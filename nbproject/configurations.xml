@@ -9,29 +9,37 @@
         <itemPath>pwm.h</itemPath>
         <itemPath>i2c.h</itemPath>
         <itemPath>usb_mm.h</itemPath>
+        <itemPath>disp9341.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
         <itemPath>font1306.h</itemPath>
         <itemPath>fontConsolas.h</itemPath>
+        <itemPath>font_twcen.h</itemPath>
+        <itemPath>font_ygm.h</itemPath>
+        <itemPath>font_fixed1306.h</itemPath>
+        <itemPath>font_arial.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="modules" projectFiles="true">
-        <itemPath>display.h</itemPath>
         <itemPath>disp1306a.h</itemPath>
-        <itemPath>disp9341a.h</itemPath>
+        <itemPath>touchXpt2046.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="system" projectFiles="true">
+        <logicalFolder name="f1" displayName="display" projectFiles="true">
+          <itemPath>graphics_hl.h</itemPath>
+          <itemPath>graphics.h</itemPath>
+          <itemPath>disp16_asm.h</itemPath>
+        </logicalFolder>
         <itemPath>main.h</itemPath>
         <itemPath>asm.h</itemPath>
         <itemPath>fnc.h</itemPath>
         <itemPath>periph.h</itemPath>
-        <itemPath>graphics.h</itemPath>
+        <itemPath>globals.h</itemPath>
       </logicalFolder>
       <itemPath>def.h</itemPath>
       <itemPath>structures.h</itemPath>
       <itemPath>asm_macro.S</itemPath>
       <itemPath>deftype.h</itemPath>
       <itemPath>test.h</itemPath>
-      <itemPath>globals.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -55,20 +63,26 @@
         <itemPath>usb_mm.c</itemPath>
         <itemPath>portWriter.c</itemPath>
         <itemPath>test.c</itemPath>
+        <itemPath>disp9341.c</itemPath>
+        <itemPath>disp1306.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="modules" projectFiles="true">
-        <itemPath>display.c</itemPath>
         <itemPath>disp1306a.c</itemPath>
         <itemPath>ubtn2.S</itemPath>
-        <itemPath>disp9341a.c</itemPath>
+        <itemPath>touchXpt2046.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="system" projectFiles="true">
+        <logicalFolder name="f1" displayName="display" projectFiles="true">
+          <itemPath>graphics_hl.c</itemPath>
+          <itemPath>graphics.c</itemPath>
+          <itemPath>disp16_asm.S</itemPath>
+        </logicalFolder>
         <itemPath>fn.S</itemPath>
         <itemPath>main.c</itemPath>
         <itemPath>cfg_bits.c</itemPath>
         <itemPath>fnc.c</itemPath>
         <itemPath>periph.c</itemPath>
-        <itemPath>graphics.c</itemPath>
+        <itemPath>globals.c</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -283,6 +297,7 @@
         <property key="UART2" value="true"/>
         <property key="UART3" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

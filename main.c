@@ -58,7 +58,7 @@ struct
 }SYSTEM_STATUS;
 
 //local fn
-char  reg_process(int* start_addr, int size);
+char reg_process(int* start_addr, int size);
 char getFreeProcessID();
 void system_Init();
 void setClock();
@@ -66,7 +66,7 @@ void setClock();
 
 void main()
 {
-    //GND novy komit 7
+    //GND
     //+
     //CLK       17, RP12
     //DATA      18, RP13
