@@ -66,7 +66,7 @@ void setClock();
 
 void main()
 {
-    //GND test commit, test doma
+    //GND test commit, test doma, test v praci
     //+
     //CLK       17, RP12
     //DATA      18, RP13
