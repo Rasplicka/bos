@@ -5,10 +5,16 @@
 #include "disp9341.h"
 #include "disp16_asm.h"
 
+/*
+ * autor JR
+ * verze 1.0
+ * driver displeje s ?adi?em ILI9341
+ * pro v?echny ?ady MM/MK/MZ
+ */
+
 #define SW_RESET                                //je definovano, pokud je RESET signal pripojen k IO pinu. Neni-li definovano, ma HW RESET (RC obvod)
 
 #ifdef USE_DISP9341
-
 
 //https://gist.github.com/postmodern/ed6e670999f456ad9f13
 

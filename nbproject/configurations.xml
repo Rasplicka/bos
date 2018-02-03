@@ -8,8 +8,8 @@
         <itemPath>spi.h</itemPath>
         <itemPath>pwm.h</itemPath>
         <itemPath>i2c.h</itemPath>
-        <itemPath>usb_mm.h</itemPath>
         <itemPath>disp9341.h</itemPath>
+        <itemPath>usb_device_mm.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
         <itemPath>font1306.h</itemPath>
@@ -60,14 +60,13 @@
         <itemPath>timer1.S</itemPath>
         <itemPath>pwm.c</itemPath>
         <itemPath>i2c.c</itemPath>
-        <itemPath>usb_mm.c</itemPath>
         <itemPath>portWriter.c</itemPath>
         <itemPath>test.c</itemPath>
         <itemPath>disp9341.c</itemPath>
         <itemPath>disp1306.c</itemPath>
+        <itemPath>usb_device_mm.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="modules" projectFiles="true">
-        <itemPath>disp1306a.c</itemPath>
         <itemPath>ubtn2.S</itemPath>
         <itemPath>touchXpt2046.c</itemPath>
       </logicalFolder>
@@ -90,6 +89,7 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
       <itemPath>MyConfig.mc3</itemPath>
+      <itemPath>documentation.txt</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

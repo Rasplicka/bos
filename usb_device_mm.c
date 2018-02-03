@@ -1,9 +1,19 @@
 #include <xc.h>
 #include "def.h"
-#include "usb_mm.h"
+#include "usb_device_mm.h"
+
+/*
+ * Autor JR
+ * verze 1.0
+ * driver pro USB device
+ * pouze procesor PIC32MM (je-li definovano PIC32MM)
+ * http://www.keil.com/forum/12679/
+ */
 
 
-//http://www.keil.com/forum/12679/
+
+#if (defined PIC32MM && defined USB_DEVICE_INIT)
+
 
 /*
 Cteni dat z PIC
@@ -447,7 +457,8 @@ int USB_isRxProgress(char ep)
     //return bd[0]>>7;
 }
 
-void usb_mm_Init()
+//inicializace modulu
+void usbDevice_Init()
 {
     U1PWRCbits.USBPWR=1;            //module ON
     
@@ -866,3 +877,4 @@ void usb_mm_interrupt()
     IFS0bits.USBIF = 0;         //USBIF
 }
 
+#endif

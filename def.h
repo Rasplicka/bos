@@ -220,18 +220,21 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="PWM">
-//#define     PWM                                     //rizeni vykonu, pouziva CCP moduly
-//#define     CCP_PWM_COUNT       2                   //pocet pouzitych CCP modulu pro rizeni vykonu PWM
+//#define     PWM_INIT                              //rizeni vykonu, pouziva CCP moduly
+//#define     CCP_PWM_COUNT       2                 //pocet pouzitych CCP modulu pro rizeni vykonu PWM
 //#define     CCP1_PWM                              //CCP1 pouzita pro pwm
-//#define     CCP2_PWM                                //CCP2 pouzita pro pwm
-//#define     CCP3_PWM                                //CCP3 pouzita pro pwm
+//#define     CCP2_PWM                              //CCP2 pouzita pro pwm
+//#define     CCP3_PWM                              //CCP3 pouzita pro pwm
 //#define     CCP4_PWM
-//#define     PWM_SOFT                                //aktivuje fci soft zmeny vykonu
+//#define     PWM_SOFT                              //aktivuje fci soft zmeny vykonu
 
 #define     CCP_PWM_TABLE_ISIZE 20                  //velikost polozky
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="USB">
-#define     USB_MM
+#define     USB_DEVICE_INIT
 
 // </editor-fold>
+
+#define     TEST_DRIVER_INIT
+//#define     TEST_DRIVER_VERSION     2

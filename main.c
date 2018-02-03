@@ -13,7 +13,8 @@
 #include "i2c.h"
 #include "timer.h"
 #include "pwm.h"
-#include "usb_mm.h"
+//#include "usb_device_mm.h"
+#include "test_driver_a.h"
 #include "disp9341.h"
 
 
@@ -95,13 +96,15 @@ void main()
     //adcscan_Init();
 
    
-#ifdef PWM    
+#ifdef PWM_INIT    
     pwm_Init();
 #endif  
     
-#ifdef USB_MM
-    usb_mm_Init();
+#ifdef USB_DEVICE_INIT
+    //usbDevice_Init();
 #endif    
+    
+    testDriver_Init();
     
     enableInterrupt();                              //provede EI
     globals_Start();
