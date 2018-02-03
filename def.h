@@ -47,23 +47,24 @@
 #define             SYSDISPLAY_1306SPI              //definuje typ systemoveho displeje (ssd1306)
 #define             USE_DISP1306                    //pouzije driver displeje
 
-#define             USE_TOUCHPAD                    //pouzije touchpad
+#define             USE_TOUCHPAD                    //aktivuje vyssi fce touchpadu (nezavisle na konkretnim typu)
+#define             TOUCHPAD_XPT2046_INIT           //aktivuje modul touchpadu, typ XPT2046
 // </editor-fold>
 
 
 // <editor-fold defaultstate="collapsed" desc="Periph driver (SPI, I2C, ...)">
 //SPI ---------------------------------------------------
 //driver je pouzit, pokud pouziva alespon jeden SPI kanal
-//#define     SPI1_USE                              //pouziva SPI1 (fce driveru pro SPI1)
-#define     SPI2_USE                                //pouziva SPI2 (fce driveru pro SPI2)
-//#define     SPI3_USE                              //pouziva SPI3 (fce driveru pro SPI3)
+//#define     SPI1_INIT                              //pouziva SPI1 (fce driveru pro SPI1)
+#define     SPI2_INIT                                //aktivuje SPI2 (fce driveru pro SPI2)
+//#define     SPI3_INIT                              //pouziva SPI3 (fce driveru pro SPI3)
 
 
 //I2C -----------------------------------------------------
-#define     I2C                     //aktivuje I2C driver
-//#define I2C1_USE
-//#define I2C2_USE
-//#define I2C3_USE
+//rada MM ma I2C pouze ve verzi PIC32MM0256 (0064 nikoliv)
+#define I2C1_INIT                                   //aktivuje I2C driver
+//#define I2C2_INIT
+//#define I2C3_INIT
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
@@ -237,4 +238,4 @@
 // </editor-fold>
 
 #define     TEST_DRIVER_INIT
-//#define     TEST_DRIVER_VERSION     2
+#define     TEST_DRIVER_VERSION     2
