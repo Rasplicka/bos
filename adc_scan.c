@@ -43,7 +43,7 @@ int adcScan_getValue(int index)
     return  adc_values[index];
 }
 
-void adcScan_Init()
+void adcScan_init()
 {
     char int_after=-1;   
     unsigned int css=0;

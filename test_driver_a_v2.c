@@ -6,7 +6,7 @@
 
 #if (defined TEST_DRIVER_INIT && TEST_DRIVER_VERSION == 2)
 
-void testDriver_Init()
+void testDriver_init()
 {
     
 }

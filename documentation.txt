@@ -1,3 +1,7 @@
+GitHub url:https://github.com/Rasplicka/bos
+GitHub jmeno:Rasplicka
+GitHub heslo:bosbos2
+
 Zásady pro tvo?ení názv?
 a) Názvy soubor?
 - pou?ívají se malá písmena
@@ -11,55 +15,57 @@ disp1306.c - ovlada? displeje SSD1306, pro v?echny ?ady
 
 
 b) Názvy funkcí
-- v?echny funkce, které pat?í pouze do daného modulu jsou definovány direktivou static nap?. "static short getWidth();"
-  tím nedojde ke konfliktu názv? mezi r?znými moduly (static znamená n?co jako LOCAL)
-- názvy funkcí za?ínají malým písmenem, a pokud jsou slo?eny z více slov, za?átek dal?ího slova je zd?razn?n 
-  velkým písmenem nap?. "getFormWidth()"
-- globální funkce, volané z jiných modul?, za?ínají názvem, který napovídá název souboru a podtr?ítkem
-  nap?. disp9341_driver() je globální fce ovlada?e disp9341. 
-  nebo usbDeviceMM_Init() - inicializa?ní fce v souboru usb_device_mm.c
+- vsechny funkce, které patrí pouze do daného modulu jsou definovány direktivou static napr. "static short getWidth();"
+  tím nedojde ke konfliktu názvu mezi ruznými moduly (static znamená neco jako LOCAL)
+- názvy funkcí zacínají malým písmenem, a pokud jsou slozeny z více slov, zacátek dalsího slova je zduraznen 
+  velkým písmenem napr. "getFormWidth()"
+- globální funkce, volané z jiných modulu, zacínají názvem, který napovídá název souboru a podtrzítkem
+  napr. disp9341_driver() je globální fce ovladace disp9341. 
+  nebo usbDevice_init() - inicializacní fce v souboru usb_device_mm.c
+  globální fce obvykle neupresnují typ procesoru (MM/MK/MZ) protoze je v projektu automaticky kompilovana správná
+  fce, ale názvy souboru obsahují _mm/_mk/_mz    
 
-- inicializa?ní fce modul? mají na konci názvu _Init viz. vý?e
-- pokud je v názvu ozna?ení ?ady procesor?, píse se velkými písmeny MM/MK/MZ (MMK - ?ada MM + MK, MZK - ?ada MZ + MK, atd...)
+- inicializacní fce modulu mají na konci názvu _init napr. usbDevice_init()
 
+Príklady:
 static void setValue() - lokální fce (kdekoliv)
 void disp9341_setDriver() - globální fce v souboru disp9341.c
-void usbDeviceMM_setBuffer() - globální fce v souboru usb_device_mm.c
+void usbDevice_setBuffer() - globální fce v souboru usb_device_mm.c nebo usb_device_mz.c
 
-c) R?zné verze
-- má-li t?eba ovlada? více verzí, p?idá se na konec názvu souboru _v1, _v2, ...
-  nap?. usb_device_mm_v1.c, usb_device_mz_v2.c
-- to platí v p?ípad?, ?e je v projektu více verzí jednoho souboru, pokud je pouze jeden (a m??e to být jakákoliv verze) 
-  pak v názvu souboru ?íslo verze menusí být.
+c) Ruzné verze
+- má-li treba ovladac více verzí, pridá se na konec názvu souboru _v1, _v2, ...
+  napr. usb_device_mm_v1.c, usb_device_mz_v2.c
+- to platí v prípade, ze je v projektu více verzí jednoho souboru, pokud je pouze jeden (a muze to být jakákoliv verze) 
+  pak v názvu souboru císlo verze menusí být.
 
-P?i více verzích v jednom projektu se postupuje takto:
+Pri více verzích v jednom projektu se postupuje takto:
 ------------------------------------------------------
-p?íklad výb?ru modulu v2 (pro ?adu MM):
+príklad výberu modulu v2:
 - usb_device_mm.c 
 - usb_device_mm_v2.c
 - usb_device_mz.c
 
 v souboru def.h
-#define     USB_DEVICE_INIT         //definuje pou?ití usb device (startup systému bude volat usbDevice_Init)
-//p?idá se náslehující definice
-#define     USB_DEVICE_VERSION  2   //definuje, ?e pou?ije verzi 2 
+#define     USB_DEVICE_INIT         //definuje pouzití usb device (startup systému bude volat usbDevice_init)
+//pridá se náslehující definice
+#define     USB_DEVICE_VERSION  2   //definuje, ze pouzije verzi 2 
 
 v souboru usb_device_mm.c
 #if (defined PIC32MM && USB_DEVICE_VERSION <= 1)
 ... celý obsah modulu
-void usbDevice_Init() {...}
+void usbDevice_init() {...}
 #endif
 
 v souboru usb_device_mm_v2.c
 #if (defined PIC32MM &&  USB_DEVICE_VERSION == 2)
 ... celý obsah modulu
-void usbDevice_Init() {...}
+void usbDevice_init() {...}
 #endif
 
 v souboru usb_device_mz.c
 #if (defined PIC32MZ)
 ... celý obsah modulu
-void usbDevice_Init() {...}
+void usbDevice_init() {...}
 #endif
 
 

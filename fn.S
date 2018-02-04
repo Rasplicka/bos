@@ -2287,7 +2287,7 @@ iVector_i2c3Bus:
 iVector_usb:
     
 #ifdef USB_DEVICE_INIT    
-    bal	    usb_mm_interrupt
+    bal	    usbDevice_interrupt
     nop
 #endif    
     
@@ -2303,11 +2303,11 @@ iVector_usb:
 //</editor-fold>
    
     
-//<editor-fold defaultstate="collapsed" desc="cpuTimer_Init">
+//<editor-fold defaultstate="collapsed" desc="cpuTimer_init">
 .align 2
-.global cpuTimer_Init
-.ent cpuTimer_Init
-cpuTimer_Init:
+.global cpuTimer_init
+.ent cpuTimer_init
+cpuTimer_init:
     
     //4/2/2018 zruseno, misto toho fce v main.c
     
@@ -2334,7 +2334,7 @@ cpuTimer_Init:
     jrc	    ra
     */
    
-.end cpuTimer_Init
+.end cpuTimer_init
     
 //</editor-fold>
     

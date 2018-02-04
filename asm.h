@@ -83,7 +83,7 @@ extern void iVector_i2c3Master();
 extern void iVector_i2c3Bus();
 #endif
 
-//extern void cpuTimer_Init();
+//extern void cpuTimer_init();
 extern void general_exception();
 extern void watch(uint);
 
@@ -91,7 +91,7 @@ extern void watch(uint);
 //timer1
 extern uint timer_ms;
 extern uint day_ms;
-extern void timer1_Init();
+extern void timer1_init();
 extern int  timer1_regEventInterval(char*, uint);
 extern int  timer1_regEventDelay(char*, uint);
 extern void timer1_unregEvent(char*);
@@ -100,7 +100,7 @@ extern void timer1_unregEvent(char*);
 #ifdef RTC
 
 //rtc.S
-extern void rtc_Init();
+extern void rtc_init();
 extern void rtc_setDayMs();
 extern uint rtc_getTime();
 extern uint rtc_getDate();

@@ -1,4 +1,4 @@
-void spi_Init();
+void spi_init();
 
 char spi_getUsed(int index);
 //void spi_setUsed(int index, int val);

@@ -74,7 +74,7 @@ void m1_start()
     blick1();
     
     
-    //usb_mm_Init();
+    //usbDevice_init();
     
     //drawText(0, "VELKA PISMENA", 0, 1, FONT1306_MID);
     //blick();

@@ -2,14 +2,45 @@
 #include "def.h"
 #include "usb_device_mm.h"
 
+// <editor-fold defaultstate="collapsed" desc="file description">
 /*
  * Autor JR
  * verze 1.0
  * driver pro USB device
- * pouze procesor PIC32MM (je-li definovano PIC32MM)
+ * pouze procesor PIC32MM0256 (je-li definovano PIC32MM0256 - 0064 nema USB)
  * http://www.keil.com/forum/12679/
  */
+// </editor-fold>
 
+// <editor-fold defaultstate="collapsed" desc="Examples">
+/*
+//odeslani bufferu 
+char buffer[64];
+char ep=1;
+while(USB_isTxProgress(ep)) { doEvents(); }
+usbDevice_txData(ep, buffer, 64);
+ * 
+  
+ //reakce na pozadavek z hosta
+ char buffer_cmd[4];                                //buffer pro prijem command z hosta (command size = 4 Bytes)
+ char data_out[64]                                  //buffer pro data do hosta
+ char ep=1;
+ usbDevice_rxData(ep, buffer_cmd, 4)                
+ while(usbDevice_isRxProgress(ep)) { doEvents(); }  //ceka na data z hosta (host vzdy zacina komunikaci)
+ 
+ //prisel pozadavek z hosta, dekoduj ho 
+ if(buffer_cmd[0]==1) 
+ {
+    fillBufferA(data_out);              //command==1, napln buffer daty A
+ }
+ else
+ {
+    fillBufferB(data_out);              //command!=1, napln buffer daty B
+ } 
+ while(USB_isTxProgress(ep)) { doEvents(); } 
+ usbDevice_txData(ep, data_out, 64);    //osedlani dat
+ */
+// </editor-fold>
 
 
 #if (defined PIC32MM0256 && defined USB_DEVICE_INIT)
@@ -139,25 +170,11 @@ BD_ITEM* bd_ep0_in_even;                                //prekryva BD, pro snazs
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="vars">
-char address    = 0;
-char isize      = 0;
-int ibuff       = 0;
-char is_connected= 0;
-char datain=0;
-// </editor-fold>
-
-// <editor-fold defaultstate="collapsed" desc="local fce">
-static void USB_reset();
-static char* USB_getBDAddress(char ep, char dir, char ppbi);
-static char* USB_getBuffer(char ep, char dir, char ppbi);
-static void USB_setBD(char* bd, char b0, int size, char* buffer_addr);
-static void USB_prepareBDForOut(char ep, char ppbi, char toggle, short int len);
-static void USB_sendDeviceDescriptor(short int len);
-static void USB_sendDeviceConfiguration(unsigned int len);
-static void USB_sendDeviceStatus();
-static void USB_sendSetupNull();
-static void USB_sendString(const unsigned char index);
-
+char address        = 0;
+char isize          = 0;
+int ibuff           = 0;
+char is_connected   = 0;
+char datain         = 0;
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="MACRO">
@@ -331,134 +348,8 @@ const char strZero[] = {
 
 // </editor-fold>
 
-/*
-//odeslani bufferu 
-char buffer[64];
-char ep=1;
-while(USB_isTxProgress(ep)){ doEvents(); }
-USB_txData(ep, buffer, 64);
- * 
-  
- //reakce na pozadavek z hosta
- char buffer_cmd[4];                    //prijem command z hosta (command size = 4B)
- char data_out[64]                      //data pro hosta
- char ep=1;
- USB_rxData(ep, buffer_cmd, 4)          //ceka na data z hosta
- while(USB_isRxProgress(ep)) { doEvents(); }
- 
- //dekoduje command 
- if(buffer_cmd[0]==1) 
- {
-    fillBufferA(data_out);              //command==1, napln buffer daty A
- }
- else
- {
-    fillBufferB(data_out);              //command!=1, napln buffer daty B
- } 
- transmitBuffer(data_out);              //osedlani dat
-  
-*/
-
 //global fce
-int USB_isConnected()
-{
-    if(U1ADDR==0 || U1OTGSTATbits.VBUSVD==0 || is_connected==0)
-    {
-        //nebyla pridelena adresa, nebo VBUS=0, neni pripojeno USB
-        return 0;
-    }
-    else
-    {
-        //je pripojeno USB (probehla enumerace)
-        return 1;
-    }
-}
-
-void USB_txData(char ep, char* buffer, short int len)
-{
-    //odeslani dat (IN token, host cte data)
-    //data jsou v bufferu, ktery alokuje volajici fce (muze mit vice bufferu)
-    //ppbi vypnuto, pouzije EVEN BD
-
-    //char* bd=USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
-    //U1CONbits.PPBRST=1;
-    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
-    p->size=len;
-    p->ptr=VA_TO_PA(buffer);  //(int)buffer & 0x0FFFFFFF;
-    p->data=0x80 | datain << 6;
-    datain++;
-    
-    /*
-    short int* bd16=(short int*)bd;
-    bd16[1]=len;
-    
-    //adresa bufferu (physical addr)
-    int* bd32=(int*)bd;
-    bd32[1]=(int)buffer & 0x0FFFFFFF;    
-    
-    //b7=1 (UOWN=1 - SIE vlastni buffer), b6=1 DATA0/1 
-    bd[0]=0x90;
-    */
-}
-
-int USB_isTxProgress(char ep)
-{
-    //vraci 1, pokud probiha vysilani (jeste nebyl odvysilany paket)
-    //bd[0].b7=1 SIE pracuje, 0=dokonceno CPU vlastni buffer
-    
-    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
-    return p->data>>7;
-    
-    //char* bd=USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
-    //return bd[0]>>7;
-}
-
-void USB_rxData(char ep, char* buffer, short int len)
-{
-    //prijem dat (OUT token, host posila data)
-    //data jsou v bufferu, ktery alokuje volajici fce (muze mit vice bufferu)
-    //ppbi vypnuto, pouzije EVEN BD
-    
-    //U1CONbits.PPBRST=1;
-    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);
-    p->size=len;
-    p->ptr=VA_TO_PA(buffer);  //(int)buffer & 0x0FFFFFFF;
-    p->data=0x80;
-    
-    //p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, PPBI_ODD);
-    //p->size=len;
-    //p->ptr=VA_TO_PA(buffer);  //(int)buffer & 0x0FFFFFFF;
-    //p->data=0x80;
-    
-    /*
-    char* bd=USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);    
-    
-    short int* bd16=(short int*)bd;
-    bd16[1]=len;
-
-    //adresa bufferu (physical addr)
-    int* bd32=(int*)bd;
-    bd32[1]=(int)buffer & 0x0FFFFFFF;  
-    
-    //b7=1 (UOWN=1 - SIE vlastni buffer), b6=0 DATA0/1 
-    bd[0]=0x80;   
-    */
-}
-
-int USB_isRxProgress(char ep)
-{
-    //vraci 1, pokud probiha cteni (jeste nebyl prijat paket)
-    //bd[0].b7=1 SIE pracuje, 0=dokonceno CPU vlastni buffer
-    
-    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);
-    return p->data>>7;
-    
-    //char* bd=USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);
-    //return bd[0]>>7;
-}
-
-//inicializace modulu
-void usbDevice_Init()
+void usbDevice_init()       //inicializace modulu
 {
     U1PWRCbits.USBPWR=1;            //module ON
     
@@ -521,220 +412,104 @@ void usbDevice_Init()
     // </editor-fold>
 }
 
-
-
-//local fce
-void USB_reset()
+int usbDevice_isConnected()
 {
-    U1ADDR = 0;
-    address=0;
-    
-    //IN BD EVEN, ODD
-    bd_ep0_in_even=(BD_ITEM*)USB_getBDAddress(0, DIRECTION_IN, PPBI_EVEN);
-    //bd_ep0_in_odd=(BD_ITEM*)USB_getBDAddress(0, DIRECTION_IN, PPBI_ODD);
-    
-    //OUT BD EVEN
-    BD_ITEM* x =(BD_ITEM*)USB_getBDAddress(0, DIRECTION_OUT, PPBI_EVEN);
-    x->ptr=VA_TO_PA(bufferOut0);
-    
-    //OUT BD ODD (pouziva pouze EVEN buffer)
-    //x =(BD_ITEM*)USB_getBDAddress(0, DIRECTION_OUT, PPBI_ODD);
-    //x->ptr=VA_TO_PA(bufferOut0);  
-   
-    //pripravit na data EP0
-    //U1CONbits.PPBRST=1;
-    USB_prepareBDForOut(0, 0, 0, 8);
-}
-
-char* USB_getBDAddress(char ep, char dir, char ppbi)
-{
-    //dir  1=OUT/SETUP, 0=IN
-    //ppbi 0=data0/EVEN, 1=data1/ODD
-    
-    int x=(int)bd_table;
-    return (char*)(x | ep<<5 | dir<<4 | ppbi<<3);
-}
-
-char* USB_getBuffer(char ep, char dir, char ppbi)
-{
-    //vraci fyzickou adresu bufferu z BufferDescriptoru
-    //BD word[1]=adresa bufferu
-    int* bd_item=(int*)USB_getBDAddress(ep, dir, ppbi);
-    return (char*)bd_item[1];                  //prevod phys. na virt.
-    
-}
-
-void USB_setBD(char* bd, char b0, int size, char* buffer_addr)
-{
-    //BD 8 bytes
-    //B0=b0
-    //B2-3 = size
-    //B4-7 = buffer adresa
-    
-    bd[0]=b0;
-    
-    short int* bd16=(short int*)bd;
-    bd16[1]=size;
-    
-    int* bd32=(int*)bd;
-    bd32[1]=(int)buffer_addr & 0x0FFFFFFF;
-}
-
-void USB_prepareBDForOut(char ep, char ppbi, char data01, short int len)
-{
-    //pripravi BD item pro prijem dat
-    //BDT item =
-    //8 bitu data,
-    //8 bitu nic,
-    //8 bitu len,
-    //8 bitu len(2bity),
-    //32 bitu adresa bufferu
-
-    //ppbi=0;
-    
-    /*
-    char* bd=USB_getBDAddress(ep, DIRECTION_OUT, ppbi);  //DIRECTION_IN
-    short int* bd16=(short int*)bd;
-    bd16[1]=len;
-
-    //b7=1 (UOWN=SIE), b6=toggle
-    bd[0]=0x80 | (data01 << 6);
-    */
-    
-    BD_ITEM* x =(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, ppbi);
-    x->size=len;
-    x->data=0x80 | (data01 << 6);
-    
-}
-
-void USB_sendDeviceDescriptor(short int len)
-{
-    if(len>18){len=18;}
-    //U1CONbits.PPBRST=1;
-    
-    bd_ep0_in_even->ptr=VA_TO_PA(dd);
-    bd_ep0_in_even->size=len;
-    bd_ep0_in_even->data=0b11000000;
-    
-    /*
-    char* bd0=USB_getBDAddress(0, DIRECTION_IN, 0);  //DIRECTION_IN
-    short int* bd016=(short int*)bd0;
-    int* bd032=(int*)bd0;
-    
-    int b0=(int)dd & 0x00FFFFFF | 0x1D000000;
-    bd032[1]=b0; 
-    
-    U1CONbits.PPBRST=1;
-    if(len>18){len=18;}
-    
-    bd016[1]= len;
-    bd0[0]=0b11000000;
-    */
-    
-    /*
-    bufferIn0[0] = 18;      //delka
-    bufferIn0[1] = 0x01;	//Device Descriptor
-    bufferIn0[2] = 0x00;    //verze 2.0
-    bufferIn0[3] = 0x02;	//verze 2.0
-    bufferIn0[4] = 0x00;	//class
-    bufferIn0[5] = 0x00;	//sub class
-    bufferIn0[6] = 0x00;	//protocol
-    bufferIn0[7] = 64;      //buffer size
-    
-    if(len > 8)    
+    if(U1ADDR==0 || U1OTGSTATbits.VBUSVD==0 || is_connected==0)
     {
-        bufferIn0[8] = 0x05;	//vendor id
-        bufferIn0[9] = 0x00;	//vendor id
-        bufferIn0[10] = 0x07;	//product id 05
-        bufferIn0[11] = 0x00;   //product id
-        bufferIn0[12] = 0x40;	//device release 04
-        bufferIn0[13] = 0x07;	//device release 03
-        bufferIn0[14] = 0x01;	//Manufact. string index
-        bufferIn0[15] = 0x02;	//Product string index
-        bufferIn0[16] = 0x00;	//serial Num. string index
-        bufferIn0[17] = 0x01;	//Number of configurations
-        len=18;
-    }
-
-    //oba BD ukazuji na bufferIn0
-    U1CONbits.PPBRST=1;
-    //USB_prepareBDForIn(0, 0, 1, len);   //EVEN
-    USB_prepareBDForIn(0, 1, 1, len);   //ODD
-    */
-
-}
-
-void USB_sendDeviceConfiguration(unsigned int len)
-{
-    //len = pozadovana velikost (odesila tento pocet, nebo mensi)
-    //char slen=0;        //skutecna velikost
-    
-    if(len==0xFF){len=9;}
-    
-    //U1CONbits.PPBRST=1;                         //nastav EVEN BD
-    bd_ep0_in_even->ptr=VA_TO_PA(cd);
-    
-    if(len>64)
-    {
-        bd_ep0_in_even->size=64;
-        bd_ep0_in_even->data =  0b11000000;     //SIE, DATA1
-
-        //priprava pro dalsi paket
-        isize=len-64;
-        ibuff=bd_ep0_in_even->ptr+64;
+        //nebyla pridelena adresa, nebo VBUS=0, neni pripojeno USB
+        return 0;
     }
     else
     {
-        bd_ep0_in_even->size = len;
-        bd_ep0_in_even->data =  0b11000000;     //SIE, DATA1
-        isize=0;                                //neni dalsi paket
+        //je pripojeno USB (probehla enumerace)
+        return 1;
     }
 }
 
-void USB_sendDeviceStatus()
+void usbDevice_txData(char ep, char* buffer, short int len)
 {
-    bd_ep0_in_even->ptr=VA_TO_PA(sd);
-    bd_ep0_in_even->size=2;
-    bd_ep0_in_even->data=0b11000000;    
-}
+    //odeslani dat (IN token, host cte data)
+    //data jsou v bufferu, ktery alokuje volajici fce (muze mit vice bufferu)
+    //ppbi vypnuto, pouzije EVEN BD
 
-void USB_sendSetupNull()
-{
-    //odeslani NULL na EP0, EVEN, data1
+    //char* bd=USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
     //U1CONbits.PPBRST=1;
-    bd_ep0_in_even->size=0;
-    bd_ep0_in_even->data=0b11000000;
-}
-
-void USB_sendString(const unsigned char index)
-{
-    //U1CONbits.PPBRST=1;
+    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
+    p->size=len;
+    p->ptr=VA_TO_PA(buffer);  //(int)buffer & 0x0FFFFFFF;
+    p->data=0x80 | datain << 6;
+    datain++;
     
-	if(index==0)
-	{
-		//USB_fillString((char*)&strZero);
-        bd_ep0_in_even->ptr=VA_TO_PA(strZero);
-        bd_ep0_in_even->size=strZero[0];
-        bd_ep0_in_even->data=0b11000000;
-	}
-	else if (index==1)
-	{
-		//USB_fillString((char*)&strManufacturer);
-        bd_ep0_in_even->ptr=VA_TO_PA(strManufacturer);
-        bd_ep0_in_even->size=strManufacturer[0];
-        bd_ep0_in_even->data=0b11000000;
-        
-	}
-	else if(index==2)
-	{
-		//USB_fillString((char*)&strProduct);
-        bd_ep0_in_even->ptr=VA_TO_PA(strProduct);
-        bd_ep0_in_even->size=strProduct[0];
-        bd_ep0_in_even->data=0b11000000;        
-	}
+    /*
+    short int* bd16=(short int*)bd;
+    bd16[1]=len;
+    
+    //adresa bufferu (physical addr)
+    int* bd32=(int*)bd;
+    bd32[1]=(int)buffer & 0x0FFFFFFF;    
+    
+    //b7=1 (UOWN=1 - SIE vlastni buffer), b6=1 DATA0/1 
+    bd[0]=0x90;
+    */
 }
 
-void usb_mm_interrupt()
+int usbDevice_isTxProgress(char ep)
+{
+    //vraci 1, pokud probiha vysilani (jeste nebyl odvysilany paket)
+    //bd[0].b7=1 SIE pracuje, 0=dokonceno CPU vlastni buffer
+    
+    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
+    return p->data>>7;
+    
+    //char* bd=USB_getBDAddress(ep, DIRECTION_IN, PPBI_EVEN);
+    //return bd[0]>>7;
+}
+
+void usbDevice_rxData(char ep, char* buffer, short int len)
+{
+    //prijem dat (OUT token, host posila data)
+    //data jsou v bufferu, ktery alokuje volajici fce (muze mit vice bufferu)
+    //ppbi vypnuto, pouzije EVEN BD
+    
+    //U1CONbits.PPBRST=1;
+    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);
+    p->size=len;
+    p->ptr=VA_TO_PA(buffer);  //(int)buffer & 0x0FFFFFFF;
+    p->data=0x80;
+    
+    //p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, PPBI_ODD);
+    //p->size=len;
+    //p->ptr=VA_TO_PA(buffer);  //(int)buffer & 0x0FFFFFFF;
+    //p->data=0x80;
+    
+    /*
+    char* bd=USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);    
+    
+    short int* bd16=(short int*)bd;
+    bd16[1]=len;
+
+    //adresa bufferu (physical addr)
+    int* bd32=(int*)bd;
+    bd32[1]=(int)buffer & 0x0FFFFFFF;  
+    
+    //b7=1 (UOWN=1 - SIE vlastni buffer), b6=0 DATA0/1 
+    bd[0]=0x80;   
+    */
+}
+
+int usbDevice_isRxProgress(char ep)
+{
+    //vraci 1, pokud probiha cteni (jeste nebyl prijat paket)
+    //bd[0].b7=1 SIE pracuje, 0=dokonceno CPU vlastni buffer
+    
+    BD_ITEM* p=(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);
+    return p->data>>7;
+    
+    //char* bd=USB_getBDAddress(ep, DIRECTION_OUT, PPBI_EVEN);
+    //return bd[0]>>7;
+}
+
+void usbDevice_interrupt()
 {
     //Po prijeti SETUP paketu nastavi SIE PKTDIS=1 - zakaz prijimani dalsich paketu
     U1CONbits.PKTDIS=0;
@@ -876,5 +651,217 @@ void usb_mm_interrupt()
     
     IFS0bits.USBIF = 0;         //USBIF
 }
+
+//local fce
+static void USB_reset()
+{
+    U1ADDR = 0;
+    address=0;
+    
+    //IN BD EVEN, ODD
+    bd_ep0_in_even=(BD_ITEM*)USB_getBDAddress(0, DIRECTION_IN, PPBI_EVEN);
+    //bd_ep0_in_odd=(BD_ITEM*)USB_getBDAddress(0, DIRECTION_IN, PPBI_ODD);
+    
+    //OUT BD EVEN
+    BD_ITEM* x =(BD_ITEM*)USB_getBDAddress(0, DIRECTION_OUT, PPBI_EVEN);
+    x->ptr=VA_TO_PA(bufferOut0);
+    
+    //OUT BD ODD (pouziva pouze EVEN buffer)
+    //x =(BD_ITEM*)USB_getBDAddress(0, DIRECTION_OUT, PPBI_ODD);
+    //x->ptr=VA_TO_PA(bufferOut0);  
+   
+    //pripravit na data EP0
+    //U1CONbits.PPBRST=1;
+    USB_prepareBDForOut(0, 0, 0, 8);
+}
+
+static char* USB_getBDAddress(char ep, char dir, char ppbi)
+{
+    //dir  1=OUT/SETUP, 0=IN
+    //ppbi 0=data0/EVEN, 1=data1/ODD
+    
+    int x=(int)bd_table;
+    return (char*)(x | ep<<5 | dir<<4 | ppbi<<3);
+}
+
+static char* USB_getBuffer(char ep, char dir, char ppbi)
+{
+    //vraci fyzickou adresu bufferu z BufferDescriptoru
+    //BD word[1]=adresa bufferu
+    int* bd_item=(int*)USB_getBDAddress(ep, dir, ppbi);
+    return (char*)bd_item[1];                  //prevod phys. na virt.
+    
+}
+
+static void USB_setBD(char* bd, char b0, int size, char* buffer_addr)
+{
+    //BD 8 bytes
+    //B0=b0
+    //B2-3 = size
+    //B4-7 = buffer adresa
+    
+    bd[0]=b0;
+    
+    short int* bd16=(short int*)bd;
+    bd16[1]=size;
+    
+    int* bd32=(int*)bd;
+    bd32[1]=(int)buffer_addr & 0x0FFFFFFF;
+}
+
+static void USB_prepareBDForOut(char ep, char ppbi, char data01, short int len)
+{
+    //pripravi BD item pro prijem dat
+    //BDT item =
+    //8 bitu data,
+    //8 bitu nic,
+    //8 bitu len,
+    //8 bitu len(2bity),
+    //32 bitu adresa bufferu
+
+    //ppbi=0;
+    
+    /*
+    char* bd=USB_getBDAddress(ep, DIRECTION_OUT, ppbi);  //DIRECTION_IN
+    short int* bd16=(short int*)bd;
+    bd16[1]=len;
+
+    //b7=1 (UOWN=SIE), b6=toggle
+    bd[0]=0x80 | (data01 << 6);
+    */
+    
+    BD_ITEM* x =(BD_ITEM*)USB_getBDAddress(ep, DIRECTION_OUT, ppbi);
+    x->size=len;
+    x->data=0x80 | (data01 << 6);
+    
+}
+
+static void USB_sendDeviceDescriptor(short int len)
+{
+    if(len>18){len=18;}
+    //U1CONbits.PPBRST=1;
+    
+    bd_ep0_in_even->ptr=VA_TO_PA(dd);
+    bd_ep0_in_even->size=len;
+    bd_ep0_in_even->data=0b11000000;
+    
+    /*
+    char* bd0=USB_getBDAddress(0, DIRECTION_IN, 0);  //DIRECTION_IN
+    short int* bd016=(short int*)bd0;
+    int* bd032=(int*)bd0;
+    
+    int b0=(int)dd & 0x00FFFFFF | 0x1D000000;
+    bd032[1]=b0; 
+    
+    U1CONbits.PPBRST=1;
+    if(len>18){len=18;}
+    
+    bd016[1]= len;
+    bd0[0]=0b11000000;
+    */
+    
+    /*
+    bufferIn0[0] = 18;      //delka
+    bufferIn0[1] = 0x01;	//Device Descriptor
+    bufferIn0[2] = 0x00;    //verze 2.0
+    bufferIn0[3] = 0x02;	//verze 2.0
+    bufferIn0[4] = 0x00;	//class
+    bufferIn0[5] = 0x00;	//sub class
+    bufferIn0[6] = 0x00;	//protocol
+    bufferIn0[7] = 64;      //buffer size
+    
+    if(len > 8)    
+    {
+        bufferIn0[8] = 0x05;	//vendor id
+        bufferIn0[9] = 0x00;	//vendor id
+        bufferIn0[10] = 0x07;	//product id 05
+        bufferIn0[11] = 0x00;   //product id
+        bufferIn0[12] = 0x40;	//device release 04
+        bufferIn0[13] = 0x07;	//device release 03
+        bufferIn0[14] = 0x01;	//Manufact. string index
+        bufferIn0[15] = 0x02;	//Product string index
+        bufferIn0[16] = 0x00;	//serial Num. string index
+        bufferIn0[17] = 0x01;	//Number of configurations
+        len=18;
+    }
+
+    //oba BD ukazuji na bufferIn0
+    U1CONbits.PPBRST=1;
+    //USB_prepareBDForIn(0, 0, 1, len);   //EVEN
+    USB_prepareBDForIn(0, 1, 1, len);   //ODD
+    */
+
+}
+
+static void USB_sendDeviceConfiguration(unsigned int len)
+{
+    //len = pozadovana velikost (odesila tento pocet, nebo mensi)
+    //char slen=0;        //skutecna velikost
+    
+    if(len==0xFF){len=9;}
+    
+    //U1CONbits.PPBRST=1;                         //nastav EVEN BD
+    bd_ep0_in_even->ptr=VA_TO_PA(cd);
+    
+    if(len>64)
+    {
+        bd_ep0_in_even->size=64;
+        bd_ep0_in_even->data =  0b11000000;     //SIE, DATA1
+
+        //priprava pro dalsi paket
+        isize=len-64;
+        ibuff=bd_ep0_in_even->ptr+64;
+    }
+    else
+    {
+        bd_ep0_in_even->size = len;
+        bd_ep0_in_even->data =  0b11000000;     //SIE, DATA1
+        isize=0;                                //neni dalsi paket
+    }
+}
+
+static void USB_sendDeviceStatus()
+{
+    bd_ep0_in_even->ptr=VA_TO_PA(sd);
+    bd_ep0_in_even->size=2;
+    bd_ep0_in_even->data=0b11000000;    
+}
+
+static void USB_sendSetupNull()
+{
+    //odeslani NULL na EP0, EVEN, data1
+    //U1CONbits.PPBRST=1;
+    bd_ep0_in_even->size=0;
+    bd_ep0_in_even->data=0b11000000;
+}
+
+static void USB_sendString(const unsigned char index)
+{
+    //U1CONbits.PPBRST=1;
+    
+	if(index==0)
+	{
+		//USB_fillString((char*)&strZero);
+        bd_ep0_in_even->ptr=VA_TO_PA(strZero);
+        bd_ep0_in_even->size=strZero[0];
+        bd_ep0_in_even->data=0b11000000;
+	}
+	else if (index==1)
+	{
+		//USB_fillString((char*)&strManufacturer);
+        bd_ep0_in_even->ptr=VA_TO_PA(strManufacturer);
+        bd_ep0_in_even->size=strManufacturer[0];
+        bd_ep0_in_even->data=0b11000000;
+        
+	}
+	else if(index==2)
+	{
+		//USB_fillString((char*)&strProduct);
+        bd_ep0_in_even->ptr=VA_TO_PA(strProduct);
+        bd_ep0_in_even->size=strProduct[0];
+        bd_ep0_in_even->data=0b11000000;        
+	}
+}
+
 
 #endif

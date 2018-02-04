@@ -192,7 +192,7 @@ void m2_start()
     }
     */
     
-    while(USB_isConnected()==0)
+    while(usbDevice_isConnected()==0)
     {
         doEvents();  
     }
@@ -204,8 +204,8 @@ void m2_start()
 
     while(1)
     {
-        USB_rxData(ep, buffer_cmd, 64);         //Pripravi se na data z hosta
-        while(USB_isRxProgress(ep)==1) 
+        usbDevice_rxData(ep, buffer_cmd, 64);         //Pripravi se na data z hosta
+        while(usbDevice_isRxProgress(ep)==1) 
         { 
             //cekani na data
             doEvents(); 

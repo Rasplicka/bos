@@ -215,11 +215,11 @@
 //</editor-fold>
 
    
-//<editor-fold defaultstate="collapsed" desc="rtc_Init">
+//<editor-fold defaultstate="collapsed" desc="rtc_init">
 .align 2    
-.global rtc_Init
-.ent rtc_Init
-rtc_Init:
+.global rtc_init
+.ent rtc_init
+rtc_init:
 //nastavi time_ms (long int) a date_century
 //vraci v0=ok, muze pokracovat, 1=chyba, nelze spustiti OS 
 
@@ -311,7 +311,7 @@ rtc_Init:
     _POP    ra
     jrc     ra
     
-.end rtc_Init
+.end rtc_init
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="rtc_setDayMs">

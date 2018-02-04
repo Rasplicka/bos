@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c usb_device_mm.c test_driver_a.c test_driver_a_v2.c test_driver_a_v3.c ubtn2.S touchXpt2046.c graphics_hl.c graphics.c disp16_asm.S fn.S main.c cfg_bits.c fnc.c periph.c globals.c adc_scan.c
+SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c usb_device_mm.c test_driver_a.c test_driver_a_v2.c test_driver_a_v3.c adc_scan.c ubtn2.S touchXpt2046.c graphics_hl.c graphics.c disp16_asm.S fn.S main.c cfg_bits.c fnc.c periph.c globals.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/test_driver_a.o ${OBJECTDIR}/test_driver_a_v2.o ${OBJECTDIR}/test_driver_a_v3.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/main.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/adc_scan.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/test.o.d ${OBJECTDIR}/disp9341.o.d ${OBJECTDIR}/disp1306.o.d ${OBJECTDIR}/usb_device_mm.o.d ${OBJECTDIR}/test_driver_a.o.d ${OBJECTDIR}/test_driver_a_v2.o.d ${OBJECTDIR}/test_driver_a_v3.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/touchXpt2046.o.d ${OBJECTDIR}/graphics_hl.o.d ${OBJECTDIR}/graphics.o.d ${OBJECTDIR}/disp16_asm.o.d ${OBJECTDIR}/fn.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/cfg_bits.o.d ${OBJECTDIR}/fnc.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/adc_scan.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/test_driver_a.o ${OBJECTDIR}/test_driver_a_v2.o ${OBJECTDIR}/test_driver_a_v3.o ${OBJECTDIR}/adc_scan.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/main.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/globals.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/test.o.d ${OBJECTDIR}/disp9341.o.d ${OBJECTDIR}/disp1306.o.d ${OBJECTDIR}/usb_device_mm.o.d ${OBJECTDIR}/test_driver_a.o.d ${OBJECTDIR}/test_driver_a_v2.o.d ${OBJECTDIR}/test_driver_a_v3.o.d ${OBJECTDIR}/adc_scan.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/touchXpt2046.o.d ${OBJECTDIR}/graphics_hl.o.d ${OBJECTDIR}/graphics.o.d ${OBJECTDIR}/disp16_asm.o.d ${OBJECTDIR}/fn.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/cfg_bits.o.d ${OBJECTDIR}/fnc.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/globals.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/test_driver_a.o ${OBJECTDIR}/test_driver_a_v2.o ${OBJECTDIR}/test_driver_a_v3.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/main.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/adc_scan.o
+OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/test_driver_a.o ${OBJECTDIR}/test_driver_a_v2.o ${OBJECTDIR}/test_driver_a_v3.o ${OBJECTDIR}/adc_scan.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/main.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/globals.o
 
 # Source Files
-SOURCEFILES=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c usb_device_mm.c test_driver_a.c test_driver_a_v2.c test_driver_a_v3.c ubtn2.S touchXpt2046.c graphics_hl.c graphics.c disp16_asm.S fn.S main.c cfg_bits.c fnc.c periph.c globals.c adc_scan.c
+SOURCEFILES=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c usb_device_mm.c test_driver_a.c test_driver_a_v2.c test_driver_a_v3.c adc_scan.c ubtn2.S touchXpt2046.c graphics_hl.c graphics.c disp16_asm.S fn.S main.c cfg_bits.c fnc.c periph.c globals.c
 
 
 CFLAGS=
@@ -274,6 +274,12 @@ ${OBJECTDIR}/test_driver_a_v3.o: test_driver_a_v3.c  nbproject/Makefile-${CND_CO
 	@${RM} ${OBJECTDIR}/test_driver_a_v3.o 
 	@${FIXDEPS} "${OBJECTDIR}/test_driver_a_v3.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/test_driver_a_v3.o.d" -o ${OBJECTDIR}/test_driver_a_v3.o test_driver_a_v3.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/adc_scan.o: adc_scan.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/adc_scan.o.d 
+	@${RM} ${OBJECTDIR}/adc_scan.o 
+	@${FIXDEPS} "${OBJECTDIR}/adc_scan.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/adc_scan.o.d" -o ${OBJECTDIR}/adc_scan.o adc_scan.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 ${OBJECTDIR}/touchXpt2046.o: touchXpt2046.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/touchXpt2046.o.d 
@@ -321,12 +327,6 @@ ${OBJECTDIR}/globals.o: globals.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/globals.o.d 
 	@${RM} ${OBJECTDIR}/globals.o 
 	@${FIXDEPS} "${OBJECTDIR}/globals.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/globals.o.d" -o ${OBJECTDIR}/globals.o globals.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/adc_scan.o: adc_scan.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/adc_scan.o.d 
-	@${RM} ${OBJECTDIR}/adc_scan.o 
-	@${FIXDEPS} "${OBJECTDIR}/adc_scan.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/adc_scan.o.d" -o ${OBJECTDIR}/adc_scan.o adc_scan.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 else
 ${OBJECTDIR}/app1.o: app1.c  nbproject/Makefile-${CND_CONF}.mk
@@ -413,6 +413,12 @@ ${OBJECTDIR}/test_driver_a_v3.o: test_driver_a_v3.c  nbproject/Makefile-${CND_CO
 	@${RM} ${OBJECTDIR}/test_driver_a_v3.o 
 	@${FIXDEPS} "${OBJECTDIR}/test_driver_a_v3.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/test_driver_a_v3.o.d" -o ${OBJECTDIR}/test_driver_a_v3.o test_driver_a_v3.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/adc_scan.o: adc_scan.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/adc_scan.o.d 
+	@${RM} ${OBJECTDIR}/adc_scan.o 
+	@${FIXDEPS} "${OBJECTDIR}/adc_scan.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/adc_scan.o.d" -o ${OBJECTDIR}/adc_scan.o adc_scan.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 ${OBJECTDIR}/touchXpt2046.o: touchXpt2046.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/touchXpt2046.o.d 
@@ -460,12 +466,6 @@ ${OBJECTDIR}/globals.o: globals.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/globals.o.d 
 	@${RM} ${OBJECTDIR}/globals.o 
 	@${FIXDEPS} "${OBJECTDIR}/globals.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/globals.o.d" -o ${OBJECTDIR}/globals.o globals.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/adc_scan.o: adc_scan.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/adc_scan.o.d 
-	@${RM} ${OBJECTDIR}/adc_scan.o 
-	@${FIXDEPS} "${OBJECTDIR}/adc_scan.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -mcci -MMD -MF "${OBJECTDIR}/adc_scan.o.d" -o ${OBJECTDIR}/adc_scan.o adc_scan.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

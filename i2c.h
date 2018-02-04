@@ -1,4 +1,4 @@
-void i2c_Init();
+void i2c_init();
 
 char i2c_getUsed(int index);
 char i2c_Process(char index, char wait);

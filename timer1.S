@@ -27,12 +27,12 @@ timer1_events:	    .space	TIMER1_EVENT_CAPA * TIMER1_EVENT_ISIZE
 .set micromips
 .section .asm_timer1, code 
     
-//<editor-fold defaultstate="collapsed" desc="timer_Init">
+//<editor-fold defaultstate="collapsed" desc="timer_init">
     
 .align 2
-.global timer1_Init
-.ent timer1_Init
-timer1_Init:
+.global timer1_init
+.ent timer1_init
+timer1_init:
     //timer1 je pripojen k LPRC oscilatoru, ten ma vzdy 32kHz, nezavisla na PBCLK 
     //stejne jako RTCC
     
@@ -43,7 +43,7 @@ timer1_Init:
     //povoli RTC modul, nastavi 1/1/2001
     //nastav day_ms, podle aktualniho casu
 
-    jal	    rtc_Init
+    jal	    rtc_init
     nop
 
 #endif     
@@ -104,7 +104,7 @@ timer1_Init:
     
 #ifdef RTC    
     //povoli RTC modul, nastavi 1/1/2001
-    rtc_Init();
+    rtc_init();
     //nastav day_ms, podle aktualniho casu
     //setDayMsFromRtc();
     
@@ -126,7 +126,7 @@ timer1_Init:
     T1CONSET=0x8000;
     */
     
-.end timer1_Init   
+.end timer1_init   
     
 //</editor-fold>
  

@@ -88,52 +88,48 @@ void main() {
 
     //2. set safe mode ---------------------------------------------------------
 #ifdef SAFE_PROCESS    
-    cpuTimer_Init();
+    cpuTimer_init();
 #endif
     
     //3. init system -----------------------------------------------------------
-    system_Init();                                  //init interrupt (ale zustane DI), nastav SRS1, ...
-    timer1_Init();                                  //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
-    periph_Init();                                  //provede vychozi nastaveni periferii, prideluje IO piny
+    system_init();                                  //init interrupt (ale zustane DI), nastav SRS1, ...
+    timer1_init();                                  //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
+    periph_init();                                  //provede vychozi nastaveni periferii, prideluje IO piny
 
     
-    //4. init drivers ----------------------------------------------------------
+    //4. init system drivers ----------------------------------------------------------
 #if (defined SPI1_INIT || defined SPI2_INIT || defined SPI3_INIT)    
-    spi_Init();
+    spi_init();
 #endif
 
 #if (defined I2C1_INIT || defined I2C2_INIT || defined I2C3_INIT)    
-    i2c_Init();
+    i2c_init();
 #endif    
     
 #ifdef ADC_SCAN_INIT    
-    adcScan_Init();
+    adcScan_init();
 #endif
    
 #ifdef PWM_INIT    
-    pwm_Init();
+    pwm_init();
 #endif  
     
 #ifdef USB_DEVICE_INIT
-    //usbDevice_Init();
+    usbDevice_init();
 #endif    
     
-    //testDriver_Init();
-  
+    //testDriver_init();
     enableInterrupt();                              //provede EI
-    globalsBeforeProcess();
+    globalsBeforeProcess();                         //inicializuje displej, touchpad, ...
     
-    //disp9341_Init();
-
-
-    //5. run modules -----------------------------------------------------------
+    //5. run system modules -----------------------------------------------------------
 #ifdef TOUCHPAD_XPT2046_INIT    
     //modul touchpad XPT2046
     reg_process((int*)touchXpt2046_start, 512);
 #endif    
     
     
-    //6. run apps --------------------------------------------------------------
+    //6. run user apps --------------------------------------------------------------
     //To run user app, modify this section. Use reg_process(int* app_start_fn_address, int stack_size)
     //The start fn of app, must be declared in extern section above
     //Check the maximum number of threads, please
@@ -218,7 +214,7 @@ static char getFreeProcessID()
     return id;
 }
 
-static void system_Init()
+static void system_init()
 {
     //nastavuje SRS[GP+SP], Multivector, ...
     //zatim nepovoli interrupt (EI)
@@ -313,7 +309,7 @@ static void setClock()
 
 #ifdef SAFE_PROCESS 
 
-static inline void cpuTimer_Init()
+static inline void cpuTimer_init()
 {
     //Inicializuje interrupt Cpu Timer, nastavi Compare na max. hodnotu 0xFFFFFFFF 
     //je pouzit k preruseni procesu, pokud bezi dele nez je povoleno, je-li definovano SAFE_PROCESS 
@@ -322,7 +318,7 @@ static inline void cpuTimer_Init()
     asm("li	    $2, 0xFFFFFFFF");       //v0=0xFFFFFFFF
     asm("mtc0   $2, $11");              //CP0_COMPARE=v0
     asm("ehb");
-    asm("mtc0   $0, $9");               //CP0_COUNT=0
+    asm("mtc0   $0, $9");               //CP0_COUNT=0 (zero)
     asm("ehb");
     
 #ifdef PIC32MM

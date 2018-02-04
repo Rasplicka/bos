@@ -42,7 +42,7 @@ I2CControl s2={ NULL, NULL, NULL, 0, 0, 0, 0, 0 };
 I2CControl s3={ NULL, NULL, NULL, 0, 0, 0, 0, 0 }; 
 I2CControl* i2cStruct[]={&s1, &s2, &s3};
 
-void i2c_Init()
+void i2c_init()
 {
     
 #ifdef I2C1_INIT    

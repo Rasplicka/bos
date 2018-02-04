@@ -348,7 +348,7 @@ int pwm_getValue(char index)
     return val;
 }
 
-void pwm_Init()
+void pwm_init()
 {
     //nastavi modul, ale zustava OFF, zapnout volanim fce pwm_on(index, 1)
     

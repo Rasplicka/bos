@@ -65,7 +65,7 @@ SPIControl* controlStruct[]={&s1, &s2, &s3};
 //local void
 static void clearRxFifo(int index);
 
-void spi_Init()
+void spi_init()
 {
     
 #ifdef SPI1_INIT
