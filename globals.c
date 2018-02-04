@@ -116,7 +116,7 @@ static void initTouchSys()
 
 #endif
 
-void globals_Start()
+void globalsBeforeProcess()
 {
     //tato fce se vola jako inicializace systemu, tesne pred prvnim spustenim threads
     
@@ -127,5 +127,10 @@ void globals_Start()
 #ifdef USE_TOUCHPAD     
     initTouchSys();
 #endif
+    
+}
+
+void globalsAfterProcess()
+{
     
 }

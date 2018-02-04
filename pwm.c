@@ -6,7 +6,7 @@
 #include "asm.h"
 #include "pwm.h"
 
-#ifdef PWM                  
+#if (defined PWM_INIT && defined PIC32MM)
 
 #define     PERIOD              4096                            //regulace 0 - 4096
 

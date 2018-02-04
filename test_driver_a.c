@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "test_driver_a.h"
 
-//#if (defined TEST_DRIVER_INIT) // && TEST_DRIVER_VERSION <= 1)
+#if (defined TEST_DRIVER_INIT && TEST_DRIVER_VERSION <= 1)
 
 void testDriver_Init()
 {
@@ -14,4 +14,4 @@ void testDriver_Init()
     c=a+b;
 }
 
-//#endif
+#endif

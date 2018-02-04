@@ -1,2 +1,2 @@
 
-//void testDriver_Init();
+void testDriver_Init();

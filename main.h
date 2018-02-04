@@ -2,6 +2,11 @@
 
 void main();
 
+static char reg_process(int* start_addr, int size);
+static char getFreeProcessID();
+static void system_Init();
+static void setClock(); 
+static inline void cpuTimer_Init();
 
 
 

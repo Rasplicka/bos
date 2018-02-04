@@ -1,6 +1,6 @@
 #include <xc.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include "def.h"
 
 /*
@@ -31,19 +31,19 @@
 //- ulozi hodnoty do pole ADResult, kde vyplni platne polozky, ostatni maji hodnotu -1
 //sw cte hodnotu AD prevodu volanim fce adcscan_getValue(input_numbe=ANx)
 
-#ifdef ADC
+#if (defined ADC_SCAN_INIT && defined PIC32MM)
 
 int  adc_counter=0;          //zvyseni o 1 pri kazdem dokonceni ADC prevodu
 int  adc_values[]={-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 uint calibData=0;
 
-int adcscan_getValue(int index)
+int adcScan_getValue(int index)
 {
     return  adc_values[index];
 }
 
-void adcscan_Init()
+void adcScan_Init()
 {
     char int_after=-1;   
     unsigned int css=0;

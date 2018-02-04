@@ -83,7 +83,7 @@ extern void iVector_i2c3Master();
 extern void iVector_i2c3Bus();
 #endif
 
-extern void cpuTimer_Init();
+//extern void cpuTimer_Init();
 extern void general_exception();
 extern void watch(uint);
 

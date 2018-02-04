@@ -7,7 +7,7 @@
 
 
 
-void initPort()
+void periph_Init()
 {
     
 #ifdef PIC32MZ

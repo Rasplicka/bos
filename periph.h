@@ -1,3 +1,3 @@
-void initPort();
-void initInterrupt();
+//void initPort();
+//void initInterrupt();
 

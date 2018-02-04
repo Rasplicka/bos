@@ -10,6 +10,9 @@
         <itemPath>i2c.h</itemPath>
         <itemPath>disp9341.h</itemPath>
         <itemPath>usb_device_mm.h</itemPath>
+        <itemPath>test_driver_a.h</itemPath>
+        <itemPath>test_driver_a_v2.h</itemPath>
+        <itemPath>test_driver_a_v3.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
         <itemPath>font1306.h</itemPath>
@@ -32,7 +35,6 @@
         <itemPath>main.h</itemPath>
         <itemPath>asm.h</itemPath>
         <itemPath>fnc.h</itemPath>
-        <itemPath>periph.h</itemPath>
         <itemPath>globals.h</itemPath>
       </logicalFolder>
       <itemPath>def.h</itemPath>
@@ -56,7 +58,6 @@
       <logicalFolder name="f4" displayName="driver" projectFiles="true">
         <itemPath>spi.c</itemPath>
         <itemPath>rtc.S</itemPath>
-        <itemPath>adc.c</itemPath>
         <itemPath>timer1.S</itemPath>
         <itemPath>pwm.c</itemPath>
         <itemPath>i2c.c</itemPath>
@@ -65,6 +66,10 @@
         <itemPath>disp9341.c</itemPath>
         <itemPath>disp1306.c</itemPath>
         <itemPath>usb_device_mm.c</itemPath>
+        <itemPath>test_driver_a.c</itemPath>
+        <itemPath>test_driver_a_v2.c</itemPath>
+        <itemPath>test_driver_a_v3.c</itemPath>
+        <itemPath>adc_scan.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="modules" projectFiles="true">
         <itemPath>ubtn2.S</itemPath>

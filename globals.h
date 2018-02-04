@@ -1,6 +1,15 @@
 //obsahuje globalni definice pro C/C++
 #include "def.h"
 
+//OS status
+struct
+{
+    unsigned Threading : 1;
+    unsigned dummy     : 7;
+    unsigned Errors    : 8; 
+    
+}SYSTEM_STATUS;
+
 const struct
 {
     char    _8bit;
@@ -281,4 +290,5 @@ typedef struct
 }I2CControl;
 
 
-void globals_Start();
+void globalsBeforeProcess();
+void globalsAfterProcess();

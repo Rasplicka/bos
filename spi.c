@@ -4,10 +4,16 @@
 #include "globals.h"
 #include "spi.h"
 
-#if defined SPI1_USE || defined SPI2_USE || SPI3_USE
+/*
+ * autor JR
+ * verze 1.0
+ * I2C driver pro procesory rady PIC32MM
+ */
+
+#if (defined SPI1_INIT || defined SPI2_INIT || SPI3_INIT) && (defined PIC32MM)
 
 //spi driver PIC32MM0064/0256, (PIC32MZ - neni dodelano)
-//ver. 9/8/2017
+//9/8/2017
 
 //SPI - Master mode
 //SPI muze vyuzivat vice modulu, je-li na jednom SPI kanalu vice zarizeni, musi pouzivat CS signal
@@ -62,7 +68,7 @@ static void clearRxFifo(int index);
 void spi_Init()
 {
     
-#ifdef SPI1_USE
+#ifdef SPI1_INIT
     
     SPI1CON = 0;                    // Stops and resets the SPI1.
     clearRxFifo(0);
@@ -112,7 +118,7 @@ void spi_Init()
     
 #endif
     
-#ifdef SPI2_USE
+#ifdef SPI2_INIT
 
     SPI2CON = 0;                    // Stops and resets the SPI2.
     clearRxFifo(1);
@@ -164,7 +170,7 @@ void spi_Init()
     
 #endif    
     
-#ifdef SPI3_USE
+#ifdef SPI3_INIT
 
     SPI3CON = 0;                    // Stops and resets the SPI2.
     clearRxFifo(2);
@@ -271,19 +277,19 @@ void spi_Exchange(int index, char* txbuff, char* rxbuff, int l)
     
     if(index==0)
     { 
-#ifdef SPI1_USE        
+#ifdef SPI1_INIT        
         spi1_TxInterrupt(); 
 #endif        
     }
     else if(index==1)
     { 
-#ifdef SPI2_USE             
+#ifdef SPI2_INIT             
         spi2_TxInterrupt(); 
 #endif        
     }
     else if (index==2)
     {
-#ifdef SPI3_USE             
+#ifdef SPI3_INIT             
         spi3_TxInterrupt();
 #endif        
     }
@@ -321,19 +327,19 @@ void spi_ExchangeMode(int index, char* txbuff, char* rxbuff, int l, char mode)
     
     if(index==0)
     { 
-#ifdef SPI1_USE        
+#ifdef SPI1_INIT        
         spi1_TxInterrupt(); 
 #endif        
     }
     else if(index==1)
     { 
-#ifdef SPI2_USE             
+#ifdef SPI2_INIT             
         spi2_TxInterrupt(); 
 #endif        
     }
     else if (index==2)
     {
-#ifdef SPI3_USE             
+#ifdef SPI3_INIT             
         spi3_TxInterrupt();
 #endif        
     }
@@ -409,7 +415,7 @@ void spi_setSpeed(int index, int speed)
     int x;
     if(index==0)
     {
-#ifdef SPI1_USE        
+#ifdef SPI1_INIT        
         x=SPI1CON;                      //zaloha SPIxCON
         SPI1CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI1BRG=speed;                  //nastav BRG (divider)
@@ -418,7 +424,7 @@ void spi_setSpeed(int index, int speed)
     }
     else if(index==1)
     {
-#ifdef SPI2_USE         
+#ifdef SPI2_INIT         
         x=SPI2CON;                      //zaloha SPIxCON
         SPI2CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI2BRG=speed;                  //nastav BRG (divider)
@@ -427,7 +433,7 @@ void spi_setSpeed(int index, int speed)
     }
     else if (index==2)
     {
-#ifdef SPI3_USE         
+#ifdef SPI3_INIT         
         x=SPI3CON;                      //zaloha SPIxCON
         SPI3CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI3BRG=speed;                  //nastav BRG (divider)
@@ -438,7 +444,7 @@ void spi_setSpeed(int index, int speed)
 
 
 
-#ifdef SPI1_USE
+#ifdef SPI1_INIT
 void spi1_TxInterrupt()
 {
     //vola se z spiExchange a z SPI interruptu
@@ -491,7 +497,7 @@ void spi1_TxInterrupt()
 }
 #endif
 
-#ifdef SPI2_USE
+#ifdef SPI2_INIT
 void spi2_TxInterrupt()
 {
     //vola se z spiExchange a z SPI interruptu
@@ -588,7 +594,7 @@ void spi2_TxInterrupt()
 }
 #endif
 
-#ifdef SPI3_USE
+#ifdef SPI3_INIT
 void spi3_TxInterrupt()
 {
     //vola se z spiExchange a z SPI interruptu
@@ -652,7 +658,7 @@ static void clearRxFifo(int index)
     int x;
     if(index==0)
     {
-#ifdef SPI1_USE        
+#ifdef SPI1_INIT        
         while(SPI1STATbits.SPIRBE==0)
         {
             x=SPI1BUF;
@@ -663,7 +669,7 @@ static void clearRxFifo(int index)
     }
     else 
     {
-#ifdef SPI2_USE          
+#ifdef SPI2_INIT          
         while(SPI2STATbits.SPIRBE==0)
         {
             x=SPI2BUF;
@@ -681,4 +687,4 @@ static void clearRxFifo(int index)
 #endif  //(ifdef PIC32MZ)
 
 
-#endif //(ifdef SPI1_USE, SPI2_USE, SPI3_USE)
+#endif //(ifdef SPI1_INIT, SPI2_INIT, SPI3_INIT)

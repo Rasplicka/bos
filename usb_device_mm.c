@@ -12,7 +12,7 @@
 
 
 
-#if (defined PIC32MM && defined USB_DEVICE_INIT)
+#if (defined PIC32MM0256 && defined USB_DEVICE_INIT)
 
 
 /*

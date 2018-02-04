@@ -4,19 +4,40 @@
 
 #include "globals.h"
 #include "main.h"
-//#include "def.h"
 #include "asm.h"
-#include "fnc.h"
-#include "graphics.h"                 //display modul
-#include "disp1306a.h"
-#include "spi.h"
-#include "i2c.h"
-#include "timer.h"
-#include "pwm.h"
-//#include "usb_device_mm.h"
-#include "test_driver_a.h"
-#include "disp9341.h"
 
+//#include "fnc.h"
+//#include "graphics.h"                 //display modul
+//#include "disp1306a.h"
+//#include "spi.h"
+//#include "i2c.h"
+//#include "timer.h"
+//#include "pwm.h"
+//#include "usb_device_mm.h"
+//#include "test_driver_a.h"
+//#include "disp9341.h"
+
+
+// <editor-fold defaultstate="collapsed" desc="extern, add user app start function here">
+//define extern functions
+//user app start function add here, 
+//and update main fn bellow, step 6. run apps
+
+//user apps
+//app1
+extern void m1_start();
+//app2
+extern void m2_start();
+//app3
+extern void m3_start();
+
+//system
+//touch module
+#ifdef TOUCHPAD_XPT2046_INIT 
+    extern void touchXpt2046_start(); 
+#endif
+
+// </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="OS vars">
 
@@ -41,32 +62,10 @@ char stack_area[STACK_SIZE] __at(RAM_BASE + RAM_SIZE - STACK_SIZE) __section(".o
 // </editor-fold>
 
 
-//app1
-extern void m1_start();
-//app2
-extern void m2_start(); 
-//app3
-extern void m3_start(); 
-
-extern void touchXpt2046_start();
-
-struct
-{
-    unsigned Threading : 1;
-    unsigned dummy     : 7;
-    unsigned Errors    : 8; 
+//global fn
+void main() {
     
-}SYSTEM_STATUS;
-
-//local fn
-char reg_process(int* start_addr, int size);
-char getFreeProcessID();
-void system_Init();
-void setClock();
-
-
-void main()
-{
+    // <editor-fold defaultstate="collapsed" desc="comment">
     //GND test commit, test doma, test v praci
     //+
     //CLK       17, RP12
@@ -78,23 +77,38 @@ void main()
     //TRISH=0b1111111111111000;
     //PORTH=0x0;
     //LATHSET=0b000;
-            
+
     //char* string="text";
-    //disp1306a_drawText(0, string, 0, 0, 1);
+    //disp1306a_drawText(0, string, 0, 0, 1); 
+    //</editor-fold>
     
+    //startup
+    //1. set basic (clock...) --------------------------------------------------
     setClock();
-    
+
+    //2. set safe mode ---------------------------------------------------------
 #ifdef SAFE_PROCESS    
     cpuTimer_Init();
 #endif
-    system_Init();                                  //init interrupt (ale zustane DI), nastav SRS1, ...
-    timer1_Init();
-    initPort();
     
-    spi_Init();
-    //i2c_Init();
-    //adcscan_Init();
+    //3. init system -----------------------------------------------------------
+    system_Init();                                  //init interrupt (ale zustane DI), nastav SRS1, ...
+    timer1_Init();                                  //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
+    periph_Init();                                  //provede vychozi nastaveni periferii, prideluje IO piny
 
+    
+    //4. init drivers ----------------------------------------------------------
+#if (defined SPI1_INIT || defined SPI2_INIT || defined SPI3_INIT)    
+    spi_Init();
+#endif
+
+#if (defined I2C1_INIT || defined I2C2_INIT || defined I2C3_INIT)    
+    i2c_Init();
+#endif    
+    
+#ifdef ADC_SCAN_INIT    
+    adcScan_Init();
+#endif
    
 #ifdef PWM_INIT    
     pwm_Init();
@@ -104,25 +118,40 @@ void main()
     //usbDevice_Init();
 #endif    
     
-    testDriver_Init();
-    
+    //testDriver_Init();
+  
     enableInterrupt();                              //provede EI
-    globals_Start();
+    globalsBeforeProcess();
     
     //disp9341_Init();
+
+
+    //5. run modules -----------------------------------------------------------
+#ifdef TOUCHPAD_XPT2046_INIT    
+    //modul touchpad XPT2046
+    reg_process((int*)touchXpt2046_start, 512);
+#endif    
     
-    //reg_process((int*)&disp9341a_start, 1024);
     
-    //reg_process((int*)&disp1306a_start, 1024); 
+    //6. run apps --------------------------------------------------------------
+    //To run user app, modify this section. Use reg_process(int* app_start_fn_address, int stack_size)
+    //The start fn of app, must be declared in extern section above
+    //Check the maximum number of threads, please
+ 
     reg_process((int*)&m1_start, 1024); 
     reg_process((int*)&m2_start, 1024);
     reg_process((int*)&m3_start, 1024);
+    
+    //reg_process((int*)&disp9341a_start, 1024);
+    //reg_process((int*)&disp1306a_start, 1024);
     //reg_process((int*)&ubtn_start, 512);          //dve tlacitka A2, A3
-    reg_process((int*)touchXpt2046_start, 512);
     //reg_process((int*)&m2, 1024);
     //reg_process((int*)&m3, 1024);
     
     
+    void globalsAfterProcess();
+    
+    //7. start multitasking
     SYSTEM_STATUS.Threading=1;
     startEvents();
     
@@ -132,7 +161,8 @@ void main()
     }
 }
 
-char reg_process(int* start_addr, int stack_size)
+//local fn
+static char reg_process(int* start_addr, int stack_size)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)
@@ -157,7 +187,7 @@ char reg_process(int* start_addr, int stack_size)
     return id;
 }
 
-char getFreeProcessID()
+static char getFreeProcessID()
 {
     //v proc_t musi byt alespon jedno volne misto
     //prvni nulova hodnota ID znamena konec platnych polozek (volne polozky pouze na konci tabulky)
@@ -188,22 +218,33 @@ char getFreeProcessID()
     return id;
 }
 
-void system_Init()
+static void system_Init()
 {
+    //nastavuje SRS[GP+SP], Multivector, ...
+    //zatim nepovoli interrupt (EI)
+
+#ifdef PIC32MM
+    
     char* sp_srs1 = stack_interrupt_srs1 + _SRS1_STACK_SIZE - 4;
     
     //nastavi vychozi hodnoty GP a SP pro SRS[1]
     //nastav GP SRS[1] na stejnou hodnotu, jako SRS[0]
-    //nastav SP SRS[1]
+    //nastav SP SRS[1] (zasobnik pro interrupt) 
     setSrsValue2(sp_srs1);
 
     //Multivector, spacing 8 bytes, IPL 1-7 pouziva SRS[1]
     //Neobsahuje EI, STATUS.EI zustava 0 (interrupt disable)
     setInterrupt();
     
+#endif    
+    
+#ifdef PIC32MZ
+
+#endif    
+    
 }
 
-void blick()
+static void blick()
 {
     //RB5, RB7, RC3
     
@@ -236,14 +277,15 @@ void blick()
     
 }
 
-void setClock()
+static void setClock()
 {
-    //PIC32MM0256
-    //Nastavi PLLMULT (f pro USB musi byt 96 MHz)
-    //PLLODIV = /4    (f pro CPU max. 24 MHz)
+    //PIC32MM0256, nsatveni pro pouziti FRC(interni) 8MHz, pres system PLL (PLLODIV=96MHz)
+    //1.Nastavi PLLMULT (f pro USB musi byt 96/2 MHz)
+    //2.Nastavi REFCLK (f pro SPI, UART, apod... 48MHz) 
+    //3.Nastavi SYSCLK a PBCLK (SYSCLK pro CPU, PBCLK pro preriph, 24MHz) (PLLODIV = /4)
     
-    //SYSKEY = 0x00000000; // force lock
-    SYSKEY = 0xAA996655; // unlock
+    //SYSKEY unlock
+    SYSKEY = 0xAA996655; 
     SYSKEY = 0x556699AA;
     
     //nastaveni pro POSC Q=12MHz: SPLLCONbits.PLLMULT = 0x4 (externi krystal 12 MHz)
@@ -252,17 +294,45 @@ void setClock()
     SPLLCONbits.PLLMULT=0x6;        // x 12 (8x12=96 MHz) USB
     SPLLCONbits.PLLODIV=0x2;        // / 4  (96/4=24 MHz) CPU
     
-    SYSKEY = 0x00000000;            //force lock
+    //SYSKEY force lock
+    SYSKEY = 0x00000000;            
     
+    //ceka na dokonceni
     while(REFO1CONbits.ACTIVE==1)
     { }
     
-    //96MHz
-    REFO1CONbits.ROSEL=7;
-    //na vstupu DIV je 48MHz
-    REFO1CONbits.RODIV=0;                   //max. freq.
-    //REFO1CONbits.RODIV=0x8;               // /8
-    
+    //nastaveni REFCLK pro SPI, UART,...
+    REFO1CONbits.ROSEL=7;                   //input SPLL (96MHz)
+    //na vstupu REFCLK je / 2, f=48MHz
+    REFO1CONbits.RODIV=0;                   //RODIV / 1, pouzije freq. 48MHz
+
+    //trim     
     REFO1TRIMbits.ROTRIM=0;
     REFO1CONbits.ON=1;
 }
+
+#ifdef SAFE_PROCESS 
+
+static inline void cpuTimer_Init()
+{
+    //Inicializuje interrupt Cpu Timer, nastavi Compare na max. hodnotu 0xFFFFFFFF 
+    //je pouzit k preruseni procesu, pokud bezi dele nez je povoleno, je-li definovano SAFE_PROCESS 
+    
+    //$9=CP0_COUNT, $11=CP0_COMPARE
+    asm("li	    $2, 0xFFFFFFFF");       //v0=0xFFFFFFFF
+    asm("mtc0   $2, $11");              //CP0_COMPARE=v0
+    asm("ehb");
+    asm("mtc0   $0, $9");               //CP0_COUNT=0
+    asm("ehb");
+    
+#ifdef PIC32MM
+    //Core Timer interrupt param
+    IPC0bits.CTIP=1;        //Priority=1
+    IPC0bits.CTIS=0;        //Subpriority=0
+    IFS0bits.CTIF=0;        //Flag=0
+    IEC0bits.CTIE=1;        //Enable=1
+#endif    
+    
+}
+
+#endif

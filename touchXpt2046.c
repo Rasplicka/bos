@@ -4,8 +4,15 @@
 #include "globals.h"
 #include "graphics.h"
 
+/*
+ * autor JR
+ * verze 1.0
+ * modul pro skenovani dotykove plochy XPT2046, SPI
+ */
 //privatni struct pro dany displej, pri pouziti vice displeju se nastavi pri kazdem volani setGraphics
 //static PORT_INFO portInfo; 
+
+#ifdef TOUCHPAD_XPT2046_INIT 
 
 //definuje hodnoty krajnich bodu (plati pro 8-bit, Vcc=3.3V)
 #define     MINX            10
@@ -15,20 +22,23 @@
 
 #define     PENIRQ_PIN      BIT4
 #define     PENIRQ_PORT     PORTA           //peniqr=RA4
-#define     MODE8BIT                        //8-bit, jinak 12-bit
+#define     MODE8BIT                        //XPT2046 vraci data 8-bit, jinak 12-bit
 
-#define     EVENT_CAPA      8
+#define     EVENT_CAPA      8               //max. pocet polozek events tabulky (zde jsou adresy fci, ktere se volaji pro event)
 static int events[EVENT_CAPA];
 
 //b7=1 start, b6,5,4 = 001Y, 101X, b3 1=8bit, 0=12bit, b2=0 interni ref, b1,0 = 00
 #ifdef MODE8BIT
-static char mx_out=0b11011000; 
-static char my_out=0b10011000;
+    //XPT2046 vraci data 8-bit
+    static char mx_out=0b11011000; 
+    static char my_out=0b10011000;
 #else
-static char mx_out=0b11010000; 
-static char my_out=0b10010000;
+    //XPT2046 vraci data 12-bit
+    static char mx_out=0b11010000; 
+    static char my_out=0b10010000;
 #endif
 
+//local fn    
 static void onEvent();
 static void setResult(short x, short y);
 static void getPort();
@@ -36,6 +46,7 @@ static void freePort();
 static void setCSPin(char value);
 static char getPenIrq();
 
+//local vars
 static short x_data, y_data, prew_x_data=-1, prew_y_data=-1;
 //static PORT_INFO* portInfo=NULL;
 //static PORT_INFO portInfo;
@@ -297,3 +308,5 @@ static char getPenIrq()
     if(v==0){ return 0; }
     else { return 1; }
 }
+
+#endif

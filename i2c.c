@@ -3,8 +3,14 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "i2c.h"
+/*
+ * autor JR
+ * verze 1.0
+ * I2C driver pro procesory rady PIC32MM
+ */
 
-#ifdef I2C
+
+#if (defined I2C1_INIT || defined I2C2_INIT || defined I2C3_INIT) && (defined PIC32MM)
 
 #define I2C1_DISABLE_MASTER_INTERRUPT   IEC2CLR=0x002
 #define I2C1_ENABLE_MASTER_INTERRUPT    IEC2SET=0x002
@@ -36,14 +42,10 @@ I2CControl s2={ NULL, NULL, NULL, 0, 0, 0, 0, 0 };
 I2CControl s3={ NULL, NULL, NULL, 0, 0, 0, 0, 0 }; 
 I2CControl* i2cStruct[]={&s1, &s2, &s3};
 
-#define I2C1_USE
-#define I2C2_USE
-#define I2C3_USE
-
 void i2c_Init()
 {
     
-#ifdef I2C1_USE    
+#ifdef I2C1_INIT    
     
     I2C1CON=0;                  //off, reset
     
@@ -59,7 +61,7 @@ void i2c_Init()
     
 #endif    
     
-#ifdef I2C2_USE    
+#ifdef I2C2_INIT    
     
     I2C2CON=0;                  //off, reset
     
@@ -75,7 +77,7 @@ void i2c_Init()
     
 #endif     
     
-#ifdef I2C3_USE    
+#ifdef I2C3_INIT    
     
     I2C3CON=0;                  //off, reset
     
@@ -179,26 +181,26 @@ void i2c_Write(int index, char* buffer, int len, int addr)
     
     if(index==0)
     { 
-#ifdef I2C1_USE        
+#ifdef I2C1_INIT        
         i2c1_MasterInterrupt(); 
 #endif        
     }
     else if (index==1) 
     { 
-#ifdef I2C2_USE        
+#ifdef I2C2_INIT        
         i2c2_MasterInterrupt(); 
 #endif        
     }
     else if (index==2) 
     { 
-#ifdef I2C3_USE        
+#ifdef I2C3_INIT        
         i2c3_MasterInterrupt(); 
 #endif        
     }
 }
 
 
-#ifdef I2C1_USE
+#ifdef I2C1_INIT
 
 void i2c1_MasterInterrupt()
 {
@@ -282,7 +284,7 @@ void i2c1_BusInterrupt()
 
 #endif
 
-#ifdef I2C2_USE
+#ifdef I2C2_INIT
 
 void i2c2_MasterInterrupt()
 {
@@ -380,7 +382,7 @@ void i2c2_BusInterrupt()
 
 #endif
 
-#ifdef I2C3_USE
+#ifdef I2C3_INIT
 
 void i2c3_MasterInterrupt()
 {

@@ -2064,7 +2064,7 @@ enableInterrupt:
 iVector_spi1Tx:   
 
     //SPI Tx
-#ifdef SPI1_USE    
+#ifdef SPI1_INIT    
     bal	    spi1_TxInterrupt
     nop
 #endif
@@ -2083,7 +2083,7 @@ iVector_spi1Tx:
 iVector_spi2Tx:   
 
     //SPI Tx
-#ifdef SPI2_USE      
+#ifdef SPI2_INIT      
     bal	    spi2_TxInterrupt
     nop
 #endif    
@@ -2102,7 +2102,7 @@ iVector_spi2Tx:
 iVector_spi3Tx:   
 
     //SPI Tx
-#ifdef SPI3_USE      
+#ifdef SPI3_INIT      
     bal	    spi3_TxInterrupt
     nop
 #endif    
@@ -2309,22 +2309,30 @@ iVector_usb:
 .ent cpuTimer_Init
 cpuTimer_Init:
     
+    //4/2/2018 zruseno, misto toho fce v main.c
+    
+    /*
+    //COUNT=0, COMPARE=0xFFFFFFFF
     li	    v0, 0xFFFFFFFF
     mtc0    v0, _CP0_COMPARE
     ehb
     mtc0    zero, _CP0_COUNT
     ehb
 
+    //Priority 1, Subpriority 0
     lw	    v0, (IPC0)
     ori	    v0, 0b00100			//IPC0.PRI=1, IPC0.SUB=0
     sw	    v0, (IPC0)
     
+    //Enable=1
     li16    v0, 1
     sw	    v0, (IEC0SET)		//IEC0.b0 = 1, enable
     
+    //Flag=0
     sw	    v0, (IFS0CLR)		//IFS0.b0 = 0, nuluj flag
     
     jrc	    ra
+    */
    
 .end cpuTimer_Init
     

@@ -16,12 +16,12 @@
 
 #define		RAM_BASE	    0x80000000
 #ifdef PIC32MM0256
-#define		RAM_SIZE	    32*1024 
-#define     STACK_SIZE      8*1024
+    #define		RAM_SIZE	    32*1024 
+    #define     STACK_SIZE      8*1024
 #endif
 #ifdef PIC32MM0064
-#define		RAM_SIZE	    8*1024
-#define     STACK_SIZE      3*1024
+    #define		RAM_SIZE	    8*1024
+    #define     STACK_SIZE      3*1024
 #endif
 
 //#define	  STACK_COUNT	    16                    //max. pocet zasobniku (pocet polozek v stack_table)
@@ -176,30 +176,30 @@
 
 
 //*******************************************
-//MODULES
+//drivers
 //*******************************************
 
 // <editor-fold defaultstate="collapsed" desc="ADC">
-#define     ADC
+#define     ADC_SCAN_INIT
 
 //vstupy, ktere jsou skenovany
 #ifdef PIC32MM0064
-#define     AN8
-#define     AN9
-#define     AN10
+    #define     AN8
+    #define     AN9
+    #define     AN10
 #endif
 #ifdef PIC32MM0256
-#define     AN4
-#define     AN5
-#define     AN6
-#define     AN7
+    #define     AN4
+    #define     AN5
+    #define     AN6
+    #define     AN7
 
-//#define     ANVDDCORE         //Vcc CORE (AN27)
-#define     ANVBG               //internal ref. 1.2V (AN28)
-//#define     ANVSS             //GND (AN29)
-//#define     ANVDD             //Vcc (AN30)
-
+    //#define     ANVDDCORE         //Vcc CORE (AN27)
+    #define     ANVBG               //internal ref. 1.2V (AN28)
+    //#define     ANVSS             //GND (AN29)
+    //#define     ANVDD             //Vcc (AN30)
 #endif
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="RTC">
@@ -221,7 +221,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="PWM">
-//#define     PWM_INIT                              //rizeni vykonu, pouziva CCP moduly
+#define     PWM_INIT                              //rizeni vykonu, pouziva CCP moduly
 //#define     CCP_PWM_COUNT       2                 //pocet pouzitych CCP modulu pro rizeni vykonu PWM
 //#define     CCP1_PWM                              //CCP1 pouzita pro pwm
 //#define     CCP2_PWM                              //CCP2 pouzita pro pwm
