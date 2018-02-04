@@ -2286,7 +2286,7 @@ iVector_i2c3Bus:
 .ent iVector_usb
 iVector_usb:
     
-#ifdef USB_MM    
+#ifdef USB_DEVICE_INIT    
     bal	    usb_mm_interrupt
     nop
 #endif    
