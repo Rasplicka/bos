@@ -2,16 +2,16 @@ GitHub url:https://github.com/Rasplicka/bos
 GitHub jmeno:Rasplicka
 GitHub heslo:bosbos2
 
-Zásady pro tvo?ení názv?
-a) Názvy soubor?
-- pou?ívají se malá písmena
-- první slovo by m?lo vyjad?ovat ?eho se soubor týká, nap?. USB driver bude za?ínat "usb"
-- pokud je název slo?en z více slov, jsou odd?lena podtr?ítkem nap?. "usb_device_mm.c"
-- ?íslo v názvu se neodd?luje podtr?ítkem nap?. "disp9341.h", nebo "timer1_mm.S"
-- pokud je soubor ur?en pouze pro jednu ?adu (MM/MK/MZ) obsahuje tuto informaci v názvu, na konci. Viz. p?edchozí p?íklad
+Zásady pro tvorení názvu
+a) Názvy souboru
+- pouzívají se malá písmena
+- první slovo by melo vyjadrovat ceho se soubor týká, napr. USB driver bude zacínat "usb"
+- pokud je název slozen z více slov, jsou oddelena podtrzítkem napr. "usb_device_mm.c"
+- císlo v názvu se neoddeluje podtrzítkem napr. "disp9341.h", nebo "timer1_mm.S"
+- pokud je soubor urcen pouze pro jednu radu (MM/MK/MZ) obsahuje tuto informaci v názvu, na konci. Viz. predchozí príklad
 
-usb_device_mm.c - ovlada? usb device, pouze pro ?adu MM
-disp1306.c - ovlada? displeje SSD1306, pro v?echny ?ady
+usb_device_mm.c - ovladac usb device, pouze pro radu MM
+disp1306.c - ovladac displeje SSD1306, pro vsechny rady
 
 
 b) Názvy funkcí

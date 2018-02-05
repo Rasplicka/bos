@@ -1,7 +1,7 @@
 //fn.S
 //extern char* stack_area;
 
-extern void allocStack(int, int*);
+extern void allocStack2(int, int*);
 
 extern void doEvents();
 extern void startEvents();
@@ -60,7 +60,7 @@ extern void pwm_soft_linear_down();
 extern void pwm_soft_exp();
 
 extern void setSrsValue();
-extern void setSrsValue2(char*);
+extern void setSrsValue2(); //char*);
 extern void setInterrupt();
 extern void enableInterrupt();
 

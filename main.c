@@ -53,8 +53,8 @@ uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA] __section(".jcr"); //8 x 88B
 int stack_list[PROC_T_CAPA] __section(".jcr");                  //kazda polozka (32-bit) definuje velikost jednoho stacku
 
 //stack pro interrupt SRS1 je mimo ostatni stacky
-#define     _SRS1_STACK_SIZE        512
-char stack_interrupt_srs1[_SRS1_STACK_SIZE] __section(".jcr");
+//#define     _SRS1_STACK_SIZE        512
+//char stack_interrupt_srs1[_SRS1_STACK_SIZE] __section(".jcr");
 
 //stack je posledni oblast RAM, stack ma definovanou velikost STACK_SIZE
 char stack_area[STACK_SIZE] __at(RAM_BASE + RAM_SIZE - STACK_SIZE) __section(".os_stack");
@@ -171,7 +171,7 @@ static char reg_process(int* start_addr, int stack_size)
     int* tab=proc_t + ((proc_t_count) * (PROC_T_ISIZE/4));     //adresa polozky proc_t
     proc_t_count++;
     
-    allocStack(stack_size, tab);                //nastavuje SP a START_SP
+    allocStack2(stack_size, tab);                //nastavuje SP a START_SP
     tab[TH_T_ID]=id;
     tab[TH_T_RA]=(int)start_addr;
     tab[TH_T_GP]=getGP();
@@ -221,12 +221,12 @@ static void system_init()
 
 #ifdef PIC32MM
     
-    char* sp_srs1 = stack_interrupt_srs1 + _SRS1_STACK_SIZE - 4;
+    //char* sp_srs1 = stack_interrupt_srs1 + _SRS1_STACK_SIZE - 4;
     
-    //nastavi vychozi hodnoty GP a SP pro SRS[1]
-    //nastav GP SRS[1] na stejnou hodnotu, jako SRS[0]
-    //nastav SP SRS[1] (zasobnik pro interrupt) 
-    setSrsValue2(sp_srs1);
+    //nastavi vychozi hodnoty GP a SP pro SRS[1], SRS[1-7]
+    //nastav GP SRS[1-7] na stejnou hodnotu, jako SRS[0]
+    //nastav SP SRS[1-7] (zasobnik pro interrupt, dolni cast stack_area) 
+    setSrsValue2(); //sp_srs1);
 
     //Multivector, spacing 8 bytes, IPL 1-7 pouziva SRS[1]
     //Neobsahuje EI, STATUS.EI zustava 0 (interrupt disable)

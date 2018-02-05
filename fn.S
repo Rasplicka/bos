@@ -28,8 +28,8 @@ allocStack:
 //vraci v0=1 OK, v0=0 chyba, neni misto
     
     addiu   v0, zero, PROC_T_CAPA	//max. pocet stacku je stejny, jako pocet procesu
-    la	    t8, stack_list
-    la	    t9, stack_area
+    la	    t8, stack_list		//seznam, obsahuje adresy zacaku pridelenych stacku
+    la	    t9, stack_area		//zacatek oblasti zasobniku v RAM
     
 1:    
     lw	    v1, (t8)			//load stack item (= stack size, nebo 0)
@@ -79,6 +79,94 @@ allocStack:
 .end allocStack  
     
 //</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="allocStack">
+    
+.align 2
+.global allocStack2
+.ent allocStack2
+allocStack2:
+//a0=pozadovana velikost stacku
+//a1=thread table, adresa akt. polozky    
+//vraci v0=1 OK, v0=0 chyba, neni misto
+    
+    //fce prideluje stack pri registraci procesu
+    //na zacatku oblasti vyhradi misto pro SRS stacky (MM 1x, MZ 6x, podle udaje v CP0 SRSCTL.HSS)
+    //pouziva tabulku stack_list, kam zapise velikost prideleneho stacku
+    //nepodporuje unreg. procesu (zasobnik zustane pridelen trvale)
+    
+    //MM maji 1x SRS, ktera se pouzije pri interruptu (error). Fce interruptu nenuluji Status.EXL bit,
+    //proto nemuze nastat nove preruseni, dokud neskonci predchozi. Proto staci zajistit, aby na konci
+    //obsluhy preruseni byla hodnota SRS[1].SP na puvodni hodnote.
+    
+    //MZ maji 7x SRS, takze je mozne, aby na zacatku fce obsluhy byl nulovan Status.EXL, protoze
+    //dokud nenastane ERET, zustane nastaveno Status.IPL a bude prijat pouze interrupt s vyssi prioritou,
+    //ktery bude mit jinou SRS. V tom pripade se ale musi jeste osetrit SRSCTL.PSS (prew. SRS), aby
+    //po ERET byla vzdy nastavena spravna SRS
+    //Pokud by pro MZ nebylo nulovano EXL, pak nema smysl mit vice zasobniku, pro SRS[1-7] staci pouze
+    //jeden, protoze novy interrupt muze nastat az po ERET predchoziho.
+    
+    la	    t8, stack_list		//seznam, obsahuje adresy zacaku pridelenych stacku
+    la	    t9, stack_area		//zacatek oblasti zasobniku v RAM
+    
+    //zjisti pocet SRS 
+    mfc0    v0, _CP0_SRSCTL
+    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
+    //spocitej celkovou velikost SRS stacku
+    li	    v1, SRS_STACK_SIZE		//vyhradi dolni cast stackArea pro zasobnik SRS (interrupt level 1 MM, nebo 1-7 MZ)
+    mul	    v0, v1			//SIZE * Number of SRS = SRS stack size
+    addu    t9, v0			//t9=stackArea za SRS
+    
+    addiu   v0, zero, PROC_T_CAPA	//max. pocet stacku je stejny, jako pocet procesu (nepocita SRS stacky)
+    
+1:    
+    lw	    v1, (t8)			//load stack item (= stack size, nebo 0)
+    beqz    v1, 3f
+    nop
+    
+    addiu   t8, 4
+    addu    t9, v1			//RAM += stack size (volna adresa)
+    addiu   v0, -1			//cnt--
+    bnez    v0, 1b			//skok na dalsi polozku
+    nop
+    
+    //nenasel stack
+2:  //end_error
+    //v0=0
+    li16    v0, 0
+    jrc	    ra
+    
+3:
+    //t9=aktualni adresa, ktera se pouzije jako stack_base
+    li	    t0, RAM_BASE
+    li	    t1, RAM_SIZE
+    addu    t0, t1			//adresa za RAM (base + size)
+    
+    addu    v0, t9, a0			//adresa za stack (base + pozad. size)
+    subu    t0, v0			//RAM-stack
+    bltz    t0, 2b			//skok, neni misto
+    nop
+    
+    //ok, je misto
+    sw	    a0, (t8)			//save polozku
+    
+    //t9=aktualni adresa (stack base)
+    sw	    t9, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
+    
+    li	    v1, STACK_CHECK_VALUE
+    sw	    v1, (t9)			//stack[base]=STACK_CHECK_VALUE
+    
+    addu    t9, a0			//stack top (base+size)
+    addiu   t9, -4			//stack top -4
+    sw	    t9, TH_T_SP*4(a1)		//th_table[sp]
+
+    //OK, konec
+    li16    v0, 1
+    jrc	    ra
+    
+.end allocStack2  
+    
+//</editor-fold>    
     
 //<editor-fold defaultstate="collapsed" desc="doEvents">     
 .align 2	
@@ -1984,8 +2072,8 @@ setSrsValue:
 .global setSrsValue2    
 .ent setSrsValue2 
 setSrsValue2:
-//a0=SP pro SRS[1]    
     
+#ifdef PIC32MM    
     //nastavi SP a GP pro SRS1, ktery pouziva interrupt
     //GP kopiruje ze SRS[0]
 
@@ -1999,8 +2087,21 @@ setSrsValue2:
     //zapis gp
     wrpgpr  gp, gp
     
-    //zapis sp
-    wrpgpr  sp, a0
+    //zapis sp (dolni cast stack_area je vyhrazena pro zasobnik SRS[1])
+    la	    v0, stack_area
+    li	    v1, SRS_STACK_SIZE
+    addu    v0, v1
+    wrpgpr  sp, v0
+    
+#endif    
+    
+#ifdef PIC32MZ
+    //nastavi SP pro SRS[1-7], zasobniky jsou vyhrazeny na adrese stack_area,
+    //velikost kazdeho je definovana SRS_STACK_SIZE (smerem nahoru)
+    //nasleduji zasobniky pro jednotlive procesy 
+    //celkova velikost oblasti pro zasobniky je v STACK_SIZE
+    
+#endif    
     
     jrc	    ra
     
