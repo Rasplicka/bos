@@ -217,109 +217,135 @@ allocStack2:
 //a0=pozadovana velikost stacku
 //a1=thread table, adresa akt. polozky 
     
-    //na adresu stack TOP dany proces nezapisuje, je to after adresa
-    //na adrese stack BOTTOM je check value
+    //meni t0-t9, v0, v1
+    //vraci 0=ok, 1=chyba nenasel volny stack
     
-    la	    t0, proc_t			//proc_t
+    //Prochazi polozky proc_t a hleda oblast v stack_area, kterou muze pouzit.
+    //
+    //Nejprve urci zacatek oblasti stacku pro app (za interrupt stack)
+    //Pokusi se pouzit tuto oblast od zacatku
+    //Je-li zacatek obsazeny, prochazi jednotlive polozky proc_t a pokusi se stack umistit 
+    //tesne za stack kazde z nich.
+    //V t4 ma pocatecni adresu a v t5 adresu za testovanou oblasti
+    //Oblast testuje tak, ze prochazi polozky v proc_t a kontroluje zda nejsou v kolizi
+    
+    //Tato metoda funguje i v pripade, ze dochazi k ukonceni procesu a startova novych za behu OS,
+    //ale neprovadi se defragmentace oblasti
+    
+    
+    //top adresu oblasti vlozi do TH_T_START_SP, coz je vrchol zasobniku, do ktereho ale tento
+    //proces nikdy nezapisuje, protoze PUSH provede nejprve SP-4. TH_T_START_SP - tato hodnota 
+    //se pouzije pro inicializaci registru sp pri startu procesu.
+    //Top adresa je zaroven dno dalsiho zasobniku, kde ma tento nasledujici ulozenu STACK_CHECK_VALUE
+    //pro kontrolu stack-overflow
+    //stack-overflow se kontroluje pri prepnuti procesu tak, ze prave ukonceny proces musi mit
+    //v TH_T_STACK_BASE (dno stacku) prave STACK_CHECK_VALUE, pokud ne, pak ji musel prespat
+    //a dostat se tak mimo svuj zasobnik
+    
+    //nastav proc_t-start(t0) a proc_t-after(t1)
+    la	    t0, proc_t			//proc_t-start
     li	    t1, PROC_T_CAPA
     li	    t9, PROC_T_ISIZE
     mul	    t1, t9
-    addu    t1, t0			//proc_t after
+    addu    t1, t0			//proc_t-after
     
+    //nastav oblast pro app stack app-stack-start(t2) a stack_area-after(t3)
     la	    t2, stack_area		//zacatek oblasti zasobniku v RAM
     li	    t9, STACK_SIZE
-    addu    t3, t2, t9			//stack after
+    addu    t3, t2, t9			//stack_area-after
     
-    //ucrit velikost stacku pro SRS, musi zjisti pocet SRS 
+    //zjisti pocet SRS 
     mfc0    v0, _CP0_SRSCTL
     ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
-    li	    v1, SRS_STACK_SIZE		//vyhradi dolni cast stackArea pro zasobnik SRS (interrupt level 1 MM, nebo 1-7 MZ)
-    mul	    v0, v1			//SIZE * Number of SRS = SRS stack size
-    addu    t2, v0
+    li	    v1, SRS_STACK_SIZE		//dolni cast stack_area pro interrupt stack (interrupt level 1 MM, nebo 1-7 MZ)
+    mul	    v0, v1			//SIZE * Number of SRS
+    addu    t2, v0			//app-stack-start
    
     //t0 = proc_t, t1=proc_t after
     //t2 = stack_start (za SRS), t3=stack_after
-    
-    
-    move    t4, t2			//pokusi se alokovat tuto oblast start t4, 
-    move    t7, zero
+
+    //pokusi se alokovat prvni cast app-stack-start 
+    move    t4, t2			//testovana oblast (start) do t4
+    move    t7, zero			
     nop
-    b16	    2f //trynext
+    b16	    2f 
     nop
 
-1://loop1:    
+1:
+    //pouzije dalsi polozku proc_t, za jejiz stack se pokusi vlozit novy stack
     
     lbu32    t9, TH_T_ID*4(t7)
-    beqz    t9, 6f //next2			//skok, polozka neni pouzita
+    beqz    t9, 6f 			//skok, polozka neni pouzita
     nop
     
-    lw	    t4, TH_T_START_SP*4(t7)	//stack TOP (after), na teto adrese se pokusi alokovat novy stack
+    lw	    t4, TH_T_START_SP*4(t7)	//top stacku = start adresa noveho stacku
 
     
-//prochazi vsechny polozky proc_t, vynecha aktualni (a1), (s7) a prazdnou
-2: //trynext:    
-    //nastav after testovane oblasti (t4=zacatek testovane oblasti)
-    addu    t5, t4, a0			//t5=after
-    move    t6, t0			//t6=akt. polozka proc_t (nastav prvni)
+    //nyni bude prochazi vsechny polozky proc_t, vynecha aktualni (a1), (s7) a prazdnou
+    //a bude zjistovat, zda novy stack (t4-t5) neni v kolizi s jiz existujicim
+2:     
+    //nastav t5 (start+size)
+    addu    t5, t4, a0			//t5 new-stack-after addr.
+    move    t6, t0			//t6 = testovana polozka proc_t (nyni nastav prvni)
     
-    //test, zda neni mimo stack_area
-    //...
+    //kontrola, zda testovana oblast neni mimo stack_area
     //reg1, reg2, skok
-    _BAL_FBT t5, t3, 5f //next1		//skok, vybrana oblast je mimo stack_area
+    _BAL_FBT t5, t3, 5f			//skok, testovana oblast je mimo stack_area
     
-3: //loop2:    
+3:  //prochazeni proc_t    
     lbu32    t9, TH_T_ID*4(t6)
-    beqz    t9, 4f //netest			//netestuje, prazdna polozka
+    beqz    t9, 4f			//skok, prazdna polozka
     nop
-    beq	    t6, a1, 4f //netest		//netestuje akt. polozku	    
+    beq	    t6, a1, 4f			//skok, toto je nova polozka (pro kterou se hleda stack)	    
     nop
-    beq	    t6, t7, 4f //netest		//netestuje polozku, za jejiz oblasti hleda
+    beq	    t6, t7, 4f			//skok, za touto polozkou je test oblast (proto nemuze byt v kolizi)
     nop
     lw32    v1, TH_T_START_SP*4(t6)	//stack TOP (after)
     lw32    v0, TH_T_STACK_BASE*4(t6)	//stack BOTTOM (start)
     
+    //macro, v pripade kolize skok na 5f
     //start1, after1, start2, after2, err
-    _TEST_COLLISION v0, v1, t4, t5, 5f //next1
+    _TEST_COLLISION v0, v1, t4, t5, 5f 
     
-4: //netest:    
-    //ok, neni kolize s touto polozkou
+4:    
+    //ok, neni v kolizi, nebo prekoceni testu
     addiu   t6, PROC_T_ISIZE
-    bne	    t6, t1, 3b //loop2
+    bne	    t6, t1, 3b			//skok, dalsi polozka proc_t
     nop
     
-    //probehl test vsech polozek
-    //neni zadna kolize
-    //t4=zacatek oblasti (stack BOTTOM), t5=after (stack TOP)
+    //probehl test vsech polozek, neni zadna kolize
+    //t4=start oblasti (stack BOTTOM), t5=after (stack TOP)
     
     //BOTTOM
-    sw32    t4, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
-    li	    v1, STACK_CHECK_VALUE
-    sw32    v1, (t4)			//stack[base]=STACK_CHECK_VALUE
+    sw32    t4, TH_T_STACK_BASE*4(a1)	//save bottom addr
+    li	    v1, STACK_CHECK_VALUE	//check_value
+    sw32    v1, (t4)			//save check_value
     
     //TOP
-    sw32    t5, TH_T_SP*4(a1)		//th_table[sp]
-    sw32    t5, TH_T_START_SP*4(a1)		//th_table[sp]
+    sw32    t5, TH_T_SP*4(a1)		//save top addr
+    sw32    t5, TH_T_START_SP*4(a1)	//save top addr
     
-    li16    v0, 0
+    li16    v0, 0			//return 0 (ok)
     jrc	    ra
     
-5: //next1:
-    bnez    t7, 6f//next2			//skok, neni prvni test
+5: 
+    //dalsi polozka proc_t
+    bnez    t7, 6f			//skok, pokud neprobihal test zacatku oblasti
     nop
     
-    //prvni test, zacatek oblasti 
+    //probehl test na zacatek oblasti 
     move    t7, t0
     nop
-    b16	    1b //loop1
+    b16	    1b
     nop
     
-6: //next2:    
+6:     
     addiu   t7, PROC_T_ISIZE
-    bne	    t7, t1, 1b //loop1
+    bne	    t7, t1, 1b 
     nop
     
-    //konec, nenasel volny stack
-    li16    v0, 1
+    //konec, nenasel volnou oblast
+    li16    v0, 1			//return 1 (error)
     jrc	    ra
    
 .end allocStack2    
