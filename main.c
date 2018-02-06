@@ -49,20 +49,25 @@ extern void m3_start();
  * 
  * sekce .os je ma nejvyssich adresach v RAM
  * obsahuje 
- * 1.proc_t
- * 2.stack_list
- * 3.ostatni os vars
- * 4.ballast
+ * 3.ballast
+ * 2.ostatni os vars        //nad proc_t
+ * 1.proc_t                 //zacatek oblasti
+ * 
+ * sekce .os_stack 
+ * volna oblast
+ * stack applikaci
+ * stack os modulu (protoze os moduly se spusti prvni)                  //nas interrupt stack
+ * interrupt stack (jeden, nebo sedm, velikost kazdeho SRS_STACK_SIZE)  //zacatek oblasti
  */
-                            //proccee_table                 stack_list          other vars + ballast
-#define     OS_DATA_SIZE    ((PROC_T_ISIZE * PROC_T_CAPA) + (PROC_T_CAPA * 4) + 64)     //velikost .os
+                            //proccee_table                 other vars + ballast
+#define     OS_DATA_SIZE    ((PROC_T_ISIZE * PROC_T_CAPA) + 64)     //velikost .os
 #define     OS_DATA_BASE    ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
 
 //process table    
 uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA] __section(".os") __at(OS_DATA_BASE);      
 //stack_list pro pouziti pri allocStack, stack pro kazdy proces je alokovan ve volne RAM
 //kazda polozka (32-bit) definuje velikost jednoho stacku
-int stack_list[PROC_T_CAPA] __section(".os");                  
+//int stack_list[PROC_T_CAPA] __section(".os");                  
 
 //.os vars 
 uint* proc_t_pos    __section(".os") = 0;
@@ -77,7 +82,7 @@ char ballast[52]    __section(".os");
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
 #define     STACK_DATA_BASE (OS_DATA_BASE - STACK_SIZE)     
 char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
-char x[200000];
+//char x[200000];
 
 // <editor-fold defaultstate="collapsed" desc="Stack Size Compiler warning">
 #ifdef  PIC32MM
@@ -117,7 +122,7 @@ void main() {
     //char* string="text";
     //disp1306a_drawText(0, string, 0, 0, 1); 
     //</editor-fold>
-    x[100000]=10;
+    //x[100000]=10;
     //startup
     //1. set basic (clock...) --------------------------------------------------
     setClock();
@@ -162,7 +167,7 @@ void main() {
     //5. run system modules -----------------------------------------------------------
 #ifdef TOUCHPAD_XPT2046_INIT    
     //modul touchpad XPT2046
-    reg_process((int*)touchXpt2046_start, 512);
+    reg_process((int*)touchXpt2046_start, 1024);
 #endif    
     
     
@@ -208,7 +213,7 @@ static char reg_process(int* start_addr, int stack_size)
     int* tab=proc_t + ((proc_t_count) * (PROC_T_ISIZE/4));      //adresa polozky proc_t
     proc_t_count++;
     
-    int ret=allocStack2(stack_size, tab);                       //nastavuje SP, START_SP a BASE_SP
+    int ret=allocStack(stack_size, tab);                       //nastavuje SP, START_SP a BASE_SP
     if(ret==0)
     {
         //ok, stack allocated

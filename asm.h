@@ -1,7 +1,7 @@
 //fn.S
 //extern char* stack_area;
 
-extern int allocStack2(int, int*);
+extern int allocStack(int, int*);
 extern void clearProcTable();
 
 extern void doEvents();

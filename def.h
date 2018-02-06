@@ -11,14 +11,14 @@
 // <editor-fold defaultstate="collapsed" desc="System">
 //#define     SIMULATOR
 
-#define		RAM_BASE            0xA0000000
+#define		RAM_BASE            0x80000000
 
 #define     SRS_STACK_SIZE      512             //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
 #define     STACK_CHECK_VALUE   0xF010E020
 
 #ifdef PIC32MM0256
 #define		RAM_SIZE            32*1024 
-#define     STACK_SIZE          12*1024
+#define     STACK_SIZE          8*1024
 #endif
 
 #ifdef PIC32MM0064

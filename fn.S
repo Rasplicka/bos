@@ -17,158 +17,34 @@
     
 .section .asm_fn, code     
     
-//<editor-fold defaultstate="collapsed" desc="allocStack">
-    
+//<editor-fold defaultstate="collapsed" desc="clearProcTable">
 .align 2
-.global allocStack
-.ent allocStack
-allocStack:
-//a0=pozadovana velikost stacku
-//a1=thread table, adresa akt. polozky    
-//vraci v0=1 OK, v0=0 chyba, neni misto
+.global clearProcTable
+.ent clearProcTable
+clearProcTable: 
     
-    addiu   v0, zero, PROC_T_CAPA	//max. pocet stacku je stejny, jako pocet procesu
-    la	    t8, stack_list		//seznam, obsahuje adresy zacaku pridelenych stacku
-    la	    t9, stack_area		//zacatek oblasti zasobniku v RAM
+    //Tato fce nuluje obsah proc_t
+    
+    la	    t0, proc_t			//proc_t
+    li	    t1, PROC_T_CAPA
+    li	    t9, PROC_T_ISIZE
+    mul	    t1, t9
+    addu    t1, t0			//proc_t after
     
 1:    
-    lw	    v1, (t8)			//load stack item (= stack size, nebo 0)
-    beqz    v1, 3f
+    sw32    zero, (t0)
+    addiu   t0, 4
+    bne	    t0, t1, 1b
     nop
     
-    addiu   t8, 4
-    addu    t9, v1			//RAM += stack size (volna adresa)
-    addiu   v0, -1			//cnt--
-    bnez    v0, 1b			//skok na dalsi polozku
-    nop
-    
-    //nenasel stack
-2:  //end_error
-    //v0=0
-    li16    v0, 0
     jrc	    ra
     
-3:
-    //t9=aktualni adresa, ktera se pouzije jako stack_base
-    li	    t0, RAM_BASE
-    li	    t1, RAM_SIZE
-    addu    t0, t1			//adresa za RAM (base + size)
-    
-    addu    v0, t9, a0			//adresa za stack (base + pozad. size)
-    subu    t0, v0			//RAM-stack
-    bltz    t0, 2b			//skok, neni misto
-    nop
-    
-    //ok, je misto
-    sw	    a0, (t8)			//save polozku
-    
-    //t9=aktualni adresa (stack base)
-    sw	    t9, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
-    
-    li	    v1, STACK_CHECK_VALUE
-    sw	    v1, (t9)			//stack[base]=STACK_CHECK_VALUE
-    
-    addu    t9, a0			//stack top (base+size)
-    addiu   t9, -4			//stack top -4
-    sw	    t9, TH_T_SP*4(a1)		//th_table[sp]
+.end clearProcTable   
 
-    //OK, konec
-    li16    v0, 1
-    jrc	    ra
-    
-.end allocStack  
-    
 //</editor-fold>
+ 
+//<editor-fold defaultstate="collapsed" desc="allocStack">   
     
-//<editor-fold defaultstate="collapsed" desc="allocStack">
-/*    
-.align 2
-.global allocStack2
-.ent allocStack2
-allocStack2:
-//a0=pozadovana velikost stacku
-//a1=thread table, adresa akt. polozky    
-//vraci v0=1 OK, v0=0 chyba, neni misto
-    
-    //fce prideluje stack pri registraci procesu
-    //na zacatku oblasti vyhradi misto pro SRS stacky (MM 1x, MZ 6x, podle udaje v CP0 SRSCTL.HSS)
-    //pouziva tabulku stack_list, kam zapise velikost prideleneho stacku
-    //nepodporuje unreg. procesu (zasobnik zustane pridelen trvale)
-    
-    //MM maji 1x SRS, ktera se pouzije pri interruptu (error). Fce interruptu nenuluji Status.EXL bit,
-    //proto nemuze nastat nove preruseni, dokud neskonci predchozi. Proto staci zajistit, aby na konci
-    //obsluhy preruseni byla hodnota SRS[1].SP na puvodni hodnote.
-    
-    //MZ maji 7x SRS, takze je mozne, aby na zacatku fce obsluhy byl nulovan Status.EXL, protoze
-    //dokud nenastane ERET, zustane nastaveno Status.IPL a bude prijat pouze interrupt s vyssi prioritou,
-    //ktery bude mit jinou SRS. V tom pripade se ale musi jeste osetrit SRSCTL.PSS (prew. SRS), aby
-    //po ERET byla vzdy nastavena spravna SRS
-    //Pokud by pro MZ nebylo nulovano EXL, pak nema smysl mit vice zasobniku, pro SRS[1-7] staci pouze
-    //jeden, protoze novy interrupt muze nastat az po ERET predchoziho.
-    
-    la	    t8, stack_list		//seznam, obsahuje adresy zacaku pridelenych stacku
-    la	    t9, stack_area		//zacatek oblasti zasobniku v RAM
-    
-    //zjisti pocet SRS 
-    mfc0    v0, _CP0_SRSCTL
-    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
-    //spocitej celkovou velikost SRS stacku
-    li	    v1, SRS_STACK_SIZE		//vyhradi dolni cast stackArea pro zasobnik SRS (interrupt level 1 MM, nebo 1-7 MZ)
-    mul	    v0, v1			//SIZE * Number of SRS = SRS stack size
-    addu    t9, v0			//t9=stackArea za SRS
-    
-    addiu   v0, zero, PROC_T_CAPA	//max. pocet stacku je stejny, jako pocet procesu (nepocita SRS stacky)
-    
-1:    
-    lw	    v1, (t8)			//load stack item (= stack size, nebo 0)
-    beqz    v1, 3f
-    nop
-    
-    addiu   t8, 4
-    addu    t9, v1			//RAM += stack size (volna adresa)
-    addiu   v0, -1			//cnt--
-    bnez    v0, 1b			//skok na dalsi polozku
-    nop
-    
-    //nenasel stack
-2:  //end_error
-    //v0=0
-    li16    v0, 0
-    jrc	    ra
-    
-3:
-    //t9=aktualni adresa, ktera se pouzije jako stack_base
-    li	    t0, RAM_BASE
-    li	    t1, RAM_SIZE
-    addu    t0, t1			//adresa za RAM (base + size)
-    
-    addu    v0, t9, a0			//adresa za stack (base + pozad. size)
-    subu    t0, v0			//RAM-stack
-    bltz    t0, 2b			//skok, neni misto
-    nop
-    
-    //ok, je misto
-    sw	    a0, (t8)			//save polozku
-    
-    //t9=aktualni adresa (stack base)
-    sw	    t9, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
-    
-    li	    v1, STACK_CHECK_VALUE
-    sw	    v1, (t9)			//stack[base]=STACK_CHECK_VALUE
-    
-    addu    t9, a0			//stack top (base+size)
-    addiu   t9, -4			//stack top -4
-    sw	    t9, TH_T_SP*4(a1)		//th_table[sp]
-
-    //OK, konec
-    li16    v0, 1
-    jrc	    ra
-    
-.end allocStack2  
-*/    
-    
-    
-//<editor-fold defaultstate="collapsed" desc="macro _TEST_COLLISION">
 .macro _TEST_COLLISION st1, af1, st2, af2, collide
     //st1 = start oblasti 1
     //af1 = after oblast 1
@@ -185,35 +61,12 @@ allocStack2:
     
 1001:
    
-.endm 
-    
-//</editor-fold>
-  
-.align 2
-.global clearProcTable
-.ent clearProcTable
-clearProcTable: 
-    
-    la	    t0, proc_t			//proc_t
-    li	    t1, PROC_T_CAPA
-    li	    t9, PROC_T_ISIZE
-    mul	    t1, t9
-    addu    t1, t0			//proc_t after
-    
-1:    
-    sw32    zero, (t0)
-    addiu   t0, 4
-    bne	    t0, t1, 1b
-    nop
-    
-    jrc	    ra
-    
-.end clearProcTable    
+.endm     
     
 .align 2
-.global allocStack2
-.ent allocStack2
-allocStack2:
+.global allocStack
+.ent allocStack
+allocStack:
 //a0=pozadovana velikost stacku
 //a1=thread table, adresa akt. polozky 
     
@@ -229,7 +82,7 @@ allocStack2:
     //V t4 ma pocatecni adresu a v t5 adresu za testovanou oblasti
     //Oblast testuje tak, ze prochazi polozky v proc_t a kontroluje zda nejsou v kolizi
     
-    //Tato metoda funguje i v pripade, ze dochazi k ukonceni procesu a startova novych za behu OS,
+    //Tato metoda funguje i v pripade, ze dochazi k ukonceni procesu a start novych za behu OS,
     //ale neprovadi se defragmentace oblasti
     
     
@@ -348,7 +201,7 @@ allocStack2:
     li16    v0, 1			//return 1 (error)
     jrc	    ra
    
-.end allocStack2    
+.end allocStack    
 //</editor-fold>    
     
 //<editor-fold defaultstate="collapsed" desc="doEvents">     
