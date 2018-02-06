@@ -77,6 +77,7 @@ char ballast[52]    __section(".os");
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
 #define     STACK_DATA_BASE (OS_DATA_BASE - STACK_SIZE)     
 char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
+//char x[200000];
 
 // <editor-fold defaultstate="collapsed" desc="Stack Size Compiler warning">
 #ifdef  PIC32MM
@@ -116,7 +117,7 @@ void main() {
     //char* string="text";
     //disp1306a_drawText(0, string, 0, 0, 1); 
     //</editor-fold>
-    
+    //x[0]=10;
     //startup
     //1. set basic (clock...) --------------------------------------------------
     setClock();
@@ -131,6 +132,7 @@ void main() {
     timer1_init();                                  //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
     periph_init();                                  //provede vychozi nastaveni periferii, prideluje IO piny
 
+    clearProcTable();
     
     //4. init system drivers ----------------------------------------------------------
 #if (defined SPI1_INIT || defined SPI2_INIT || defined SPI3_INIT)    
