@@ -18,7 +18,7 @@
 
 #ifdef PIC32MM0256
 #define		RAM_SIZE            32*1024 
-#define     STACK_SIZE          8*1024
+#define     STACK_SIZE          12*1024
 #endif
 
 #ifdef PIC32MM0064
@@ -71,7 +71,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
 #define     PROC_T_ISIZE    88          //velikost polozky v proc_t
-#define     PROC_T_CAPA     6           //kapacita proc_t
+#define     PROC_T_CAPA     8           //kapacita proc_t
 
 //cislovani pro pouziti v c/c++ (index word), v asm se musi vynasobit 4
 //

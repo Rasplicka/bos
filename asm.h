@@ -2,6 +2,7 @@
 //extern char* stack_area;
 
 extern int allocStack2(int, int*);
+extern void clearProcTable();
 
 extern void doEvents();
 extern void startEvents();

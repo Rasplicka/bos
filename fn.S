@@ -188,7 +188,27 @@ allocStack2:
 .endm 
     
 //</editor-fold>
-   
+  
+.align 2
+.global clearProcTable
+.ent clearProcTable
+clearProcTable: 
+    
+    la	    t0, proc_t			//proc_t
+    li	    t1, PROC_T_CAPA
+    li	    t9, PROC_T_ISIZE
+    mul	    t1, t9
+    addu    t1, t0			//proc_t after
+    
+1:    
+    sw32    zero, (t0)
+    addiu   t0, 4
+    bne	    t0, t1, 1b
+    nop
+    
+    jrc	    ra
+    
+.end clearProcTable    
     
 .align 2
 .global allocStack2
@@ -211,10 +231,11 @@ allocStack2:
     addu    t3, t2, t9			//stack after
     
     //ucrit velikost stacku pro SRS, musi zjisti pocet SRS 
-    mfc0    t2, _CP0_SRSCTL
-    ext	    t2, t2, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
+    mfc0    v0, _CP0_SRSCTL
+    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
     li	    v1, SRS_STACK_SIZE		//vyhradi dolni cast stackArea pro zasobnik SRS (interrupt level 1 MM, nebo 1-7 MZ)
-    mul	    t2, v1			//SIZE * Number of SRS = SRS stack size
+    mul	    v0, v1			//SIZE * Number of SRS = SRS stack size
+    addu    t2, v0
    
     //t0 = proc_t, t1=proc_t after
     //t2 = stack_start (za SRS), t3=stack_after
@@ -271,13 +292,13 @@ allocStack2:
     //t4=zacatek oblasti (stack BOTTOM), t5=after (stack TOP)
     
     //BOTTOM
-    sw32    t5, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
+    sw32    t4, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
     li	    v1, STACK_CHECK_VALUE
-    sw32    v1, (t5)			//stack[base]=STACK_CHECK_VALUE
+    sw32    v1, (t4)			//stack[base]=STACK_CHECK_VALUE
     
     //TOP
-    sw32    t4, TH_T_SP*4(a1)		//th_table[sp]
-    sw32    t4, TH_T_START_SP*4(a1)		//th_table[sp]
+    sw32    t5, TH_T_SP*4(a1)		//th_table[sp]
+    sw32    t5, TH_T_START_SP*4(a1)		//th_table[sp]
     
     li16    v0, 0
     jrc	    ra
