@@ -5,11 +5,14 @@
         <group>
             <file>file:/D:/bos/bos/disp9341.c</file>
             <file>file:/D:/bos/bos/graphics.c</file>
-            <file>file:/D:/bos/bos/documentation.txt</file>
+            <file>file:/D:/bos/bos/disp16_asm.S</file>
             <file>file:/D:/bos/bos/globals.h</file>
+            <file>file:/D:/bos/bos/fn.S</file>
             <file>file:/D:/bos/bos/structures.h</file>
             <file>file:/D:/bos/bos/main.c</file>
             <file>file:/D:/bos/bos/globals.c</file>
+            <file>file:/D:/bos/bos/asm.h</file>
+            <file>file:/D:/bos/bos/def.h</file>
             <file>file:/D:/bos/bos/spi.h</file>
             <file>file:/D:/bos/bos/app3.c</file>
         </group>

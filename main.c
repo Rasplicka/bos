@@ -40,24 +40,59 @@ extern void m3_start();
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="OS vars">
+    
+/*
+ * OBSAZENI RAM od nejvyssi adresy
+ * a).os
+ * b).os_stack
+ * c)zbytek RAM 0x8000 0000 ... &stack_area-4
+ * 
+ * sekce .os je ma nejvyssich adresach v RAM
+ * obsahuje 
+ * 1.proc_t
+ * 2.stack_list
+ * 3.ostatni os vars
+ * 4.ballast
+ */
+                            //proccee_table                 stack_list          other vars + ballast
+#define     OS_DATA_SIZE    ((PROC_T_ISIZE * PROC_T_CAPA) + (PROC_T_CAPA * 4) + 64)     //velikost .os
+#define     OS_DATA_BASE    ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
 
-//RAM sekce pro system (pouziva sekci .jcr, kterou linker vklada na zacatek RAM)
-uint* proc_t_pos __section(".jcr") = 0;
-uint* proc_t_max __section(".jcr") = 0;
-char proc_t_count __section(".jcr") = 0;
-uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA] __section(".jcr"); //8 x 88B
-//uint gp_value __section(".jcr") = 0;
-//char* sp_srs1_top __section(".jcr") = 0;
-
+//process table    
+uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA] __section(".os") __at(OS_DATA_BASE);      
 //stack_list pro pouziti pri allocStack, stack pro kazdy proces je alokovan ve volne RAM
-int stack_list[PROC_T_CAPA] __section(".jcr");                  //kazda polozka (32-bit) definuje velikost jednoho stacku
+//kazda polozka (32-bit) definuje velikost jednoho stacku
+int stack_list[PROC_T_CAPA] __section(".os");                  
 
-//stack pro interrupt SRS1 je mimo ostatni stacky
-//#define     _SRS1_STACK_SIZE        512
-//char stack_interrupt_srs1[_SRS1_STACK_SIZE] __section(".jcr");
+//.os vars 
+uint* proc_t_pos    __section(".os") = 0;
+uint* proc_t_max    __section(".os") = 0;
+char proc_t_count   __section(".os") = 0;
 
-//stack je posledni oblast RAM, stack ma definovanou velikost STACK_SIZE
-char stack_area[STACK_SIZE] __at(RAM_BASE + RAM_SIZE - STACK_SIZE) __section(".os_stack");
+//ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
+//velikost ballast = 64 - vars.size (zarovnano na word)
+char ballast[52]    __section(".os");
+
+
+//.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
+#define     STACK_DATA_BASE (OS_DATA_BASE - STACK_SIZE)     
+char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
+
+// <editor-fold defaultstate="collapsed" desc="Stack Size Compiler warning">
+#ifdef  PIC32MM
+//PIC32MM jeden zasobnik pro vsechny interrupt level
+#define     STACK_MINIMUM   ((PROC_T_CAPA * 1024) + (1 * SRS_STACK_SIZE))      
+#endif
+
+#ifdef  PIC32MZ
+//PIC32MZ kazdy interrupt level ma svuj zasobnik
+#define     STACK_MINIMUM   ((PROC_T_CAPA * 1024) + (7 * SRS_STACK_SIZE))      
+#endif
+
+#if (STACK_SIZE < STACK_MINIMUM)
+#warning Definition of STACK_SIZE is too small! Please, check STACK_SIZE in def.h
+#endif
+// </editor-fold>
 
 // </editor-fold>
 
@@ -168,19 +203,31 @@ static char reg_process(int* start_addr, int stack_size)
     if(proc_t_count >= PROC_T_CAPA) { return -1; } 
     
     char id=getFreeProcessID();
-    int* tab=proc_t + ((proc_t_count) * (PROC_T_ISIZE/4));     //adresa polozky proc_t
+    int* tab=proc_t + ((proc_t_count) * (PROC_T_ISIZE/4));      //adresa polozky proc_t
     proc_t_count++;
     
-    allocStack2(stack_size, tab);                //nastavuje SP a START_SP
-    tab[TH_T_ID]=id;
-    tab[TH_T_RA]=(int)start_addr;
-    tab[TH_T_GP]=getGP();
+    int ret=allocStack2(stack_size, tab);                       //nastavuje SP, START_SP a BASE_SP
+    if(ret==0)
+    {
+        //ok, stack allocated
+        tab[TH_T_ID]=id;
+        tab[TH_T_RA]=(int)start_addr;
+        tab[TH_T_GP]=getGP();
     
-    tab[TH_T_START_ADDR]=(int)start_addr;       //START_RA pro pripad restartu app
+        tab[TH_T_START_ADDR]=(int)start_addr;                   //START_ADDR pro pripad restartu app
     
-    proc_t_max=tab;
+        proc_t_max=tab;
     
-    return id;
+        return id;
+    }
+    else
+    {
+        //reg_process error!
+        while(1)
+        {
+            //os is stopped
+        }
+    }
 }
 
 static char getFreeProcessID()

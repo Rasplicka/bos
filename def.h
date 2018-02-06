@@ -11,7 +11,7 @@
 // <editor-fold defaultstate="collapsed" desc="System">
 //#define     SIMULATOR
 
-#define		RAM_BASE            0x80000000
+#define		RAM_BASE            0xA0000000
 
 #define     SRS_STACK_SIZE      512             //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
 #define     STACK_CHECK_VALUE   0xF010E020
@@ -71,14 +71,14 @@
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
 #define     PROC_T_ISIZE    88          //velikost polozky v proc_t
-#define     PROC_T_CAPA     8           //kapacita proc_t
+#define     PROC_T_CAPA     6           //kapacita proc_t
 
 //cislovani pro pouziti v c/c++ (index word), v asm se musi vynasobit 4
 //
 #define     TH_T_ID         0    
 #define     TH_T_START_ADDR 1       //pouzije se pro restart procesu
 #define     TH_T_START_SP   2       //pouzije se pro restart procesu
-#define     TH_T_STACK_BASE 3
+#define     TH_T_STACK_BASE 3       //zde je check value
 
 #define     TH_T_A0			4      //offset a0
 #define     TH_T_A1			5

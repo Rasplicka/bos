@@ -166,6 +166,123 @@ allocStack2:
     
 .end allocStack2  
     
+    
+.align 2
+.global isStackUsed
+.ent isStackUsed
+isStackUsed:
+//a0=pozadovana velikost stacku
+//a1=thread table, adresa akt. polozky 
+    
+    //na adresu stack TOP dany proces nezapisuje, je to after adresa
+    //na adrese stack BOTTOM je check value
+    
+    la	    t0, proc_t			//proc_t
+    li	    t1, PROC_T_CAPA
+    li	    t9, PROC_T_ISIZE
+    mul	    t1, t9
+    addu    t1, t0			//proc_t after
+    
+    la	    t2, stack_area		//zacatek oblasti zasobniku v RAM
+    li	    t9, STACK_SIZE
+    addu    t3, t2, t9			//stack after
+    
+    //zjisti pocet SRS 
+    mfc0    v0, _CP0_SRSCTL
+    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
+    //spocitej celkovou velikost SRS stacku
+    li	    v1, SRS_STACK_SIZE		//vyhradi dolni cast stackArea pro zasobnik SRS (interrupt level 1 MM, nebo 1-7 MZ)
+    mul	    v0, v1			//SIZE * Number of SRS = SRS stack size
+    
+    addu    t2, v0			//t2=start stackArea za SRS    
+    
+    
+    //t0 = proc_t, t1=proc_t after
+    //t2 = stack_start (za SRS), t3=stack_after
+    
+    
+    move    t4, t2			//pokusi se alokovat tuto oblast start t4, 
+    move    t7, zero
+    nop
+    b16	    trynext
+    nop
+
+loop1:    
+    
+    lbu	    t9, TH_T_ID*4(t7)
+    beqz    t9, next2			//skok, polozka neni pouzita
+    nop
+    
+    lw	    t4, TH_T_START_SP*4(t7)	//stack TOP (after), na teto adrese se pokusi alokovat novy stack
+
+    
+//prochazi vsechny polozky proc_t, vynecha aktualni (a1), (s7) a prazdnou
+trynext:    
+    //nastav after testovane oblasti (t4=zacatek testovane oblasti)
+    addu    t5, t4, a0			//t5=after
+    move    t6, t0			//t6=akt. polozka proc_t (nastav prvni)
+    
+    //test, zda neni mimo stack_area
+    //...
+    //reg1, reg2, skok
+    _BAL_FBT t5, t3, next1		//skok, vybrana oblast je mimo stack_area
+    
+loop2:    
+    lbu	    t9, TH_T_ID*4(t6)
+    beqz    t9, netest			//netestuje, prazdna polozka
+    nop
+    beq	    t6, a1, netest		//netestuje akt. polozku	    
+    nop
+    beq	    t6, t7, netest		//netestuje polozku, za jejiz oblasti hleda
+    nop
+    lw	    v1, TH_T_START_SP*4(t6)	//stack TOP (after)
+    lw	    v0, TH_T_BASE_SP*4(t6)	//stack BOTTOM (start)
+    
+    //start1, after1, start2, after2, err
+    _IS_IN v0, v1, t4, t5, next1
+    
+netest:    
+    //ok, neni kolize s touto polozkou
+    addiu   t6, PROC_T_ISIZE
+    bne	    t6, t1, loop2
+    nop
+    
+    //probehl test vsech polozek
+    //neni zadna kolize
+    //t4=zacatek oblasti (stack BOTTOM), t5=after (stack TOP)
+    
+    //BOTTOM
+    sw	    t5, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
+    li	    v1, STACK_CHECK_VALUE
+    sw	    v1, (t5)			//stack[base]=STACK_CHECK_VALUE
+    
+    //TOP
+    sw	    t4, TH_T_SP*4(a1)		//th_table[sp]
+    sw	    t4, TH_T_START_SP*4(a1)		//th_table[sp]
+    
+    li16    v0, 0
+    jrc	    ra
+    
+next1:
+    bnez    t7, next2			//skok, neni prvni test
+    nop
+    
+    //prvni test, zacatek oblasti 
+    move    t7, t0
+    nop
+    b16	    loop1
+    nop
+    
+next2:    
+    addiu   t7, PROC_T_ISIZE
+    bne	    t7, t1, loop1
+    nop
+    
+    //konec, nenasel volny stack
+    li16    v0, 1
+    jrc	    ra
+   
+.end isStackUsed    
 //</editor-fold>    
     
 //<editor-fold defaultstate="collapsed" desc="doEvents">     
@@ -2073,6 +2190,7 @@ setSrsValue:
 .ent setSrsValue2 
 setSrsValue2:
     
+    /*
 #ifdef PIC32MM    
     //nastavi SP a GP pro SRS1, ktery pouziva interrupt
     //GP kopiruje ze SRS[0]
@@ -2093,16 +2211,43 @@ setSrsValue2:
     addu    v0, v1
     wrpgpr  sp, v0
     
-#endif    
+#endif  
     
-#ifdef PIC32MZ
-    //nastavi SP pro SRS[1-7], zasobniky jsou vyhrazeny na adrese stack_area,
+    */
+    
+    //nastavi SP (a GP) pro SRS[1-7], zasobniky jsou vyhrazeny na adrese stack_area,
     //velikost kazdeho je definovana SRS_STACK_SIZE (smerem nahoru)
     //nasleduji zasobniky pro jednotlive procesy 
     //celkova velikost oblasti pro zasobniky je v STACK_SIZE
     
-#endif    
+    //zjisti pocet SRS 
+    mfc0    v0, _CP0_SRSCTL
+    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
     
+    move    v1, zero			//SRS index
+    la	    t8, stack_area
+    li	    t7, SRS_STACK_SIZE
+
+1:    
+    addiu   v1, 1			//SRS index++
+    
+    //nastav previous SRS=v1
+    mfc0    t9, _CP0_SRSCTL
+    ins	    t9, v1, 6, 4
+    mtc0    t9, _CP0_SRSCTL
+    ehb
+    
+    //zapis gp
+    wrpgpr  gp, gp
+    
+    //zapis sp (dolni cast stack_area je vyhrazena pro zasobnik SRS[1])
+    addu    t8, t7			//horni hranice stacku
+    wrpgpr  sp, t8
+    
+    bne	    v1, v0, 1b			//skok, existuje dalsi SRS
+    nop
+    
+    //konec
     jrc	    ra
     
 .end setSrsValue2
