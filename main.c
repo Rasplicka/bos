@@ -104,7 +104,8 @@ char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
 
 
 //global fn
-void main() {
+void main() 
+{
     
     //startup
     //1. set basic (clock...) --------------------------------------------------
