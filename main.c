@@ -106,40 +106,31 @@ char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
 //global fn
 void main() {
     
-    // <editor-fold defaultstate="collapsed" desc="comment">
-    //GND test commit, test doma, test v praci
-    //+
-    //CLK       17, RP12
-    //DATA      18, RP13
-    //RST       19, RP14 B9
-    //DC        21, RP18 C9
-
-    //MZ test LED
-    //TRISH=0b1111111111111000;
-    //PORTH=0x0;
-    //LATHSET=0b000;
-
-    //char* string="text";
-    //disp1306a_drawText(0, string, 0, 0, 1); 
-    //</editor-fold>
-    //x[100000]=10;
     //startup
     //1. set basic (clock...) --------------------------------------------------
-    setClock();
+    // <editor-fold defaultstate="collapsed" desc="clock">
+    setClock(); 
+    // </editor-fold>
 
     //2. set safe mode ---------------------------------------------------------
+    // <editor-fold defaultstate="collapsed" desc="safe mode">
 #ifdef SAFE_PROCESS    
     cpuTimer_init();
 #endif
-    
-    //3. init system -----------------------------------------------------------
-    system_init();                                  //init interrupt (ale zustane DI), nastav SRS1, ...
-    timer1_init();                                  //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
-    periph_init();                                  //provede vychozi nastaveni periferii, prideluje IO piny
+    // </editor-fold>
 
-    clearProcTable();
+    //3. init system -----------------------------------------------------------
+    // <editor-fold defaultstate="collapsed" desc="system init">
+    system_init(); //init interrupt (ale zustane DI), nastav SRS1, ...
+    timer1_init(); //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
+    periph_init(); //provede vychozi nastaveni periferii, prideluje IO piny
+
+    clearProcTable(); 
+    // </editor-fold>
     
-    //4. init system drivers ----------------------------------------------------------
+    //4. init system drivers ---------------------------------------------------
+    // <editor-fold defaultstate="collapsed" desc="drivers">
+
 #if (defined SPI1_INIT || defined SPI2_INIT || defined SPI3_INIT)    
     spi_init();
 #endif
@@ -147,52 +138,57 @@ void main() {
 #if (defined I2C1_INIT || defined I2C2_INIT || defined I2C3_INIT)    
     i2c_init();
 #endif    
-    
+
 #ifdef ADC_SCAN_INIT    
     adcScan_init();
 #endif
-   
+
 #ifdef PWM_INIT    
     pwm_init();
 #endif  
-    
+
 #ifdef USB_DEVICE_INIT
     usbDevice_init();
 #endif    
-    
+
     //testDriver_init();
-    enableInterrupt();                              //provede EI
-    globalsBeforeProcess();                         //inicializuje displej, touchpad, ...
+    enableInterrupt(); //provede EI
+    globalsBeforeProcess(); //inicializuje displej, touchpad, ...
     
-    //5. run system modules -----------------------------------------------------------
+    // </editor-fold>
+
+    //5. run system modules ----------------------------------------------------
+    // <editor-fold defaultstate="collapsed" desc="run module, apps">
 #ifdef TOUCHPAD_XPT2046_INIT    
     //modul touchpad XPT2046
-    reg_process((int*)touchXpt2046_start, 1024);
+    reg_process((int*) touchXpt2046_start, 1024);
 #endif    
-    
-    
+
+
     //6. run user apps --------------------------------------------------------------
     //To run user app, modify this section. Use reg_process(int* app_start_fn_address, int stack_size)
     //The start fn of app, must be declared in extern section above
     //Check the maximum number of threads, please
- 
-    reg_process((int*)&m1_start, 1024); 
-    reg_process((int*)&m2_start, 1024);
-    reg_process((int*)&m3_start, 1024);
-    
+
+    reg_process((int*) &m1_start, 1024);
+    reg_process((int*) &m2_start, 1024);
+    reg_process((int*) &m3_start, 1024);
+
     //reg_process((int*)&disp9341a_start, 1024);
     //reg_process((int*)&disp1306a_start, 1024);
     //reg_process((int*)&ubtn_start, 512);          //dve tlacitka A2, A3
     //reg_process((int*)&m2, 1024);
     //reg_process((int*)&m3, 1024);
     
-    
-    void globalsAfterProcess();
-    
-    //7. start multitasking
-    SYSTEM_STATUS.Threading=1;
-    startEvents();
-    
+    // </editor-fold>
+
+    //6. start multitasking ----------------------------------------------------
+    // <editor-fold defaultstate="collapsed" desc="start os">
+    globalsAfterProcess();
+    SYSTEM_STATUS.Threading = 1;
+    startEvents(); 
+    // </editor-fold>
+
     while(1)
     {
         
