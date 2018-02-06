@@ -1,7 +1,7 @@
 //fn.S
 //extern char* stack_area;
 
-extern void allocStack2(int, int*);
+extern int allocStack2(int, int*);
 
 extern void doEvents();
 extern void startEvents();

@@ -81,7 +81,7 @@ allocStack:
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="allocStack">
-    
+/*    
 .align 2
 .global allocStack2
 .ent allocStack2
@@ -165,12 +165,35 @@ allocStack2:
     jrc	    ra
     
 .end allocStack2  
+*/    
     
+    
+//<editor-fold defaultstate="collapsed" desc="macro _TEST_COLLISION">
+.macro _TEST_COLLISION st1, af1, st2, af2, collide
+    //st1 = start oblasti 1
+    //af1 = after oblast 1
+    //st2 = start oblasti 2
+    //af2 = after oblast 2
+    
+    //meni t9
+    _BAL_FBE \st2, \af1, 1001f		//meni t9
+    _BAL_FLE \af2, \st1, 1001f		//meni t9
+    
+    nop
+    b16	    \collide
+    nop
+    
+1001:
+   
+.endm 
+    
+//</editor-fold>
+   
     
 .align 2
-.global isStackUsed
-.ent isStackUsed
-isStackUsed:
+.global allocStack2
+.ent allocStack2
+allocStack2:
 //a0=pozadovana velikost stacku
 //a1=thread table, adresa akt. polozky 
     
@@ -187,16 +210,12 @@ isStackUsed:
     li	    t9, STACK_SIZE
     addu    t3, t2, t9			//stack after
     
-    //zjisti pocet SRS 
-    mfc0    v0, _CP0_SRSCTL
-    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
-    //spocitej celkovou velikost SRS stacku
+    //ucrit velikost stacku pro SRS, musi zjisti pocet SRS 
+    mfc0    t2, _CP0_SRSCTL
+    ext	    t2, t2, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
     li	    v1, SRS_STACK_SIZE		//vyhradi dolni cast stackArea pro zasobnik SRS (interrupt level 1 MM, nebo 1-7 MZ)
-    mul	    v0, v1			//SIZE * Number of SRS = SRS stack size
-    
-    addu    t2, v0			//t2=start stackArea za SRS    
-    
-    
+    mul	    t2, v1			//SIZE * Number of SRS = SRS stack size
+   
     //t0 = proc_t, t1=proc_t after
     //t2 = stack_start (za SRS), t3=stack_after
     
@@ -204,20 +223,20 @@ isStackUsed:
     move    t4, t2			//pokusi se alokovat tuto oblast start t4, 
     move    t7, zero
     nop
-    b16	    trynext
+    b16	    2f //trynext
     nop
 
-loop1:    
+1://loop1:    
     
-    lbu	    t9, TH_T_ID*4(t7)
-    beqz    t9, next2			//skok, polozka neni pouzita
+    lbu32    t9, TH_T_ID*4(t7)
+    beqz    t9, 6f //next2			//skok, polozka neni pouzita
     nop
     
     lw	    t4, TH_T_START_SP*4(t7)	//stack TOP (after), na teto adrese se pokusi alokovat novy stack
 
     
 //prochazi vsechny polozky proc_t, vynecha aktualni (a1), (s7) a prazdnou
-trynext:    
+2: //trynext:    
     //nastav after testovane oblasti (t4=zacatek testovane oblasti)
     addu    t5, t4, a0			//t5=after
     move    t6, t0			//t6=akt. polozka proc_t (nastav prvni)
@@ -225,26 +244,26 @@ trynext:
     //test, zda neni mimo stack_area
     //...
     //reg1, reg2, skok
-    _BAL_FBT t5, t3, next1		//skok, vybrana oblast je mimo stack_area
+    _BAL_FBT t5, t3, 5f //next1		//skok, vybrana oblast je mimo stack_area
     
-loop2:    
-    lbu	    t9, TH_T_ID*4(t6)
-    beqz    t9, netest			//netestuje, prazdna polozka
+3: //loop2:    
+    lbu32    t9, TH_T_ID*4(t6)
+    beqz    t9, 4f //netest			//netestuje, prazdna polozka
     nop
-    beq	    t6, a1, netest		//netestuje akt. polozku	    
+    beq	    t6, a1, 4f //netest		//netestuje akt. polozku	    
     nop
-    beq	    t6, t7, netest		//netestuje polozku, za jejiz oblasti hleda
+    beq	    t6, t7, 4f //netest		//netestuje polozku, za jejiz oblasti hleda
     nop
-    lw	    v1, TH_T_START_SP*4(t6)	//stack TOP (after)
-    lw	    v0, TH_T_BASE_SP*4(t6)	//stack BOTTOM (start)
+    lw32    v1, TH_T_START_SP*4(t6)	//stack TOP (after)
+    lw32    v0, TH_T_STACK_BASE*4(t6)	//stack BOTTOM (start)
     
     //start1, after1, start2, after2, err
-    _IS_IN v0, v1, t4, t5, next1
+    _TEST_COLLISION v0, v1, t4, t5, 5f //next1
     
-netest:    
+4: //netest:    
     //ok, neni kolize s touto polozkou
     addiu   t6, PROC_T_ISIZE
-    bne	    t6, t1, loop2
+    bne	    t6, t1, 3b //loop2
     nop
     
     //probehl test vsech polozek
@@ -252,37 +271,37 @@ netest:
     //t4=zacatek oblasti (stack BOTTOM), t5=after (stack TOP)
     
     //BOTTOM
-    sw	    t5, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
+    sw32    t5, TH_T_STACK_BASE*4(a1)	//th_table[stack_base]
     li	    v1, STACK_CHECK_VALUE
-    sw	    v1, (t5)			//stack[base]=STACK_CHECK_VALUE
+    sw32    v1, (t5)			//stack[base]=STACK_CHECK_VALUE
     
     //TOP
-    sw	    t4, TH_T_SP*4(a1)		//th_table[sp]
-    sw	    t4, TH_T_START_SP*4(a1)		//th_table[sp]
+    sw32    t4, TH_T_SP*4(a1)		//th_table[sp]
+    sw32    t4, TH_T_START_SP*4(a1)		//th_table[sp]
     
     li16    v0, 0
     jrc	    ra
     
-next1:
-    bnez    t7, next2			//skok, neni prvni test
+5: //next1:
+    bnez    t7, 6f//next2			//skok, neni prvni test
     nop
     
     //prvni test, zacatek oblasti 
     move    t7, t0
     nop
-    b16	    loop1
+    b16	    1b //loop1
     nop
     
-next2:    
+6: //next2:    
     addiu   t7, PROC_T_ISIZE
-    bne	    t7, t1, loop1
+    bne	    t7, t1, 1b //loop1
     nop
     
     //konec, nenasel volny stack
     li16    v0, 1
     jrc	    ra
    
-.end isStackUsed    
+.end allocStack2    
 //</editor-fold>    
     
 //<editor-fold defaultstate="collapsed" desc="doEvents">     
