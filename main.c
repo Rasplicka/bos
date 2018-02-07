@@ -63,7 +63,8 @@ uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA] __section(".os") __at(OS_DATA_BASE
 
 //.os vars 
 uint* proc_t_pos    __section(".os") = 0;
-uint* proc_t_max    __section(".os") = 0;
+//uint* proc_t_max    __section(".os") = 0;
+uint* proc_t_after  __section(".os") = 0;
 char proc_t_count   __section(".os") = 0;
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
@@ -144,7 +145,8 @@ void main()
 #endif    
 
     //testDriver_init();
-    enableInterrupt(); //provede EI
+    asm("EI");              //povoli interrupt
+    //enableInterrupt(); 
     globalsBeforeProcess(); //inicializuje displej, touchpad, ...
     
     // </editor-fold>
@@ -189,97 +191,145 @@ void main()
     }
 }
 
+void processGeneralException(int code)
+{
+    
+}
+
 //local fn
-char reg_process(int* start_addr, int stack_size)
+int reg_process(int* start_addr, int stack_size)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)
-    //vraci ID procesu, nebo -1 pri chybe
+    //vraci ID procesu, nebo:
+    //-1 = prilis mnoho procesu
+    //-2 = nelze alokovat stack
     
     //test, zda je volne misto v proc_t
     if(proc_t_count >= PROC_T_CAPA) { return -1; } 
+
+    //najdi volne procID
+    char id = getFreeProcessID();
+    if(id < 1) { return -1; }
     
-    char id=getFreeProcessID();
-    int* tab=proc_t + ((proc_t_count) * (PROC_T_ISIZE/4));      //adresa polozky proc_t
-    proc_t_count++;
+    //najdi volnou polozku v proc_t
+    int* tab = getEmptyProcessTableItem();
+    if(tab == NULL) { return -1; }
     
+    //alokuj stack
     int ret=allocStack(stack_size, tab);                       //nastavuje SP, START_SP a BASE_SP
     if(ret==0)
     {
-        //ok, stack allocated
-        tab[TH_T_ID]=id;
+        //ok, stack allocated, set process item at proc_t
+        proc_t_count++;
+        
+        tab[TH_T_ID]=id;                                        //procID
         tab[TH_T_RA]=(int)start_addr;
         tab[TH_T_GP]=getGP();
-    
         tab[TH_T_START_ADDR]=(int)start_addr;                   //START_ADDR pro pripad restartu app
-    
-        proc_t_max=tab;
-    
+
+        //ok
         return id;
     }
     else
     {
-        //reg_process error!
-        while(1)
-        {
-            //os is stopped
-        }
+        //error
+        return -2;
     }
 }
 
 static char getFreeProcessID()
 {
-    //v proc_t musi byt alespon jedno volne misto
-    //prvni nulova hodnota ID znamena konec platnych polozek (volne polozky pouze na konci tabulky)
-    char* proc_t_bytes=(char*)proc_t;
-    
-    char id=1;
-    while(1)
+    //najde volne id, ktere vraci (id>0)
+    //pri chybe vraci 0
+        
+    char id=1, a, exist;
+    while(id < 255)
     {
-        char exist_id=proc_t_bytes[0];
-        if(id==exist_id)
+        char* proc_t_bytes = (char*)proc_t;
+        exist=0;
+        
+        for(a=0; a<PROC_T_CAPA; a++)
         {
-            //nasel stejne ID, cele znova
-            id++;                                   //nove id
-            proc_t_bytes=(char*)proc_t;             //nastav zacatek proc_table
-        }
-        else if(exist_id==0)
-        {
-            //nasel konec tabulky, pouzije ID
-            break;
-        }
-        else
-        {
-            //jdi na dalsi polozku
+            //prochazi vsechny polozky proc_t    
+            if(proc_t_bytes[0]==id) { exist=1; break; }
             proc_t_bytes += PROC_T_ISIZE;
         }
+        
+        if(exist == 0) 
+        { 
+            //stejne id neexistuje, pouzije ho
+            return id; 
+        }
+        
+        id++;
     }
     
-    return id;
+    //nenasel volne id
+    return 0;
+}
+
+static int* getEmptyProcessTableItem()
+{
+    //hleda volnou polozku v proc_t, jeji adresu vraci
+    //nebo NULL
+    
+    char* proc_t_bytes = (char*)proc_t;
+    int a;
+    for(a=0; a<PROC_T_CAPA; a++)
+    {
+        if(proc_t_bytes[0]==0) 
+        { 
+            //ok, polozka je volna (procID=0)
+            return (int*)proc_t_bytes; 
+        }
+        
+        proc_t_bytes += PROC_T_ISIZE;
+    }   
+    
+    return NULL;
 }
 
 static void system_init()
 {
     //nastavuje SRS[GP+SP], Multivector, ...
-    //zatim nepovoli interrupt (EI)
-
-#ifdef PIC32MM
-    
-    //char* sp_srs1 = stack_interrupt_srs1 + _SRS1_STACK_SIZE - 4;
+    //zatim nepovoli interrupt (EI) STATUS.EI zustava 0 (interrupt disable)
     
     //nastavi vychozi hodnoty GP a SP pro SRS[1], SRS[1-7]
     //nastav GP SRS[1-7] na stejnou hodnotu, jako SRS[0]
     //nastav SP SRS[1-7] (zasobnik pro interrupt, dolni cast stack_area) 
-    setSrsValue2(); //sp_srs1);
-
-    //Multivector, spacing 8 bytes, IPL 1-7 pouziva SRS[1]
-    //Neobsahuje EI, STATUS.EI zustava 0 (interrupt disable)
-    setInterrupt();
+    setSrsValue(); 
+    
+    //init interrupt
+    
+#ifdef PIC32MM
+    //Vector spacing=8, MVEC=1, prox. timer disable
+    INTCON=0x00011000;
+    
+    //kazdy interrupt level pouziva SRS[1]
+    PRISS=0x11111100;
+    
+    //_CP0_SRSMAP = $12,3
+    //jako PRISS
+    asm("li	    $2, 0x11111100");
+    asm("mtc0   $2, $12, 3");
+    asm("ehb");
     
 #endif    
     
 #ifdef PIC32MZ
 
+    //MVEC=1, prox. timer disable
+    INTCON=0x1000;
+    
+    //kazdy interrupt level pouziva jiny SRS
+    PRISS=0x76543210;
+
+    //_CP0_SRSMAP = $12,3
+    //jako PRISS
+    asm("li	    $2, 0x76543210");
+    asm("mtc0   $2, $12, 3");
+    asm("ehb");    
 #endif    
     
 }
@@ -376,3 +426,4 @@ static inline void cpuTimer_init()
 }
 
 #endif
+
