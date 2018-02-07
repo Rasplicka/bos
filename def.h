@@ -9,7 +9,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="System">
-//#define     SIMULATOR
+#define     SIMULATOR
 
 #define		RAM_BASE            0x80000000
 

@@ -23,14 +23,6 @@
 //user app start function add here, 
 //and update main fn bellow, step 6. run apps
 
-//user apps
-//app1
-extern void m1_start();
-//app2
-extern void m2_start();
-//app3
-extern void m3_start();
-
 //system
 //touch module
 #ifdef TOUCHPAD_XPT2046_INIT 
@@ -106,7 +98,6 @@ char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
 //global fn
 void main() 
 {
-    
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
@@ -170,10 +161,11 @@ void main()
     //To run user app, modify this section. Use reg_process(int* app_start_fn_address, int stack_size)
     //The start fn of app, must be declared in extern section above
     //Check the maximum number of threads, please
-
-    reg_process((int*) &m1_start, 1024);
-    reg_process((int*) &m2_start, 1024);
-    reg_process((int*) &m3_start, 1024);
+    userAppsStart();
+    
+    //reg_process((int*) &m1_start, 1024);
+    //reg_process((int*) &m2_start, 1024);
+    //reg_process((int*) &m3_start, 1024);
 
     //reg_process((int*)&disp9341a_start, 1024);
     //reg_process((int*)&disp1306a_start, 1024);
@@ -185,11 +177,12 @@ void main()
 
     //6. start multitasking ----------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="start os">
+   
     globalsAfterProcess();
     SYSTEM_STATUS.Threading = 1;
     startEvents(); 
     // </editor-fold>
-
+    
     while(1)
     {
         
@@ -197,7 +190,7 @@ void main()
 }
 
 //local fn
-static char reg_process(int* start_addr, int stack_size)
+char reg_process(int* start_addr, int stack_size)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)

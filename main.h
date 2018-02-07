@@ -2,7 +2,7 @@
 
 void main();
 
-static char reg_process(int* start_addr, int size);
+char reg_process(int* start_addr, int size);
 static char getFreeProcessID();
 static void system_init();
 static void setClock(); 

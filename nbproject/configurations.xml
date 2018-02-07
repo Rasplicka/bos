@@ -81,6 +81,7 @@
         <itemPath>fnc.c</itemPath>
         <itemPath>periph.c</itemPath>
         <itemPath>globals.c</itemPath>
+        <itemPath>user_apps.c</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -102,7 +103,7 @@
         <targetDevice>PIC32MM0256GPM036</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>ICD3PlatformTool</platformTool>
+        <platformTool>Simulator</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
@@ -211,7 +212,7 @@
         <property key="optimization-level" value="-O3"/>
         <property key="preprocessor-macros" value=""/>
         <property key="remove-unused-sections" value="false"/>
-        <property key="report-memory-usage" value="false"/>
+        <property key="report-memory-usage" value="true"/>
         <property key="serial-length" value=""/>
         <property key="serial-origin" value=""/>
         <property key="stack-size" value=""/>
