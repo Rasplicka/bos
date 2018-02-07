@@ -3,6 +3,7 @@
 
 extern int allocStack(int, int*);
 extern void clearProcTable();
+extern void setSrsValue();
 
 extern void doEvents();
 extern void startEvents();
@@ -60,10 +61,8 @@ extern void pwm_soft_linear_up();
 extern void pwm_soft_linear_down();
 extern void pwm_soft_exp();
 
-extern void setSrsValue();
-extern void setSrsValue2(); //char*);
-extern void setInterrupt();
-extern void enableInterrupt();
+//extern void setInterrupt();
+//extern void enableInterrupt();
 
 extern void iVector_timer1();
 extern void iVector_usb();

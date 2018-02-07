@@ -204,6 +204,58 @@ allocStack:
 .end allocStack    
 //</editor-fold>    
     
+//<editor-fold defaultstate="collapsed" desc="setSrsValue">         
+    
+.align 2    
+.global setSrsValue    
+.ent setSrsValue 
+setSrsValue:
+    
+    //nastavi sp pro SRS[0] na TOP stack_area, tj docasny zasobnik pro inicializaci OS
+    //nastavi SP (a GP) pro SRS[1-7], zasobniky jsou vyhrazeny na adrese stack_area,
+    //velikost kazdeho je definovana SRS_STACK_SIZE (smerem nahoru)
+    //nasleduji zasobniky pro jednotlive procesy 
+    //celkova velikost oblasti pro zasobniky je v STACK_SIZE
+    
+    //sp SRS[0], docasny zasobnik
+    la	    v0, stack_area
+    li	    v1, STACK_SIZE
+    addu    sp, v0, v1    
+    
+    //zjisti pocet SRS 
+    mfc0    v0, _CP0_SRSCTL
+    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
+    
+    move    v1, zero			//SRS index
+    la	    t8, stack_area
+    li	    t7, SRS_STACK_SIZE
+
+1:    
+    addiu   v1, 1			//SRS index++
+    
+    //nastav previous SRS=v1
+    mfc0    t9, _CP0_SRSCTL
+    ins	    t9, v1, 6, 4
+    mtc0    t9, _CP0_SRSCTL
+    ehb
+    
+    //zapis gp
+    wrpgpr  gp, gp
+    
+    //zapis sp (dolni cast stack_area je vyhrazena pro zasobnik SRS[1])
+    addu    t8, t7			//horni hranice stacku
+    wrpgpr  sp, t8
+    
+    bne	    v1, v0, 1b			//skok, existuje dalsi SRS
+    nop
+    
+    //konec
+    jrc	    ra
+    
+.end setSrsValue
+    
+//</editor-fold>         
+    
 //<editor-fold defaultstate="collapsed" desc="doEvents">     
 .align 2	
 .global doEvents    
@@ -217,8 +269,8 @@ doEvents:
     mtc0    zero, _CP0_COUNT 
 #endif    
     
-    la	    t9, proc_t_pos	    //zde je ulozena akt. pozice v proc_t
-    lw	    t8, (t9)		    //process table
+    //la	    t9, proc_t_pos	    //zde je ulozena akt. pozice v proc_t
+    lw	    t8, (proc_t_pos)		    //process table
     
 #ifdef ENABLE_CHECK_STACK_OVERFLOW
     //test, zda posledni (nejnizsi) word ve stacku na kontrolni hodnotu
@@ -247,24 +299,24 @@ doEvents:
     //swp	    t0, TH_T_LO*4(t8)
     //</editor-fold>
     
-    la	    v0, proc_t_max	    //proc_t_max
-    lw	    v0, (v0)		    //v0=process_max
-    bne	    v0, t8, 1f		    //skok, neni na posl. pozici proc_t
-    nop
-    
-    //je na posl.
-    nop
-    la	    t8, proc_t		    //nastav prvni polozku proc_t
-    nop
-    b16	    2f
-    nop
+    //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
+    lw	    v0, (proc_t_after)
 1:    
-    //
     addu    t8, PROC_T_ISIZE	    //dalsi polozka proc_t
+    bne	    t8, v0, 2f		    //skok, neni za proc_t
+    nop
     
+    //je za posledni polozkou, nastav prvni
+    la	    t8, proc_t		    //nastav prvni polozku proc_t
+
 2:    
+    lbu	    t9, TH_T_ID(t8)	    //load procID
+    beqz    t9, 1b		    //skok, polozka je prazdna
+    nop
+
     //t8=adresa polozky v proc_t
-    sw	    t8, (t9)		    //ulozit adresu akt. polozky proc_t
+    sw	    t8, (proc_t_pos)	    //ulozit adresu akt. polozky proc_t
+    //--------------------------------------------------------------------------
     
     //<editor-fold defaultstate="collapsed" desc="load regs"> 
     //HI/LO
@@ -303,18 +355,23 @@ startEvents:
     ehb
     
     //nastav compare
-    li	    v0, 0xFFFFF
-    mtc0    v0, _CP0_COMPARE
+    li	    k0, SAFE_PROCESS_VALUE
+    mtc0    k0, _CP0_COMPARE
     ehb
     
 #endif      
     
+    //proc_t_pos
     la	    k0, proc_t		//process table
-    la	    k1, proc_t_pos	//zde je ulozena akt. pozice v proc_t
-    sw	    k0, (k1)		//uloz prvni pozici
+    sw	    k0, (proc_t_pos)		//uloz prvni pozici
     
-    lw	    ra, TH_T_RA*4(k0)
-    lw	    sp, TH_T_SP*4(k0)
+    //proc_t_after
+    li	    k1, (PROC_T_ISIZE * PROC_T_CAPA)	    //proc_t size
+    addu    k1, k0
+    sw	    k1, (proc_t_after)
+    
+    lw32    ra, TH_T_RA*4(k0)	//load start addr
+    lw32    sp, TH_T_SP*4(k0)	//load sp
     
     jrc	    ra
     nop				//musi zde zustat
@@ -341,8 +398,8 @@ doEventsL:
     ori	    ra, 0x1			//micromips
 #endif    
     
-    la	    t9, proc_t_pos		//zde je ulozena akt. pozice v proc_t
-    lw	    t8, (t9)			//process table
+    //la	    t9, proc_t_pos		//zde je ulozena akt. pozice v proc_t
+    lw	    t8, (proc_t_pos)			//process table
     
 #ifdef ENABLE_CHECK_STACK_OVERFLOW
     //test, zda posledni (nejnizsi) word ve stacku na kontrolni hodnotu
@@ -372,6 +429,7 @@ doEventsL:
     //swp	    t0, TH_T_LO*4(t8)
     //</editor-fold>
     
+    /*
     la	    v0, proc_t_max	    //proc_t_max
     lw	    v0, (v0)		    //v0=process_max
     bne	    v0, t8, 1f		    //skok, neni na posl. pozici proc_t
@@ -390,6 +448,26 @@ doEventsL:
 2:    
     //t8=adresa polozky v proc_t
     sw	    t8, (t9)		    //ulozit adresu akt. polozky proc_t
+    */
+    
+    //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
+    lw	    v0, (proc_t_after)
+1:    
+    addu    t8, PROC_T_ISIZE	    //dalsi polozka proc_t
+    bne	    t8, v0, 2f		    //skok, neni za proc_t
+    nop
+    
+    //je za posledni polozkou, nastav prvni
+    la	    t8, proc_t		    //nastav prvni polozku proc_t
+
+2:    
+    lbu	    t9, TH_T_ID(t8)	    //load procID
+    beqz    t9, 1b		    //skok, polozka je prazdna
+    nop
+
+    //t8=adresa polozky v proc_t
+    sw	    t8, (proc_t_pos)	    //ulozit adresu akt. polozky proc_t
+    //--------------------------------------------------------------------------    
     
     //<editor-fold defaultstate="collapsed" desc="load regs"> 
     //HI/LO
@@ -413,10 +491,6 @@ doEventsL:
     //nop
     //</editor-fold>   
 
-    
-    //ori	    ra, 0x1
-    
-    //ei
     jrc	    ra
     nop
 .end doEventsL    
@@ -1782,6 +1856,8 @@ iVector_timer1:
 .global iVector_rtc   
 .ent iVector_rtc
 iVector_rtc:
+
+#ifdef RTC    
     //allarm jednou za minutu pri sec=00
     
     //nastav day_ms, podle aktualniho casu
@@ -1817,6 +1893,8 @@ iVector_rtc:
     
     eret
     nop
+
+#endif    
     
 .end iVector_rtc
     
@@ -2061,9 +2139,9 @@ iVector_adc:
 iVector0:
     
     //aktualni proces trva prilis dlouho, neprovedl doEvents
-    nop
-    b	    general_exception
-    nop
+    li	    a0, ERROR_CPU_TIMER
+    la	    v0, processGeneralException
+    jr	    v0
     
 .end iVector0  
     
@@ -2072,7 +2150,8 @@ iVector0:
     
 //<editor-fold defaultstate="collapsed" desc="Interrupt MM">         
    
-//<editor-fold defaultstate="collapsed" desc="setSrsValue">         
+//<editor-fold defaultstate="collapsed" desc="setSrsValue - stara verze">   
+    /*
 .align 2    
 .global setSrsValue    
 .ent setSrsValue 
@@ -2100,81 +2179,12 @@ setSrsValue:
     jrc	    ra
     
 .end setSrsValue    
+    */
 //</editor-fold>   
     
-//<editor-fold defaultstate="collapsed" desc="setSrsValue2">         
-    
-.align 2    
-.global setSrsValue2    
-.ent setSrsValue2 
-setSrsValue2:
-    
-    /*
-#ifdef PIC32MM    
-    //nastavi SP a GP pro SRS1, ktery pouziva interrupt
-    //GP kopiruje ze SRS[0]
-
-    //nastav previous SRS=1
-    li16    v0, 0x1   
-    mfc0    v1, _CP0_SRSCTL
-    ins	    v1, v0, 6, 4
-    mtc0    v1, _CP0_SRSCTL
-    ehb
-    
-    //zapis gp
-    wrpgpr  gp, gp
-    
-    //zapis sp (dolni cast stack_area je vyhrazena pro zasobnik SRS[1])
-    la	    v0, stack_area
-    li	    v1, SRS_STACK_SIZE
-    addu    v0, v1
-    wrpgpr  sp, v0
-    
-#endif  
-    
-    */
-    
-    //nastavi SP (a GP) pro SRS[1-7], zasobniky jsou vyhrazeny na adrese stack_area,
-    //velikost kazdeho je definovana SRS_STACK_SIZE (smerem nahoru)
-    //nasleduji zasobniky pro jednotlive procesy 
-    //celkova velikost oblasti pro zasobniky je v STACK_SIZE
-    
-    //zjisti pocet SRS 
-    mfc0    v0, _CP0_SRSCTL
-    ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
-    
-    move    v1, zero			//SRS index
-    la	    t8, stack_area
-    li	    t7, SRS_STACK_SIZE
-
-1:    
-    addiu   v1, 1			//SRS index++
-    
-    //nastav previous SRS=v1
-    mfc0    t9, _CP0_SRSCTL
-    ins	    t9, v1, 6, 4
-    mtc0    t9, _CP0_SRSCTL
-    ehb
-    
-    //zapis gp
-    wrpgpr  gp, gp
-    
-    //zapis sp (dolni cast stack_area je vyhrazena pro zasobnik SRS[1])
-    addu    t8, t7			//horni hranice stacku
-    wrpgpr  sp, t8
-    
-    bne	    v1, v0, 1b			//skok, existuje dalsi SRS
-    nop
-    
-    //konec
-    jrc	    ra
-    
-.end setSrsValue2
-    
-//</editor-fold>     
-    
-    
 //<editor-fold defaultstate="collapsed" desc="setInterrupt, enableInterrupt">
+    /*
+     //zruseno, viz. system_init
 .align 2    
 .global setInterrupt
 .ent setInterrupt
@@ -2197,7 +2207,9 @@ setInterrupt:
     jrc	    ra
     
 .end setInterrupt
+    */
     
+    /*
 .align 2    
 .global enableInterrupt
 .ent enableInterrupt
@@ -2207,7 +2219,8 @@ enableInterrupt:
     ei
     jrc	    ra
     
-.end enableInterrupt    
+.end enableInterrupt  
+    */
     
     
 //</editor-fold>

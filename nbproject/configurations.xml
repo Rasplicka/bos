@@ -23,22 +23,23 @@
         <itemPath>touchXpt2046.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="system" projectFiles="true">
+        <logicalFolder name="f2" displayName="core" projectFiles="true">
+          <itemPath>main.h</itemPath>
+          <itemPath>globals.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
           <itemPath>graphics_hl.h</itemPath>
           <itemPath>graphics.h</itemPath>
           <itemPath>disp16_asm.h</itemPath>
         </logicalFolder>
-        <itemPath>main.h</itemPath>
         <itemPath>asm.h</itemPath>
         <itemPath>fnc.h</itemPath>
         <itemPath>periph.h</itemPath>
-        <itemPath>globals.h</itemPath>
+        <itemPath>user_apps.h</itemPath>
       </logicalFolder>
       <itemPath>def.h</itemPath>
       <itemPath>structures.h</itemPath>
       <itemPath>asm_macro.S</itemPath>
-      <itemPath>deftype.h</itemPath>
-      <itemPath>test.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -70,17 +71,19 @@
         <itemPath>touchXpt2046.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="system" projectFiles="true">
+        <logicalFolder name="f2" displayName="core" projectFiles="true">
+          <itemPath>main.c</itemPath>
+          <itemPath>globals.c</itemPath>
+          <itemPath>fn.S</itemPath>
+        </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
           <itemPath>graphics_hl.c</itemPath>
           <itemPath>graphics.c</itemPath>
           <itemPath>disp16_asm.S</itemPath>
         </logicalFolder>
-        <itemPath>fn.S</itemPath>
-        <itemPath>main.c</itemPath>
         <itemPath>cfg_bits.c</itemPath>
         <itemPath>fnc.c</itemPath>
         <itemPath>periph.c</itemPath>
-        <itemPath>globals.c</itemPath>
         <itemPath>user_apps.c</itemPath>
       </logicalFolder>
     </logicalFolder>
@@ -103,7 +106,7 @@
         <targetDevice>PIC32MM0256GPM036</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>Simulator</platformTool>
+        <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>

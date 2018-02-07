@@ -49,11 +49,11 @@ void i2c_init()
     
     I2C1CON=0;                  //off, reset
     
-    IPC16bits.I2C1MIP=1;
+    IPC16bits.I2C1MIP=2;
     IPC16bits.I2C1MIS=0;
-    IPC16bits.I2C1SIP=1;
+    IPC16bits.I2C1SIP=2;
     IPC16bits.I2C1SIS=0;
-    IPC16bits.I2C1BCIP=1;
+    IPC16bits.I2C1BCIP=2;
     IPC16bits.I2C1BCIS=0;
     
     I2C1BRG=0xC;                //CPU 20MHz, bus 400kHz
@@ -65,11 +65,11 @@ void i2c_init()
     
     I2C2CON=0;                  //off, reset
     
-    IPC17bits.I2C2MIP=1;        //master interrupt
+    IPC17bits.I2C2MIP=2;        //master interrupt
     IPC17bits.I2C2MIS=0;
-    IPC17bits.I2C2SIP=1;        //slave interrupt
+    IPC17bits.I2C2SIP=2;        //slave interrupt
     IPC17bits.I2C2SIS=0;
-    IPC17bits.I2C2BCIP=1;       //bus interrupt
+    IPC17bits.I2C2BCIP=2;       //bus interrupt
     IPC17bits.I2C2BCIS=0;
     
     I2C2BRG=0xC;                //CPU-24MHz ... min. 0xB, CPU-8MHz ... min 0x5
@@ -81,11 +81,11 @@ void i2c_init()
     
     I2C3CON=0;                  //off, reset
     
-    IPC18bits.I2C3MIP=1;
+    IPC18bits.I2C3MIP=2;
     IPC18bits.I2C3MIS=0;
-    IPC17bits.I2C3SIP=1;
+    IPC17bits.I2C3SIP=2;
     IPC17bits.I2C3SIS=0;
-    IPC18bits.I2C3BCIP=1;
+    IPC18bits.I2C3BCIP=2;
     IPC18bits.I2C3BCIS=0;
     
     I2C3BRG=0xC;              //CPU 20MHz, bus 400kHz

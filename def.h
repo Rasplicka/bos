@@ -9,7 +9,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="System">
-#define     SIMULATOR
+//#define     SIMULATOR
 
 #define		RAM_BASE            0x80000000
 
@@ -26,8 +26,10 @@
 #define     STACK_SIZE          3*1024
 #endif
 
-//#define	  STACK_COUNT	    16                    //max. pocet zasobniku (pocet polozek v stack_table)
-//#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+
+#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+#define     SAFE_PROCESS_VALUE  0xFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
+
 #define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception
 #define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
@@ -36,6 +38,8 @@
 #define     TIMER1_INTERVAL 10                      //interval ms
 
 // </editor-fold>
+
+#define     ERROR_CPU_TIMER         1
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 #define             USE_GRAPHICS                    //pouzije graphics

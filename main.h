@@ -1,9 +1,11 @@
 #include "def.h"
 
 void main();
+void processGeneralException(int);
 
-char reg_process(int* start_addr, int size);
+int reg_process(int* start_addr, int size);
 static char getFreeProcessID();
+static int* getEmptyProcessTableItem();
 static void system_init();
 static void setClock(); 
 static inline void cpuTimer_init();

@@ -43,7 +43,7 @@ timer1_init:
     //povoli RTC modul, nastavi 1/1/2001
     //nastav day_ms, podle aktualniho casu
 
-    jal	    rtc_init
+    //jal	    rtc_init	    //nastavit interrupt priority > 1
     nop
 
 #endif     
@@ -56,8 +56,8 @@ timer1_init:
     
 #ifdef PIC32MM0064    //IPC/IEC/IFS
     
-    //prior 1, subprior 0
-    li	    t9, (1<<26)
+    //prior 2, subprior 0
+    li	    t9, (2<<26)
     sw	    t9, (IPC2SET) 
     
     //IFS=0, IEC=1
@@ -68,8 +68,8 @@ timer1_init:
     
 #ifdef PIC32MM0256    //IPC/IEC/IFS
     
-    //prior 1, subprior 0
-    li	    t9, (1<<12)
+    //prior 2, subprior 0
+    li	    t9, (2<<10)
     sw	    t9, (IPC4SET) 
     
     //IFS=0, IEC=1

@@ -80,11 +80,11 @@ void spi_init()
     IFS0CLR=0x00700000;
     
     //SPI1 Tx, Rx, Err, Prior:1, SubPrior:0
-    IPC5bits.SPI1TXIP = 1;                  //Tx prior
+    IPC5bits.SPI1TXIP = 2;                  //Tx prior
     IPC5bits.SPI1TXIS = 0;                  //Tx subprior
-    IPC5bits.SPI1EIP = 1;                   //Err prior
+    IPC5bits.SPI1EIP = 2;                   //Err prior
     IPC5bits.SPI1EIS = 0;                   //Err subprior
-    IPC5bits.SPI1RXIP = 1;                  //Rx prior
+    IPC5bits.SPI1RXIP = 2;                  //Rx prior
     IPC5bits.SPI1RXIS = 0;                  //Rx subprior
 #endif  
     
@@ -97,11 +97,11 @@ void spi_init()
     IFS1bits.SPI1RXIF=0;
     IFS1bits.SPI1TXIF=0;
     
-    IPC10bits.SPI1TXIP = 1;
+    IPC10bits.SPI1TXIP = 2;
     IPC10bits.SPI1TXIS = 0;
-    IPC10bits.SPI1EIP = 1;
+    IPC10bits.SPI1EIP = 2;
     IPC10bits.SPI1EIS = 0;
-    IPC10bits.SPI1RXIP = 1;
+    IPC10bits.SPI1RXIP = 2;
     IPC10bits.SPI1RXIS = 0;
 #endif
     
@@ -131,11 +131,11 @@ void spi_init()
     IFS1CLR=0x000000E0;
     
     //SPI1 Tx, Rx, Err, Prior:1, SubPrior:0
-    IPC9bits.SPI2TXIP = 1;                  //Tx prior
+    IPC9bits.SPI2TXIP = 2;                  //Tx prior
     IPC9bits.SPI2TXIS = 0;                  //Tx subprior
-    IPC9bits.SPI2EIP = 1;                   //Err prior
+    IPC9bits.SPI2EIP = 2;                   //Err prior
     IPC9bits.SPI2EIS = 0;                   //Err subprior
-    IPC9bits.SPI2RXIP = 1;                  //Rx prior
+    IPC9bits.SPI2RXIP = 2;                  //Rx prior
     IPC9bits.SPI2RXIS = 0;                  //Rx subprior
 #endif    
     
@@ -148,11 +148,11 @@ void spi_init()
     IFS1bits.SPI2RXIF=0;
     IFS1bits.SPI2TXIF=0;
     
-    IPC11bits.SPI2TXIP = 1;
+    IPC11bits.SPI2TXIP = 2;
     IPC11bits.SPI2TXIS = 0;
-    IPC11bits.SPI2EIP = 1;
+    IPC11bits.SPI2EIP = 2;
     IPC11bits.SPI2EIS = 0;
-    IPC11bits.SPI2RXIP = 1;
+    IPC11bits.SPI2RXIP = 2;
     IPC11bits.SPI2RXIS = 0;
 #endif  
     
@@ -188,11 +188,11 @@ void spi_init()
     IFS1bits.SPI3RXIF=0;
     IFS1bits.SPI3TXIF=0;
     
-    IPC12bits.SPI3TXIP = 1;
+    IPC12bits.SPI3TXIP = 2;
     IPC12bits.SPI3TXIS = 0;
-    IPC11bits.SPI3EIP = 1;
+    IPC11bits.SPI3EIP = 2;
     IPC11bits.SPI3EIS = 0;
-    IPC12bits.SPI3RXIP = 1;
+    IPC12bits.SPI3RXIP = 2;
     IPC12bits.SPI3RXIS = 0;
 #endif  
     

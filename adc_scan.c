@@ -276,7 +276,7 @@ void adcScan_init()
     AD1CON1bits.ON = 1;             //Turn on the ADC
     
 #ifdef PIC32MM0256
-    IPC8bits.AD1IP=1;
+    IPC8bits.AD1IP=2;
     IPC8bits.AD1IS=0;
     IFS1bits.AD1IF=0;
     IEC1bits.AD1IE=1;
