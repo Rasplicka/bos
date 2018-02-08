@@ -255,6 +255,43 @@ setSrsValue:
 .end setSrsValue
     
 //</editor-fold>         
+   
+//<editor-fold defaultstate="collapsed" desc="startEvents">    
+.align 2    
+.global startEvents
+.ent startEvents    
+startEvents:
+    //start, spusti prvni proces v process table
+    
+#ifdef SAFE_PROCESS    
+    //nuluj count
+    mtc0    zero, _CP0_COUNT 
+    ehb
+    
+    //nastav compare
+    li	    k0, SAFE_PROCESS_VALUE
+    mtc0    k0, _CP0_COMPARE
+    ehb
+    
+#endif      
+    
+    //proc_t_pos
+    la	    k0, proc_t				//process table
+    sw	    k0, (proc_t_pos)			//uloz prvni pozici
+    
+    //proc_t_after
+    li	    k1, (PROC_T_ISIZE * PROC_T_CAPA)	//proc_t size
+    addu    k1, k0
+    sw	    k1, (proc_t_after)
+    
+    lw32    ra, TH_T_RA*4(k0)			//load start addr
+    lw32    sp, TH_T_SP*4(k0)			//load sp
+    
+    jrc	    ra
+    nop						//musi zde zustat
+    
+.end startEvents
+//</editor-fold>        
     
 //<editor-fold defaultstate="collapsed" desc="doEvents">     
 .align 2	
@@ -269,17 +306,32 @@ doEvents:
     mtc0    zero, _CP0_COUNT 
 #endif    
     
-    //la	    t9, proc_t_pos	    //zde je ulozena akt. pozice v proc_t
     lw	    t8, (proc_t_pos)		    //process table
     
 #ifdef ENABLE_CHECK_STACK_OVERFLOW
-    //test, zda posledni (nejnizsi) word ve stacku na kontrolni hodnotu
-    //pokud ne, nastalo stack overflow
-    lw	    t6, TH_T_STACK_BASE*4(t8)	//adresa stack_base
-    lw	    t6, (t6)			//load data
+    //test, zda dno (nejnizsi word) ve stacku obsahuje kontrolni hodnotu
+    //pokud ne = stack overflow
+    lw	    t6, TH_T_STACK_BASE*4(t8)	    //adresa stack_base
+    lw	    t5, (t6)			    //load data
     li	    t7, STACK_CHECK_VALUE
-    tne	    t6, t7		    //trap
+    bne	    t5, t7, 1f			    //skok, chyba
     nop
+    
+    //test, zda neni sp <= stack_base
+    subu    t6, sp, t6
+    bgtz    t6, 2f			    //skok, ok
+    nop
+    
+1:    
+    //chyba stack overflow
+    la	    t9, (processException)   //adresa error fce
+    li	    a0, ERROR_STACK_OVERFLOW        //param (stack overflow)
+
+    
+    jrc	    t9
+    nop
+    
+2:    
     
 #endif   
     
@@ -298,6 +350,9 @@ doEvents:
     //mfhi    t1
     //swp	    t0, TH_T_LO*4(t8)
     //</editor-fold>
+    
+.global doEventsError
+doEventsError:    
     
     //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
     lw	    v0, (proc_t_after)
@@ -342,42 +397,6 @@ doEvents:
 .end doEvents    
 //</editor-fold>    
     
-//<editor-fold defaultstate="collapsed" desc="startEvents">    
-.align 2    
-.global startEvents
-.ent startEvents    
-startEvents:
-    //start, spusti prvni proces v process table
-    
-#ifdef SAFE_PROCESS    
-    //nuluj count
-    mtc0    zero, _CP0_COUNT 
-    ehb
-    
-    //nastav compare
-    li	    k0, SAFE_PROCESS_VALUE
-    mtc0    k0, _CP0_COMPARE
-    ehb
-    
-#endif      
-    
-    //proc_t_pos
-    la	    k0, proc_t		//process table
-    sw	    k0, (proc_t_pos)		//uloz prvni pozici
-    
-    //proc_t_after
-    li	    k1, (PROC_T_ISIZE * PROC_T_CAPA)	    //proc_t size
-    addu    k1, k0
-    sw	    k1, (proc_t_after)
-    
-    lw32    ra, TH_T_RA*4(k0)	//load start addr
-    lw32    sp, TH_T_SP*4(k0)	//load sp
-    
-    jrc	    ra
-    nop				//musi zde zustat
-.end startEvents
-//</editor-fold>    
-    
 //<editor-fold defaultstate="collapsed" desc="doEventsL">     
 .align 2    
 .global doEventsL    
@@ -391,25 +410,38 @@ doEventsL:
     mtc0    zero, _CP0_COUNT 
 #endif      
     
-    //di
-    move    ra, a0			//a0 pouzije jako ra
+    move    ra, a0			    //a0 pouzije jako ra
     
 #ifdef MICROMIPS    
-    ori	    ra, 0x1			//micromips
+    ori	    ra, 0x1			    //micromips
 #endif    
-    
-    //la	    t9, proc_t_pos		//zde je ulozena akt. pozice v proc_t
-    lw	    t8, (proc_t_pos)			//process table
+
+    lw	    t8, (proc_t_pos)		    //process table
     
 #ifdef ENABLE_CHECK_STACK_OVERFLOW
-    //test, zda posledni (nejnizsi) word ve stacku na kontrolni hodnotu
-    //pokud ne, nastalo stack overflow
-    lw	    t6, TH_T_STACK_BASE*4(t8)
-    lw	    t6, (t6)			//load data
+    //test, zda dno (nejnizsi word) ve stacku obsahuje kontrolni hodnotu
+    //pokud ne = stack overflow
+    lw	    t6, TH_T_STACK_BASE*4(t8)	    //adresa stack_base
+    lw	    t5, (t6)			    //load data
     li	    t7, STACK_CHECK_VALUE
-    tne	    t6, t7			//trap
+    bne	    t5, t7, 1f			    //skok, chyba
     nop
     
+    //test, zda neni sp <= stack_base
+    subu    t6, sp, t6
+    bgtz    t6, 2f			    //skok, ok
+    nop
+    
+1:    
+    //chyba stack overflow
+    la	    t9, (processException)   //adresa error fce
+    li	    a0, ERROR_STACK_OVERFLOW        //param (stack overflow)
+
+    
+    jrc	    t9
+    nop
+    
+2: 
 #endif      
     
     //<editor-fold defaultstate="collapsed" desc="save regs">
@@ -428,27 +460,6 @@ doEventsL:
     //mfhi    t1
     //swp	    t0, TH_T_LO*4(t8)
     //</editor-fold>
-    
-    /*
-    la	    v0, proc_t_max	    //proc_t_max
-    lw	    v0, (v0)		    //v0=process_max
-    bne	    v0, t8, 1f		    //skok, neni na posl. pozici proc_t
-    nop
-    
-    //je na posl.
-    nop
-    la	    t8, proc_t		    //nastav prvni polozku proc_t
-    nop
-    b16	    2f
-    nop
-1:    
-    //
-    addu    t8, PROC_T_ISIZE	    //dalsi polozka proc_t
-    
-2:    
-    //t8=adresa polozky v proc_t
-    sw	    t8, (t9)		    //ulozit adresu akt. polozky proc_t
-    */
     
     //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
     lw	    v0, (proc_t_after)
@@ -485,10 +496,6 @@ doEventsL:
     lwp     gp, TH_T_GP*4(t8)	    //gp, sp
     lwp     fp, TH_T_FP*4(t8)	    //fp, ra
     
-    //nop
-    //nop
-    //nop
-    //nop
     //</editor-fold>   
 
     jrc	    ra
@@ -2138,10 +2145,35 @@ iVector_adc:
 .ent iVector0
 iVector0:
     
+    //CPU timer interrupt, interrupt level 1, pouziva SRS[0]
     //aktualni proces trva prilis dlouho, neprovedl doEvents
+    
+    //COUNT a COMPARE necha bez zmeny
+
+    
+#if defined PIC32MM0256    
+    #define	    IFS_BIT	    0			//bit v IFS registru
+    #define	    IFS_REG_CLR	    IFS0CLR		//IFS CLR register
+#elif defined PIC32MM0064
+    #define	    IFS_BIT	    0
+    #define	    IFS_REG_CLR	    IFS0CLR     
+#elif defined PIC32MZ
+    //...
+#endif    
+    
+    //nuluj flag
+    li16    v0, (1 << IFS_BIT)	    
+    sw	    v0, (IFS_REG_CLR)
+    
+    //param pro fci processException
     li	    a0, ERROR_CPU_TIMER
-    la	    v0, processGeneralException
-    jr	    v0
+    
+    //EPC=processException (ERET do teto fce)
+    la	    v0, processException
+    mtc0    v0, _CP0_EPC
+    ehb
+    
+    eret
     
 .end iVector0  
     
@@ -2526,6 +2558,17 @@ _general_exception_handler:
 general_exception:
  
     
+    //param pro fci processGeneralException
+    li	    a0, ERROR_GENERAL_EXCEPTION
+    
+    //EPC=processException (ERET do teto fce)
+    la	    v0, processException
+    mtc0    v0, _CP0_EPC
+    ehb
+    
+    eret
+    
+    /*
 #ifdef ENABLE_APP_RESTART_ON_ERROR    
     
     //provede nove spusteni procesu (v dalsim loop)
@@ -2554,10 +2597,12 @@ general_exception:
     b16	    1b
     nop
     
-#endif    
+#endif 
+    */
    
 .end _general_exception_handler  
     
 //</editor-fold>
+  
  
    

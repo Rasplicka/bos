@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include "globals.h"
 
+const APP_START_PARAM defaultAppStartParam = { ERROR_RESET_PROCESS, ERROR_RESET_PROCESS, SAFE_PROCESS_VALUE };
+
+
+
 #ifdef USE_SYSTEMFONT_ARIAL 
     #include "font_arial.h"
     IMAGE_SRC fontSys;

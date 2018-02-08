@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c adc_scan.c usb_device_mm.c ubtn2.S touchXpt2046.c main.c graphics_hl.c graphics.c disp16_asm.S cfg_bits.c fnc.c periph.c user_apps.c globals.c fn.S
+SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c adc_scan.c usb_device_mm.c ubtn2.S touchXpt2046.c main.c globals.c fn.S graphics_hl.c graphics.c disp16_asm.S cfg_bits.c fnc.c periph.c user_apps.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/adc_scan.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/main.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/fn.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/test.o.d ${OBJECTDIR}/disp9341.o.d ${OBJECTDIR}/disp1306.o.d ${OBJECTDIR}/adc_scan.o.d ${OBJECTDIR}/usb_device_mm.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/touchXpt2046.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/graphics_hl.o.d ${OBJECTDIR}/graphics.o.d ${OBJECTDIR}/disp16_asm.o.d ${OBJECTDIR}/cfg_bits.o.d ${OBJECTDIR}/fnc.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/user_apps.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/fn.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/adc_scan.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/test.o.d ${OBJECTDIR}/disp9341.o.d ${OBJECTDIR}/disp1306.o.d ${OBJECTDIR}/adc_scan.o.d ${OBJECTDIR}/usb_device_mm.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/touchXpt2046.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/fn.o.d ${OBJECTDIR}/graphics_hl.o.d ${OBJECTDIR}/graphics.o.d ${OBJECTDIR}/disp16_asm.o.d ${OBJECTDIR}/cfg_bits.o.d ${OBJECTDIR}/fnc.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/user_apps.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/adc_scan.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/main.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/fn.o
+OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/test.o ${OBJECTDIR}/disp9341.o ${OBJECTDIR}/disp1306.o ${OBJECTDIR}/adc_scan.o ${OBJECTDIR}/usb_device_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/touchXpt2046.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/graphics_hl.o ${OBJECTDIR}/graphics.o ${OBJECTDIR}/disp16_asm.o ${OBJECTDIR}/cfg_bits.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o
 
 # Source Files
-SOURCEFILES=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c adc_scan.c usb_device_mm.c ubtn2.S touchXpt2046.c main.c graphics_hl.c graphics.c disp16_asm.S cfg_bits.c fnc.c periph.c user_apps.c globals.c fn.S
+SOURCEFILES=asm_macro.S app1.c app2.c app3.c spi.c rtc.S timer1.S pwm.c i2c.c portWriter.c test.c disp9341.c disp1306.c adc_scan.c usb_device_mm.c ubtn2.S touchXpt2046.c main.c globals.c fn.S graphics_hl.c graphics.c disp16_asm.S cfg_bits.c fnc.c periph.c user_apps.c
 
 
 CFLAGS=
@@ -128,19 +128,19 @@ ${OBJECTDIR}/ubtn2.o: ubtn2.S  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/ubtn2.o.ok ${OBJECTDIR}/ubtn2.o.err 
 	@${FIXDEPS} "${OBJECTDIR}/ubtn2.o.d" "${OBJECTDIR}/ubtn2.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG -DICD3PlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ubtn2.o.d"  -o ${OBJECTDIR}/ubtn2.o ubtn2.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/ubtn2.o.asm.d",--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1,--defsym=ICD3PlatformTool=1
 	
-${OBJECTDIR}/disp16_asm.o: disp16_asm.S  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/disp16_asm.o.d 
-	@${RM} ${OBJECTDIR}/disp16_asm.o 
-	@${RM} ${OBJECTDIR}/disp16_asm.o.ok ${OBJECTDIR}/disp16_asm.o.err 
-	@${FIXDEPS} "${OBJECTDIR}/disp16_asm.o.d" "${OBJECTDIR}/disp16_asm.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG -DICD3PlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/disp16_asm.o.d"  -o ${OBJECTDIR}/disp16_asm.o disp16_asm.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/disp16_asm.o.asm.d",--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1,--defsym=ICD3PlatformTool=1
-	
 ${OBJECTDIR}/fn.o: fn.S  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/fn.o.d 
 	@${RM} ${OBJECTDIR}/fn.o 
 	@${RM} ${OBJECTDIR}/fn.o.ok ${OBJECTDIR}/fn.o.err 
 	@${FIXDEPS} "${OBJECTDIR}/fn.o.d" "${OBJECTDIR}/fn.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG -DICD3PlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/fn.o.d"  -o ${OBJECTDIR}/fn.o fn.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/fn.o.asm.d",--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1,--defsym=ICD3PlatformTool=1
+	
+${OBJECTDIR}/disp16_asm.o: disp16_asm.S  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/disp16_asm.o.d 
+	@${RM} ${OBJECTDIR}/disp16_asm.o 
+	@${RM} ${OBJECTDIR}/disp16_asm.o.ok ${OBJECTDIR}/disp16_asm.o.err 
+	@${FIXDEPS} "${OBJECTDIR}/disp16_asm.o.d" "${OBJECTDIR}/disp16_asm.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG -DICD3PlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/disp16_asm.o.d"  -o ${OBJECTDIR}/disp16_asm.o disp16_asm.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/disp16_asm.o.asm.d",--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1,--defsym=ICD3PlatformTool=1
 	
 else
 ${OBJECTDIR}/asm_macro.o: asm_macro.S  nbproject/Makefile-${CND_CONF}.mk
@@ -171,19 +171,19 @@ ${OBJECTDIR}/ubtn2.o: ubtn2.S  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/ubtn2.o.ok ${OBJECTDIR}/ubtn2.o.err 
 	@${FIXDEPS} "${OBJECTDIR}/ubtn2.o.d" "${OBJECTDIR}/ubtn2.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ubtn2.o.d"  -o ${OBJECTDIR}/ubtn2.o ubtn2.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/ubtn2.o.asm.d",--gdwarf-2
 	
-${OBJECTDIR}/disp16_asm.o: disp16_asm.S  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/disp16_asm.o.d 
-	@${RM} ${OBJECTDIR}/disp16_asm.o 
-	@${RM} ${OBJECTDIR}/disp16_asm.o.ok ${OBJECTDIR}/disp16_asm.o.err 
-	@${FIXDEPS} "${OBJECTDIR}/disp16_asm.o.d" "${OBJECTDIR}/disp16_asm.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/disp16_asm.o.d"  -o ${OBJECTDIR}/disp16_asm.o disp16_asm.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/disp16_asm.o.asm.d",--gdwarf-2
-	
 ${OBJECTDIR}/fn.o: fn.S  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/fn.o.d 
 	@${RM} ${OBJECTDIR}/fn.o 
 	@${RM} ${OBJECTDIR}/fn.o.ok ${OBJECTDIR}/fn.o.err 
 	@${FIXDEPS} "${OBJECTDIR}/fn.o.d" "${OBJECTDIR}/fn.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/fn.o.d"  -o ${OBJECTDIR}/fn.o fn.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/fn.o.asm.d",--gdwarf-2
+	
+${OBJECTDIR}/disp16_asm.o: disp16_asm.S  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/disp16_asm.o.d 
+	@${RM} ${OBJECTDIR}/disp16_asm.o 
+	@${RM} ${OBJECTDIR}/disp16_asm.o.ok ${OBJECTDIR}/disp16_asm.o.err 
+	@${FIXDEPS} "${OBJECTDIR}/disp16_asm.o.d" "${OBJECTDIR}/disp16_asm.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/disp16_asm.o.d"  -o ${OBJECTDIR}/disp16_asm.o disp16_asm.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/disp16_asm.o.asm.d",--gdwarf-2
 	
 endif
 
@@ -274,6 +274,12 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/main.o 
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/globals.o: globals.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/globals.o.d 
+	@${RM} ${OBJECTDIR}/globals.o 
+	@${FIXDEPS} "${OBJECTDIR}/globals.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/globals.o.d" -o ${OBJECTDIR}/globals.o globals.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 ${OBJECTDIR}/graphics_hl.o: graphics_hl.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/graphics_hl.o.d 
@@ -309,12 +315,6 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o.d 
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/globals.o: globals.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/globals.o.d 
-	@${RM} ${OBJECTDIR}/globals.o 
-	@${FIXDEPS} "${OBJECTDIR}/globals.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/globals.o.d" -o ${OBJECTDIR}/globals.o globals.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 else
 ${OBJECTDIR}/app1.o: app1.c  nbproject/Makefile-${CND_CONF}.mk
@@ -401,6 +401,12 @@ ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/main.o 
 	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/globals.o: globals.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/globals.o.d 
+	@${RM} ${OBJECTDIR}/globals.o 
+	@${FIXDEPS} "${OBJECTDIR}/globals.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/globals.o.d" -o ${OBJECTDIR}/globals.o globals.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 ${OBJECTDIR}/graphics_hl.o: graphics_hl.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/graphics_hl.o.d 
@@ -436,12 +442,6 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o.d 
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/globals.o: globals.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/globals.o.d 
-	@${RM} ${OBJECTDIR}/globals.o 
-	@${FIXDEPS} "${OBJECTDIR}/globals.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/globals.o.d" -o ${OBJECTDIR}/globals.o globals.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

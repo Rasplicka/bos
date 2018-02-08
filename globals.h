@@ -5,5 +5,7 @@
 #include "def.h"
 #include "structures.h"
 
+const APP_START_PARAM defaultAppStartParam;
+
 void globalsBeforeProcess();
 void globalsAfterProcess();

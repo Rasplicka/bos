@@ -429,6 +429,30 @@ void draw()
 
 static void blick1()
 {
+    int x=0;
+    while(x<500)
+    {
+        //do LATxINV zapise 1 na prislusnou pozici
+        _LED_INV_REG = _LED_INV_VAL;
+        
+        int a, b=0;
+        for(a=0; a<100000; a++)
+        {
+            b++;
+            if(a>0 && a % 1000 == 0)
+            {
+                doEvents();
+
+            }
+        }
+        //stack overflow
+        blick1();
+        x++;
+    }    
+    
+    //int* ad=0;
+    //int dat=*ad;
+    
     while(1)
     {
         //do LATxINV zapise 1 na prislusnou pozici
@@ -438,12 +462,16 @@ static void blick1()
         for(a=0; a<190000; a++)
         {
             b++;
-            if(a % 1000 == 0)
+            if(a % 10000 == 0)
             {
                 doEvents();
             }
         }
+        x++;
     }    
+    
+    
+    
 }
 
 

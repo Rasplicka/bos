@@ -28,18 +28,24 @@
 
 
 #define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
-#define     SAFE_PROCESS_VALUE  0xFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
+#define     SAFE_PROCESS_VALUE  0xFFFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 
 #define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception
 #define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
 #define     TIMER1_EVENT_CAPA       16
 #define     TIMER1_EVENT_ISIZE      12
-#define     TIMER1_INTERVAL 10                      //interval ms
+#define     TIMER1_INTERVAL         10              //interval ms
 
 // </editor-fold>
 
 #define     ERROR_CPU_TIMER         1
+#define     ERROR_GENERAL_EXCEPTION 2
+#define     ERROR_STACK_OVERFLOW    3
+
+#define     ERROR_RESET_PROCESS     1
+#define     ERROR_RESET_SYSTEM      0
+
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 #define             USE_GRAPHICS                    //pouzije graphics
@@ -74,7 +80,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
-#define     PROC_T_ISIZE    88          //velikost polozky v proc_t
+#define     PROC_T_ISIZE    92          //velikost polozky v proc_t
 #define     PROC_T_CAPA     8           //kapacita proc_t
 
 //cislovani pro pouziti v c/c++ (index word), v asm se musi vynasobit 4
@@ -101,6 +107,8 @@
 #define	    TH_T_SP			19
 #define	    TH_T_FP			20
 #define	    TH_T_RA			21
+
+#define     TH_T_COUNT      22
 
 //#define	    TH_T_LO			30
 //#define	    TH_T_HI			31

@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "globals.h"
 #include "main.h"
 #include "asm.h"
 
@@ -155,7 +154,7 @@ void main()
     // <editor-fold defaultstate="collapsed" desc="run module, apps">
 #ifdef TOUCHPAD_XPT2046_INIT    
     //modul touchpad XPT2046
-    reg_process((int*) touchXpt2046_start, 1024);
+    reg_process((int*)&touchXpt2046_start, 512, &defaultAppStartParam);///&defaultAppStartParam); //1024);
 #endif    
 
 
@@ -191,13 +190,53 @@ void main()
     }
 }
 
-void processGeneralException(int code)
+void processException(char code)
 {
+    char id=(char)proc_t_pos[TH_T_ID];
+    userAppError(id, code);
     
+    if(code==ERROR_CPU_TIMER)
+    {
+        //LongLasting error - chovani podle byte[1]b.0-3
+        int behavior=proc_t_pos[TH_T_ID] & 0x00000F00;
+        if(behavior==ERROR_RESET_PROCESS)
+        {
+            restartApp();
+        }
+        else
+        {
+            softReset();
+        }
+    }
+    else if(code==ERROR_GENERAL_EXCEPTION)
+    {
+        //General Exception - chovani podle byte[1]b.4-7
+        int behavior=proc_t_pos[TH_T_ID] & 0x0000F000;
+        if(behavior==ERROR_RESET_PROCESS)
+        {
+            restartApp();
+        }
+        else
+        {
+            softReset();
+        }      
+    }
+    else
+    {
+        //code=ERROR_STACK_OVERFLOW, stack overflow, reset
+        softReset();
+    }
 }
 
+void trap()
+{
+    //vyvola general exception (trap)
+    asm("teq    $0, $0");
+}
+
+
 //local fn
-int reg_process(int* start_addr, int stack_size)
+int reg_process(int* start_addr, int stack_size, const APP_START_PARAM* param)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)
@@ -217,16 +256,21 @@ int reg_process(int* start_addr, int stack_size)
     if(tab == NULL) { return -1; }
     
     //alokuj stack
-    int ret=allocStack(stack_size, tab);                       //nastavuje SP, START_SP a BASE_SP
+    int ret=allocStack(stack_size, tab);                            //nastavuje SP, START_SP a BASE_SP
     if(ret==0)
     {
         //ok, stack allocated, set process item at proc_t
         proc_t_count++;
         
-        tab[TH_T_ID]=id;                                        //procID
+        //proc_t[0]= byte[0]=ID, byte[1]=b0-b3 je LongLastingBehavior, b4-7 je GeneralExceptionBehavior
+        int x1 = 0 | (param->LongLastingBehavior << 8);
+        int x2 = 0 | (param->GeneralExceptionBehavior << 12);
+        tab[TH_T_ID]=((int)id | x1 | x2);                           //byte[0] = procID, byte[1]=ErrorBehavior
+        
         tab[TH_T_RA]=(int)start_addr;
         tab[TH_T_GP]=getGP();
-        tab[TH_T_START_ADDR]=(int)start_addr;                   //START_ADDR pro pripad restartu app
+        tab[TH_T_START_ADDR]=(int)start_addr;                       //START_ADDR pro pripad restartu app
+        tab[TH_T_COUNT]=param->LongLastingValue;
 
         //ok
         return id;
@@ -399,6 +443,35 @@ static void setClock()
     //trim     
     REFO1TRIMbits.ROTRIM=0;
     REFO1CONbits.ON=1;
+}
+
+static void restartApp()
+{
+    //restartuje aktualni process
+    //po chybe LongLasting, nebo GeneralException
+    //nove spusteni nastana v nasledujicim cyklu
+    
+    int x=proc_t_pos[TH_T_START_SP];
+    proc_t_pos[TH_T_SP]=x;
+    
+    x=proc_t_pos[TH_T_START_ADDR];
+    proc_t_pos[TH_T_RA]=x;
+    
+    //vynecha save_regs
+    doEventsError();
+}
+
+static void softReset()
+{
+    //software reset
+    
+    SYSKEY = 0x00000000; 
+    SYSKEY = 0xAA996655;        //write key1 to SYSKEY
+    SYSKEY = 0x556699AA;        //write key2 to SYSKEY
+    RSWRSTSET = 1;
+    volatile int* p = &RSWRST;
+    *p;
+    while(1){}    
 }
 
 #ifdef SAFE_PROCESS 

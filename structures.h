@@ -25,6 +25,26 @@ const struct
     char    _32bit;
 }BUS_MODE={0, 1, 2};
 
+//definuje chovani pri chybe
+
+/*
+const struct
+{
+    char ResetThread;
+    char ResetSystem;
+    char Ignore;
+}ON_ERROR={0, 1, 2};
+*/
+
+
+
+typedef struct
+{
+    unsigned GeneralExceptionBehavior :4;
+    unsigned LongLastingBehavior      :4;
+    unsigned int LongLastingValue;   
+}APP_START_PARAM;
+
 
 typedef struct 
 {

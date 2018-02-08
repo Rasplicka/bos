@@ -6,6 +6,7 @@ extern void clearProcTable();
 extern void setSrsValue();
 
 extern void doEvents();
+extern void doEventsError();
 extern void startEvents();
 extern void doEventsL();
 extern uint getGP();
