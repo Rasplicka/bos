@@ -69,7 +69,6 @@
                    displayName="Important Files"
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
-      <itemPath>documentation.txt</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

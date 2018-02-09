@@ -1,6 +1,4 @@
 GitHub url:https://github.com/Rasplicka/bos
-GitHub jmeno:Rasplicka
-GitHub heslo:bosbos2
 
 Zásady pro tvorení názvu
 a) Názvy souboru
