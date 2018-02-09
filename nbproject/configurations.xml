@@ -75,6 +75,7 @@
           <itemPath>main.c</itemPath>
           <itemPath>globals.c</itemPath>
           <itemPath>fn.S</itemPath>
+          <itemPath>coreFn.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
           <itemPath>graphics_hl.c</itemPath>
