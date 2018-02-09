@@ -5,11 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f3" displayName="driver" projectFiles="true">
-        <itemPath>spi.h</itemPath>
-        <itemPath>pwm.h</itemPath>
-        <itemPath>i2c.h</itemPath>
-        <itemPath>disp9341.h</itemPath>
-        <itemPath>usb_device_mm.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
         <itemPath>font1306.h</itemPath>
@@ -20,7 +15,6 @@
         <itemPath>font_arial.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="modules" projectFiles="true">
-        <itemPath>touchXpt2046.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="system" projectFiles="true">
         <logicalFolder name="f2" displayName="core" projectFiles="true">
@@ -28,9 +22,6 @@
           <itemPath>globals.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
-          <itemPath>graphics_hl.h</itemPath>
-          <itemPath>graphics.h</itemPath>
-          <itemPath>disp16_asm.h</itemPath>
         </logicalFolder>
         <itemPath>asm.h</itemPath>
         <itemPath>fnc.h</itemPath>
@@ -54,38 +45,24 @@
         <itemPath>app3.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="driver" projectFiles="true">
-        <itemPath>spi.c</itemPath>
-        <itemPath>rtc.S</itemPath>
         <itemPath>timer1.S</itemPath>
-        <itemPath>pwm.c</itemPath>
-        <itemPath>i2c.c</itemPath>
-        <itemPath>portWriter.c</itemPath>
-        <itemPath>test.c</itemPath>
-        <itemPath>disp9341.c</itemPath>
-        <itemPath>disp1306.c</itemPath>
-        <itemPath>adc_scan.c</itemPath>
-        <itemPath>usb_device_mm.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="modules" projectFiles="true">
         <itemPath>ubtn2.S</itemPath>
-        <itemPath>touchXpt2046.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="system" projectFiles="true">
         <logicalFolder name="f2" displayName="core" projectFiles="true">
           <itemPath>main.c</itemPath>
           <itemPath>globals.c</itemPath>
-          <itemPath>fn.S</itemPath>
           <itemPath>coreFn.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
-          <itemPath>graphics_hl.c</itemPath>
-          <itemPath>graphics.c</itemPath>
-          <itemPath>disp16_asm.S</itemPath>
         </logicalFolder>
         <itemPath>cfg_bits.c</itemPath>
         <itemPath>fnc.c</itemPath>
         <itemPath>periph.c</itemPath>
         <itemPath>user_apps.c</itemPath>
+        <itemPath>fn.S</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"

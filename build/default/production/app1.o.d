@@ -1,7 +1,5 @@
 build/default/production/app1.o:  \
 app1.c  \
-asm.h  \
+globals.h  \
 def.h  \
-fnc.h  \
-graphics.h  \
- timer.h 
+structures.h 

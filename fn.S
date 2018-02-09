@@ -1373,14 +1373,14 @@ iVector_rtc:
     mflo    s0			//uchova Lo
     mfhi    s1			//uchova Hi
     
-    bal	    rtc_setDayMs	//meni HiLo
+    //bal	    rtc_setDayMs	//meni HiLo
     nop
     
     mthi    s1			//obnov Hi
     mtlo    s0			//obnov Lo
     
     
-    lw	    v0, (minute_event);
+    //lw	    v0, (minute_event);
     beqz    v0, 1f		//skok, neni zadna fce minute_event
     nop
     
@@ -1474,8 +1474,8 @@ iVector_adc:
     */
     
     la	    v0, (ADC1BUF0)
-    la	    v1, (adc_values)
-    lw	    t8, (calibData)
+    //la	    v1, (adc_values)
+    //lw	    t8, (calibData)
     
 #ifdef AN0   
     lw	    t9, (v0)
@@ -1718,7 +1718,7 @@ iVector_spi2Tx:
 
     //SPI Tx
 #ifdef SPI2_INIT      
-    bal	    spi2_TxInterrupt
+    //bal	    spi2_TxInterrupt
     nop
 #endif    
     
@@ -1921,7 +1921,7 @@ iVector_i2c3Bus:
 iVector_usb:
     
 #ifdef USB_DEVICE_INIT    
-    bal	    usbDevice_interrupt
+    //bal	    usbDevice_interrupt
     nop
 #endif    
     

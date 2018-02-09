@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/production/bos.production.elf">                 
+  <executable name="dist/default/production/BOS2.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>263312</length>                 
-      <used>82736</used>                     
-      <free>180576</free>                     
+      <used>11116</used>                     
+      <free>252196</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>32768</length>                 
-      <used>11472</used>                     
-      <free>21296</free>                     
+      <used>9324</used>                     
+      <free>23444</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

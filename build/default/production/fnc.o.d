@@ -1,6 +1,6 @@
 build/default/production/fnc.o:  \
 fnc.c  \
 fnc.h  \
-asm.h  \
+globals.h  \
 def.h  \
-graphics.h 
+structures.h 

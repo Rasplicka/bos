@@ -3,9 +3,9 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include "fnc.h"
-#include "asm.h"
-#include "def.h"
-#include "graphics.h"
+#include "globals.h"
+
+
 
 void pauseEvent2(int ms)
 {

@@ -123,57 +123,17 @@ void main()
     //4. init system drivers ---------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="drivers">
 
-#if (defined SPI1_INIT || defined SPI2_INIT || defined SPI3_INIT)    
-    spi_init();
-#endif
-
-#if (defined I2C1_INIT || defined I2C2_INIT || defined I2C3_INIT)    
-    i2c_init();
-#endif    
-
-#ifdef ADC_SCAN_INIT    
-    adcScan_init();
-#endif
-
-#ifdef PWM_INIT    
-    pwm_init();
-#endif  
-
-#ifdef USB_DEVICE_INIT
-    usbDevice_init();
-#endif    
-
-    //testDriver_init();
     asm("EI");              //povoli interrupt
-    //enableInterrupt(); 
-    globalsBeforeProcess(); //inicializuje displej, touchpad, ...
     
     // </editor-fold>
 
     //5. run system modules ----------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="run module, apps">
-#ifdef TOUCHPAD_XPT2046_INIT    
-    //modul touchpad XPT2046
-    reg_process((int*)&touchXpt2046_start, 512, &defaultAppStartParam);///&defaultAppStartParam); //1024);
-#endif    
 
 
     //6. run user apps --------------------------------------------------------------
-    //To run user app, modify this section. Use reg_process(int* app_start_fn_address, int stack_size)
-    //The start fn of app, must be declared in extern section above
-    //Check the maximum number of threads, please
     userAppsStart();
-    
-    //reg_process((int*) &m1_start, 1024);
-    //reg_process((int*) &m2_start, 1024);
-    //reg_process((int*) &m3_start, 1024);
-
-    //reg_process((int*)&disp9341a_start, 1024);
-    //reg_process((int*)&disp1306a_start, 1024);
-    //reg_process((int*)&ubtn_start, 512);          //dve tlacitka A2, A3
-    //reg_process((int*)&m2, 1024);
-    //reg_process((int*)&m3, 1024);
-    
+     
     // </editor-fold>
 
     //6. start multitasking ----------------------------------------------------
