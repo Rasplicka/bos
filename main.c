@@ -101,6 +101,20 @@ void main()
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
+    
+    int p=0;
+    //sp SRS[0], docasny zasobnik
+    //$0=v0, $3=v1, $25=t9, $29=sp
+    asm("la	    $25, stack_area");      
+    asm("mfc0   $2, $12, 2");           //read _CP0_SRSCTL     
+    asm("ext	$2, $2, 26, 4");		//Number of Shadow Set (MM=1, MZ=7)
+    
+    asm("li	    $3, SRS_STACK_SIZE");
+    asm("mul	$2, $3");
+    
+    asm("addu   $29, $25, $2");
+    
+    
     setClock(); 
     // </editor-fold>
 
@@ -113,7 +127,7 @@ void main()
 
     //3. init system -----------------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="system init">
-    system_init(); //init interrupt (ale zustane DI), nastav SRS1, ...
+    system_init(); //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
     timer1_init(); //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
     periph_init(); //provede vychozi nastaveni periferii, prideluje IO piny
 
@@ -123,6 +137,8 @@ void main()
     //4. init system drivers ---------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="drivers">
 
+    //drivers
+    
     asm("EI");              //povoli interrupt
     
     // </editor-fold>

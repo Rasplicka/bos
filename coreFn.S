@@ -217,11 +217,6 @@ setSrsValue:
     //nasleduji zasobniky pro jednotlive procesy 
     //celkova velikost oblasti pro zasobniky je v STACK_SIZE
     
-    //sp SRS[0], docasny zasobnik
-    la	    v0, stack_area
-    li	    v1, STACK_SIZE
-    addu    sp, v0, v1    
-    
     //zjisti pocet SRS 
     mfc0    v0, _CP0_SRSCTL
     ext	    v0, v0, 26, 4		//Number of Shadow Set (MM=1, MZ=7)
