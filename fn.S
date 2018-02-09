@@ -1688,6 +1688,7 @@ iVector0:
 //asm_fn muze volat c_fn, ale zpracovani musi koncit ERET (tzn. mimo telo c_fn)
 //v prubehu zpracovani interruptu je STATUS.EXL=1, dalsi interrupty cekaji na dokonceni predchoziho   
 //vsechny IPL pouzivaji SRS[1], kde je nastaven SP a GP (vsechny obsluhy pouzivaji stack[512] vyhrazeny pouze pro interrupt)
+
     
 #ifdef PIC32MM    
     
