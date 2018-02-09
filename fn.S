@@ -1750,6 +1750,7 @@ iVector_spi3Tx:
     
 #endif 
     
+    
 #ifdef PIC32MM0256		    //I2C ma pouze PIC32MM0256
     
 //<editor-fold defaultstate="collapsed" desc="I2C1Slave">
