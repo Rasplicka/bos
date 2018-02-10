@@ -73,7 +73,9 @@ nebylo definováno USB_DEVICE_INIT_V2, pou?ije se soubor usb_device_mm.c (pro ?ad
 (pro ?adu MZ)
 
 
-
+- predelat timer1
+- upravit NOP
+- predelat RTC
 
 #if defined BUFSIZE && BUFSIZE >= 1024
 #if defined (MAX) && ! defined (MIN) 
