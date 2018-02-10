@@ -27,7 +27,7 @@
 void m1_start()
 {
     int x=0;
-    while(x<500)
+    while(x<10)
     {
         //do LATxINV zapise 1 na prislusnou pozici
         _LED_INV_REG = _LED_INV_VAL;
