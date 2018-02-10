@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S app1.c app2.c app3.c timer1.S ubtn2.S main.c globals.c coreFn.S fnc.c periph.c user_apps.c fn.S cfg_bits_mm.c cfg_bits_mz.c
+SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S app1.c app2.c app3.c timer1.S ubtn2.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c coreFn.S fnc.c periph.c user_apps.c fn.S
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/coreFn.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/cfg_bits_mm.o ${OBJECTDIR}/cfg_bits_mz.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/coreFn.o.d ${OBJECTDIR}/fnc.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/user_apps.o.d ${OBJECTDIR}/fn.o.d ${OBJECTDIR}/cfg_bits_mm.o.d ${OBJECTDIR}/cfg_bits_mz.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/coreFn.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/fn.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/clock_cfgBits_mm.o.d ${OBJECTDIR}/clock_cfgBits_mz.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/coreFn.o.d ${OBJECTDIR}/fnc.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/user_apps.o.d ${OBJECTDIR}/fn.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/coreFn.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/fn.o ${OBJECTDIR}/cfg_bits_mm.o ${OBJECTDIR}/cfg_bits_mz.o
+OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/coreFn.o ${OBJECTDIR}/fnc.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/fn.o
 
 # Source Files
-SOURCEFILES=asm_macro.S app1.c app2.c app3.c timer1.S ubtn2.S main.c globals.c coreFn.S fnc.c periph.c user_apps.c fn.S cfg_bits_mm.c cfg_bits_mz.c
+SOURCEFILES=asm_macro.S app1.c app2.c app3.c timer1.S ubtn2.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c coreFn.S fnc.c periph.c user_apps.c fn.S
 
 
 CFLAGS=
@@ -194,6 +194,18 @@ ${OBJECTDIR}/app3.o: app3.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/app3.o 
 	@${FIXDEPS} "${OBJECTDIR}/app3.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/app3.o.d" -o ${OBJECTDIR}/app3.o app3.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/clock_cfgBits_mm.o: clock_cfgBits_mm.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mm.o.d 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mm.o 
+	@${FIXDEPS} "${OBJECTDIR}/clock_cfgBits_mm.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/clock_cfgBits_mm.o.d" -o ${OBJECTDIR}/clock_cfgBits_mm.o clock_cfgBits_mm.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/clock_cfgBits_mz.o: clock_cfgBits_mz.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o.d 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o 
+	@${FIXDEPS} "${OBJECTDIR}/clock_cfgBits_mz.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/clock_cfgBits_mz.o.d" -o ${OBJECTDIR}/clock_cfgBits_mz.o clock_cfgBits_mz.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -224,18 +236,6 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/cfg_bits_mm.o: cfg_bits_mm.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/cfg_bits_mm.o.d 
-	@${RM} ${OBJECTDIR}/cfg_bits_mm.o 
-	@${FIXDEPS} "${OBJECTDIR}/cfg_bits_mm.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/cfg_bits_mm.o.d" -o ${OBJECTDIR}/cfg_bits_mm.o cfg_bits_mm.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/cfg_bits_mz.o: cfg_bits_mz.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/cfg_bits_mz.o.d 
-	@${RM} ${OBJECTDIR}/cfg_bits_mz.o 
-	@${FIXDEPS} "${OBJECTDIR}/cfg_bits_mz.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/cfg_bits_mz.o.d" -o ${OBJECTDIR}/cfg_bits_mz.o cfg_bits_mz.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
 else
 ${OBJECTDIR}/app1.o: app1.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -254,6 +254,18 @@ ${OBJECTDIR}/app3.o: app3.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/app3.o.d 
 	@${RM} ${OBJECTDIR}/app3.o 
 	@${FIXDEPS} "${OBJECTDIR}/app3.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/app3.o.d" -o ${OBJECTDIR}/app3.o app3.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/clock_cfgBits_mm.o: clock_cfgBits_mm.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mm.o.d 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mm.o 
+	@${FIXDEPS} "${OBJECTDIR}/clock_cfgBits_mm.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/clock_cfgBits_mm.o.d" -o ${OBJECTDIR}/clock_cfgBits_mm.o clock_cfgBits_mm.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/clock_cfgBits_mz.o: clock_cfgBits_mz.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o.d 
+	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o 
+	@${FIXDEPS} "${OBJECTDIR}/clock_cfgBits_mz.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/clock_cfgBits_mz.o.d" -o ${OBJECTDIR}/clock_cfgBits_mz.o clock_cfgBits_mz.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -284,18 +296,6 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o.d 
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/cfg_bits_mm.o: cfg_bits_mm.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/cfg_bits_mm.o.d 
-	@${RM} ${OBJECTDIR}/cfg_bits_mm.o 
-	@${FIXDEPS} "${OBJECTDIR}/cfg_bits_mm.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/cfg_bits_mm.o.d" -o ${OBJECTDIR}/cfg_bits_mm.o cfg_bits_mm.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/cfg_bits_mz.o: cfg_bits_mz.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/cfg_bits_mz.o.d 
-	@${RM} ${OBJECTDIR}/cfg_bits_mz.o 
-	@${FIXDEPS} "${OBJECTDIR}/cfg_bits_mz.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/cfg_bits_mz.o.d" -o ${OBJECTDIR}/cfg_bits_mz.o cfg_bits_mz.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

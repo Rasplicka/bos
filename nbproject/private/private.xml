@@ -5,9 +5,11 @@
         <group>
             <file>file:/E:/bos2/coreFn.S</file>
             <file>file:/E:/bos2/structures.h</file>
-            <file>file:/E:/bos2/cfg_bits.c</file>
             <file>file:/E:/bos2/main.c</file>
             <file>file:/E:/bos2/asm.h</file>
+            <file>file:/E:/bos2/clock_cfgBits_mm.c</file>
+            <file>file:/E:/bos2/main.h</file>
+            <file>file:/E:/bos2/clock_cfgBits_mz.c</file>
         </group>
     </open-files>
 </project-private>

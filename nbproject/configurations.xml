@@ -7,7 +7,6 @@
       <logicalFolder name="f3" displayName="driver" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
-        <itemPath>font1306.h</itemPath>
         <itemPath>fontConsolas.h</itemPath>
         <itemPath>font_twcen.h</itemPath>
         <itemPath>font_ygm.h</itemPath>
@@ -54,9 +53,9 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="system" projectFiles="true">
         <logicalFolder name="f2" displayName="core" projectFiles="true">
-          <logicalFolder name="f1" displayName="clock" projectFiles="true">
-            <itemPath>cfg_bits.c</itemPath>
-            <itemPath>cfg_bits_mz.c</itemPath>
+          <logicalFolder name="f1" displayName="clock_cfgBits" projectFiles="true">
+            <itemPath>clock_cfgBits_mm.c</itemPath>
+            <itemPath>clock_cfgBits_mz.c</itemPath>
           </logicalFolder>
           <itemPath>main.c</itemPath>
           <itemPath>globals.c</itemPath>
