@@ -1,15 +1,17 @@
 //fn.S
 //extern char* stack_area;
 
+extern void startupStack();
 extern int allocStack(int, int*);
 extern void clearProcTable();
 extern void setSrsValue();
-
-extern void doEvents();
-extern void doEventsError();
 extern void startEvents();
+extern void doEvents();
 extern void doEventsL();
+extern void doEventsError();
 extern uint getGP();
+
+
 extern void setStack(void*, int);
 
 extern int strLen(char*);

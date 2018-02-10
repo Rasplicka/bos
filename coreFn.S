@@ -17,6 +17,24 @@
     
 .section .asm_fn, code     
     
+//<editor-fold defaultstate="collapsed" desc="startupStack">
+.align 2
+.global startupStack
+.ent startupStack
+startupStack:
+    
+    //nastavi hodnotu sp pro startup OS (na TOP adresu stack_area)
+    
+    //sp SRS[0], docasny zasobnik
+    la	    v0, stack_area
+    li	    v1, STACK_SIZE
+    addu    sp, v0, v1 
+    
+    jrc	    ra
+    
+.end startupStack  
+//</editor-fold>
+    
 //<editor-fold defaultstate="collapsed" desc="clearProcTable">
 .align 2
 .global clearProcTable

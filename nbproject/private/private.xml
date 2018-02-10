@@ -3,7 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/bos2/BOS2.X/fn.S</file>
+            <file>file:/E:/bos2/coreFn.S</file>
+            <file>file:/E:/bos2/structures.h</file>
+            <file>file:/E:/bos2/cfg_bits.c</file>
+            <file>file:/E:/bos2/main.c</file>
+            <file>file:/E:/bos2/asm.h</file>
         </group>
     </open-files>
 </project-private>

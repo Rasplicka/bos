@@ -2,6 +2,7 @@
 #include "globals.h"
 
 
+
 void main();
 void processException(char);
 void trap();
@@ -10,7 +11,7 @@ int reg_process(int* start_addr, int stack_size, const APP_START_PARAM* param);
 static char getFreeProcessID();
 static int* getEmptyProcessTableItem();
 static void system_init();
-static void setClock(); 
+//static void setClock(); 
 static void restartApp();
 static void softReset();
 static inline void cpuTimer_init();

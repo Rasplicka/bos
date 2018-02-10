@@ -102,20 +102,8 @@ void main()
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
     
-    int p=0;
-    //sp SRS[0], docasny zasobnik
-    //$0=v0, $3=v1, $25=t9, $29=sp
-    asm("la	    $25, stack_area");      
-    asm("mfc0   $2, $12, 2");           //read _CP0_SRSCTL     
-    asm("ext	$2, $2, 26, 4");		//Number of Shadow Set (MM=1, MZ=7)
-    
-    asm("li	    $3, SRS_STACK_SIZE");
-    asm("mul	$2, $3");
-    
-    asm("addu   $29, $25, $2");
-    
-    
-    setClock(); 
+    startupStack();                         //nastavi sp pro startup OS
+    setClock(CLOCK_CFG.CLK_NORMAL);                 
     // </editor-fold>
 
     //2. set safe mode ---------------------------------------------------------
@@ -387,12 +375,19 @@ static void blick()
     
 }
 
-static void setClock()
+/*
+static void setClock(int cl)
 {
     //PIC32MM0256, nsatveni pro pouziti FRC(interni) 8MHz, pres system PLL (PLLODIV=96MHz)
     //1.Nastavi PLLMULT (f pro USB musi byt 96/2 MHz)
     //2.Nastavi REFCLK (f pro SPI, UART, apod... 48MHz) 
     //3.Nastavi SYSCLK a PBCLK (SYSCLK pro CPU, PBCLK pro preriph, 24MHz) (PLLODIV = /4)
+    
+
+    //if(cl==CLOCK.INTERNAL_FRC_24MHz)
+    {
+        
+    }
     
     //SYSKEY unlock
     SYSKEY = 0xAA996655; 
@@ -420,6 +415,7 @@ static void setClock()
     REFO1TRIMbits.ROTRIM=0;
     REFO1CONbits.ON=1;
 }
+*/
 
 static void restartApp()
 {

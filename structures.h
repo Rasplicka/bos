@@ -25,18 +25,12 @@ const struct
     char    _32bit;
 }BUS_MODE={0, 1, 2};
 
-//definuje chovani pri chybe
-
-/*
-const struct
+struct
 {
-    char ResetThread;
-    char ResetSystem;
-    char Ignore;
-}ON_ERROR={0, 1, 2};
-*/
-
-
+    char CLK_NORMAL;
+    char CLK_ALT1;              
+    char CLK_ALT2;              
+}CLOCK_CFG = { 0, 1, 2 };
 
 typedef struct
 {
