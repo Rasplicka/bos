@@ -2,9 +2,18 @@
 #include "def.h"  
 #include "asm_macro.S"
    
-
+/*
+* Author Jiri Rasplicka, 2017
+* asm helper functions for OS core
+* quck process switching
+* initialize interrupt and process stacks
+* general exception     
+*/
+    
+//!!! 2/2018 vyrazeny instrukce NOP v delay slotu, po skocich b16, beq, bne, bltz, bgtz, ...
+//compiler xc32, v1.44 je vklada automaticky, dle typu CPU   
+    
 //.set mips32    
-#define MICROMIPS  
 .set micromips     
     
 //.section os_alloc_stack_here
@@ -37,27 +46,24 @@ startupStack:
     
 //<editor-fold defaultstate="collapsed" desc="clearProcTable">
 .align 2
-.global clearProcTable
-.ent clearProcTable
-clearProcTable: 
+.global clearSystemData
+.ent clearSystemData
+clearSystemData: 
+//a0=startAddr
+//a1=size
     
-    //Tato fce nuluje obsah proc_t
+    //Tato fce nuluje obsah dat pro OS (sekce .os)
     
-    la	    t0, proc_t			//proc_t
-    li	    t1, PROC_T_CAPA
-    li	    t9, PROC_T_ISIZE
-    mul	    t1, t9
-    addu    t1, t0			//proc_t after
+    addu    a1, a0		//after
     
 1:    
-    sw32    zero, (t0)
-    addiu   t0, 4
-    bne	    t0, t1, 1b
-    nop
-    
+    sw	    zero, (a0)
+    addiu   a0, 4
+    bne	    a0, a1, 1b
+  
     jrc	    ra
     
-.end clearProcTable   
+.end clearSystemData   
 
 //</editor-fold>
  
@@ -73,9 +79,9 @@ clearProcTable:
     _BAL_FBE \st2, \af1, 1001f		//meni t9
     _BAL_FLE \af2, \st1, 1001f		//meni t9
     
-    nop
+    //nop
     b16	    \collide
-    nop
+    //nop
     
 1001:
    
@@ -138,16 +144,16 @@ allocStack:
     //pokusi se alokovat prvni cast app-stack-start 
     move    t4, t2			//testovana oblast (start) do t4
     move    t7, zero			
-    nop
+    //nop
     b16	    2f 
-    nop
+    //nop
 
 1:
     //pouzije dalsi polozku proc_t, za jejiz stack se pokusi vlozit novy stack
     
     lbu32    t9, TH_T_ID*4(t7)
     beqz    t9, 6f 			//skok, polozka neni pouzita
-    nop
+    //nop
     
     lw	    t4, TH_T_START_SP*4(t7)	//top stacku = start adresa noveho stacku
 
@@ -166,11 +172,11 @@ allocStack:
 3:  //prochazeni proc_t    
     lbu32    t9, TH_T_ID*4(t6)
     beqz    t9, 4f			//skok, prazdna polozka
-    nop
+    //nop
     beq	    t6, a1, 4f			//skok, toto je nova polozka (pro kterou se hleda stack)	    
-    nop
+    //nop
     beq	    t6, t7, 4f			//skok, za touto polozkou je test oblast (proto nemuze byt v kolizi)
-    nop
+    //nop
     lw32    v1, TH_T_START_SP*4(t6)	//stack TOP (after)
     lw32    v0, TH_T_STACK_BASE*4(t6)	//stack BOTTOM (start)
     
@@ -182,7 +188,7 @@ allocStack:
     //ok, neni v kolizi, nebo prekoceni testu
     addiu   t6, PROC_T_ISIZE
     bne	    t6, t1, 3b			//skok, dalsi polozka proc_t
-    nop
+    //nop
     
     //probehl test vsech polozek, neni zadna kolize
     //t4=start oblasti (stack BOTTOM), t5=after (stack TOP)
@@ -202,18 +208,18 @@ allocStack:
 5: 
     //dalsi polozka proc_t
     bnez    t7, 6f			//skok, pokud neprobihal test zacatku oblasti
-    nop
+    //nop
     
     //probehl test na zacatek oblasti 
     move    t7, t0
-    nop
+    //nop
     b16	    1b
-    nop
+    //nop
     
 6:     
     addiu   t7, PROC_T_ISIZE
     bne	    t7, t1, 1b 
-    nop
+    //nop
     
     //konec, nenasel volnou oblast
     li16    v0, 1			//return 1 (error)
@@ -260,7 +266,7 @@ setSrsValue:
     wrpgpr  sp, t8
     
     bne	    v1, v0, 1b			//skok, existuje dalsi SRS
-    nop
+    //nop
     
     //konec
     jrc	    ra
@@ -282,7 +288,7 @@ startEvents:
     ehb
     
     //nastav compare
-    li	    k0, SAFE_PROCESS_VALUE
+    li	    k0, SAFE_MODE_TIME_LIMIT_VALUE
     mtc0    k0, _CP0_COMPARE
     ehb
     
@@ -301,7 +307,7 @@ startEvents:
     lw32    sp, TH_T_SP*4(k0)			//load sp
     
     jrc	    ra
-    nop						//musi zde zustat
+    //nop						//musi zde zustat
     
 .end startEvents
 //</editor-fold>        
@@ -311,16 +317,17 @@ startEvents:
 .global doEvents    
 .ent doEvents    
 doEvents:
-    //prepnuti procesu
+    //prepnuti procesu (volano z processu)
     //ra obsahuje navratovou adresu
     
 #ifdef SAFE_PROCESS    
-    //nuluj count
+    //nuluj count, nastav compare 
     mtc0    zero, _CP0_COUNT 
 #endif    
     
     lw	    t8, (proc_t_pos)		    //process table
     
+    //<editor-fold defaultstate="collapsed" desc="STACK_OVERFLOW">
 #ifdef ENABLE_CHECK_STACK_OVERFLOW
     //test, zda dno (nejnizsi word) ve stacku obsahuje kontrolni hodnotu
     //pokud ne = stack overflow
@@ -333,21 +340,22 @@ doEvents:
     //test, zda neni sp <= stack_base
     subu    t6, sp, t6
     bgtz    t6, 2f			    //skok, ok
-    nop
+    //nop
     
 1:    
     //chyba stack overflow
     la	    t9, (processException)   //adresa error fce
-    li	    a0, ERROR_STACK_OVERFLOW        //param (stack overflow)
+    li	    a0, ERR_STACK_OVERFLOW        //param (stack overflow)
 
     
     jrc	    t9
-    nop
+    //nop
     
 2:    
     
-#endif   
-    
+#endif 
+    //</editor-fold>
+   
     //<editor-fold defaultstate="collapsed" desc="save regs">
     swp     v0, TH_T_V0*4(t8)	    //v0, v1
     swp     a0, TH_T_A0*4(t8)	    //a0, a1
@@ -364,15 +372,17 @@ doEvents:
     //swp	    t0, TH_T_LO*4(t8)
     //</editor-fold>
     
+//skok sem po chybe v procesu (pri restartApp), neuklada stav regs    
 .global doEventsError
 doEventsError:    
     
+    //<editor-fold defaultstate="collapsed" desc="next process">
     //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
     lw	    v0, (proc_t_after)
 1:    
     addu    t8, PROC_T_ISIZE	    //dalsi polozka proc_t
     bne	    t8, v0, 2f		    //skok, neni za proc_t
-    nop
+    //nop
     
     //je za posledni polozkou, nastav prvni
     la	    t8, proc_t		    //nastav prvni polozku proc_t
@@ -380,11 +390,18 @@ doEventsError:
 2:    
     lbu	    t9, TH_T_ID(t8)	    //load procID
     beqz    t9, 1b		    //skok, polozka je prazdna
-    nop
+    //nop
 
     //t8=adresa polozky v proc_t
     sw	    t8, (proc_t_pos)	    //ulozit adresu akt. polozky proc_t
     //--------------------------------------------------------------------------
+    //</editor-fold>
+    
+#ifdef SAFE_PROCESS    
+    //nastav compare 
+    lw32    t9, TH_T_LIMIT*4(t8)
+    mtc0    t9, _CP0_COMPARE
+#endif      
     
     //<editor-fold defaultstate="collapsed" desc="load regs"> 
     //HI/LO
@@ -406,7 +423,7 @@ doEventsError:
     //</editor-fold>   
 
     jrc	    ra
-    nop
+    //nop
 .end doEvents    
 //</editor-fold>    
     
@@ -423,14 +440,15 @@ doEventsL:
     mtc0    zero, _CP0_COUNT 
 #endif      
     
-    move    ra, a0			    //a0 pouzije jako ra
+    move    ra, a0			    //param v a0 pouzije jako ra (navratova adresa)
     
 #ifdef MICROMIPS    
-    ori	    ra, 0x1			    //micromips
+    ori	    ra, 0x1			    //micromips (licha adresa zajisti prepnuti do micromips po "jrc ra")
 #endif    
 
     lw	    t8, (proc_t_pos)		    //process table
     
+    //<editor-fold defaultstate="collapsed" desc="STACK_OVERFLOW">
 #ifdef ENABLE_CHECK_STACK_OVERFLOW
     //test, zda dno (nejnizsi word) ve stacku obsahuje kontrolni hodnotu
     //pokud ne = stack overflow
@@ -443,19 +461,20 @@ doEventsL:
     //test, zda neni sp <= stack_base
     subu    t6, sp, t6
     bgtz    t6, 2f			    //skok, ok
-    nop
+    //nop
     
 1:    
     //chyba stack overflow
     la	    t9, (processException)   //adresa error fce
-    li	    a0, ERROR_STACK_OVERFLOW        //param (stack overflow)
+    li	    a0, ERR_STACK_OVERFLOW        //param (stack overflow)
 
     
     jrc	    t9
-    nop
+    //nop
     
 2: 
-#endif      
+#endif  
+    //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="save regs">
     swp     v0, TH_T_V0*4(t8)	    //v0, v1
@@ -474,12 +493,13 @@ doEventsL:
     //swp	    t0, TH_T_LO*4(t8)
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="next process">
     //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
     lw	    v0, (proc_t_after)
 1:    
     addu    t8, PROC_T_ISIZE	    //dalsi polozka proc_t
     bne	    t8, v0, 2f		    //skok, neni za proc_t
-    nop
+    //nop
     
     //je za posledni polozkou, nastav prvni
     la	    t8, proc_t		    //nastav prvni polozku proc_t
@@ -487,11 +507,18 @@ doEventsL:
 2:    
     lbu	    t9, TH_T_ID(t8)	    //load procID
     beqz    t9, 1b		    //skok, polozka je prazdna
-    nop
+    //nop
 
     //t8=adresa polozky v proc_t
     sw	    t8, (proc_t_pos)	    //ulozit adresu akt. polozky proc_t
     //--------------------------------------------------------------------------    
+    //</editor-fold>
+    
+#ifdef SAFE_PROCESS    
+    //nastav compare 
+    lw32    t9, TH_T_LIMIT*4(t8)
+    mtc0    t9, _CP0_COMPARE
+#endif      
     
     //<editor-fold defaultstate="collapsed" desc="load regs"> 
     //HI/LO
@@ -512,7 +539,7 @@ doEventsL:
     //</editor-fold>   
 
     jrc	    ra
-    nop
+    //nop
 .end doEventsL    
 //</editor-fold>        
     
@@ -528,6 +555,192 @@ getGP:
 .end getGP    
 //</editor-fold>   
     
+    
+//<editor-fold defaultstate="collapsed" desc="defragTableW">
+    
+.align 2
+.global defragTableW
+.ent defragTableW
+defragTableW:
+//a0=adresa tabulky
+//a1=item size [bytes] (delitelne 4)
+//a2=max. pocet polozek, item cnt
+//meni t7-t9, v0, v1, a0-a2
+    
+    //tabulka musi obsahovat polozky word (velikost polozky min. 1 word, delitelna 4)
+    //posouva polozky v tabulce tak, aby mezi nimi nebyly neplatne polozky
+    //tzn. prvni nulova polozka je konec tabulky
+    //polozka musi zacinat word, ktery urcuje jeji platnost. Hodnota 0x0 = polozka je neplatna, hodnota != 0x0, polozka je platna
+    
+    
+    //a0=src
+    //t7=dest
+    move    t7, a0
+    
+1:
+    lw	    t9, (a0)		    //load src data
+    beqz    t9, 3f		    //skok, src data=0
+    //nop
+    
+    //src data neni 0
+    bne	    t7, a0, 4f		    //skok src != dest, bude presun
+    //nop
+    
+    //src=dest, zadny presun
+2:    
+    addu    t7, a1		    //dest++
+    
+3:
+    addu    a0, a1		    //src++
+    addiu   a2, -1		    //item cnt--
+    bne	    a2, zero, 1b	    //neni konec
+    //nop
+    
+    //je konec, prosel vsechny polozky
+    jrc	    ra
+    //nop
+    
+4:
+    //presun dat ze src do dest
+    move    v0, a0		    //src
+    move    v1, t7		    //dest
+    move    t8, a1		    //size bytes
+    
+5:    
+    lw	    t9, (v0)
+    sw	    t9, (v1)
+    addiu   v0, 4
+    addiu   v1, 4
+    addiu   t8, -4
+    bnez    t8, 5b		    //skok, polozka pokracuje
+    //nop
+    
+    //src[0]=0x0
+    sw	    zero, (a0)
+    //nop
+    b16	    2b
+    //nop
+    
+.end defragTableW    
+    
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="defragTableB">
+    
+.align 2
+.global defragTableB
+.ent defragTableB
+defragTableB:
+//a0=adresa tabulky
+//a1=item size [bytes] (delitelne 1)
+//a2=max. pocet polozek, item cnt
+//meni t7-t9, v0, v1, a0-a2    
+    
+    //tabulka musi obsahovat polozky word (velikost polozky min. 1 word, delitelna 4)
+    //posouva polozky v tabulce tak, aby mezi nimi nebyly neplatne polozky
+    //tzn. prvni nulova polozka je konec tabulky
+    //polozka musi zacinat word, ktery urcuje jeji platnost. Hodnota 0x0 = polozka je neplatna, hodnota != 0x0, polozka je platna
+    
+    
+    //a0=src
+    //t7=dest
+    move    t7, a0
+    
+1:
+    lbu	    t9, (a0)		    //load src data
+    beqz    t9, 3f		    //skok, src data=0
+    //nop
+    
+    //src data neni 0
+    bne	    t7, a0, 4f		    //skok src != dest, bude presun
+    //nop
+    
+    //src=dest, zadny presun
+2:    
+    addu    t7, a1		    //dest++
+    
+3:
+    addu    a0, a1		    //src++
+    addiu   a2, -1		    //item cnt--
+    bne	    a2, zero, 1b	    //neni konec
+    //nop
+    
+    //je konec, prosel vsechny polozky
+    jrc	    ra
+    //nop
+    
+4:
+    //presun dat ze src do dest
+    move    v0, a0		    //src
+    move    v1, t7		    //dest
+    move    t8, a1		    //size bytes
+    
+5:    
+    lbu	    t9, (v0)
+    sb	    t9, (v1)
+    addiu   v0, 1
+    addiu   v1, 1
+    addiu   t8, -1
+    bnez    t8, 5b		    //skok, polozka pokracuje
+    //nop
+    
+    //src[0]=0x0
+    sb	    zero, (a0)
+    //nop
+    b16	    2b
+    //nop
+    
+    
+.end defragTableB    
+    
+//</editor-fold>        
+    
+    
+//<editor-fold defaultstate="collapsed" desc="iVector0 CPU Timer">
+.align 2    
+.global iVector0
+.ent iVector0
+iVector0:
+    
+    //CPU timer interrupt, interrupt level 1, pouziva SRS[0]
+    //aktualni proces trva prilis dlouho, neprovedl doEvents
+    //COUNT a COMPARE necha bez zmeny
+
+    
+#if defined PIC32MM0256    
+    
+    #define	    IFS_BIT	    0			//bit v IFS registru
+    #define	    IFS_REG_CLR	    IFS0CLR		//IFS CLR register
+    
+#elif defined PIC32MM0064
+    
+    #define	    IFS_BIT	    0
+    #define	    IFS_REG_CLR	    IFS0CLR     
+    
+#elif defined PIC32MZ
+    
+    //...
+    
+#endif    
+    
+    //nuluj flag
+    li16    v0, (1 << IFS_BIT)	    
+    sw	    v0, (IFS_REG_CLR)
+    
+    //param pro fci processException
+    li	    a0, ERR_CODE_TIME_LIMIT_EXCEED
+    
+    //EPC=processException (ERET do teto fce)
+    la	    v0, processException
+    mtc0    v0, _CP0_EPC
+    ehb
+    
+    eret
+    
+.end iVector0  
+    
+//</editor-fold>
+    
 //<editor-fold defaultstate="collapsed" desc="general_exception">
 .align 2    
 .global _general_exception_handler    
@@ -538,9 +751,29 @@ _general_exception_handler:
 general_exception:
 
     //nastavi parameter a vola fci processException(code)
-    //param pro fci processGeneralException
-    li	    a0, ERROR_GENERAL_EXCEPTION
+    //param pro fci processException
     
+    //zjisti, zda nastal TRAP (v c/c++ volani fce trap())
+    li	    a0, ERR_CODE_TRAP
+    
+    mfc0    t9, _CP0_CAUSE		//cause.b0-4
+    ehb
+    
+#ifdef PIC32MM    
+    ext	    t9, t9, 2, 4
+#else 
+    //!!!zkontrolovat na MZ, zda trap = b0-4 (podle doc. ano)
+    //ale je divny, pro MM ma b2-5 
+    ext	    t9, t9, 0, 5
+#endif    
+    
+    li	    t8, 0x0D			//trap code=0x0D
+    beq	    t8, t9, 1f			//skok, je trap
+  
+    //neni trap
+    li	    a0, ERR_CODE_GENERAL_EXCEPTION
+    
+1:    
     //EPC=processException (ERET do teto fce)
     la	    v0, processException
     mtc0    v0, _CP0_EPC
