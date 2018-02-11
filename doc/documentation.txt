@@ -79,3 +79,8 @@ nebylo definováno USB_DEVICE_INIT_V2, pou?ije se soubor usb_device_mm.c (pro ?ad
 
 #if defined BUFSIZE && BUFSIZE >= 1024
 #if defined (MAX) && ! defined (MIN) 
+
+interrupt priority/sub/SRS-MM, SRS-MZ
+cpuTimer    1/0/0 (pouze safe mode)
+timer1      2/0/1
+RTC         2/1/1

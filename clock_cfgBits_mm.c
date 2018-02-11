@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "globals.h"
 
-// <editor-fold defaultstate="collapsed" desc="DEVCFG0 PIC32MM">
-
 #ifdef PIC32MM
 
 // PIC32MM0064GPL028 Configuration Bit Settings
@@ -63,7 +61,7 @@ void setClock(char mode)
     //FNOSC = PLL (SYSCLK a PBCLK from PLL)
     //PLLSRC = FRC (src PLL from FRC)
 
-    if(mode==0)
+    if(mode==CLOCK_CFG.CLK_NORMAL)
     {
         //default mode
         //SYSKEY unlock
@@ -92,7 +90,7 @@ void setClock(char mode)
         REFO1TRIMbits.ROTRIM=0;
         REFO1CONbits.ON=1;
     }
-    else if (mode==1)
+    else if (mode==CLOCK_CFG.CLK_ALT1)
     {
         //alt mode1
     }
@@ -104,5 +102,4 @@ void setClock(char mode)
 
 #endif
 
-// </editor-fold>
 

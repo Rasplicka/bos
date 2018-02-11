@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="f1" displayName="docs" projectFiles="true">
+      <itemPath>doc/documentation.txt</itemPath>
+      <itemPath>doc/systemTimer.txt</itemPath>
+    </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -25,8 +29,6 @@
         <logicalFolder name="f3" displayName="oscilator" projectFiles="true">
         </logicalFolder>
         <itemPath>asm.h</itemPath>
-        <itemPath>fnc.h</itemPath>
-        <itemPath>periph.h</itemPath>
         <itemPath>user_apps.h</itemPath>
       </logicalFolder>
       <itemPath>def.h</itemPath>
@@ -46,7 +48,7 @@
         <itemPath>app3.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="driver" projectFiles="true">
-        <itemPath>timer1.S</itemPath>
+        <itemPath>rtc.S</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="modules" projectFiles="true">
         <itemPath>ubtn2.S</itemPath>
@@ -60,13 +62,12 @@
           <itemPath>main.c</itemPath>
           <itemPath>globals.c</itemPath>
           <itemPath>coreFn.S</itemPath>
+          <itemPath>timer1.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
         </logicalFolder>
-        <itemPath>fnc.c</itemPath>
         <itemPath>periph.c</itemPath>
         <itemPath>user_apps.c</itemPath>
-        <itemPath>fn.S</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -280,6 +281,7 @@
         <property key="UART2" value="true"/>
         <property key="UART3" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

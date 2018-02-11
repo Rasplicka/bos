@@ -3,13 +3,18 @@
 #include <stdlib.h>
 #include "globals.h"
 
-const APP_START_PARAM defaultAppStartParam = { ERROR_RESET_PROCESS, ERROR_RESET_PROCESS, SAFE_PROCESS_VALUE };
-
+/*
+ * Author Jiri Rasplicka, 2017, (all rights reserved)
+ * Version 1.0       
+ * BOS core
+ * This file is shared to the PIC32MM, PIC32MZ
+ * 
+ */
 
 void globalsBeforeProcess()
 {
     //tato fce se vola jako inicializace systemu, tesne pred prvnim spustenim (registraci) procesu
-   
+
 }
 
 void globalsAfterProcess()

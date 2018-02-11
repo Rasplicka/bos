@@ -6,6 +6,8 @@
 //#define PIC32MM0064_28pin
 #define PIC32MM0256
 #define PIC32MM0256_36pin
+#define MICROMIPS  
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="System">
@@ -28,20 +30,21 @@
 
 
 #define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
-#define     SAFE_PROCESS_VALUE  0xFFFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
+#define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 
 #define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception
 #define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
-#define     TIMER1_EVENT_CAPA       16
-#define     TIMER1_EVENT_ISIZE      12
+#define     TIMER1_EVENT_CAPA       16              //kapacita timer1_event tabulky, tj. max. pocet spustenych systemovych casovacu
+#define     TIMER1_EVENT_ISIZE      12              //velikost jedne polozky
 #define     TIMER1_INTERVAL         10              //interval ms
 
 // </editor-fold>
 
-#define     ERROR_CPU_TIMER         1
-#define     ERROR_GENERAL_EXCEPTION 2
-#define     ERROR_STACK_OVERFLOW    3
+#define     ERR_CODE_TIME_LIMIT_EXCEED          1
+#define     ERR_CODE_GENERAL_EXCEPTION          2
+#define     ERR_CODE_TRAP                       3
+#define     ERR_STACK_OVERFLOW                  4
 
 #define     ERROR_RESET_PROCESS     1
 #define     ERROR_RESET_SYSTEM      0
@@ -108,7 +111,7 @@
 #define	    TH_T_FP			20
 #define	    TH_T_RA			21
 
-#define     TH_T_COUNT      22
+#define     TH_T_LIMIT      22
 
 //#define	    TH_T_LO			30
 //#define	    TH_T_HI			31
@@ -253,3 +256,4 @@
 
 #define     TEST_DRIVER_INIT
 #define     TEST_DRIVER_VERSION     2
+

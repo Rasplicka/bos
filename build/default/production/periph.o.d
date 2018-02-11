@@ -1,5 +1,6 @@
 build/default/production/periph.o:  \
 periph.c  \
-periph.h  \
+globals.h  \
+asm.h  \
 def.h  \
-asm.h 
+ structures.h 

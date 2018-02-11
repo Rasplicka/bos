@@ -1,21 +1,16 @@
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "main.h"
-#include "asm.h"
 
-//#include "fnc.h"
-//#include "graphics.h"                 //display modul
-//#include "disp1306a.h"
-//#include "spi.h"
-//#include "i2c.h"
-//#include "timer.h"
-//#include "pwm.h"
-//#include "usb_device_mm.h"
-//#include "test_driver_a.h"
-//#include "disp9341.h"
 
+/*
+ * Author Jiri Rasplicka, 2017, (all rights reserved)
+ * Version 1.0       
+ * BOS core (system startup)
+ * This file is shared to the PIC32MM, PIC32MZ
+ * 
+ */
 
 // <editor-fold defaultstate="collapsed" desc="extern, add user app start function here">
 //define extern functions
@@ -50,25 +45,29 @@
  * stack os modulu (protoze os moduly se spusti prvni)                  //nas interrupt stack
  * interrupt stack (jeden, nebo sedm, velikost kazdeho SRS_STACK_SIZE)  //zacatek oblasti
  */
-                            //proccee_table                 other vars + ballast
-#define     OS_DATA_SIZE    ((PROC_T_ISIZE * PROC_T_CAPA) + 64)     //velikost .os
-#define     OS_DATA_BASE    ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
+    
+#define     TIMER1_EVENT_T_SIZE (TIMER1_EVENT_CAPA * TIMER1_EVENT_ISIZE)   
+                                //proccee_table                 timer1_events         other vars + ballast
+#define     OS_DATA_SIZE        ((PROC_T_ISIZE * PROC_T_CAPA) + TIMER1_EVENT_T_SIZE + 64)     //velikost .os
+#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
 
-//process table    
+//process table (prvni polozka v sekci .os, proto definuje jeji adresu)   
 uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA] __section(".os") __at(OS_DATA_BASE);      
-//stack_list pro pouziti pri allocStack, stack pro kazdy proces je alokovan ve volne RAM
-//kazda polozka (32-bit) definuje velikost jednoho stacku
-//int stack_list[PROC_T_CAPA] __section(".os");                  
+//tabulka, kde se registruji casovace
+char timer1_events[TIMER1_EVENT_T_SIZE]__section(".os");        //timer1
 
 //.os vars 
 uint* proc_t_pos    __section(".os") = 0;
-//uint* proc_t_max    __section(".os") = 0;
 uint* proc_t_after  __section(".os") = 0;
 char proc_t_count   __section(".os") = 0;
 
+uint timer_ms __section(".os");                         //timer1
+uint day_ms __section(".os");                           //timer1
+
+
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-char ballast[52]    __section(".os");
+char ballast[44]    __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
@@ -105,21 +104,35 @@ void main()
     startupStack();                         //nastavi sp pro startup OS
     setClock(CLOCK_CFG.CLK_NORMAL);                 
     // </editor-fold>
-
+    
     //2. set safe mode ---------------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="safe mode">
 #ifdef SAFE_PROCESS    
-    cpuTimer_init();
+    cpuTimerInit();
 #endif
     // </editor-fold>
 
     //3. init system -----------------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="system init">
-    system_init(); //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
-    timer1_init(); //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
-    periph_init(); //provede vychozi nastaveni periferii, prideluje IO piny
+    
+    //nuluje celou oblast pro OS data
+    clearSystemData(OS_DATA_BASE, OS_DATA_SIZE); 
+    
+    systemInit(); //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
+    //periphInit(); //provede vychozi nastaveni periferii, prideluje IO piny
+    pinSetting();
+    timer1Init(); //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
 
-    clearProcTable(); 
+#ifdef RTC    
+    //povoli RTC modul, nastavi 1/1/2001, nastav day_ms, podle aktualniho casu
+    rtcInit();
+#endif 
+
+    //default param pro start aplikace
+    defaultAppStartParam.TimeLimitExceedBehavior=ON_ERROR.RESET_PROCESS;
+    defaultAppStartParam.GeneralExceptionBehavior=ON_ERROR.RESET_PROCESS;
+    defaultAppStartParam.TrapBehavior=ON_ERROR.RESET_PROCESS;
+    defaultAppStartParam.TimeLimitValue=SAFE_MODE_TIME_LIMIT_VALUE;
     // </editor-fold>
     
     //4. init system drivers ---------------------------------------------------
@@ -156,14 +169,15 @@ void main()
 
 void processException(char code)
 {
+    //procID b.0-7
     char id=(char)proc_t_pos[TH_T_ID];
     userAppError(id, code);
     
-    if(code==ERROR_CPU_TIMER)
+    if(code==ERR_CODE_TIME_LIMIT_EXCEED)
     {
-        //LongLasting error - chovani podle byte[1]b.0-3
-        int behavior=proc_t_pos[TH_T_ID] & 0x00000F00;
-        if(behavior==ERROR_RESET_PROCESS)
+        //LongLasting error - chovani podle b.8-9
+        int behavior=(proc_t_pos[TH_T_ID] & 0x00000300) >> 8;
+        if(behavior==ON_ERROR.RESET_PROCESS)
         {
             restartApp();
         }
@@ -172,11 +186,11 @@ void processException(char code)
             softReset();
         }
     }
-    else if(code==ERROR_GENERAL_EXCEPTION)
+    else if(code==ERR_CODE_GENERAL_EXCEPTION)
     {
-        //General Exception - chovani podle byte[1]b.4-7
-        int behavior=proc_t_pos[TH_T_ID] & 0x0000F000;
-        if(behavior==ERROR_RESET_PROCESS)
+        //General Exception - chovani podle b.10-11
+        int behavior=(proc_t_pos[TH_T_ID] & 0x00000C00) >> 10;
+        if(behavior==ON_ERROR.RESET_PROCESS)
         {
             restartApp();
         }
@@ -184,6 +198,19 @@ void processException(char code)
         {
             softReset();
         }      
+    }
+    else if(code==ERR_CODE_TRAP)
+    {
+        //TRAP instruction - chovani podle b.12-13
+        int behavior=(proc_t_pos[TH_T_ID] & 0x00003000) >> 12;        
+        if(behavior==ON_ERROR.RESET_PROCESS)
+        {
+            restartApp();
+        }
+        else
+        {
+            softReset();
+        }         
     }
     else
     {
@@ -197,7 +224,6 @@ void trap()
     //vyvola general exception (trap)
     asm("teq    $0, $0");
 }
-
 
 //local fn
 int reg_process(int* start_addr, int stack_size, const APP_START_PARAM* param)
@@ -226,15 +252,16 @@ int reg_process(int* start_addr, int stack_size, const APP_START_PARAM* param)
         //ok, stack allocated, set process item at proc_t
         proc_t_count++;
         
-        //proc_t[0]= byte[0]=ID, byte[1]=b0-b3 je LongLastingBehavior, b4-7 je GeneralExceptionBehavior
-        int x1 = 0 | (param->LongLastingBehavior << 8);
-        int x2 = 0 | (param->GeneralExceptionBehavior << 12);
-        tab[TH_T_ID]=((int)id | x1 | x2);                           //byte[0] = procID, byte[1]=ErrorBehavior
+        //proc_t[0]= byte[0]=ID, byte[1]=b0-b3 je TimeLimitExceedBehavior, b4-7 je GeneralExceptionBehavior
+        int x1 = ((param->TimeLimitExceedBehavior) << 8);
+        int x2 = ((param->GeneralExceptionBehavior) << 10);
+        int x3 = ((param->TrapBehavior) << 12);
+        tab[TH_T_ID]=((int)id | x1 | x2 | x3);                      //b.0-7 = procID, b.8-9, b.10-11, b.12-13 ErrorBehavior
         
         tab[TH_T_RA]=(int)start_addr;
         tab[TH_T_GP]=getGP();
         tab[TH_T_START_ADDR]=(int)start_addr;                       //START_ADDR pro pripad restartu app
-        tab[TH_T_COUNT]=param->LongLastingValue;
+        tab[TH_T_LIMIT]=param->TimeLimitValue;
 
         //ok
         return id;
@@ -298,7 +325,7 @@ static int* getEmptyProcessTableItem()
     return NULL;
 }
 
-static void system_init()
+static void systemInit()
 {
     //nastavuje SRS[GP+SP], Multivector, ...
     //zatim nepovoli interrupt (EI) STATUS.EI zustava 0 (interrupt disable)
@@ -448,7 +475,7 @@ static void softReset()
 
 #ifdef SAFE_PROCESS 
 
-static inline void cpuTimer_init()
+static inline void cpuTimerInit()
 {
     //Inicializuje interrupt Cpu Timer, nastavi Compare na max. hodnotu 0xFFFFFFFF 
     //je pouzit k preruseni procesu, pokud bezi dele nez je povoleno, je-li definovano SAFE_PROCESS 

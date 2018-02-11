@@ -23,9 +23,12 @@
 
 #endif
 
+static void testSystemTimer();
 
 void m1_start()
 {
+    testSystemTimer();
+    
     int x=0;
     while(x<10)
     {
@@ -68,5 +71,28 @@ void m1_start()
     }    
 }
 
-
+static void testSystemTimer()
+{
+    char x;
+    
+    while(1)
+    {
+        x=0;
+        _LED_INV_REG = _LED_INV_VAL;
+        if(systemTimerRegDelay(&x, 1000) == 0)
+        {
+            //chyba
+        }
+        
+        while(x==0) { doEvents(); }
+    
+        x=0;
+        _LED_INV_REG = _LED_INV_VAL;
+        if(systemTimerRegDelay(&x, 500) == 0)
+        {
+            //chyba
+        }
+        while(x==0) { doEvents(); }
+    }
+}
 

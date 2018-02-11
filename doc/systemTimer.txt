@@ -1,0 +1,77 @@
+Priklady pouziti system timer
+Umoznuje dve funkce
+a)generovat delay
+b)generovat interval
+
+Obe funkce, po uplynuti zvoleneho casu (ms) nastavi status byte, kterym indikuji
+aplikaci, ze nastala casova udalost.
+Delay - generuje pouze jednu udalost a po jejim vyvolani se automaticky odstrani
+Interval - generuje udalosti stale, dokud aplikace nezavola fci systemTimerUnregInterval()
+
+Adresa Status bytu je predana pri registraci udalosti z aplikace.
+Status byte by nemel byt alokovan na zasobniku, protoze zde hrozi nebezpeci, ze
+kdyby doslo k chybe v aplikaci a byla by restartovana bez predchoziho volani
+systemTimerUnregInterval(), adresa Status bytu je stale pouzivana OS k nastaveni udalosti,
+tzn. ze tuto adresu systemovy timer meni.
+
+Pouziti systemTimerRegDelay:
+-----------------------------
+//uvnitr fce by nemela byt promena status deklarovana, protoze by byla na zasobniku
+static char status;                                     //alokace mimo zasobnik
+
+static void testSystemTimerDelay()
+{
+    //fce provadi On/Off LED
+    //po uplynuti pozadovane doby system nastavi promenou status=1
+    //zaroven uvolni polozku v systemovem casovaci (aplikace nevola systemTimerUnregInterval())
+    
+    while(1)
+    {
+        setLedOn();                                     //LED on
+        status=0;                                       //nuluj status
+        if(systemTimerRegDelay(&status, 1000) == 0)    //regitrace delay (1000ms)        
+        {
+            //chyba, neni volny system timer...
+        }
+        
+        while(status==0) { doEvents(); }                //ceka na udalost (OS nastavi status=1), mezi tim umozni vykonavat ostatni procesy
+
+        setLedOff();                                    //LED off
+        status=0;                                       //nuluj status
+        if(systemTimerRegDelay(&status, 500) == 0)     //regitrace delay (500ms)
+        {
+            //chyba, neni volny system timer...
+        }
+        while(status==0) { doEvents(); }                //ceka na udalost (OS nastavi status=1), mezi tim umozni vykonavat ostatni procesy
+    }
+}
+
+Pouziti systemTimerRegInterval:
+--------------------------------
+//uvnitr fce by nemela byt promena status deklarovana, protoze by byla na zasobniku
+static char status;                                     //alokace mimo zasobnik
+
+static void testSystemTimerInterval()
+{
+    //fce provadi 10x On/Off LED
+ 
+    status=0;                                           //nuluj status
+    
+    //po registraci bude OS periodicky nastavovat status=1
+    if(systemTimerRegInterval(&status, 300) == 0)      //regitrace intervalu (300ms) 
+    {
+        //chyba, neni volny system timer...
+    }
+    
+    int x=0;
+    while(x < 20)                                      //LED blika 10x on, 10x off
+    {
+        while(status==0) { doEvents(); }                //ceka na udalost (OS nastavi status=1), mezi tim umozni vykonavat ostatni procesy
+        InvertLed();                                    //Invertuj stav LED
+        status=0;                                       //nuluj status
+        x++;    
+    }
+
+    //uvolni polozku v systemovem casovaci
+    systemTimerUnregInterval(&status);
+}

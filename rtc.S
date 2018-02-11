@@ -2,27 +2,45 @@
 #include "def.h"    
 #include "asm_macro.S"    
    
+/*
+ * Author Jiri Rasplicka, 2017, (all rights reserved)
+ * Version 1.0    
+ * RTC, used by BOS core
+ * This file is shared to the PIC32MM, PIC32MZ
+     
+//date a time se cte z RTC modulu
+//presny cas (ms 32-bit) od zacatku dne je v day_ms, kterou incrementuje timer1
+//day_ms se synchronizuje s RTC kazdou minutu (alarm interrupt)    
+//(doba spusteni OS je v timer_ms)
+
+//bcd format detail:
+//   b31       b23       b15       b7      b0
+//   des  jed  des  jed  des  jed
+//0b RRRR.RRRR-MMMM.MMMM-DDDD.DDDD-xxxx xWWW		//RTCDATE, WWW = week day
+//      0    5    1    0    2    4         1		//05/10/24 Sunday     
+     
+//0b HHHH.HHHH-MMMM.MMMM-SSSS.SSSS-xxxx xxxx		//RTCTIME
+//      1    4    3    5    0    2			//14:35:02
+ */ 
+    
 #ifdef RTC
 
-    
-//<editor-fold defaultstate="collapsed" desc="Popis">
-//date a time se cte z RTC modulu
-//presny cas (ms 32-bit) od zacatku dne je v promene day_ms, kterou incrementuje timer1
-//day_ms se synchronizuje s RTC kazdou minutu (alarm interrupt)    
-//doba spusteni OS je v timer_ms (32-bit)
-
-//bcd format
-//   des  jed  des  jed  des  jed
-//0b RRRR.RRRR-MMMM.MMMM-DDDD.DDDD-xxxx xWWW - week day
-//0b HHHH.HHHH-MMMM.MMMM-SSSS.SSSS-xxxx xxxx      
-    
-//</editor-fold>
-
 .set micromips
-.section .asm_rtc, code 
+.section .asm_rtc, code  
     
-//spolecne macro pro MM i MZ    
-
+#ifdef PIC32MM 
+    
+    #define	    WRLOCK	    0x0800		//RTCCON1.b11  
+    #define	    TIME_SYNC	    0x0004
+    #define	    ALARM_SYNC	    0x0002
+    #define	    RTCCON1_SET	    0xC3FF0000		//ALARM enable, ON, ... 
+    #define	    RTCCON1_ON	    0x00008000	    
+    #define	    RTCCON2_SET	    0x3E800001		//clock=Low Power RC oscilator (32.0kHz)  
+    
+#endif	    //MM        
+    
+//<editor-fold defaultstate="collapsed" desc="MACRO">
+    
 //<editor-fold defaultstate="collapsed" desc="_GET_HOUR_FROM_BCD">
 .macro _GET_HOUR_FROM_BCD src, dest
     ext     \dest, \src, 28, 4		//desitky
@@ -52,84 +70,7 @@
     ext     t9, \src, 8, 4		//jednotky
     addu    \dest, t9
 .endm
-//</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="_GET_Y_FROM_BCD">
-.macro _GET_Y_FROM_BCD src, dest
-    //do t0 year 2000-2099
-    ext     \dest, \src, 28, 4		    //4 bits desitky
-    li	    t9, 10
-    mul     \dest, t9              
-    ext     t9, \src, 24, 4		    //4 bits jednotky
-    addu    \dest, t9			    //dest=rok 0-99
-    
-    //load stoleti z cfg
-    //lw	    t9, (working_ffat)		    //adresa primarni ffat
-    //lw	    t9, BOOT_CENTURY_OFFSET+4(t9)   //adresa polozky century
-    //FFAT byla zmenena...
-    //lw	    t9, (date_century)
-    li	    t9, 2000			    //stoleti
-    addu    \dest, t9			    //stoleti + RR 
-.endm
-//</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="_GET_M_FROM_BCD">
-.macro _GET_M_FROM_BCD src, dest
-    //month 1-12
-    ext     \dest, \src, 20, 4	    //4 bits desitky
-    li      t9, 10
-    mul     \dest, t9
-    ext     t9, \src, 16, 4         //4 bits jednotky
-    addu    \dest, t9
-.endm
-//</editor-fold>
-     
-//<editor-fold defaultstate="collapsed" desc="_GET_D_FROM_BCD">
-.macro _GET_D_FROM_BCD src, dest    
-    //day 1-31
-    ext     \dest, \src, 12, 4	    //4 bits desitky
-    li      t9, 10
-    mul     \dest, t9
-    ext     t9, \src, 8, 4	    //4 bits jednotky
-    addu    \dest, t9
-.endm  
 //</editor-fold>    
-
-//<editor-fold defaultstate="collapsed" desc="_BIN_TO_BCD">
-.macro _BIN_TO_BCD val   
-//val=number 0-99, prevede na v cislice 0-9(b7-b4), 0-9(b3-b0)
-    move    t9, zero
-1001:
-    addiu   t8, zero, 10
-    slt	    t8, \val, t8
-    bnez    t8, 1002f			//vysledek < 10
-    nop
-    
-    //val>9
-    addiu   t9, 1			//desitky ++
-    addiu   \val, -10			//val -= 10
-    nop
-    b16	    1001b
-    nop
-
-1002:    
-    ins	    \val, t9, 4, 4
-    
-.endm 
-//</editor-fold>   
-
-    
-    
-#ifdef PIC32MM 
-    
-#define	    WRLOCK	    0x0800		//RTCCON1.b11  
-#define     TIME_SYNC	    0x0004
-#define	    ALARM_SYNC	    0x0002
-#define	    RTCCON1_SET	    0xC3FF0000		//ALARM enable, ON, ... 
-#define	    RTCCON1_ON	    0x00008000	    
-#define	    RTCCON2_SET	    0x3E800001		//clock=Low Power RC oscilator (32 kHz)  
-    
-#endif	    //MM        
     
 //<editor-fold defaultstate="collapsed" desc="_DISABLE_INT">
 .macro _DISABLE_INT
@@ -215,13 +156,16 @@
 .endm  
     
 //</editor-fold>
-
+    
+//</editor-fold>
    
-//<editor-fold defaultstate="collapsed" desc="rtc_init">
+//globals
+    
+//<editor-fold defaultstate="collapsed" desc="rtcInit">
 .align 2    
-.global rtc_init
-.ent rtc_init
-rtc_init:
+.global rtcInit
+.ent rtcInit
+rtcInit:
 //nastavi time_ms (long int) a date_century
 //vraci v0=ok, muze pokracovat, 1=chyba, nelze spustiti OS 
 
@@ -238,7 +182,7 @@ rtc_init:
     bnez    v0, 1f			//skok, RTC modul je zapnuty
     //nop
     
-//<editor-fold defaultstate="collapsed" desc="Interrupt">
+    //<editor-fold defaultstate="collapsed" desc="interrupt priority...">
 #ifdef PIC32MM0064
     //priority IPC3.b18-20
     li	    t9, (0b111 << 18)
@@ -320,104 +264,53 @@ rtc_init:
     
 1:    
     //nastav day_ms, aby byla synchronizonava s RTC
-    bal	    rtc_setDayMs
+    bal	    setDayMs
     nop
     
     _POP    ra
     jrc     ra
     
-.end rtc_init
+.end rtcInit
 //</editor-fold>
-
-//<editor-fold defaultstate="collapsed" desc="rtc_setDayMs">
-.align 2     
-//.global rtc_setDayMs    
-.ent rtc_setDayMs
-rtc_setDayMs:
-//meni a0, a1, v0, v1, (volane fce t0-t3, t8, t9)    
     
-    //RTC sec * 1000
-    //+ RTC min * 60
-    //+ RTC hod * 60
-    
-    lw      a0, (RTCTIME)
-    //src, dest
-    _GET_SEC_FROM_BCD a0, t0		//meni t9
-    _GET_MIN_FROM_BCD a0, t1		//meni t9
-    _GET_HOUR_FROM_BCD a0, t2		//meni t9
-    
-    li	    t9, 1000
-    li	    t8, 60
-    mtlo    zero
-    mthi    zero
-    
-    maddu   t0, t9	//   sec  * 1000
-    maddu   t1, t8	// + min  * 60
-    maddu   t2, t8	// + hour * 60
-    
-    mflo    v0
-    sw	    v0, (day_ms)
-    
-    jrc	    ra
-    
-.end rtc_setDayMs 
-//</editor-fold>
-  
-//<editor-fold defaultstate="collapsed" desc="rtc_getTime">
+//<editor-fold defaultstate="collapsed" desc="rtcGetTime">
 
 .align 2    
-.global rtc_getTime
-.ent rtc_getTime
-rtc_getTime:
+.global rtcGetTime
+.ent rtcGetTime
+rtcGetTime:
     
     _DATETIME_SYNC			//nemi v0, v1
     lw	    v0, (RTCTIME)
     
     jrc	    ra
     
-.end rtc_getTime 
+.end rtcGetTime 
     
 //</editor-fold>
   
-//<editor-fold defaultstate="collapsed" desc="rtc_getDate">
+//<editor-fold defaultstate="collapsed" desc="rtcGetDate">
     
 .align 2    
-.global rtc_getDate
-.ent rtc_getDate
-rtc_getDate:
+.global rtcGetDate
+.ent rtcGetDate
+rtcGetDate:
     
     _DATETIME_SYNC			//nemi v0, v1
     lw	    v0, (RTCDATE)
     
     jrc	    ra
     
-.end rtc_getDate  
+.end rtcGetDate  
     
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="rtc_getHalfSecond">
-
-.align 2
-.global rtc_getHalfSecond
-.ent rtc_getHalfSecond
-rtc_getHalfSecond:    
-    
-    //RTCSTAT.b0
-    lw	    v0, (RTCSTAT)
-    ext	    v0, v0, 0, 1
-    
-    jrc	    ra
-    
-.end rtc_getHalfSecond  
-    
-//</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="rtc_setTime">
+//<editor-fold defaultstate="collapsed" desc="rtcSetTime">
     
 .align 2
-.global rtc_setTime    
-.ent rtc_setTime
-rtc_setTime:
+.global rtcSetTime    
+.ent rtcSetTime
+rtcSetTime:
 //a0=BCD time
     
 //bcd format
@@ -447,22 +340,22 @@ rtc_setTime:
     //restore interrupt
     _RESTORE_INT			//ze zalohy t9, meni v0    
     
-    bal	    rtc_setDayMs
+    bal	    setDayMs
     nop
     
     _POP    ra
     jrc     ra
     
-.end rtc_setTime 
+.end rtcSetTime 
     
 //</editor-fold>
    
-//<editor-fold defaultstate="collapsed" desc="rtc_setDate">
+//<editor-fold defaultstate="collapsed" desc="rtcSetDate">
     
 .align 2
-.global rtc_setDate    
-.ent rtc_setDate
-rtc_setDate:
+.global rtcSetDate    
+.ent rtcSetDate
+rtcSetDate:
 //a0=BCD time
     
 //bcd format
@@ -491,11 +384,28 @@ rtc_setDate:
     
     jrc     ra
     
-.end rtc_setDate 
+.end rtcSetDate 
     
-//</editor-fold>    
+//</editor-fold>   
     
-//<editor-fold defaultstate="collapsed" desc="iVector_rtc RTC alarm">
+//<editor-fold defaultstate="collapsed" desc="rtcGetHalfSecond">
+
+.align 2
+.global rtcGetHalfSecond
+.ent rtcGetHalfSecond
+rtcGetHalfSecond:    
+    
+    //RTCSTAT.b0
+    lw	    v0, (RTCSTAT)
+    ext	    v0, v0, 0, 1
+    
+    jrc	    ra
+    
+.end rtcGetHalfSecond  
+    
+//</editor-fold>       
+    
+//<editor-fold defaultstate="collapsed" desc="iVector_rtc (RTC alarm)">
 
 .align 2    
 .global iVector_rtc   
@@ -509,7 +419,7 @@ iVector_rtc:
     mflo    s0			//uchova Lo
     mfhi    s1			//uchova Hi
     
-    bal	    rtc_setDayMs	//meni HiLo
+    bal	    setDayMs	//meni HiLo
     
     mthi    s1			//obnov Hi
     mtlo    s0			//obnov Lo
@@ -528,7 +438,54 @@ iVector_rtc:
 
 .end iVector_rtc
     
+//</editor-fold>    
+
+    
+//locals
+    
+//<editor-fold defaultstate="collapsed" desc="setDayMs">
+.align 2     
+//.global setDayMs    
+.ent setDayMs
+setDayMs:
+//meni a0, a1, v0, v1, (volane fce t0-t3, t8, t9)    
+    
+    //RTC sec * 1000
+    //+ RTC min * 60
+    //+ RTC hod * 60
+    
+    lw      a0, (RTCTIME)
+    //src, dest
+    _GET_SEC_FROM_BCD a0, t0		//meni t9
+    _GET_MIN_FROM_BCD a0, t1		//meni t9
+    _GET_HOUR_FROM_BCD a0, t2		//meni t9
+    
+    
+    //li	    t8, 60
+    
+    mtlo    t0				//Lo=sec
+    mthi    zero			//Hi=0
+    
+    //maddu   t0, t9	//   sec  * 1000
+    li	    t9, 60
+    maddu   t1, t9	//k Lo prida minute  * 60
+    
+    li	    t9, 3600
+    maddu   t2, t9	//k Lo prida hour  * 3600
+    
+    //Lo obsahuje pocet second od zacatku dne
+    li	    t9, 1000
+    mflo    t8		//t8=Lo
+    
+    mul	    t9, t8	//second * 1000
+    
+    
+    //mflo    v0
+    sw	    t9, (day_ms)
+    
+    jrc	    ra
+    
+.end setDayMs 
 //</editor-fold>
-    
-    
+
 #endif	    //RTC

@@ -32,11 +32,21 @@ struct
     char CLK_ALT2;              
 }CLOCK_CFG = { 0, 1, 2 };
 
+struct
+{
+    char RESET_SYSTEM;
+    char RESET_PROCESS;
+    
+}ON_ERROR = { 0, 1 };
+
 typedef struct
 {
-    unsigned GeneralExceptionBehavior :4;
-    unsigned LongLastingBehavior      :4;
-    unsigned int LongLastingValue;   
+    char TimeLimitExceedBehavior;           //If the process time limit exceed
+    char GeneralExceptionBehavior;          //If an general exception occurs
+    char TrapBehavior;                      //If trap() function is called
+    
+    unsigned int TimeLimitValue;            //Defines process time limit (safe mode)
+    
 }APP_START_PARAM;
 
 

@@ -23,15 +23,19 @@
 
 #endif
 
+static void testSystemTimer();
+
 void m2_start()
 {
+    testSystemTimer();
+    
     while(1)
     {
         //do LATxINV zapise 1 na prislusnou pozici
         _LED_INV_REG = _LED_INV_VAL;
         
         int a, b=0;
-        for(a=0; a<100000; a++)
+        for(a=0; a<150000; a++)
         {
             b++;
             if(a % 1000 == 0)
@@ -39,5 +43,30 @@ void m2_start()
                 doEvents();
             }
         }
+    }
+}
+
+static void testSystemTimer()
+{
+    char x;
+    
+    while(1)
+    {
+        x=0;
+        _LED_INV_REG = _LED_INV_VAL;
+        if(systemTimerRegDelay(&x, 900) == 0)
+        {
+            //chyba
+        }
+    
+        while(x==0) { doEvents(); }
+    
+        x=0;
+        _LED_INV_REG = _LED_INV_VAL;
+        if(systemTimerRegDelay(&x, 1500) == 0)
+        {
+            //chyba
+        }
+        while(x==0) { doEvents(); }
     }
 }

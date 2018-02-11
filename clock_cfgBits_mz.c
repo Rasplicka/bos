@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "globals.h"
 
-// <editor-fold defaultstate="collapsed" desc="DEVCFG0 PIC32MZ">
-
 #ifdef PIC32MZ
 /*** DEVCFG0 ***/
 
@@ -116,5 +114,4 @@ void setClock(char mode)
 
 #endif
 
-// </editor-fold>
 

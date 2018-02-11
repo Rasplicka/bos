@@ -2,6 +2,13 @@
 #include "asm_macro.S"
 #include "def.h"       
 
+ /*
+ * Author Jiri Rasplicka, 2017, (all rights reserved)
+ * Version 1.0       
+ * BOS module, input pins scan
+ * This file is shared to the PIC32MM, PIC32MZ
+ * 
+ */
     
 //<editor-fold defaultstate="collapsed" desc="popis">
     
