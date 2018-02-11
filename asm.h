@@ -16,7 +16,13 @@ extern uint compareTimerMs(uint);
 extern void pauseEvent(uint);                       //time ms
 extern void general_exception();
 
+//periph_fn.S
 extern void setPortDigOut(uint, uint);
+extern void setPortDigIn(uint, uint);
+extern void setPortAnalogIn(uint, uint);
+extern void setPortOpenDrain(uint, uint, uint);
+extern void setPortPullUp(uint, uint, uint);
+extern void setPortPullDown(uint, uint, uint);
 
 //timer1.S
 void timer1Init();

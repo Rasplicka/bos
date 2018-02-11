@@ -1,6 +1,5 @@
 #include <xc.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include "globals.h"
 
 /*
@@ -18,6 +17,7 @@ extern void m1_start();
 extern void m2_start();
 //app3
 extern void m3_start();
+
 
 void pinSetting()
 {
@@ -39,6 +39,14 @@ void pinSetting()
     LED3_BIT=BIT3;    
     
 #endif
+    
+#ifdef __32MM0256GPM048__     
+    
+#endif    
+    
+#ifdef __32MM0256GPM064__     
+    
+#endif       
     
 }
 
