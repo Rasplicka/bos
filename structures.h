@@ -36,8 +36,9 @@ struct
 {
     char RESET_SYSTEM;
     char RESET_PROCESS;
+    char REMOVE_PROCESS;
     
-}ON_ERROR = { 0, 1 };
+}ON_ERROR = { 0, 1, 2 };
 
 typedef struct
 {

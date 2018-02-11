@@ -5,7 +5,7 @@
 /*
  * Author Jiri Rasplicka, 2017, (all rights reserved)
  * Version 1.0       
- * BOS core/user apps interface
+ * BOS user apps interface
  * This file is shared to the PIC32MM, PIC32MZ
  * 
  */
@@ -77,7 +77,7 @@ void userAppsStart()
     }
 }
 
-void userAppError(char id, char code)
+void userAppError(char id, char code, uint addr)
 {
     //id=procID, code=kod chyby
     //Call OS on error, before process restart, or system restart

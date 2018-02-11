@@ -4,7 +4,7 @@
 
 //globals
 void main();
-void processException(char);
+void processException(char code, uint addr);
 void trap();
 
 //locals

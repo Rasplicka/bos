@@ -167,56 +167,51 @@ void main()
     }
 }
 
-void processException(char code)
+void processException(char code, uint addr)
 {
     //procID b.0-7
     char id=(char)proc_t_pos[TH_T_ID];
-    userAppError(id, code);
+    userAppError(id, code, addr);
     
+    int behavior;
+    
+    //zjisti pozadovanou akci
     if(code==ERR_CODE_TIME_LIMIT_EXCEED)
     {
         //LongLasting error - chovani podle b.8-9
-        int behavior=(proc_t_pos[TH_T_ID] & 0x00000300) >> 8;
-        if(behavior==ON_ERROR.RESET_PROCESS)
-        {
-            restartApp();
-        }
-        else
-        {
-            softReset();
-        }
+        behavior=(proc_t_pos[TH_T_ID] & 0x00000300) >> 8;
     }
     else if(code==ERR_CODE_GENERAL_EXCEPTION)
     {
         //General Exception - chovani podle b.10-11
-        int behavior=(proc_t_pos[TH_T_ID] & 0x00000C00) >> 10;
-        if(behavior==ON_ERROR.RESET_PROCESS)
-        {
-            restartApp();
-        }
-        else
-        {
-            softReset();
-        }      
+        behavior=(proc_t_pos[TH_T_ID] & 0x00000C00) >> 10;
     }
     else if(code==ERR_CODE_TRAP)
     {
         //TRAP instruction - chovani podle b.12-13
-        int behavior=(proc_t_pos[TH_T_ID] & 0x00003000) >> 12;        
-        if(behavior==ON_ERROR.RESET_PROCESS)
-        {
-            restartApp();
-        }
-        else
-        {
-            softReset();
-        }         
+        behavior=(proc_t_pos[TH_T_ID] & 0x00003000) >> 12;        
     }
     else
     {
         //code=ERROR_STACK_OVERFLOW, stack overflow, reset
+        behavior=ON_ERROR.RESET_SYSTEM;
+    }
+    
+    //proved akci
+    if(behavior==ON_ERROR.RESET_PROCESS)
+    {
+        removeEvents();
+        restartApp();
+    }
+    else if(behavior==ON_ERROR.REMOVE_PROCESS)
+    {
+        removeProcess(id);
+    } 
+    else
+    {
         softReset();
     }
+    
 }
 
 void trap()

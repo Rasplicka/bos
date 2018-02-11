@@ -2,7 +2,7 @@
  * Author Jiri Rasplicka, 2017
  */
 
-//coreFn.S
+//core_fn.S
 extern void startupStack();
 extern int allocStack(int, int*);
 extern void clearSystemData(uint, uint);
@@ -12,6 +12,8 @@ extern void doEvents();
 extern void doEventsL();
 extern void doEventsError();
 extern uint getGP();
+extern void removeEvents(char);
+extern void removeProcess(char);
 extern uint compareTimerMs(uint);
 extern void pauseEvent(uint);                       //time ms
 extern void general_exception();
@@ -35,7 +37,7 @@ extern void iVector_adc();
 extern void iVector_spi1Tx();
 extern void iVector_spi2Tx();
 
-#ifdef PIC32MM0256      //I2C ma pouze PIC32MM0256
+#ifdef PIC32MM0256
 extern void iVector_i2c1Slave();
 extern void iVector_i2c1Master();
 extern void iVector_i2c1Bus();

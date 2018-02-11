@@ -10,9 +10,152 @@
  * 
  */
 
-void periphInit()
+void portSet(uint base, uint bits)
 {
+    //base=bazova adresa portu (PORTA_BASE, PORTB_BASE, ...)
+    //bits=ovlinvene bity (BIT0, BIT0 | BIT1 | BIT5, ...)
+    //priklad: (nastaveni B.3 a B.7)
+    //portSet(PORTB_BASE, BIT3 | BIT7)
     
+    volatile int* p;
+    p=(int*)(base + LAT_OFFSET + SET_OFFSET);
+    *p=bits;
+}
+
+void portClear(uint base, uint bits)
+{
+    //base=bazova adresa portu (PORTA_BASE, PORTB_BASE, ...)
+    //bits=ovlinvene bity (BIT0, BIT0 | BIT1 | BIT5, ...)
+    //priklad: (nulovani B.3 a B.7)
+    //portClear(PORTB_BASE, BIT3 | BIT7)
+    
+    volatile int* p;
+    p=(int*)(base + LAT_OFFSET + CLR_OFFSET);
+    *p=bits;
+}
+
+void portInv(uint base, uint bits)
+{
+    //base=bazova adresa portu (PORTA_BASE, PORTB_BASE, ...)
+    //bits=ovlinvene bity (BIT0, BIT0 | BIT1 | BIT5, ...)
+    //priklad: (inverze B.3 a B.7)
+    //portInv(PORTB_BASE, BIT3 | BIT7)
+    
+    volatile int* p;
+    p=(int*)(base + LAT_OFFSET + INV_OFFSET);
+    *p=bits;
+}
+
+void testLedSet(int num)             //test led
+{
+    //num test led, nastavi pin=H
+    
+    volatile int* p;
+    if(num==1)
+    {
+        p=(int*)(LED1_BASE + LAT_OFFSET + SET_OFFSET);
+        *p=LED1_BIT;
+    }
+    else if(num==2)
+    {
+        p=(int*)(LED2_BASE + LAT_OFFSET + SET_OFFSET);
+        *p=LED2_BIT;
+    }
+    else if(num==3)
+    {
+        p=(int*)(LED3_BASE + LAT_OFFSET + SET_OFFSET);
+        *p=LED3_BIT;
+    }
+    else if(num==4)
+    {
+        p=(int*)(LED4_BASE + LAT_OFFSET + SET_OFFSET);
+        *p=LED4_BIT;
+    }    
+}
+
+void testLedClear(int num)             //test led
+{
+    //num test led, nastavi pin=L
+    
+    volatile int* p;
+    if(num==1)
+    {
+        p=(int*)(LED1_BASE + LAT_OFFSET + CLR_OFFSET);
+        *p=LED1_BIT;
+    }
+    else if(num==2)
+    {
+        p=(int*)(LED2_BASE + LAT_OFFSET + CLR_OFFSET);
+        *p=LED2_BIT;
+    }
+    else if(num==3)
+    {
+        p=(int*)(LED3_BASE + LAT_OFFSET + CLR_OFFSET);
+        *p=LED3_BIT;
+    }
+    else if(num==4)
+    {
+        p=(int*)(LED4_BASE + LAT_OFFSET + CLR_OFFSET);
+        *p=LED4_BIT;
+    }    
+}
+
+void testLedInv(int num)             //test led
+{
+    //num test led, invertuje pin
+    
+    volatile int* p;
+    if(num==1)
+    {
+        p=(int*)(LED1_BASE + LAT_OFFSET + INV_OFFSET);
+        *p=LED1_BIT;
+    }
+    else if(num==2)
+    {
+        p=(int*)(LED2_BASE + LAT_OFFSET + INV_OFFSET);
+        *p=LED2_BIT;
+    }
+    else if(num==3)
+    {
+        p=(int*)(LED3_BASE + LAT_OFFSET + INV_OFFSET);
+        *p=LED3_BIT;
+    }
+    else if(num==4)
+    {
+        p=(int*)(LED4_BASE + LAT_OFFSET + INV_OFFSET);
+        *p=LED4_BIT;
+    }    
+}
+
+void signalizeError(int num, int code)
+{
+    //num je test LED 1-4
+    //code je kod, ktery se zobrazuje (definuje pocet bliknuti)
+    
+    while(1)
+    {
+        int x=code;
+        
+        while(x > 0)
+        {
+            testLedSet(num);
+            pauseEvent(60);
+        
+            testLedClear(num);
+            pauseEvent(400);
+            
+            x--;
+        }
+        
+        pauseEvent(2000);
+    }
+}
+
+
+
+void periphInitX()
+{
+    //jez nepouzito, zatim ponechano pro info
 #ifdef PIC32MZ
     
     TRISH=0b1111111111111000;
@@ -189,109 +332,4 @@ void periphInit()
     
 #endif    
     
-}
-
-void testLedHigh(int num)             //test led
-{
-    //num test led, nastavi pin=H
-    
-    volatile int* p;
-    if(num==1)
-    {
-        p=(int*)(LED1_BASE + LAT_OFFSET + SET_OFFSET);
-        *p=LED1_BIT;
-    }
-    else if(num==2)
-    {
-        p=(int*)(LED2_BASE + LAT_OFFSET + SET_OFFSET);
-        *p=LED2_BIT;
-    }
-    else if(num==3)
-    {
-        p=(int*)(LED3_BASE + LAT_OFFSET + SET_OFFSET);
-        *p=LED3_BIT;
-    }
-    else if(num==4)
-    {
-        p=(int*)(LED4_BASE + LAT_OFFSET + SET_OFFSET);
-        *p=LED4_BIT;
-    }    
-}
-
-void testLedLow(int num)             //test led
-{
-    //num test led, nastavi pin=L
-    
-    volatile int* p;
-    if(num==1)
-    {
-        p=(int*)(LED1_BASE + LAT_OFFSET + CLR_OFFSET);
-        *p=LED1_BIT;
-    }
-    else if(num==2)
-    {
-        p=(int*)(LED2_BASE + LAT_OFFSET + CLR_OFFSET);
-        *p=LED2_BIT;
-    }
-    else if(num==3)
-    {
-        p=(int*)(LED3_BASE + LAT_OFFSET + CLR_OFFSET);
-        *p=LED3_BIT;
-    }
-    else if(num==4)
-    {
-        p=(int*)(LED4_BASE + LAT_OFFSET + CLR_OFFSET);
-        *p=LED4_BIT;
-    }    
-}
-
-void testLedInv(int num)             //test led
-{
-    //num test led, invertuje pin
-    
-    volatile int* p;
-    if(num==1)
-    {
-        p=(int*)(LED1_BASE + LAT_OFFSET + INV_OFFSET);
-        *p=LED1_BIT;
-    }
-    else if(num==2)
-    {
-        p=(int*)(LED2_BASE + LAT_OFFSET + INV_OFFSET);
-        *p=LED2_BIT;
-    }
-    else if(num==3)
-    {
-        p=(int*)(LED3_BASE + LAT_OFFSET + INV_OFFSET);
-        *p=LED3_BIT;
-    }
-    else if(num==4)
-    {
-        p=(int*)(LED4_BASE + LAT_OFFSET + INV_OFFSET);
-        *p=LED4_BIT;
-    }    
-}
-
-void signalizeError(int num, int code)
-{
-    //num je test LED 1-4
-    //code je kod, ktery se zobrazuje (definuje pocet bliknuti)
-    
-    while(1)
-    {
-        int x=code;
-        
-        while(x > 0)
-        {
-            testLedHigh(num);
-            pauseEvent(60);
-        
-            testLedLow(num);
-            pauseEvent(400);
-            
-            x--;
-        }
-        
-        pauseEvent(2000);
-    }
 }
