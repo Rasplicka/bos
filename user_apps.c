@@ -61,17 +61,17 @@ void userAppsStart()
     p1.TimeLimitValue = 0xFFFF;
     
     
-    if(reg_process((int*) &m1_start, 1024, &p1) < 0)
+    if(regProcess((int*) &m1_start, 1024, &p1) < 0)
     {
         //error
     }
     
-    if(reg_process((int*) &m2_start, 1024, &defaultAppStartParam) < 0)
+    if(regProcess((int*) &m2_start, 1024, &defaultAppStartParam) < 0)
     {
         //error
     }
     
-    if(reg_process((int*) &m3_start, 1024, &defaultAppStartParam) < 0) 
+    if(regProcess((int*) &m3_start, 1024, &defaultAppStartParam) < 0) 
     {
         //error
     }

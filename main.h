@@ -8,7 +8,7 @@ void processException(char code, uint addr);
 void trap();
 
 //locals
-int reg_process(int* start_addr, int stack_size, const APP_START_PARAM* param);
+int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param);
 static char getFreeProcessID();
 static int* getEmptyProcessTableItem();
 static void systemInit();

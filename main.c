@@ -221,7 +221,7 @@ void trap()
 }
 
 //local fn
-int reg_process(int* start_addr, int stack_size, const APP_START_PARAM* param)
+int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)
