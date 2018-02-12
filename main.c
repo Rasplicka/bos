@@ -200,7 +200,7 @@ void processException(char code, uint addr)
     //proved akci
     if(behavior==ON_ERROR.RESET_PROCESS)
     {
-        removeEvents();
+        removeEvents(id);
         restartApp();
     }
     else if(behavior==ON_ERROR.REMOVE_PROCESS)

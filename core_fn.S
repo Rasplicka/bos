@@ -565,6 +565,8 @@ removeEvents:
     //a0=procID
     //vyradi vsechny udalosti procesu (napr. pri retartu)
     
+    jrc	    ra
+    
 .end removeEvents 
     
 //</editor-fold>    
@@ -577,6 +579,8 @@ removeProcess:
     //a0=procID
     
     //remove events, dealloc stack
+    
+    jrc	    ra
     
 .end removeProcess 
     
