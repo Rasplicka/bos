@@ -3,23 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/bos2/globals.c</file>
-            <file>file:/E:/bos2/app1.c</file>
-            <file>file:/E:/bos2/timer1.S</file>
+            <file>file:/E:/bos2/periph.c</file>
+            <file>file:/E:/bos2/def.h</file>
+            <file>file:/E:/bos2/structures.h</file>
             <file>file:/E:/bos2/user_apps.c</file>
             <file>file:/E:/bos2/main.c</file>
             <file>file:/E:/bos2/doc/documentation.txt</file>
             <file>file:/E:/bos2/asm.h</file>
-            <file>file:/E:/bos2/main.h</file>
-            <file>file:/E:/bos2/clock_cfgBits_mz.c</file>
-            <file>file:/E:/bos2/coreFn.S</file>
-            <file>file:/E:/bos2/structures.h</file>
-            <file>file:/E:/bos2/def.h</file>
-            <file>file:/E:/bos2/globals.h</file>
-            <file>file:/E:/bos2/clock_cfgBits_mm.c</file>
-            <file>file:/E:/bos2/app2.c</file>
+            <file>file:/E:/bos2/periph_fn.S</file>
             <file>file:/E:/bos2/app3.c</file>
-            <file>file:/E:/bos2/doc/systemTimer.txt</file>
+            <file>file:/E:/bos2/main.h</file>
+            <file>file:/E:/bos2/core_fn.S</file>
         </group>
     </open-files>
 </project-private>
