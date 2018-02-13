@@ -169,6 +169,7 @@ void main()
 
 void processException(char code, uint addr)
 {
+    //xxx
     //procID b.0-7
     char id=(char)proc_t_pos[TH_T_ID];
     userAppError(id, code, addr);
