@@ -12,11 +12,16 @@ extern void doEvents();
 extern void doEventsL();
 extern void doEventsError();
 extern uint getGP();
+extern void restartApp();
+extern void restartAppId(char id);
 extern void removeEvents(char);
 extern void removeProcess(char);
 extern uint compareTimerMs(uint);
 extern void pauseEvent(uint);                       //time ms
 extern void general_exception();
+
+extern char getProcID();
+extern void* getProcTableItem(char id);
 
 //periph_fn.S
 extern void setPortDigOut(uint, uint);

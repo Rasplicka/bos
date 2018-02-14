@@ -239,6 +239,28 @@ void softReset()
     while(1){}    
 }
 
+/*
+void restartApp()
+{
+    //restartuje aktualni process
+    //po chybe LongLasting, nebo GeneralException
+    //nove spusteni nastana v nasledujicim cyklu
+    
+    char pid = getProcID();                     //aktualni procID (respektuje events)
+    int* item = getProcTableItem(pid);             //polozka v proc_t
+    
+    int r=item[TH_T_START_SP];
+    item[TH_T_SP]=r;
+    
+    r=item[TH_T_START_ADDR];
+    item[TH_T_RA]=r;
+    
+    
+    
+    //vynecha save_regs
+    doEventsError();
+}
+*/
 //local fn
 int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
 {

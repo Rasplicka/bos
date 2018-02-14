@@ -13,7 +13,7 @@ int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param);
 static char getFreeProcessID();
 static int* getEmptyProcessTableItem();
 static void systemInit();
-static void restartApp();
+//static void restartApp();
 static inline void cpuTimerInit();
 
 

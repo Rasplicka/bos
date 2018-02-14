@@ -557,37 +557,56 @@ getGP:
 .end getGP    
 //</editor-fold>   
   
-//<editor-fold defaultstate="collapsed" desc="removeEvents">
+//<editor-fold defaultstate="collapsed" desc="restartApp">
 .align 2
-.global removeEvents
-.ent removeEvents
-removeEvents:
-    //a0=procID
-    //vyradi vsechny udalosti procesu (napr. pri retartu)
+.global restartApp
+.ent restartApp
+restartApp:
+    //restaruje aktualni App
+    //muze byt volano i v obsluze events (systemovy process)
+    //ukonci process, kteremu patri udalost, ne system process
     
+    bal	    getProcID				    //aktualni procID, respektuje beh v events
+    move    a0, v0
+    
+.global restartAppId   
+restartAppId:    
+//a0=procID
+    
+    move    s0, a0				    //s0=zaloha procID
+    bal	    getProcTableItem			    //zjisti proc_t polozku procesu
+    
+    //v0=polozka proc_t
+    lw32    v1, TH_T_START_SP(v0)
+    sw32    v1, TH_T_SP(v0)			    //default sp
+    
+    lw32    v1, TH_T_START_ADDR(v0)	
+    sw32    v1, TH_T_RA(v0)			    //default ra
+    
+    move    a0, s0				    //a0=procID
+    bal	    removeRegEventProcID		    //remove reg events    
+    move    a0, s0				    //a0=procID
+    bal	    removeEventCacheProcID		    //remove raised events
+    
+    //zjisti, zda je normalni beh, nebo system process - pri event
+    la	    v0, proc_t
+    lw	    v1, (proc_t_pos)			    //proc_t_pos=proc_t (prvni process = system process)
+    bne	    v0, v1, 1f				    //skok, normalni beh   
+
+    //system process, volano z event
+    //navrat do system procesu
+    la	    ra, systemProcessResumeError
     jrc	    ra
     
-.end removeEvents 
-    
-//</editor-fold>    
-    
-//<editor-fold defaultstate="collapsed" desc="removeProcess">
-.align 2
-.global removeProcess
-.ent removeProcess
-removeProcess:
-    //a0=procID
-    
-    //remove events, dealloc stack
-    
+1:    
+    //normalni beh
+    la	    ra, (doEventsError)		//prepnuti procesu, neuklada regs
     jrc	    ra
     
-.end removeProcess 
+.end restartApp 
     
 //</editor-fold>
    
-//xxx    
-    
     
 //<editor-fold defaultstate="collapsed" desc="defragTableW">
     
@@ -983,6 +1002,7 @@ general_exception_shared_point:
 .global getProcID    
 .ent getProcID
 getProcID:     
+    //vraci v0 = aktualni procID
   
     lw	    v0, (proc_t_pos)
     la	    v1, proc_t
@@ -1342,6 +1362,8 @@ systemProcess:
     //ale aby pridavalo nove events na konec tabulky.
     //kriticke casti systemProcess jsou v rezimu DI
     
+    
+    
     //la	    v0, systemProcessResumeError
     //sw	    v0, (onErrorResume)		    //meni chovani pro error
     
@@ -1399,6 +1421,8 @@ systemProcess:
     
 systemProcessResumeError:    
     //v eventCache byly polozky ukonceneho procesu nastaveny na 0xFF, neni treba defragmentovat
+    //pozor, mohou byt zmeneny i s0-s7   
+    //restart system processu
     lw	    t9, (proc_t_pos)
     lw32    sp, TH_T_START_SP(t9)	    //nastav sp na vychozi hodnotu
     b16	    1b
