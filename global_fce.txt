@@ -1,0 +1,39 @@
+globalne pouzitelne fce OS
+
+void doEvents()
+- provede prepnuti procesu
+
+void doEventsL(void* label)
+---------------------------
+- provede prepnuti procesu, po navratu bude pokracovat na label
+label:
+    //any code
+    doEventsL(label)
+
+void softReset()
+----------------
+- provede reset cipu
+
+void restartApp()
+-----------------
+- provede restart aktualniho procesu
+
+void restartAppId(char id)
+--------------------------
+- provede restart procesu id
+
+void pauseEvents(uint ms)
+------------------------
+- pauza, ktera trva min. pocet zadanych milisekund. Muze trva o neco dele, protoze
+  v teto pauze jsou spusteny ostatni procesy
+
+char getProcID()
+----------------
+- vraci ID aktualniho procesu
+
+int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
+-----------------------------------------------------------------------------
+- spusteni aplikace (procesu). Vraci ID procesu, nebo:
+-1 = prilis mnoho spustenych procesu
+-2 = neni volna pamet pro stack
+

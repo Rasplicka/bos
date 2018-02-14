@@ -141,6 +141,7 @@ void main()
     defaultAppStartParam.GeneralExceptionBehavior=ON_ERROR.RESET_PROCESS;
     defaultAppStartParam.TrapBehavior=ON_ERROR.RESET_PROCESS;
     defaultAppStartParam.TimeLimitValue=SAFE_MODE_TIME_LIMIT_VALUE;
+    defaultAppStartParam.defaultID=0;
     // </editor-fold>
     
     //4. init system drivers ---------------------------------------------------
@@ -239,28 +240,7 @@ void softReset()
     while(1){}    
 }
 
-/*
-void restartApp()
-{
-    //restartuje aktualni process
-    //po chybe LongLasting, nebo GeneralException
-    //nove spusteni nastana v nasledujicim cyklu
-    
-    char pid = getProcID();                     //aktualni procID (respektuje events)
-    int* item = getProcTableItem(pid);             //polozka v proc_t
-    
-    int r=item[TH_T_START_SP];
-    item[TH_T_SP]=r;
-    
-    r=item[TH_T_START_ADDR];
-    item[TH_T_RA]=r;
-    
-    
-    
-    //vynecha save_regs
-    doEventsError();
-}
-*/
+
 //local fn
 int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
 {
@@ -274,7 +254,7 @@ int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
     if(proc_t_count >= PROC_T_CAPA) { return -1; } 
 
     //najdi volne procID
-    char id = getFreeProcessID();
+    char id = getFreeProcessID(param->defaultID);
     if(id < 1) { return -1; }
     
     //najdi volnou polozku v proc_t
@@ -309,31 +289,53 @@ int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
     }
 }
 
-static char getFreeProcessID()
+static char getFreeProcessID(char defaultId)
 {
-    //najde volne id, ktere vraci (id>0)
+    //vraci ID procesu
+    //pokud muze pouzit defaultId, pouzije ho
+    //jinak najde volne id, ktere vraci (id>0)
     //pri chybe vraci 0
         
-    char id=1, a, exist;
-    while(id < 255)
+    char a, exist=0;
+    char* procTabB = (char*)proc_t;
+    //try to use defaultId
+    if(defaultId > 0 && defaultId < 0xFF)
     {
-        char* proc_t_bytes = (char*)proc_t;
-        exist=0;
-        
         for(a=0; a<PROC_T_CAPA; a++)
         {
             //prochazi vsechny polozky proc_t    
-            if(proc_t_bytes[0]==id) { exist=1; break; }
-            proc_t_bytes += PROC_T_ISIZE;
+            if(procTabB[0]==defaultId) { exist=1; break; }
+            procTabB += PROC_T_ISIZE;
         }
         
         if(exist == 0) 
         { 
             //stejne id neexistuje, pouzije ho
-            return id; 
+            return defaultId; 
+        }
+    }
+    
+    
+    defaultId=1;
+    //use automatic ID
+    while(defaultId < 255)
+    {
+        exist=0;
+        procTabB = (char*)proc_t;
+        for(a=0; a<PROC_T_CAPA; a++)
+        {
+            //prochazi vsechny polozky proc_t    
+            if(procTabB[0]==defaultId) { exist=1; break; }
+            procTabB += PROC_T_ISIZE;
         }
         
-        id++;
+        if(exist == 0) 
+        { 
+            //stejne id neexistuje, pouzije ho
+            return defaultId; 
+        }
+        
+        defaultId++;
     }
     
     //nenasel volne id
@@ -477,24 +479,6 @@ static void setClock(int cl)
     //trim     
     REFO1TRIMbits.ROTRIM=0;
     REFO1CONbits.ON=1;
-}
-*/
-
-/*
-static void restartApp()
-{
-    //restartuje aktualni process
-    //po chybe LongLasting, nebo GeneralException
-    //nove spusteni nastana v nasledujicim cyklu
-    
-    int x=proc_t_pos[TH_T_START_SP];
-    proc_t_pos[TH_T_SP]=x;
-    
-    x=proc_t_pos[TH_T_START_ADDR];
-    proc_t_pos[TH_T_RA]=x;
-    
-    //vynecha save_regs
-    doEventsError();
 }
 */
 

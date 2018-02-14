@@ -9,15 +9,13 @@ extern void clearSystemData(uint, uint);
 extern void setSrsValue();
 extern void startEvents();
 extern void doEvents();
-extern void doEventsL();
+extern void doEventsL(void* label);
 extern void doEventsError();
 extern uint getGP();
 extern void restartApp();
 extern void restartAppId(char id);
-extern void removeEvents(char);
-extern void removeProcess(char);
 extern uint compareTimerMs(uint);
-extern void pauseEvent(uint);                       //time ms
+extern void pauseEvents(uint);                       //time ms
 extern void general_exception();
 
 extern char getProcID();

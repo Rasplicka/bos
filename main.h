@@ -1,6 +1,4 @@
-//#include "def.h"
 #include "globals.h"
-
 
 //globals
 void main();
@@ -10,10 +8,9 @@ void softReset();
 
 //locals
 int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param);
-static char getFreeProcessID();
+static char getFreeProcessID(char defaultId);
 static int* getEmptyProcessTableItem();
 static void systemInit();
-//static void restartApp();
 static inline void cpuTimerInit();
 
 

@@ -139,15 +139,15 @@ void signalizeError(int num, int code)
         while(x > 0)
         {
             testLedSet(num);
-            pauseEvent(60);
+            pauseEvents(60);
         
             testLedClear(num);
-            pauseEvent(400);
+            pauseEvents(400);
             
             x--;
         }
         
-        pauseEvent(2000);
+        pauseEvents(2000);
     }
 }
 

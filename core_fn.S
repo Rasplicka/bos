@@ -557,7 +557,7 @@ getGP:
 .end getGP    
 //</editor-fold>   
   
-//<editor-fold defaultstate="collapsed" desc="restartApp">
+//<editor-fold defaultstate="collapsed" desc="restartApp, restartAppId">
 .align 2
 .global restartApp
 .ent restartApp
@@ -777,11 +777,11 @@ compareTimerMs:
 .end compareTimerMs 
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="pauseEvent">    
+//<editor-fold defaultstate="collapsed" desc="pauseEvents">    
 .align 2
-.global pauseEvent
-.ent pauseEvent
-pauseEvent:
+.global pauseEvents
+.ent pauseEvents
+pauseEvents:
 //a0=pauza ms
     
 #ifdef SIMULATOR
@@ -816,7 +816,7 @@ pauseEvent:
     move    ra, a2		    //obnov ra
     jrc	    ra
     
-.end pauseEvent    
+.end pauseEvents    
     
 //</editor-fold>
     

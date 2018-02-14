@@ -58,6 +58,7 @@ void userAppsStart()
     p1.TimeLimitExceedBehavior = ON_ERROR.RESET_PROCESS;
     p1.GeneralExceptionBehavior = ON_ERROR.RESET_PROCESS;
     p1.TrapBehavior = ON_ERROR.RESET_SYSTEM;
+    p1.defaultID=1;
     p1.TimeLimitValue = 0xFFFF;
     
     

@@ -75,12 +75,12 @@ static void testSystemTimer2()
     {
         //_LED_INV_REG = _LED_INV_VAL;
         testLedClear(3);
-        pauseEvent(500);
+        pauseEvents(500);
         
         
         //_LED_INV_REG = _LED_INV_VAL;
         testLedSet(3);
-        pauseEvent(50);
+        pauseEvents(50);
         
     }
 }
