@@ -801,6 +801,7 @@ pauseEvent:
     
 //</editor-fold>
     
+//errors
     
 //<editor-fold defaultstate="collapsed" desc="iVector0 CPU Timer">
 .align 2    
@@ -808,25 +809,19 @@ pauseEvent:
 .ent iVector0
 iVector0:
     
-    //CPU timer interrupt, interrupt level 1, pouziva SRS[0]
+    //CPU timer interrupt, interrupt level 1, pouziva SRS[1]
     //aktualni proces trva prilis dlouho, neprovedl doEvents
     //COUNT a COMPARE necha bez zmeny
 
     
 #if defined PIC32MM0256    
-    
     #define	    IFS_BIT	    0			//bit v IFS registru
     #define	    IFS_REG_CLR	    IFS0CLR		//IFS CLR register
-    
 #elif defined PIC32MM0064
-    
     #define	    IFS_BIT	    0
     #define	    IFS_REG_CLR	    IFS0CLR     
-    
 #elif defined PIC32MZ
-    
     //...
-    
 #endif    
     
     //nuluj flag
@@ -834,14 +829,17 @@ iVector0:
     sw	    v0, (IFS_REG_CLR)
     
     //param pro fci processException
-    li	    a0, ERR_CODE_TIME_LIMIT_EXCEED
+    li	    s1, ERR_CODE_TIME_LIMIT_EXCEED
+    
+    //pokracuje v generalException
+    b	    general_exception_shared_point
     
     //EPC=processException (ERET do teto fce)
-    la	    v0, processException
-    mtc0    v0, _CP0_EPC
-    ehb
+    //la	    v0, processException
+    //mtc0    v0, _CP0_EPC
+    //ehb
     
-    eret
+    //eret
     
 .end iVector0  
     
@@ -858,9 +856,10 @@ general_exception:
 
     //nastavi parameter a vola fci processException(code)
     //param pro fci processException
-    
+  
+    //<editor-fold defaultstate="collapsed" desc="err code">
     //zjisti, zda nastal TRAP (v c/c++ volani fce trap())
-    li	    a0, ERR_CODE_TRAP
+    li	    s1, ERR_CODE_TRAP
     
     mfc0    t9, _CP0_CAUSE		//cause.b0-4
     ehb
@@ -877,21 +876,533 @@ general_exception:
     beq	    t8, t9, 1f			//skok, je trap
   
     //neni trap
-    li	    a0, ERR_CODE_GENERAL_EXCEPTION
+    li	    s1, ERR_CODE_GENERAL_EXCEPTION
+    //</editor-fold>
+   
+general_exception_shared_point:    
+1:  
     
-1:    
-    //a1=adresa chyby
-    mfc0    a1, _CP0_EPC
+    //<editor-fold defaultstate="collapsed" desc="userAppError">
+    //a0=err code
+    mfc0    s2, _CP0_EPC		//do a1 adresu chyby
     
-    //EPC=processException (ERET do teto fce)
-    la	    v0, processException
+    //zjisti procID
+    bal	    getProcID
+    move    s0, v0			//do a2 procID
+    
+    //s0=procID, s1=err code, s2=bad addr
+
+    //volat user fci userAppError (status.EXL=1, umoznuje HALT)
+    move    a0, s0			//procID
+    move    a1, s1			//code
+    move    a2, s2			//addr
+    bal	    userAppError
+    //</editor-fold>
+
+    
+    //<editor-fold defaultstate="collapsed" desc="najdi proc_t polozku">
+    move    a0, s0			//procID
+    bal	    getProcTableItem		
+    beqz    v0, 9f			//chyba nenasel polozku v proc_t (nemelo by nikdy nastat)
+    move    s3, v0			//proc_t item, zaloha do s3
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="zjisti ON_ERROR behavior, sw RESET">
+    move    a0, s3			//a0=proc_t adresa polozky procesu
+    move    a1, s1			//err code
+    bal	    getErrorBehavior
+    
+    //v0=behavior
+    beqz    v0, 9f			//skok, behavior = reset
+    
+    //RESET PROCESS, nebo REMOVE PROCESS
+    move    s4, v0			//s4 = zaloha behavior
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="remove events procesu">
+    move    a0, s0			//a0=procID
+    bal	    removeRegEventProcID	//remove reg events    
+    move    a0, s0			//a0=procID
+    bal	    removeEventCacheProcID	//remove raised events
+    
+    li16    v0, ON_ERROR_RESET_PROCESS
+    bne	    v0, s4, 3f			//skok, neni RESET PROCESS
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="RESET PROCESS">
+    //RESET PROCESS
+    lw32    v0, TH_T_START_SP(s3)	
+    sw32    v0, TH_T_SP(s3)		//SP=default
+    lw32    v0, TH_T_START_ADDR(s3)	
+    sw32    v0, TH_T_RA(s3)		//RA=default
+
+    b16	    4f
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="REMOVE PROCESS">
+3:
+    //REMOVE PROCESS
+    sw32    zero, TH_T_ID(s3)		//nuluje procID
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="ERET, normalni beh, nebo system process">
+4:
+    //zjisti, kde nastala chyba (normalni beh, nebo system process - pri event)
+    la	    v0, proc_t
+    lw	    v1, (proc_t_pos)		//proc_t_pos=proc_t (prvni process = system process)
+    bne	    v0, v1, 5f			//skok, chyba pri normalnim behu
+    
+    //chyba v obsluze event, zpet do system process
+    la	    v0, systemProcessResumeError
     mtc0    v0, _CP0_EPC
     ehb
-    
     eret
+
+5:
+    //chyba pri normalnim behu, spustit dalsi proces 
+    la	    v0, (doEventsError)
+    mtc0    v0, _CP0_EPC
+    ehb
+    eret 
+    //</editor-fold>
+ 
+    //<editor-fold defaultstate="collapsed" desc="reset, unknown error">
+9:    
+    //reset, nebo neznama chyba
+    la	    v0, softReset
+    jrc	    v0
+    //</editor-fold>
    
 .end _general_exception_handler  
     
 //</editor-fold>
      
+    
+//<editor-fold defaultstate="collapsed" desc="getProcID">
+.align 2    
+.global getProcID    
+.ent getProcID
+getProcID:     
   
+    lw	    v0, (proc_t_pos)
+    la	    v1, proc_t
+    bne	    v0, v1, 1f			    //skok, neni prvni (system) proces
+    
+    //systemProcess, aktualni procID je v errorProcID
+    lw	    v0, (errorProcID)
+    jrc	    ra
+    
+1:
+    //bezi jiny nez systemProcess, precte ID z proc_t_pos
+    lbu	    v0, TH_T_ID(v0)
+    jrc	    ra
+    
+.end getProcID  
+    
+//</editor-fold>  
+
+//<editor-fold defaultstate="collapsed" desc="getProcTableItem">
+.align 2    
+.global getProcTableItem    
+.ent getProcTableItem
+getProcTableItem: 
+//a0=procID
+    la	    v0, proc_t
+    addiu   v1, v0, (PROC_T_ISIZE * PROC_T_CAPA)
+    b16	    2f
+    
+1:
+    addiu   v0, PROC_T_ISIZE
+    beq	    v0, v1, 9f
+2:    
+    lbu	    t9, TH_T_ID(v0)
+    bne	    t9, a0, 1b
+    
+    //ok, nasel polozku
+    jrc	    ra				    //v0=adresa polozky
+    
+9:
+    //nenasel polozku
+    move    v0, zero
+    jrc	    ra
+    
+.end getProcTableItem  
+    
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="getErrorBehavior">
+.align 2    
+.global getErrorBehavior   
+.ent getErrorBehavior
+getErrorBehavior:     
+//a0=adresa polozky proc_t
+//a1=err code
+    
+    lw	    t9, TH_T_ID(a0)		    //load word, b8-15 = behavior
+    
+    li16    v0, ERR_CODE_TIME_LIMIT_EXCEED
+    bne	    v0, a1, 1f
+    //CPU timer limit error
+    ext	    v0, t9, 8, 2		    //b8-9
+    b16	    4f
+    
+1:
+    li16    v0, ERR_CODE_GENERAL_EXCEPTION
+    bne	    v0, a1, 2f
+    //General Exception
+    ext	    v0, t9, 10, 2		    //b10-11
+    b16	    4f    
+    
+2:
+    li16    v0, ERR_CODE_TRAP
+    bne	    v0, a1, 3f    
+    //trap
+    ext	    v0, t9, 12, 2		    //b12-13
+    b16	    4f    
+    
+3:
+    //stack overflow
+    move    v0, zero			    //RESET_SYSTEM
+    
+4:    
+    //v0=ON_ERROR, 0=RESET_SYSTEM, 1=RESET_PROCESS, 2=REMOVE_PROCESS
+ 
+    jrc	    ra
+    
+.end getErrorBehavior 
+    
+//</editor-fold>
+   
+//events
+    
+//<editor-fold defaultstate="collapsed" desc="getRegEvent">
+.align 2    
+.global getRegEvent    
+.ent getRegEvent
+getRegEvent: 
+//a0=adresa zacatku hledani
+//a1=eventID    
+
+    //fce hleda polozku podle eventID
+    //vraci v0=adresa polozky, nebo 0=nenasel
+    //hledani zacina na adrese a0 (je-li > 0, jinak od zacatku regEventTable)
+    
+    la	    v0, regEventTable
+    addiu   v1, v0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
+    
+    beqz    a0, 2f			//skok, je zadan zacatek hledani (naposledy nalezena)
+   
+    move    v0, a0
+   
+1:    
+    addiu   v0, REG_EVENT_TABLE_ISIZE	//dalsi polozka
+    beq	    v0, v1, 9f			//skok, je na konci    
+    
+2:    
+    lbu	    t9, (v0)			//load eventID (0=empty)
+    beqz    t9, 9f			//skok, konec	
+    bne	    t9, a1, 1b			//skok, jina polozka 
+
+    //nasel polozku (v0)
+    jrc	    ra
+    
+9:
+    //nenasel dalsi polozku
+    move    v0, zero
+    jrc	    ra
+    
+.end getRegEvent  
+    
+//</editor-fold>
+   
+//<editor-fold defaultstate="collapsed" desc="addRegEvent">
+.align 2    
+.global addRegEvent    
+.ent addRegEvent
+addRegEvent:    
+//a0 eventID(b0-7), procID(b8-15), var2(b16-23), var3(b24-31)
+//a1 var0
+//a2 var1
+//a3 fn
+    
+    //meni t9, v0, v1
+    //vraci v0=adr. polozky (OK), v0=0 (NULL=chyba), plna tabulka
+    
+    //prida polozku do globalni tabulky regEventTable, kde jsou
+    //vsechny registrovane udalosti
+    //pri ukonceni procesu, OS automaticky vyradi polozky tohoto procesu
+    //tabulku pote defragmentuje
+    //prvni eventID=0, polozka je volna
+    //tato fce neni nikdy volana z interruptu (proto nemusi pracovat v rezimu DI)
+    
+//regEventTable:    
+//b0 -   eventID  
+//b1 -   procID
+//b2 -   var2 - 8bit
+//b3 -   var3 - 8bit   
+//b4-7   var0 - 32bit
+//b8-11  var1 - 32bit    
+//b12-16 fn_addr    
+
+    la	    v0, regEventTable
+    addiu   v1, v0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
+    b16	    2f
+ 
+1:    
+    addiu   v0, REG_EVENT_TABLE_ISIZE	//dalsi polozka
+    beq	    v0, v1, 9f			//skok, je na konci
+    
+2:    
+    lbu	    t9, (v0)			//load eventID (0=empty)
+    bnez    t9, 1b			//skok, polozka neni prazdna
+
+    //ok, polozka je prazdna
+    sw	    a3, RET_FN(v0)		//fn addr
+    sw	    a2, RET_V1(v0)		//fn addr
+    sw	    a1, RET_V0(v0)		//fn addr
+    sw	    a0, RET_EVENTID(v0)		//eventID, procID, var2, var3
+
+    jrc	    ra
+    
+9:
+    move    v0, zero
+    jrc	    ra
+    
+.end addRegEvent  
+    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="removeRegEventProcID">
+.align 2    
+.global removeRegEventProcID    
+.ent removeRegEventProcID
+removeRegEventProcID: 
+//a0=procID
+    
+    //meni t7-t9, v0, v1, a0-a2 (defragTableW)
+    
+    //vola se pri ukonceni procesu procID
+    //vymaze vrechny registrace se stejnym procID, z regEventTable
+    //nakonec je regEventTable defragmentovana v rezimu DI
+    
+    la	    v0, regEventTable
+    addiu   v1, v0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
+    move    t8, zero			//status, zda byla vyrazena polozka
+    b16	    2f
+ 
+1:    
+    addiu   v0, REG_EVENT_TABLE_ISIZE	//dalsi polozka
+    beq	    v0, v1, 9f			//skok, je na konci
+    
+2:    
+    lbu	    t9, RET_PROCID(v0)		//load procID
+    bne	    t9, a0, 1b
+    
+    //stejne procID
+    sb	    zero, RET_EVENTID(v0)	//eventID=0 (volna polozka)
+    addiu   t8, 1			//status ++
+    b16	    1b
+
+9:
+    beqz    t8, 10f			//skok, nenastala zmena
+    _PUSH   ra
+    
+    //defrag eventCache
+    la	    a0, regEventTable			//a0=adresa tabulky
+    li	    a1, REG_EVENT_TABLE_ISIZE		//a1=item size [bytes] (delitelne 4)
+    li	    a2, REG_EVENT_TABLE_CAPA		//a2=max. pocet polozek, item cnt
+    di
+    ehb
+    bal	    defragTableW
+    ei
+    
+    _POP    ra
+    
+10:    
+    jrc	    ra
+    
+.end removeRegEventProcID 
+    
+//</editor-fold>    
+    
+//<editor-fold defaultstate="collapsed" desc="removeEventCacheProcID">
+.align 2    
+.global removeEventCacheProcID    
+.ent removeEventCacheProcID
+removeEventCacheProcID: 
+//a0=procID
+    
+    //meni t8, t9, v0, v1
+    //vymaze vrechny cekajici udalosti v eventCache
+    //v eventCache nastavi vsechny polozky daneho procesu na 0xFF - dokoncene
+    //polozky z eventCache se takto vyrazuji, aby v pripade raiseEvent z interruptu
+    //byly nove polozky pridavany na konec
+    //systemProcess nejprve vykona vsechny polozky (0 < procID > 0xFF) a pak je nuluje (pri DI)
+    //proto se nemusi eventCache defragmentovat
+    
+    la	    v0, eventCache
+    addiu   v1, v0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)
+    li	    t8, 0xFF
+    b16	    2f
+ 
+1:    
+    addiu   v0, EVENT_CACHE_ISIZE	//dalsi polozka
+    beq	    v0, v1, 9f			//skok, je na konci
+    
+2:    
+    lbu	    t9, (v0)			//load procID
+    bne	    t9, a0, 1b
+    
+    //stejne procID
+    sb	    t8, EVC_PROCID(v0)		//procID=0xFF (dokoncena polozka)
+    b16	    1b
+
+9:
+
+    jrc	    ra    
+    
+.end removeEventCacheProcID 
+    
+//</editor-fold>    
+    
+//<editor-fold defaultstate="collapsed" desc="raiseEvent">
+.align 2    
+.global raiseEvent    
+.ent raiseEvent
+raiseEvent:  
+//a0=adresa polozky v regEventTable (pouzije z ni procID a fn addr)
+//a1=p0
+//a2=p2
+//a3=p3
+    
+    //meni t9, v0, v1
+    //vraci v0=1 OK, v0=1 chyba, eventCache je plna
+    
+    //vyvolani udalosti v a0
+    //prochazi eventCache a hleda volnou polozku
+    //tu vyplni daty
+    //pracuje v rezimu DI, jinak by v prubehu mohl interupt menit eventCache (take muze volat raiseEvent)
+
+    
+    //eventCache
+    la	    v0, eventCache
+    addiu   v1, v0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)
+    di
+    ehb
+    b16	    2f
+  
+1:
+    //polozka neni prazdna
+    addiu   v0, EVENT_CACHE_ISIZE
+    beq	    v0, v1, 9f 
+    
+2:    
+    lbu	    t9, EVC_PROCID(v0)		//load procID v eventCache
+    bnez    t9, 1b			//skok, polozka neni volna    
+    
+    //ok, nasel volnou polozku
+    lbu	    t9, RET_PROCID(a0)		//load procID
+    sb	    t9, EVC_PROCID(v0)		//save procID
+    
+    ei					//polozka je nyni obsazena, muze povolit interrupt
+    
+    lw	    t9, RET_FN(a0)		//load fn addr
+    sw	    t9, EVC_FN(v0)		//save fn addr
+    
+    sw	    a1, EVC_P0(v0)		//save params
+    sw	    a2, EVC_P1(v0)
+    sw	    a3, EVC_P2(v0)
+  
+    li16    v0, 1
+    jrc	    ra
+    
+9:    
+    ei
+    move    v0, zero
+    jrc	    ra
+
+.end raiseEvent  
+    
+//</editor-fold>
+   
+//<editor-fold defaultstate="collapsed" desc="systemProcess">
+.align 2    
+.global systemProcess    
+.ent systemProcess
+systemProcess: 
+    //systemovy proces
+    //vzdy projde celou eventCache a vola jednotlive events - fn(p0, p1, p2)
+    //pripadna chyba v event fn se povazuje za chybu daneho procesu, ne systemProcessu
+    //pokud je v event fci doEvents(), dojde k beznemu prepnuti procesu, tzn. ze 
+    //provadeni eventCache se pozastavi (a muze dojit k jejimu naplneni)
+    //doEvents by se v event fci volat nemelo, ale chyba to neni.
+    
+    //systemProcess prochazi polozky a dokoncenou oznaci procID=0xFF, tzn. dokonceno
+    //to je proto, aby pripadne raiseEvent z interruptu nepouzilo jiz dokoncene polozky
+    //ale aby pridavalo nove events na konec tabulky.
+    //kriticke casti systemProcess jsou v rezimu DI
+    
+    //la	    v0, systemProcessResumeError
+    //sw	    v0, (onErrorResume)		    //meni chovani pro error
+    
+1:
+    //eventCache
+    la	    s0, eventCache
+    addiu   s1, s0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)   
+    li	    s2, 0xFF
+    di
+    ehb
+
+2:  //v rezimu DI
+    lbu	    t9, EVC_PROCID(s0)
+    beqz    t9, 5f			    //skok, prazdna polozka, konec eventCache
+    beq	    t9, s2, 3f			    //skok, dokoncena polozka 
+    
+    //platna polozka
+    ei
+    lw	    v0, EVC_FN(s0)		    //fn addr
+    lw	    a0, EVC_P0(s0)		    //p0
+    lw	    a1, EVC_P1(s0)		    //p1
+    lw	    a2, EVC_P2(s0)		    //p2
+    
+    sw	    t9, (errorProcID)		    //nastav aktualni procID
+    jalr    v0				    //skok do fce
+    
+    //po navratu z event fn
+    sb	    s2, EVC_PROCID(s0)		    //oznac jako dokonceno (ale ne empty, aby polozku neobsadilo raiseEvent z interruptu)
+    di
+    ehb
+    
+3:  //next    
+    addiu   s0, EVENT_CACHE_ISIZE
+    bne	    s0, s1, 2b
+    
+    //je za eventCache
+
+5:    
+    //konec, vsechny udalosti dokonceny, a jsou oznaceny jako neplatne - 0xFF
+    //vymazat eventCache (v rezimu DI, nezmi nastat zadna zmena v eventCache)
+    la	    s0, eventCache
+6:    
+    lbu	    t9, EVC_PROCID(s0)
+    beqz    t9, 7f
+    
+    sb	    zero, EVC_PROCID(s0)
+    addiu   s0, EVENT_CACHE_ISIZE	
+    bne	    s0, s1, 6b
+    
+7:  //ok, cela eventCache je prazdna (nyni muze interrupt pridat novou polozku)
+    ei
+    //sw	    zero, (onErrorResume)	    //meni chovani pro error
+    la	    a0, systemProcess		    //param, adresa pristiho cyklu
+    bal	    doEventsL			    //prepni process
+    
+systemProcessResumeError:    
+    //v eventCache byly polozky ukonceneho procesu nastaveny na 0xFF, neni treba defragmentovat
+    lw	    t9, (proc_t_pos)
+    lw32    sp, TH_T_START_SP(t9)	    //nastav sp na vychozi hodnotu
+    b16	    1b
+    
+.end systemProcess  
+    
+//</editor-fold>    

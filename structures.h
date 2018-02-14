@@ -38,7 +38,7 @@ struct
     char RESET_PROCESS;
     char REMOVE_PROCESS;
     
-}ON_ERROR = { 0, 1, 2 };
+}ON_ERROR = { ON_ERROR_RESET_SYSTEM, ON_ERROR_RESET_PROCESS, ON_ERROR_REMOVE_PROCESS };
 
 typedef struct
 {

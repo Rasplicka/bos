@@ -46,9 +46,11 @@
 #define     ERR_CODE_TRAP                       3
 #define     ERR_STACK_OVERFLOW                  4
 
-#define     ERROR_RESET_PROCESS     1
-#define     ERROR_RESET_SYSTEM      0
+  
 
+#define     ON_ERROR_RESET_SYSTEM      0
+#define     ON_ERROR_RESET_PROCESS     1
+#define     ON_ERROR_REMOVE_PROCESS    2
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 #define             USE_GRAPHICS                    //pouzije graphics
@@ -115,6 +117,30 @@
 
 //#define	    TH_T_LO			30
 //#define	    TH_T_HI			31
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Events">
+//regEventTable a eventCache
+#define		REG_EVENT_TABLE_ISIZE	16
+#define		REG_EVENT_TABLE_CAPA    20
+
+#define		RET_EVENTID		0
+#define		RET_PROCID		1
+#define		RET_V2			2
+#define		RET_V3			3
+#define		RET_V0			4
+#define		RET_V1			8
+#define		RET_FN			12
+
+#define		EVENT_CACHE_ISIZE	20
+#define		EVENT_CACHE_CAPA	20
+
+#define		EVC_PROCID		0    
+#define		EVC_P0			4
+#define		EVC_P1			8
+#define		EVC_P2			12
+#define		EVC_FN			16  
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Font (SSD1306)">

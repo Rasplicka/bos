@@ -52,7 +52,7 @@ void pinSetting()
 
 void userAppsStart()
 {
-    //Call OS on startup
+    //Calls OS on startup
     
     APP_START_PARAM p1;
     p1.TimeLimitExceedBehavior = ON_ERROR.RESET_PROCESS;
@@ -63,25 +63,41 @@ void userAppsStart()
     
     if(regProcess((int*) &m1_start, 1024, &p1) < 0)
     {
-        //error
+        //error, cannot run app
     }
     
     if(regProcess((int*) &m2_start, 1024, &defaultAppStartParam) < 0)
     {
-        //error
+        //error, cannot run app
     }
     
     if(regProcess((int*) &m3_start, 1024, &defaultAppStartParam) < 0) 
     {
-        //error
+        //error, cannot run app
     }
 }
 
-void userAppError(char id, char code, uint addr)
+void userAppError(char procId, char code, void* addr)
 {
-    //id=procID, code=kod chyby
-    //Call OS on error, before process restart, or system restart
+    //Call OS on exception, when CP0_STATUS.EXL=1
+    //now, all interrupts are disabled, it is possible execute sw HALT CPU 
+    //procId=process ID
+    //code=error code, 
+    //addr=exception address 
+    
+    //When this fn ends, OS performs the appropriate action (reset process, reset system, ...)
+    //according to "ON_ERROR" app behavior setting
+    
     int a=0;
     int b=0;
     int c=a+b;
+    
+    /*
+     * this is HALT code 
+     * for example, you can set HALT LED indicator
+    while(1)
+    {
+
+    }
+    */
 }

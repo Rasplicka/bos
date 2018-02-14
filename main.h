@@ -4,8 +4,9 @@
 
 //globals
 void main();
-void processException(char code, uint addr);
+void processException(char procId, char code, void* addr);
 void trap();
+void softReset();
 
 //locals
 int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param);
@@ -13,7 +14,6 @@ static char getFreeProcessID();
 static int* getEmptyProcessTableItem();
 static void systemInit();
 static void restartApp();
-static void softReset();
 static inline void cpuTimerInit();
 
 
