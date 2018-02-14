@@ -7,7 +7,7 @@ void trap();
 void softReset();
 
 //locals
-int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param);
+int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param);
 static char getFreeProcessID(char defaultId);
 static int* getEmptyProcessTableItem();
 static void systemInit();

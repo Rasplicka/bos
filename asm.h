@@ -21,6 +21,8 @@ extern void general_exception();
 extern char getProcID();
 extern void* getProcTableItem(char id);
 
+extern void systemProcess();
+
 //periph_fn.S
 extern void setPortDigOut(uint, uint);
 extern void setPortDigIn(uint, uint);

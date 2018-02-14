@@ -141,7 +141,7 @@ void main()
     defaultAppStartParam.GeneralExceptionBehavior=ON_ERROR.RESET_PROCESS;
     defaultAppStartParam.TrapBehavior=ON_ERROR.RESET_PROCESS;
     defaultAppStartParam.TimeLimitValue=SAFE_MODE_TIME_LIMIT_VALUE;
-    defaultAppStartParam.defaultID=0;
+    defaultAppStartParam.defaultID=0x0;
     // </editor-fold>
     
     //4. init system drivers ---------------------------------------------------
@@ -156,13 +156,18 @@ void main()
     //5. run system modules ----------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="run module, apps">
 
-
-    //6. run user apps --------------------------------------------------------------
+    //6. run user apps ---------------------------------------------------------
+    //jako prvni spustit system process
+    defaultAppStartParam.defaultID=0xFE;
+    regProcess(&systemProcess, 1024, &defaultAppStartParam);
+    defaultAppStartParam.defaultID=0x0;
+          
+    //user apps
     userAppsStart();
      
     // </editor-fold>
 
-    //6. start multitasking ----------------------------------------------------
+    //7. start multitasking ----------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="start os">
    
     globalsAfterProcess();
@@ -242,7 +247,7 @@ void softReset()
 
 
 //local fn
-int regProcess(int* start_addr, int stack_size, const APP_START_PARAM* param)
+int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)
@@ -481,8 +486,6 @@ static void setClock(int cl)
     REFO1CONbits.ON=1;
 }
 */
-
-
 
 #ifdef SAFE_PROCESS 
 

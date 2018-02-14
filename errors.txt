@@ -1,0 +1,60 @@
+Chovani pri chybe
+Pri spusteni procesu se nastavuje zakladni chovani pri chybe procesu.
+K tomu slouzi typedef APP_START_PARAM, kde se nastavuje chovani pri:
+- TimeLimitExceedBehavior (proces trva prilis dlouho)
+- GeneralExceptionBehavior (v procesu doslo ke General Exception)
+- TrapBehavior (proces vyvolal vyjimku volanim fce trap() )
+
+Dalsi mozna chyba je stack overflow, jejiz chovani ale nelze menit a je-li
+detekovana, dojde k resetu chipu.
+
+Chovani pri chybe je nasledujici:
+1. OS zjisti pricinu, proces ID a adresu, kde k chybe doslo
+2. S temito parametry vola fci userAppError(char procId, char code, void* addr),
+   ve ktere je mozne na chybu reagovat, napr. provest HALT procesoru, indikaci 
+   chyby pomoci signalizace LED apod...
+3. Po navratu z userAppError OS provede akci, ktera je nastavena 
+   v APP_START_PARAM - viz. vyse
+
+Pro tyto tri uvedene typy chyb lze zvolit moznou reakci:
+- ON_ERROR_RESET_SYSTEM
+- ON_ERROR_RESET_PROCESS
+- ON_ERROR_REMOVE_PROCESS
+to znamena, resetovat chip, resetovat proces (nove spusteni), nebo ukoncit dany 
+proces.
+
+
+Nastaveni chovani se provadi pri startu procesu, jak ukazuje priklad:
+
+APP_START_PARAM p1;
+p1.TimeLimitExceedBehavior = ON_ERROR.RESET_PROCESS;
+p1.GeneralExceptionBehavior = ON_ERROR.RESET_PROCESS;
+p1.TrapBehavior = ON_ERROR.RESET_SYSTEM;
+p1.defaultID = 1;
+p1.TimeLimitValue = 0xFFFF;
+
+//&m1_start je adresa startovni fce procesu
+//1024 je velikost stacku
+//&p1 je adresa typedef p1
+
+if(regProcess((int*) &m1_start, 1024, &p1) < 0)
+{
+    //error, cannot run the app
+}
+
+Nebo lze pouzit predefinovanou promenou defaultAppStartParam, kde jsou nastaveny
+standardni parametry (ON_ERROR.RESET_PROCESS, TimeLimitValue = 0xFFFFF)
+
+defaultID je uzivatelem navrzene ID procesu, OS tuto hodnotu pouzije, pokud
+jiz neni vyuzita jinym procesem. Uzivatel tak ma prehled o tom, jake ID
+ktery proces pouziva (krome procesu, jenz zadava uzivatel jako apps, bezi
+jeden systemovy proces, ktery pouziva ID=0xFE)
+
+TimeLimitValue definuje max. mozny cas, po ktery muze proces bezet bez 
+umozneni prepnuti ostatnich procesu. Je-li tato doba prekrocena, dojde k chybe
+TimeLimitExceed (viz. nastaveni TimeLimitExceedBehavior).
+Tato kontrola vyuziva CPU-TIMER, ktery cita kroky procesoru, kdy provedeni
+jedne instrukce zvysi citac o 2-7, podle typu instrukce. K chybe dojde
+v pripade, ze proces pravidelne nevola doEvents().
+Nejde tedy o kontrolu primo casu, ale pocet provedenych kroku CPU. Tento zpusob
+je vyhodny proto, ze neni zavisly na pracovnim kmitoctu.

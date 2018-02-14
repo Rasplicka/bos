@@ -5,6 +5,7 @@
       <itemPath>doc/documentation.txt</itemPath>
       <itemPath>doc/systemTimer.txt</itemPath>
       <itemPath>global_fce.txt</itemPath>
+      <itemPath>errors.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
