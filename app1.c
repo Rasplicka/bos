@@ -27,10 +27,10 @@ static void testSystemTimer();
 
 void m1_start()
 {
-    testSystemTimer();
+    //testSystemTimer();
     
     int x=0;
-    while(x<10)
+    while(x<1000)
     {
         //do LATxINV zapise 1 na prislusnou pozici
         _LED_INV_REG = _LED_INV_VAL;

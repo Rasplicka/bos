@@ -27,7 +27,7 @@ static void testSystemTimer();
 
 void m2_start()
 {
-    testSystemTimer();
+    //testSystemTimer();
     
     while(1)
     {

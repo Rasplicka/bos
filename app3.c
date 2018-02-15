@@ -28,8 +28,8 @@ static void testSystemTimer2();
 
 void m3_start()
 {
-    testSystemTimer2();
-    testSystemTimer();
+    //testSystemTimer2();
+    //testSystemTimer();
     
     while(1)
     {

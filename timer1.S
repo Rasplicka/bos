@@ -31,6 +31,8 @@ ukazka pouziti casovacu viz. doc/system timer
 .set micromips
 .section .asm_timer1, code 
     
+#define	TIMER1_EVENT_ID		    1
+    
 //<editor-fold defaultstate="collapsed" desc="timer1Init">
     
 .align 2
@@ -144,6 +146,26 @@ timer1Init:
 .global systemTimerRegInterval
 .ent systemTimerRegInterval
 systemTimerRegInterval:
+//a0=adresa fce, a1=time ms
+    
+    move    a2, a1		    //time ms
+    bal	    getProcID		    //meni v0, v1
+    sll	    a1, v0, 8		    //procID do b8-b15
+    ori	    a1, TIMER1_EVENT_ID	    
+    move    a3, zero
+    
+    //a0=fn, 
+    //a1=eventID, procID, (var2=0, var3=0)
+    //a2=time (var0) 
+    //a3=zero (var1)
+    bal	    addRegEvent
+    
+    //v0=0 error, jinak adresa polozky
+    
+    jrc	    ra    
+    
+    
+    
 //a0=adresa status byte
 //a1=interval ms 
 //vraci v0=1 OK, v0=0 chyba, plna tabulka  
@@ -151,6 +173,7 @@ systemTimerRegInterval:
 //po uplynuti casu nastavi status byte=1, nulovat ho pak musi app 
 //udalost nastava periodicky, pro zruseni ji musi app unreg
     
+    /*
     la	    v1, (timer1_events)
     addiu   v0, zero, TIMER1_EVENT_CAPA
 
@@ -175,6 +198,7 @@ systemTimerRegInterval:
     
     //v0=0, vraci chybu
     jrc	    ra
+    */
     
 .end systemTimerRegInterval    
     
@@ -267,8 +291,9 @@ systemTimerUnregInterval:
     //nenasel polozku
     _POP    ra
     jrc	    ra
-    //nop   
+    //nop  
     
+ 
 .end systemTimerUnregInterval  
     
 //</editor-fold>
@@ -292,6 +317,49 @@ iVector_timer1:
     sw	    v0, (day_ms)
 #endif    
    
+    //<editor-fold defaultstate="collapsed" desc="events">
+    
+    la	    t0, regEventTable
+    addiu   t1, t0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
+    li	    t3, TIMER1_EVENT_ID
+    b16	    2f			//skok, je zadan zacatek hledani (naposledy nalezena)
+    
+1:    
+    addiu   t0, REG_EVENT_TABLE_ISIZE	//dalsi polozka
+    beq	    t0, t1, 5f			//skok, je na konci    
+    
+2:    
+    lbu	    t9, RET_EVENTID(t0)		//load eventID (0=empty)
+    beqz    t9, 5f			//skok, konec	
+    bne	    t9, t3, 1b			//skok, jine eventID  
+    
+    //ok, nasel polozku
+    //var0=nastaveny cas, var1=aktualni cas
+    lw	    t2, RET_V1(t0)	
+    addiu   t2, -TIMER1_INTERVAL	//t2=nova hodnota	    
+    bgtz    t2, 3f			//skok, cas nevyprsel, udalost nenastala
+    
+    //nastala event
+    
+    move    a0, t0			//a0=adresa polozky v regEventTable, a1-a3 params
+    //a1-a3 nenastavuje
+    //meni t9, v0, v1
+    bal	    raiseEventInt
+    
+    //nove nastaveni var1 na puvodni hodnotu
+    lw	    t2, RET_V0(t0)
+    
+3:
+    //v teto polozce jeste nenastala event
+    sw	    t2, RET_V1(t0)		//save hodnotu
+
+    b16	    1b				//next
+    
+    //</editor-fold>
+
+    
+    /*
+    
 //word addr, word ms, word ms value    
     la	    v0, timer1_events
     addiu   v1, zero, TIMER1_EVENT_CAPA
@@ -341,6 +409,8 @@ iVector_timer1:
     //a0=adresa tabulky, a1=velikost polozky, a2=max. pocet polozek (kapacita)
     bal	    defragTableW
     //nop
+    
+    */
 
 5:    
     

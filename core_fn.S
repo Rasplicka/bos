@@ -40,6 +40,12 @@ startupStack:
     la	    v0, stack_area
     li	    v1, STACK_SIZE
     addu    sp, v0, v1 
+    //c/c++ program ma nad zasobnikem oblast, kde jsou param fce (pri skoku do fce)
+    //proto nemuze byt nastaven vrchol zasobniku
+    //volana fce zapisuje do teto oblasti nad akt. zasobnikem, protoze tam uklada param
+    //napr. kdyz se vola fce se 4 param (int), 16 bytes nad aktualnim zasobnikem se prepise
+    //vlozi se tam kopie a0-a3
+    addiu   sp, -64					//TOP stacku - 64
     
     jrc	    ra
     
@@ -1003,6 +1009,7 @@ general_exception_shared_point:
 .ent getProcID
 getProcID:     
     //vraci v0 = aktualni procID
+    //meni v0, v1
   
     lw	    v0, (proc_t_pos)
     la	    v1, proc_t
@@ -1119,7 +1126,7 @@ getRegEvent:
     beq	    v0, v1, 9f			//skok, je na konci    
     
 2:    
-    lbu	    t9, (v0)			//load eventID (0=empty)
+    lbu	    t9, RET_EVENTID(v0)		//load eventID (0=empty)
     beqz    t9, 9f			//skok, konec	
     bne	    t9, a1, 1b			//skok, jina polozka 
 
@@ -1140,10 +1147,11 @@ getRegEvent:
 .global addRegEvent    
 .ent addRegEvent
 addRegEvent:    
-//a0 eventID(b0-7), procID(b8-15), var2(b16-23), var3(b24-31)
-//a1 var0
-//a2 var1
-//a3 fn
+//a0 fn 
+//a1 eventID(b0-7), procID(b8-15), var2(b16-23), var3(b24-31)
+//a2 var0
+//a3 var1
+//a3 
     
     //meni t9, v0, v1
     //vraci v0=adr. polozky (OK), v0=0 (NULL=chyba), plna tabulka
@@ -1179,8 +1187,8 @@ addRegEvent:
     //ok, polozka je prazdna
     sw	    a3, RET_FN(v0)		//fn addr
     sw	    a2, RET_V1(v0)		//fn addr
-    sw	    a1, RET_V0(v0)		//fn addr
-    sw	    a0, RET_EVENTID(v0)		//eventID, procID, var2, var3
+    sw	    a1, RET_EVENTID(v0)		//eventID, procID, var2, var3
+    sw	    a0, RET_V0(v0)		//fn addr
 
     jrc	    ra
     
@@ -1191,6 +1199,62 @@ addRegEvent:
 .end addRegEvent  
     
 //</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="UnregEvent">
+.align 2    
+.global UnregEvent    
+.ent UnregEvent
+UnregEvent: 
+//a0=fn addr
+    
+    //meni t7-t9, v0, v1, a0-a2 (defragTableW)
+    
+    //vola se pri odstraneni polozky z regEventTable
+    //projde vsechny polozky a vyradu ty, kde souhlasi fn addr
+    //nakonec je regEventTable defragmentovana 
+    //pracuje v rezimu DI 
+    
+    la	    v0, regEventTable
+    addiu   v1, v0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
+    move    t8, zero			//status, zda byla vyrazena polozka
+    di
+    ehb
+    b16	    2f
+ 
+1:    
+    addiu   v0, REG_EVENT_TABLE_ISIZE	//dalsi polozka
+    beq	    v0, v1, 9f			//skok, je na konci
+    
+2:    
+    lbu	    t9, RET_EVENTID(v0)		//load eventID
+    beqz    t9, 9f			//skok, je na konci    
+    lw	    t9, RET_FN(v0)		//load fn
+    bne	    t9, a0, 1b
+    
+    //stejne procID
+    sw	    zero, RET_EVENTID(v0)	//eventID=0 (volna polozka)
+    addiu   t8, 1			//status ++
+    b16	    1b
+
+9:
+    beqz    t8, 10f			//skok, nenastala zmena
+    _PUSH   ra
+    
+    //defrag eventCache
+    la	    a0, regEventTable			//a0=adresa tabulky
+    li	    a1, REG_EVENT_TABLE_ISIZE		//a1=item size [bytes] (delitelne 4)
+    li	    a2, REG_EVENT_TABLE_CAPA		//a2=max. pocet polozek, item cnt
+    bal	    defragTableW
+   
+    _POP    ra
+    
+10:    
+    ei
+    jrc	    ra
+    
+.end UnregEvent 
+    
+//</editor-fold>        
     
 //<editor-fold defaultstate="collapsed" desc="removeRegEventProcID">
 .align 2    
@@ -1203,11 +1267,14 @@ removeRegEventProcID:
     
     //vola se pri ukonceni procesu procID
     //vymaze vrechny registrace se stejnym procID, z regEventTable
-    //nakonec je regEventTable defragmentovana v rezimu DI
+    //nakonec je regEventTable defragmentovana 
+    //pracuje v rezimu DI
     
     la	    v0, regEventTable
     addiu   v1, v0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
     move    t8, zero			//status, zda byla vyrazena polozka
+    di
+    ehb
     b16	    2f
  
 1:    
@@ -1215,11 +1282,13 @@ removeRegEventProcID:
     beq	    v0, v1, 9f			//skok, je na konci
     
 2:    
+    lbu	    t9, RET_EVENTID(v0)		//load eventID
+    beqz    t9, 9f			//skok, je na konci
     lbu	    t9, RET_PROCID(v0)		//load procID
     bne	    t9, a0, 1b
     
     //stejne procID
-    sb	    zero, RET_EVENTID(v0)	//eventID=0 (volna polozka)
+    sw	    zero, RET_EVENTID(v0)	//eventID=0 (volna polozka)
     addiu   t8, 1			//status ++
     b16	    1b
 
@@ -1231,14 +1300,12 @@ removeRegEventProcID:
     la	    a0, regEventTable			//a0=adresa tabulky
     li	    a1, REG_EVENT_TABLE_ISIZE		//a1=item size [bytes] (delitelne 4)
     li	    a2, REG_EVENT_TABLE_CAPA		//a2=max. pocet polozek, item cnt
-    di
-    ehb
     bal	    defragTableW
-    ei
-    
+   
     _POP    ra
     
 10:    
+    ei
     jrc	    ra
     
 .end removeRegEventProcID 
@@ -1298,10 +1365,9 @@ raiseEvent:
     //meni t9, v0, v1
     //vraci v0=1 OK, v0=1 chyba, eventCache je plna
     
-    //vyvolani udalosti v a0
-    //prochazi eventCache a hleda volnou polozku
-    //tu vyplni daty
-    //pracuje v rezimu DI, jinak by v prubehu mohl interupt menit eventCache (take muze volat raiseEvent)
+    //vyvolani udalosti v a0 (adresa polozky v regEventTable)
+    //prochazi eventCache a hleda volnou polozku, tu vyplni daty
+    //pracuje v rezimu DI, jinak by v prubehu mohl interupt menit eventCache (interrupt vola raiseEventInt)
 
     
     //eventCache
@@ -1344,6 +1410,58 @@ raiseEvent:
 .end raiseEvent  
     
 //</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="raiseEventInt">
+.align 2    
+.global raiseEventInt    
+.ent raiseEventInt
+raiseEventInt:  
+//a0=adresa polozky v regEventTable (pouzije z ni procID a fn addr)
+//a1=p0
+//a2=p2
+//a3=p3
+    
+    //meni t9, v0, v1
+    //vraci v0=1 OK, v0=1 chyba, eventCache je plna
+    
+    //vola se z interruptu, neprovadi DI a EI (interrupt nemuze byt prerusen)
+    //vyvolani udalosti v a0 (adresa polozky v regEventTable)
+    //prochazi eventCache a hleda volnou polozku, tu vyplni daty
+    
+    la	    v0, eventCache
+    addiu   v1, v0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)
+    b16	    2f
+  
+1:
+    //polozka neni prazdna
+    addiu   v0, EVENT_CACHE_ISIZE
+    beq	    v0, v1, 9f 
+    
+2:    
+    lbu	    t9, EVC_PROCID(v0)		//load procID v eventCache
+    bnez    t9, 1b			//skok, polozka neni volna    
+    
+    //ok, nasel volnou polozku
+    lbu	    t9, RET_PROCID(a0)		//load procID
+    sb	    t9, EVC_PROCID(v0)		//save procID
+    
+    lw	    t9, RET_FN(a0)		//load fn addr
+    sw	    t9, EVC_FN(v0)		//save fn addr
+    
+    sw	    a1, EVC_P0(v0)		//save params
+    sw	    a2, EVC_P1(v0)
+    sw	    a3, EVC_P2(v0)
+  
+    li16    v0, 1
+    jrc	    ra
+    
+9:    
+    move    v0, zero
+    jrc	    ra
+
+.end raiseEventInt  
+    
+//</editor-fold>    
    
 //<editor-fold defaultstate="collapsed" desc="systemProcess">
 .align 2    
