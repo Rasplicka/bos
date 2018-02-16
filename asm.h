@@ -33,6 +33,7 @@ extern void setPortPullDown(uint, uint, uint);
 
 //timer1.S
 void timer1Init();
+int systemTimerRegInterval(void*, uint);
 
 
 extern void iVector_timer1();

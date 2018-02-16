@@ -396,7 +396,7 @@ doEventsError:
     la	    t8, proc_t		    //nastav prvni polozku proc_t
 
 2:    
-    lbu	    t9, TH_T_ID(t8)	    //load procID
+    lbu	    t9, TH_T_ID*4(t8)	    //load procID
     beqz    t9, 1b		    //skok, polozka je prazdna
     //nop
 
@@ -513,7 +513,7 @@ doEventsL:
     la	    t8, proc_t		    //nastav prvni polozku proc_t
 
 2:    
-    lbu	    t9, TH_T_ID(t8)	    //load procID
+    lbu	    t9, TH_T_ID*4(t8)	    //load procID
     beqz    t9, 1b		    //skok, polozka je prazdna
     //nop
 
@@ -583,11 +583,11 @@ restartAppId:
     bal	    getProcTableItem			    //zjisti proc_t polozku procesu
     
     //v0=polozka proc_t
-    lw32    v1, TH_T_START_SP(v0)
-    sw32    v1, TH_T_SP(v0)			    //default sp
+    lw32    v1, TH_T_START_SP*4(v0)
+    sw32    v1, TH_T_SP*4(v0)			    //default sp
     
-    lw32    v1, TH_T_START_ADDR(v0)	
-    sw32    v1, TH_T_RA(v0)			    //default ra
+    lw32    v1, TH_T_START_ADDR*4(v0)	
+    sw32    v1, TH_T_RA*4(v0)			    //default ra
     
     move    a0, s0				    //a0=procID
     bal	    removeRegEventProcID		    //remove reg events    
@@ -956,10 +956,10 @@ general_exception_shared_point:
     
     //<editor-fold defaultstate="collapsed" desc="RESET PROCESS">
     //RESET PROCESS
-    lw32    v0, TH_T_START_SP(s3)	
-    sw32    v0, TH_T_SP(s3)		//SP=default
-    lw32    v0, TH_T_START_ADDR(s3)	
-    sw32    v0, TH_T_RA(s3)		//RA=default
+    lw32    v0, TH_T_START_SP*4(s3)	
+    sw32    v0, TH_T_SP*4(s3)		//SP=default
+    lw32    v0, TH_T_START_ADDR*4(s3)	
+    sw32    v0, TH_T_RA*4(s3)		//RA=default
 
     b16	    4f
     //</editor-fold>
@@ -967,7 +967,7 @@ general_exception_shared_point:
     //<editor-fold defaultstate="collapsed" desc="REMOVE PROCESS">
 3:
     //REMOVE PROCESS
-    sw32    zero, TH_T_ID(s3)		//nuluje procID
+    sw32    zero, TH_T_ID*4(s3)		//nuluje procID
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ERET, normalni beh, nebo system process">
@@ -1021,7 +1021,7 @@ getProcID:
     
 1:
     //bezi jiny nez systemProcess, precte ID z proc_t_pos
-    lbu	    v0, TH_T_ID(v0)
+    lbu	    v0, TH_T_ID*4(v0)
     jrc	    ra
     
 .end getProcID  
@@ -1042,7 +1042,7 @@ getProcTableItem:
     addiu   v0, PROC_T_ISIZE
     beq	    v0, v1, 9f
 2:    
-    lbu	    t9, TH_T_ID(v0)
+    lbu	    t9, TH_T_ID*4(v0)
     bne	    t9, a0, 1b
     
     //ok, nasel polozku
@@ -1065,17 +1065,17 @@ getErrorBehavior:
 //a0=adresa polozky proc_t
 //a1=err code
     
-    lw	    t9, TH_T_ID(a0)		    //load word, b8-15 = behavior
+    lw	    t9, TH_T_ID*4(a0)		    //load word, b8-15 = behavior
     
     li16    v0, ERR_CODE_TIME_LIMIT_EXCEED
-    bne	    v0, a1, 1f
+    bne	    v0, a1, 1f			    //skok, neni CPU timer limit error		
     //CPU timer limit error
     ext	    v0, t9, 8, 2		    //b8-9
     b16	    4f
     
 1:
     li16    v0, ERR_CODE_GENERAL_EXCEPTION
-    bne	    v0, a1, 2f
+    bne	    v0, a1, 2f			    //skok, neni GE
     //General Exception
     ext	    v0, t9, 10, 2		    //b10-11
     b16	    4f    
@@ -1151,7 +1151,6 @@ addRegEvent:
 //a1 eventID(b0-7), procID(b8-15), var2(b16-23), var3(b24-31)
 //a2 var0
 //a3 var1
-//a3 
     
     //meni t9, v0, v1
     //vraci v0=adr. polozky (OK), v0=0 (NULL=chyba), plna tabulka
@@ -1185,10 +1184,10 @@ addRegEvent:
     bnez    t9, 1b			//skok, polozka neni prazdna
 
     //ok, polozka je prazdna
-    sw	    a3, RET_FN(v0)		//fn addr
-    sw	    a2, RET_V1(v0)		//fn addr
+    sw	    a0, RET_FN(v0)		//fn addr
     sw	    a1, RET_EVENTID(v0)		//eventID, procID, var2, var3
-    sw	    a0, RET_V0(v0)		//fn addr
+    sw	    a2, RET_V0(v0)		//v0   
+    sw	    a3, RET_V1(v0)		//v1
 
     jrc	    ra
     
@@ -1486,8 +1485,14 @@ systemProcess:
     //sw	    v0, (onErrorResume)		    //meni chovani pro error
     
 1:
-    //eventCache
-    la	    s0, eventCache
+    //pozn.:
+    //c/c++ fce uklada nad svuj stack param a0-a2 (event fn ma max. 3 parametry)
+    //proto se sp posune, aby fce nezapisovala nad svuj stack
+    //v c/c++ sem totiz volajici uklada parametry (ale nevim, proc volana fce dela to same,
+    //tj. kopiruje a0-a2 do stacku volajici fce)
+    
+    
+    la	    s0, eventCache		    //eventCache
     addiu   s1, s0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)   
     li	    s2, 0xFF
     di
@@ -1506,8 +1511,9 @@ systemProcess:
     lw	    a2, EVC_P2(s0)		    //p2
     
     sw	    t9, (errorProcID)		    //nastav aktualni procID
+    addiu   sp, -12			    //viz. pozn
     jalr    v0				    //skok do fce
-    
+    addiu   sp, 12			    //viz. pozn
     //po navratu z event fn
     sb	    s2, EVC_PROCID(s0)		    //oznac jako dokonceno (ale ne empty, aby polozku neobsadilo raiseEvent z interruptu)
     di
@@ -1515,7 +1521,7 @@ systemProcess:
     
 3:  //next    
     addiu   s0, EVENT_CACHE_ISIZE
-    bne	    s0, s1, 2b
+    bne	    s0, s1, 2b			    //skok, neni za tabulkou
     
     //je za eventCache
 
@@ -1525,15 +1531,16 @@ systemProcess:
     la	    s0, eventCache
 6:    
     lbu	    t9, EVC_PROCID(s0)
-    beqz    t9, 7f
+    beqz    t9, 7f			    //skok, konec dat
     
-    sb	    zero, EVC_PROCID(s0)
+    //nuluj tuto polozku
+    sw	    zero, EVC_PROCID(s0)
     addiu   s0, EVENT_CACHE_ISIZE	
     bne	    s0, s1, 6b
     
 7:  //ok, cela eventCache je prazdna (nyni muze interrupt pridat novou polozku)
     ei
-    //sw	    zero, (onErrorResume)	    //meni chovani pro error
+    //sw	    zero, (onErrorResume)   //meni chovani pro error
     la	    a0, systemProcess		    //param, adresa pristiho cyklu
     bal	    doEventsL			    //prepni process
     
@@ -1542,7 +1549,7 @@ systemProcessResumeError:
     //pozor, mohou byt zmeneny i s0-s7   
     //restart system processu
     lw	    t9, (proc_t_pos)
-    lw32    sp, TH_T_START_SP(t9)	    //nastav sp na vychozi hodnotu
+    lw32    sp, TH_T_START_SP*4(t9)	    //nastav sp na vychozi hodnotu
     b16	    1b
     
 .end systemProcess  

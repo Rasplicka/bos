@@ -23,11 +23,15 @@
 
 #endif
 
-static void testSystemTimer();
+static void testSystemTimer(int a);
 
 void m2_start()
 {
-    //testSystemTimer();
+    systemTimerRegInterval(&testSystemTimer, 500);
+    while(1)
+    {
+        doEvents();
+    }
     
     while(1)
     {
@@ -46,8 +50,13 @@ void m2_start()
     }
 }
 
-static void testSystemTimer()
+static void testSystemTimer(int a)
 {
+    //int* p=0;
+    //int x=*p;
+    _LED_INV_REG = _LED_INV_VAL;
+    
+    /*
     char x;
     
     while(1)
@@ -69,4 +78,5 @@ static void testSystemTimer()
         }
         while(x==0) { doEvents(); }
     }
+    */
 }

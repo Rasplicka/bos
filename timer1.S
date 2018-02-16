@@ -148,6 +148,8 @@ timer1Init:
 systemTimerRegInterval:
 //a0=adresa fce, a1=time ms
     
+    _PUSH   ra
+    
     move    a2, a1		    //time ms
     bal	    getProcID		    //meni v0, v1
     sll	    a1, v0, 8		    //procID do b8-b15
@@ -162,6 +164,7 @@ systemTimerRegInterval:
     
     //v0=0 error, jinak adresa polozky
     
+    _POP    ra
     jrc	    ra    
     
     

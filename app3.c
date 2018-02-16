@@ -28,8 +28,11 @@ static void testSystemTimer2();
 
 void m3_start()
 {
-    //testSystemTimer2();
-    //testSystemTimer();
+    systemTimerRegInterval(&testSystemTimer, 2000);
+    while(1)
+    {
+        doEvents();
+    }    
     
     while(1)
     {
@@ -52,6 +55,10 @@ void m3_start()
 
 static void testSystemTimer()
 {
+    
+    _LED_INV_REG = _LED_INV_VAL;
+    
+    /*
     char x=0;
     
     if(systemTimerRegInterval(&x, 300) == 0)
@@ -65,6 +72,7 @@ static void testSystemTimer()
         _LED_INV_REG = _LED_INV_VAL;
         x=0;
     }
+    */
 }
 
 static void testSystemTimer2()
