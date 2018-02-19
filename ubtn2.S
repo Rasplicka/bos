@@ -106,8 +106,9 @@ items:		.space			BUTTONS_TABLE_CAPA * ITEM_SIZE
 buttons_table:
 //tabulka obsahuje popis vsech tlacitek, je zakoncena 0x0 (velikost se urci automaticky: buttons_table_end - buttons_table)
     
-    _DEFINE_BUTTON PORTA_BASE, 2, 0, 32  
-    _DEFINE_BUTTON PORTA_BASE, 3, 0, 33
+    //             port base   pin    mode  value
+    _DEFINE_BUTTON PORTA_BASE, 2    , 0,    32		//A.2
+    _DEFINE_BUTTON PORTA_BASE, 3    , 0,    33		//A.3
     
     
     
