@@ -5,7 +5,7 @@
  /*
  * Author Jiri Rasplicka, 2017, (all rights reserved)
  * Version 1.0       
- * BOS module, input pins scan
+ * BOS module, digital input pins scan
  * This file is shared to the PIC32MM, PIC32MZ
  * 
  */
@@ -61,74 +61,72 @@
 //</editor-fold>
     
 #ifdef UBTN
-    
-#define		LONG_DOWN_MS	    3000			//po 3000 ms detekuje dlouhe stisknuti (mod 0)
-#define		REPEAT_FIRST_MS	    2000			//po 2000 ms poprve odesila REPEAT event (mod 0)
-#define		REPEAT_NEXT_MS	    200				//po 200 ms druhe a dalsi REPEAT event (mod 0)
-    
   
-//RAM vars    
-.section .data
+//<editor-fold defaultstate="collapsed" desc="definition">
+ 
+#define		LONG_DOWN_MS		3000			//po 3000 ms detekuje dlouhe stisknuti (mod 0)
+#define		REPEAT_FIRST_MS		2000			//po 2000 ms poprve odesila REPEAT event (mod 0)
+#define		REPEAT_NEXT_MS		200			//po 200 ms druhe a dalsi REPEAT event (mod 0)
     
-#define		ITEM_SIZE	    12				//polozka v items: rep_time[4B], long_time[4B], rep_count[1B], long_count[1B], up_state[1B], down_state[1B]
-#define		BUTTONS_TABLE_ISIZE 8				//velikost polozky v buttons_table    
-#define		BUTTONS_TABLE_CAPA  8  
+#define		BUTTONS_TABLE_CAPA	((buttons_table_end-buttons_table)/8) //8 
+#define		ITEM_SIZE		12				//polozka v items: rep_time[4B], long_time[4B], rep_count[1B], long_count[1B], up_state[1B], down_state[1B]
+#define		BUTTONS_TABLE_ISIZE	8				//velikost polozky v buttons_table    
+     
+#define		REP_TIME_OFF		0
+#define		LONG_TIME_OFF		4
+#define		REP_COUNT_OFF		8
+#define		LONG_COUNT_OFF		9
+#define		UP_STATE_OFF		10
+#define		DOWN_STATE_OFF		11  
+ 
+ //</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="RAM vars">
+   
+.section .ubtn.data    
+items:		.space			BUTTONS_TABLE_CAPA * ITEM_SIZE   
     
-#define		REP_TIME_OFF	    0
-#define		LONG_TIME_OFF	    4
-#define		REP_COUNT_OFF	    8
-#define		LONG_COUNT_OFF	    9
-#define		UP_STATE_OFF	    10
-#define		DOWN_STATE_OFF	    11    
-    
-items:		.space		    BUTTONS_TABLE_CAPA * ITEM_SIZE   
-    
-//events table    
-#define		EVENTS_CAPA	    8				//kapacita events tabulky
-events:	.space	EVENTS_CAPA * 4					//8 polozek (word) pro adresy fci volanych pri event
-    
-    
+//</editor-fold>
+  
 .set micromips   
 .section .ubtn, code
 .align 2
-//STATE 0xF0=UP, 0x0F=DOWN (mode 0,2), 0x0E=DOWN (mode 1)
     
-//<editor-fold defaultstate="collapsed" desc="buttons_table">
+//<editor-fold defaultstate="collapsed" desc="BUTTONS TABLE">
+    
+//<editor-fold defaultstate="collapsed" desc="MACRO">
+.macro _DEFINE_BUTTON port, bit, mode, value
+    .word	\port		//PORTx_BASE, base addr portu 
+    .byte	\bit 		//bit_index (A2)
+    .byte	\mode 		//mode 0=down, repeat, long down, up, long up, 1=down, up
+    .hword	\value 		//value, ktera bude odeslana v event, param1
+.endm
+//</editor-fold>    
     
 buttons_table:
-//tabulka obsahuje popis vsech tlacitek, je zakoncena 0x0
-//!!!POZOR v tabulce nesmi byt vice polozek, nez BUTTONS_TABLE_CAPA
+//tabulka obsahuje popis vsech tlacitek, je zakoncena 0x0 (velikost se urci automaticky: buttons_table_end - buttons_table)
     
-#ifdef PIC32MM
+    _DEFINE_BUTTON PORTA_BASE, 2, 0, 32  
+    _DEFINE_BUTTON PORTA_BASE, 3, 0, 33
     
-//button 0 (A.2-pin 9)   
-.word	PORTA_BASE	//base addr portu 
-.byte	2		//bit_index (A0)
-.byte	0		//mode 0=down, repeat, long down, up, long up, 1=down, up
-.hword	32		//value, ktera bude odeslana v event, param1
     
-//button 1 (A.3-pin 10)   
-.word	PORTA_BASE	//base addr portu     
-.byte	3		//bit_index (A1)
-.byte	0		//mode 0=long up/down, 1=repeat down
-.hword	33		//value, ktera bude odeslana v event, param1    
     
-#endif    
-    
-//konec tabulky    
-.word	0x0		//konec tabulky
-    
+ //konec tabulky, musi byt zakonceno 0x0!
+buttons_table_end:    
+.word	0x0		
+   
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="ubtn_start">
+//<editor-fold defaultstate="collapsed" desc="ubtnStart">
 .align 2    
-.global ubtn_start
-.ent ubtn_start    
-ubtn_start:
+.global ubtnStart
+.ent ubtnStart    
+ubtnStart:
 //nastavi bit v portu odpovidajicim tlacitku: TRIS=1(input), ANSEL=0(digital), CNPU=1(pull-up rezistor)    
 //tlacitko se zapoji mezi pin a GND, stisknuti = LOG 0
 //STATE nastavi na UP   
-//definice tlacitek je v buttons_table    
+//definice tlacitek je v buttons_table 
+//STATE 0xF0=UP, 0x0F=DOWN (mode 0,2), 0x0E=DOWN (mode 1)    
 
     //nastav TRIS bit=1 (input), ANSEL bit=0 digital
     la	    t0, buttons_table
@@ -173,24 +171,26 @@ ubtn_start:
 9:    
     
     //doEvents
-    la	    a0, ubtn_go
+    la	    a0, ubtnGo
     bal	    doEventsL
     nop
     
-.end ubtn_start  
+.end ubtnStart  
     
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="ubtn_go">
+//<editor-fold defaultstate="collapsed" desc="ubtnGo">
 .align 2    
-.ent ubtn_go
-ubtn_go:
+.ent ubtnGo
+ubtnGo:
 //odesila event
 //1. btn_down,      param0=1, param1=buttons_table[6]    - okamzik stisknuti
 //2. btn_up,        param0=2, param1=buttons_table[6]	 - uvolneni po beznem stisknuti   
 //3. btn_down_long, param0=3, param1=buttons_table[6]    - trva down delsi dobu (pouze jeden event, nikoliv opakovane) mod 0
 //4. btn_up_long,   param0=4, param1=buttons_table[6]    - uvolneni po dlouhem stisknuti mod 0
 //5. btn_repeat     param0=5, param1=buttons_table[6]    - opakovane down mod 1
+    
+//STATE 0xF0=UP, 0x0F=DOWN (mode 0,2), 0x0E=DOWN (mode 1)    
     
     la	    s0, items
     addiu   s1, zero, 0xF	    //hodnota potvrzeny stav
@@ -204,7 +204,7 @@ next:
     //zjisti akt. stav pinu do v0
     lw32    v0, PORT_OFFSET(t1)		    //load port
     lbu	    t9, 4(s2)			    //load bit_index
-    srlv    v0, v0, t9			    //cteny bit do b0
+    srlv    v0, v0, t9			    //cteny bit do v0
     ext	    v0, v0, 0, 1		    //v0=stav pinu
     
     beqz    v0, pin_down		    //skok, pin=0-down
@@ -239,7 +239,7 @@ up_test_change:
     li16    a0, UBTN_UP_LONG		    //btn up long
     lhu	    a1, 6(s2)			    //value z buttons_table
     move    a2, zero
-    bal	    runEvent
+    bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     nop
     
     nop
@@ -251,7 +251,7 @@ send_up:
     li16    a0, UBTN_UP			    //btn up long
     lhu	    a1, 6(s2)			    //value z buttons_table
     move    a2, zero
-    bal	    runEvent
+    bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     nop
     
     nop
@@ -292,7 +292,7 @@ send_rep:
     li16    a0, UBTN_REPEAT		    //btn repeat
     lhu	    a1, 6(s2)			    //value z buttons_table    
     move    a2, s3			    //repeat count
-    bal	    runEvent
+    bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     nop
     
     lw      t9, (timer_ms)
@@ -331,7 +331,7 @@ test_long:
     li16    a0, UBTN_DOWN_LONG		    //btn long down
     lhu	    a1, 6(s2)			    //value z buttons_table    
     move    a2, s3			    //longCount
-    bal	    runEvent
+    bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     nop    
     
     lw      t9, (timer_ms)
@@ -366,7 +366,7 @@ down_test_change:
     li16    a0, UBTN_DOWN		    //btn down
     lhu	    a1, 6(s2)			    //value z buttons_table
     move    a2, zero
-    bal	    runEvent
+    bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     nop
     
     //pokracuje loop
@@ -382,98 +382,46 @@ loop:
     
 end:    
     //doEvents
-    la	    a0, ubtn_go
+    la	    a0, ubtnGo
     bal	    doEventsL
     nop    
 
-.end ubtn_go  
+.end ubtnGo  
     
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="ubtn_regEvent">
+//<editor-fold defaultstate="collapsed" desc="ubtnRegEvent">
     
 .align 2
-.global	ubtn_regEvent
-.ent ubtn_regEvent
-ubtn_regEvent:
+.global	ubtnRegEvent
+.ent ubtnRegEvent
+ubtnRegEvent:
 //a0=adresa fce
-//vraci v0=1 OK, tabulka plna vraci v0=0    
-    
-    
-    addiu   t0, zero, EVENTS_CAPA
-    la	    t1, events
-    
-1:    
-    lw	    t9, (t1)
-    bnez    t9, 2f	    //skok, polozka neni volna 
-    nop
-    
-    //je vola, pouzit
-    sw	    a0, (t1)
-    li16    v0, 1
-    jrc	    ra
-
-2:    
-    addiu   t0, -1	    //count--
-    addiu   t1, 4	    //item++ (event table)
-    bnez    t0, 1b	    //skok na dalsi item
-    nop
-    
-    //chyba, tabulka je plna
-    move    v0, zero
-    jrc	    ra    
-    
-.end ubtn_regEvent 
-    
-//</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="ubtn_unregEvent">
-    
-.align 2
-.global	ubtn_unregEvent    
-.ent ubtn_unregEvent
-ubtn_unregEvent:
-//a0=adresa fce, ktera bude unreg
     
     _PUSH   ra
     
-    addiu   v0, zero, EVENTS_CAPA
-    la	    v1, events
-1:    
-    lw	    t9, (v1)
-    bne	    t9, a0, 3f
-    nop
+    move    a3, zero		    
+    move    a2, zero		    
+
+    bal	    getProcID		    //meni v0, v1
+    sll	    a1, v0, 8		    //procID do b8-b15
+    ori	    a1, UBTN_EVENT_ID	    
+        
+    //a0=fn, 
+    //a1=eventID, procID, (var2=0, var3=0)
+    //a2=0 (var0) 
+    //a3=0 (var1)
+    bal	    addRegEvent		    //meni t9, v0, v1
     
-    //nasel polozku
-    sw	    zero, (v1)	    //vymazat
+    //v0=0 error, jinak adresa polozky
     
-    la	    a0, events
-    li16    a1, 4
-    addiu   a2, zero, EVENTS_CAPA
-    //a0=adresa tabulky, a1=velikost polozky, a2=max. pocet polozek
-    bal	    defragTableW
-    nop
-    
-2:
     _POP    ra
-    jrc	    ra
-    nop
-    
-3:
-    addiu   v0, -1	    //count--
-    addiu   v1, 4	    //item++ (event table)
-    bnez    v0, 1b	    //skok na dalsi item
-    nop
-    
-    //nenasel polozku
-    _POP    ra
-    jrc	    ra
-    nop
-    
-.end ubtn_unregEvent    
+    jrc	    ra    
+     
+.end ubtnRegEvent 
     
 //</editor-fold>
-   
+    
 //<editor-fold defaultstate="collapsed" desc="runEvent">
     
 .align 2    
@@ -481,50 +429,47 @@ ubtn_unregEvent:
 runEvent:
 //a0=udalost UBTN_UP/DOWN/LONG_DOWN/LONG_UP/REPEAT
 //a1=button value z buttons_table 
-//a2=cnt - index opakovani REPEAT a LONG_DOWN (0-0xFF)    
+//a2=cnt - index opakovani REPEAT a LONG_DOWN (0-0xFF) 
     
-    _PUSH_S04RA
-   
-    move    s0, a0			    //zaloha a0 (volana fce muze zmenit)
-    move    s1, a1			    //zaloha a1 (volana fce muze zmenit)
-    move    s2, a2
     
-    la	    s3, events
-    addiu   s4, zero, EVENTS_CAPA
+    //meni a0-a3, v0, v1, t5-t9
+    _PUSH   ra
     
-1:    
-    lw	    t9, (s3)
-    beqz    t9, 2f			    //nulova polozka, konec dat
-    nop
+    move    t5, a0
+    move    t6, a1
+    move    t7, a2
     
-    move    a0, s0			    //nastav param0
-    move    a1, s1			    //nastav param1
-    move    a2, s2
-   
-    //volani c/c++ fce, argumenty:
-    //pokud se vejdou do a0-a3, c fce predpoklada, ze jsou v a0-a3 (pouzije hodnoty v reg. a0-a3)
-    //ale zaroven je ulozi do zasobniku, nad akt. pozici SP, kam by je mela ulozit volajici fce
-    //protoze v prubehu fce se na ne muze odvolavat nikoliv v a0-a3, ale cist je ze zasobniku
-    //v ASM kodu to znamena, ze musi posunout zasobnik o prislusnou velikost (nebo tyto argumenty 
-    //do zasobniku ulozit - to neni nutne c/c++ to dela automaticky)
-    addiu   sp, -12			    //3 argumenty int
-    jalr    t9				    //volani fce (muze menit vse, krome s0-s7)
-    nop
-    addiu   sp, 12
-    
-    //next
-    addiu   s4, -1	    //count--
-    addiu   s3, 4	    //item++ (event table)
-    bnez    s4, 1b
-    nop
+    move    a0, zero			//hledani od zacatku regEventTable
+    li	    a1, UBTN_EVENT_ID	
 
+1:  
+    //a0=adresa zacetku hledani
+    //a1=eventID
+    bal	    getRegEvent			//meni v0, v1, t9, (vraci v0=adresa, nebo 0x0 - polozka neni)
+    beqz    v0, 2f			//skok, nenasel polozku
     
-2:    
-    _POP_S04RA
+    //nasel polozku v regEventTable
+    move    a0, v0			//adresa polozky v regEventTable
+    
+    //a0=adresa polozky v regEventTable (pouzije z ni procID a fn addr)
+    //a1=p0
+    //a2=p2
+    //a3=p3
+    move    a1, t5
+    move    a2, t6
+    move    a3, t7
+    bal	    raiseEvent			//meni t9, v0, v1
+    
+    //a1 bylo zmemeno, dosadit eventID
+    li	    a1, UBTN_EVENT_ID	
+    b16	    1b
+    
+2:  
+    _POP    ra
     jrc	    ra
     
 .end runEvent   
     
 //</editor-fold>
  
-#endif    
+#endif	//UBTN   

@@ -59,9 +59,8 @@ extern void iVector_i2c3Bus();
 
 #ifdef UBTN
 //ubtn.S
-extern void ubtn_start();
-extern int  ubtn_regEvent(void*);
-extern void ubtn_unregEvent(void*);
+extern void ubtnStart();
+extern int  ubtnRegEvent(void*);
 
 #endif
 

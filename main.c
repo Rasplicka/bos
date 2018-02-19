@@ -160,6 +160,12 @@ void main()
     defaultAppStartParam.defaultID=0xFE;
     regProcess(&systemProcess, 1024, &defaultAppStartParam);
     defaultAppStartParam.defaultID=0x0;
+    
+#ifdef UBTN
+    defaultAppStartParam.defaultID=0xF0;
+    regProcess(&ubtnStart, 512, &defaultAppStartParam);
+    defaultAppStartParam.defaultID=0x0;
+#endif    
           
     //user apps
     userAppsStart();

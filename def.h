@@ -148,6 +148,7 @@
 // <editor-fold defaultstate="collapsed" desc="EventID">
 //ID event
 #define     TIMER1_EVENT_ID		    1
+#define     UBTN_EVENT_ID           5
 #define     RTC_TALARM_ID           10
 
 // </editor-fold>
