@@ -46,7 +46,7 @@
  * interrupt stack (jeden, nebo sedm, velikost kazdeho SRS_STACK_SIZE)  //zacatek oblasti
  */
     
-#define     TIMER1_EVENT_T_SIZE (TIMER1_EVENT_CAPA * TIMER1_EVENT_ISIZE)  
+#define     TIMER1_EVENT_T_SIZE     0 //(TIMER1_EVENT_CAPA * TIMER1_EVENT_ISIZE)  
 #define     REG_EVENT_T_SIZE    (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)    
 #define     EVENT_C_SIZE        (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
     
@@ -57,7 +57,7 @@
 //process table (prvni polozka v sekci .os, proto definuje jeji adresu)   
 uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA]   __section(".os") __at(OS_DATA_BASE);      
 //tabulka, kde se registruji casovace
-char timer1_events[TIMER1_EVENT_T_SIZE]         __section(".os");               //timer1
+//char timer1_events[TIMER1_EVENT_T_SIZE]         __section(".os");               //timer1
 
 char regEventTable[REG_EVENT_T_SIZE]            __section(".os");
 char eventCache[EVENT_C_SIZE]                   __section(".os");
@@ -126,10 +126,9 @@ void main()
     //nuluje celou oblast pro OS data
     clearSystemData(OS_DATA_BASE, OS_DATA_SIZE); 
     
-    systemInit(); //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
-    //periphInit(); //provede vychozi nastaveni periferii, prideluje IO piny
-    pinSetting();
-    timer1Init(); //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
+    systemInit();   //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
+    pinSetting();   //provede vychozi nastaveni periferii, prideluje IO piny
+    timer1Init();   //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
 
 #ifdef RTC    
     //povoli RTC modul, nastavi 1/1/2001, nastav day_ms, podle aktualniho casu

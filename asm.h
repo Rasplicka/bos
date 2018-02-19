@@ -1,3 +1,4 @@
+#include "def.h"
 /*
  * Author Jiri Rasplicka, 2017
  */
@@ -71,4 +72,5 @@ extern void rtcSetDate(uint);
 extern uint rtcGetTime();
 extern uint rtcGetDate();
 extern char rtcGetHalfSecond();
+extern int  rtcRegTimeAlarm(void*, char, char);
 #endif

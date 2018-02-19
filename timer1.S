@@ -31,8 +31,6 @@ ukazka pouziti casovacu viz. doc/system timer
 .set micromips
 .section .asm_timer1, code 
     
-#define	TIMER1_EVENT_ID		    1
-    
 //<editor-fold defaultstate="collapsed" desc="timer1Init">
     
 .align 2
@@ -167,48 +165,13 @@ systemTimerRegInterval:
     _POP    ra
     jrc	    ra    
     
-    
-    
-//a0=adresa status byte
-//a1=interval ms 
-//vraci v0=1 OK, v0=0 chyba, plna tabulka  
-    
-//po uplynuti casu nastavi status byte=1, nulovat ho pak musi app 
-//udalost nastava periodicky, pro zruseni ji musi app unreg
-    
-    /*
-    la	    v1, (timer1_events)
-    addiu   v0, zero, TIMER1_EVENT_CAPA
-
-1:    
-    lw	    t9, (v1)
-    bnez    t9, 2f
-    //nop
-    
-    //volna polozka
-    sw	    a0, (v1)				//adresa status byte
-    sw	    a1, 4(v1)				//default value
-    sw	    a1, 8(v1)				//value
-   
-    li16    v0, 1				//vraci OK
-    jrc	    ra
-    
-2:
-    addiu   v1, TIMER1_EVENT_ISIZE
-    addiu   v0, -1
-    bnez    v0, 1b
-    //nop
-    
-    //v0=0, vraci chybu
-    jrc	    ra
-    */
-    
 .end systemTimerRegInterval    
     
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="systemTimerRegDelay">
-    
+    //zruseno (bud pouzit pauseEvent(ms), systemTimerRegInterval() + volani UnregEvent)
+    /*
 .align 2
 .global systemTimerRegDelay
 .ent systemTimerRegDelay
@@ -248,56 +211,28 @@ systemTimerRegDelay:
     
     
 .end systemTimerRegDelay
+    */
     
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="systemTimerUnregInterval">
-    
+    //vola UnregEvent(fn)
+    /*
 .align 2
 .global systemTimerUnregInterval
 .ent systemTimerUnregInterval
 systemTimerUnregInterval:
-//a0=adresa status byte    
+//a0=adresa fn    
     
-    _PUSH ra
+    _PUSH   ra
     
-    addiu   v0, zero, TIMER1_EVENT_CAPA
-    la	    v1, timer1_events
-1:    
-    lw	    t9, (v1)
-    bne	    t9, a0, 3f
-    //nop
+    bal	    UnregEvent			//meni t7-t9, v0, v1, a0-a2
     
-    //nasel polozku
-    sw	    zero, (v1)	    //vymazat
-    
-    la	    a0, timer1_events
-    li16    a1, TIMER1_EVENT_ISIZE
-    addiu   a2, zero, TIMER1_EVENT_CAPA
-    //a0=adresa tabulky, a1=velikost polozky, a2=max. pocet polozek
-    la	    t9, (defragTableW)
-    jalr    t9
-    bal	    defragTableW
-    //nop
-    
-2:
-    _POP ra
-    jrc	    ra
-    //nop
-    
-3:
-    addiu   v0, -1	    //count--
-    addiu   v1, 4	    //item++ (event table)
-    bnez    v0, 1b	    //skok na dalsi item
-    //nop
-    
-    //nenasel polozku
     _POP    ra
     jrc	    ra
-    //nop  
-    
  
 .end systemTimerUnregInterval  
+    */
     
 //</editor-fold>
    
@@ -360,65 +295,10 @@ iVector_timer1:
     
     //</editor-fold>
 
-    
-    /*
-    
-//word addr, word ms, word ms value    
-    la	    v0, timer1_events
-    addiu   v1, zero, TIMER1_EVENT_CAPA
-    li16    a0, 1
-    move    t0, zero			//priznak, zda byla vyrazena udalost
-    	
-1:    
-    lw	    t9, (v0)			//adresa promene, kterou nastavi na 1, pokud nastala udalost
-    beqz    t9, 4f			//skok, neplatna polozka, konec dat
-    //nop
-   
-    //platna polozka
-    lw	    t8, 8(v0)			//load aktualni value (citac)
-    addiu   t8, -TIMER1_INTERVAL	//citac --
-    sw	    t8, 8(v0)			//save citac
-    bgtz    t8, 3f			//skok, neni 0, zadna udalost
-    //nop
-    
-    //nastala udalost
-    sb	    a0, (t9)			//nastav status byte registrovane udalosti
-    lw	    t8, 4(v0)			//load default value (pokud je 0, neni udalost repeat)
-    bnez    t8, 2f			//skok, je repeat
-    //nop
-    
-    //t8=0, udalost neni repeat, zrusit 
-    sw	    zero, (v0)
-    addiu   t0, 1			//nastav priznak zruseni event
-
-2:
-    //je repeat, t8=default value (provede i kdyz neni repeat, nevadi to)
-    sw	    t8, 8(v0)
-    
-3:
-    //next
-    addiu   v0, TIMER1_EVENT_ISIZE	//dalsi polozka
-    addiu   v1, -1			//items--
-    bnez    v1, 1b			//loop
-    //nop
-    
-4:    
-    beqz    t0, 5f			//skok, nebyla zrusena zadna udalost
-    //nop
-    //byla zrusena udalost (nebyla repeat), defrag. tabulku
-    la	    a0, timer1_events
-    addiu   a1, zero, TIMER1_EVENT_ISIZE
-    addiu   a2, zero, TIMER1_EVENT_CAPA
-    //a0=adresa tabulky, a1=velikost polozky, a2=max. pocet polozek (kapacita)
-    bal	    defragTableW
-    //nop
-    
-    */
-
-5:    
-    
     //<editor-fold defaultstate="collapsed" desc="clr FLAG">
     //konec, nuluj flag IFS0.4
+5:     
+    
 #ifdef PIC32MZ    
     li16    v0, (1 << 4)
     sw      v0, (IFS0CLR)
@@ -436,7 +316,6 @@ iVector_timer1:
     //</editor-fold>
 
     eret
-    //nop
   
 .end iVector_timer1
   

@@ -35,22 +35,24 @@
 #define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception
 #define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
-#define     TIMER1_EVENT_CAPA       16              //kapacita timer1_event tabulky, tj. max. pocet spustenych systemovych casovacu
-#define     TIMER1_EVENT_ISIZE      12              //velikost jedne polozky
+//#define     TIMER1_EVENT_CAPA       16              //kapacita timer1_event tabulky, tj. max. pocet spustenych systemovych casovacu
+//#define     TIMER1_EVENT_ISIZE      12              //velikost jedne polozky
 #define     TIMER1_INTERVAL         10              //interval ms
 
 // </editor-fold>
 
+// <editor-fold defaultstate="collapsed" desc="Error">
 #define     ERR_CODE_TIME_LIMIT_EXCEED          1
 #define     ERR_CODE_GENERAL_EXCEPTION          2
 #define     ERR_CODE_TRAP                       3
 #define     ERR_STACK_OVERFLOW                  4
 
-  
+#define     ON_ERROR_RESET_SYSTEM               0
+#define     ON_ERROR_RESET_PROCESS              1
+#define     ON_ERROR_REMOVE_PROCESS             2
 
-#define     ON_ERROR_RESET_SYSTEM      0
-#define     ON_ERROR_RESET_PROCESS     1
-#define     ON_ERROR_REMOVE_PROCESS    2
+// </editor-fold>
+
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 #define             USE_GRAPHICS                    //pouzije graphics
@@ -142,6 +144,14 @@
 #define		EVC_FN			16  
 
 // </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="EventID">
+//ID event
+#define     TIMER1_EVENT_ID		    1
+#define     RTC_TALARM_ID           10
+
+// </editor-fold>
+
 
 // <editor-fold defaultstate="collapsed" desc="Font (SSD1306)">
 #define     FONT1306_MID    1

@@ -13,6 +13,9 @@
 //day_ms se synchronizuje s RTC kazdou minutu (alarm interrupt)    
 //(doba spusteni OS je v timer_ms)
 
+//Poskytuje event - RTC ALARM, v zadanou hodinu a minutu
+//do fce predava i aktualni datum v BCD formatu (obsah RTCDATE)     
+     
 //bcd format detail:
 //   b31       b23       b15       b7      b0
 //   des  jed  des  jed  des  jed
@@ -404,43 +407,42 @@ rtcGetHalfSecond:
 .end rtcGetHalfSecond  
     
 //</editor-fold>       
-    
-//<editor-fold defaultstate="collapsed" desc="iVector_rtc (RTC alarm)">
 
-.align 2    
-.global iVector_rtc   
-.ent iVector_rtc
-iVector_rtc:
+//<editor-fold defaultstate="collapsed" desc="rtcRegTimeAlarm">
+    
+.align 2
+.global rtcRegTimeAlarm
+.ent rtcRegTimeAlarm
+rtcRegTimeAlarm:
+//a0=adresa fce
+//a1=hour
+//a2=minute
+    
+    _PUSH   ra
+    
+    move    a3, a2		    //a3=minute
+    move    a2, a1		    //a2=hour
+
+    bal	    getProcID		    //meni v0, v1
+    sll	    a1, v0, 8		    //procID do b8-b15
+    ori	    a1, RTC_TALARM_ID	    
+        
+    //a0=fn, 
+    //a1=eventID, procID, (var2=0, var3=0)
+    //a2=hour   (var0) 
+    //a3=minute (var1)
+    bal	    addRegEvent		    //meni t9, v0, v1
+    
+    //v0=0 error, jinak adresa polozky
+    
+    _POP    ra
+    jrc	    ra    
+    
+.end rtcRegTimeAlarm   
+
+//</editor-fold>
+ 
    
-    //allarm jednou za minutu pri sec=00
-    
-    //nastav day_ms, podle aktualniho casu
-    //musi uchovat Hi/Lo, jsou spolecne pro vsechny SRS
-    mflo    s0			//uchova Lo
-    mfhi    s1			//uchova Hi
-    
-    bal	    setDayMs	//meni HiLo
-    
-    mthi    s1			//obnov Hi
-    mtlo    s0			//obnov Lo
-    
-#ifdef PIC32MM0064    
-    li	    v0, (1 << 14)	//nuluj flag
-    sw	    v0, (IFS0CLR)
-#endif
-    
-#ifdef PIC32MM0256    
-    li	    v0, (1 << 0)	//nuluj flag
-    sw	    v0, (IFS1CLR)
-#endif    
-    
-    eret
-
-.end iVector_rtc
-    
-//</editor-fold>    
-
-    
 //locals
     
 //<editor-fold defaultstate="collapsed" desc="setDayMs">
@@ -460,13 +462,9 @@ setDayMs:
     _GET_MIN_FROM_BCD a0, t1		//meni t9
     _GET_HOUR_FROM_BCD a0, t2		//meni t9
     
-    
-    //li	    t8, 60
-    
     mtlo    t0				//Lo=sec
     mthi    zero			//Hi=0
     
-    //maddu   t0, t9	//   sec  * 1000
     li	    t9, 60
     maddu   t1, t9	//k Lo prida minute  * 60
     
@@ -479,8 +477,6 @@ setDayMs:
     
     mul	    t9, t8	//second * 1000
     
-    
-    //mflo    v0
     sw	    t9, (day_ms)
     
     jrc	    ra
@@ -488,4 +484,92 @@ setDayMs:
 .end setDayMs 
 //</editor-fold>
 
+//<editor-fold defaultstate="collapsed" desc="rtcEvents">
+.ent rtcEvents
+rtcEvents:
+    
+    //meni a0-a3, v0, v1, t6-t9
+    _PUSH   ra
+    
+    lw      a0, (RTCTIME)
+    _GET_MIN_FROM_BCD a0, t6		//meni t9, t6=minute
+    _GET_HOUR_FROM_BCD a0, t7		//meni t9, t7=hour
+    
+    move    a0, zero			//hledani od zacatku regEventTable
+    li	    a1, RTC_TALARM_ID	
+
+1:  
+    //a0=adresa zacetku hledani
+    //a1=eventID
+    bal	    getRegEvent			//meni v0, v1, t9, (vraci v0=adresa, nebo 0x0 - polozka neni)
+    beqz    v0, 2f			//skok, nenasel polozku
+    
+    //nasel polozku v regEventTable
+    move    a0, v0			//adresa polozky v regEventTable
+    //var1=minute
+    lw	    v1, RET_V1(a0)		//load minute
+    bne	    v1, t6, 1b			//skok, jina minuta
+    //var0=hour
+    lw	    v1, RET_V0(a0)		//load hour
+    bne	    v1, t7, 1b			//skok, jina hodina    
+    
+    //a0=adresa polozky v regEventTable (pouzije z ni procID a fn addr)
+    //a1=p0
+    //a2=p2
+    //a3=p3
+    move    a1, t7			//param hour
+    move    a2, t6			//param minute
+    lw      a3, (RTCDATE)		//RTC DATE
+    bal	    raiseEventInt		//meni t9, v0, v1
+    
+    //a1 bylo zmemeno, dosadit eventID
+    li	    a1, RTC_TALARM_ID	
+    b16	    1b
+    
+2:  
+    _POP    ra
+    jrc	    ra
+      
+.end rtcEvents 
+    
+//</editor-fold>
+   
+//<editor-fold defaultstate="collapsed" desc="iVector_rtc (RTC alarm)">
+
+.align 2    
+.global iVector_rtc   
+.ent iVector_rtc
+iVector_rtc:
+   
+    //allarm jednou za minutu pri sec=00
+    
+    //nastav day_ms, podle aktualniho casu
+    //musi uchovat Hi/Lo, jsou spolecne pro vsechny SRS
+    mflo    s0			//uchova Lo
+    mfhi    s1			//uchova Hi
+    
+    bal	    setDayMs		//meni HiLo
+    
+    mthi    s1			//obnov Hi
+    mtlo    s0			//obnov Lo
+    
+    //obsluha udalosti rtcAlarm
+    bal	    rtcEvents		//meni a0-a3, v0, v1, t6-t9
+    
+#ifdef PIC32MM0064    
+    li	    v0, (1 << 14)	//nuluj flag
+    sw	    v0, (IFS0CLR)
+#endif
+    
+#ifdef PIC32MM0256    
+    li	    v0, (1 << 0)	//nuluj flag
+    sw	    v0, (IFS1CLR)
+#endif    
+    
+    eret
+
+.end iVector_rtc
+    
+//</editor-fold>    
+    
 #endif	    //RTC

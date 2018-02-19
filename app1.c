@@ -24,11 +24,13 @@
 #endif
 
 static void testSystemTimer(int a, int b, int c);
+static void testRTC(char hour, char min, uint date);
 
 void m1_start()
 {
     //testSystemTimer();
     systemTimerRegInterval(&testSystemTimer, 1000);
+    rtcRegTimeAlarm(&testRTC, 0, 5);
     while(1)
     {
         doEvents();
@@ -108,3 +110,7 @@ static void testSystemTimer(int a, int b, int c)
     
 }
 
+static void testRTC(char hour, char min, uint date)
+{
+    int a=0;
+}

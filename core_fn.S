@@ -1110,6 +1110,8 @@ getRegEvent:
 //a0=adresa zacatku hledani
 //a1=eventID    
 
+    //meni v0, v1, t9
+    
     //fce hleda polozku podle eventID
     //vraci v0=adresa polozky, nebo 0=nenasel
     //hledani zacina na adrese a0 (je-li > 0, jinak od zacatku regEventTable)
@@ -1243,7 +1245,7 @@ UnregEvent:
     la	    a0, regEventTable			//a0=adresa tabulky
     li	    a1, REG_EVENT_TABLE_ISIZE		//a1=item size [bytes] (delitelne 4)
     li	    a2, REG_EVENT_TABLE_CAPA		//a2=max. pocet polozek, item cnt
-    bal	    defragTableW
+    bal	    defragTableW			//meni t7-t9, v0, v1, a0-a2
    
     _POP    ra
     
