@@ -41,13 +41,8 @@ timer1Init:
     //stejne jako RTCC
     //v idle modu stale bezi
     
-    //TIMER1_INTERVAL (def.h) definuje interval v ms (10-MM, 1-MZ)
-    //pro 32.0kHz PR1=320 - 10ms, PR1=32 - 1ms 
-    #define	PR1_VALUE			(32000/(1000/TIMER1_INTERVAL))
-    
-    //src muze byt LPRC, nebo SOSC (pak je nutne pouzit krystal a upravit cfg-bits, zapnout SOSC)
-    #define	TIMER1_SRC_LPRC
-    //#define	TIMER1_SRC_SOSC
+    //MM - src muze byt LPRC, nebo SOSC (pak je nutne pouzit krystal a upravit cfg-bits, zapnout SOSC)
+    //MZ - src muze byt PBCLK3, nebo SOSC
     
     #define	TIMER1_INTERRUPT_PRIORITY	2
     #define	TIMER1_INTERRUPT_SUBPRIORITY	0
@@ -55,12 +50,17 @@ timer1Init:
     sw	    zero, (timer_ms)			//timer_ms (uint) cita pocet ms od zapnuti
     sw	    zero, (day_ms)			//day_ms (uint) pocita pocet ms od zacatku dne, pouze pokud je definovano RTC
     
+    sw	    zero, (T1CON)			//timer1 OFF (ON bit=0)
+    sw	    zero, (TMR1)
    
     //<editor-fold defaultstate="collapsed" desc="PIC32MM">
 #ifdef PIC32MM    
+    
+    //TIMER1_INTERVAL (def.h) definuje interval v ms (10-MM, 1-MZ)
+    //pro 32.0kHz PR1=320 - 10ms, PR1=32 - 1ms 
+    #define	PR1_VALUE			(32000/(1000/TIMER1_INTERVAL))
 
-    sw	    zero, (T1CON)	    //timer1 OFF (ON bit=0)
-    sw	    zero, (TMR1)
+    //sw	    zero, (T1CON)	    //timer1 OFF (ON bit=0)
     li	    t9, 0x0202
     sw	    t9, (T1CON)		    //setting (ON=0), src=LPRC (32kHz), div=1:1, idle-run, 
     
@@ -128,6 +128,47 @@ timer1Init:
 
     //<editor-fold defaultstate="collapsed" desc="PIC32MZ">
 #ifdef PIC32MZ
+    //TIMER1_INTERVAL (def.h) definuje interval v ms (10-MM, 1-MZ)
+    //pro 200MHz PR1=781 - 1ms  
+    #define	PR1_VALUE			(781250/(1000/TIMER1_INTERVAL))    
+    
+    li	    t9, 0x0030
+    sw	    t9, (T1CON)		    //setting (ON=0), src=PBCLK3 (200MHz), div=1:256, idle-run, 
+    
+    
+    li	    v1, 0x9D000000
+    la	    v0, iVector_timer1
+    subu    v0, v1
+    sw	    v0, (OFF004)
+    
+    //IPC/IEC/IFS
+    
+    //priority IPC1.b2-4
+    li	    t9, (0b111 << 2)
+    sw	    t9, (IPC1CLR)					//nuluj bity
+    li	    t9, (TIMER1_INTERRUPT_PRIORITY << 2)
+    sw	    t9, (IPC1SET)					//nastav bity
+    
+    //subpriority IPC1.b0-1
+    li	    t9, (0b11 << 0)
+    sw	    t9, (IPC1CLR)					//nuluj bity    
+    li	    t9, (TIMER1_INTERRUPT_SUBPRIORITY << 0)
+    sw	    t9, (IPC1SET)					//nastav bity
+    
+    
+    //IFS0.b4=0, IEC0.b4=1
+    li	    t9, (1<<4)
+    sw	    t9, (IFS0CLR)
+    sw	    t9, (IEC0SET)    
+    
+    
+    //PR1 je komparativni reg. (pro 32.0kHz a 10ms = 320) 
+    li	    t9, PR1_VALUE
+    sw	    t9, (PR1)
+    
+    //T1CON.b15 = ON
+    li	    t9, (1<<15)
+    sw	    t9, (T1CONSET)
     
 #endif	//PIC32MZ  
     //</editor-fold>
@@ -242,8 +283,22 @@ systemTimerUnregInterval:
 .ent iVector_timer1
 iVector_timer1:
     
-    //#define INTERVAL	10		//10ms
-    //timer1_events tabulka word[0]-adresa var, word[1]=default time, word[2]akt. value (citac) 
+#ifdef PIC32MM0064 
+    #define	    IFS_BIT	    11
+    #define	    IFS_REG_CLR	    IFS0CLR     
+#endif
+    
+#ifdef PIC32MM0256 
+    #define	    IFS_BIT	    17
+    #define	    IFS_REG_CLR	    IFS0CLR     
+#endif    
+#ifdef PIC32MZ
+    #define	    IFS_BIT	    4
+    #define	    IFS_REG_CLR	    IFS0CLR 
+     
+    MIPS32_TO_MICROMIPS  
+#endif    
+    
     
     lw	    v0, (timer_ms)	    
     addiu   v0, TIMER1_INTERVAL		//timer_ms += TIMER1_INTERVAL (10ms)
@@ -298,7 +353,10 @@ iVector_timer1:
     //<editor-fold defaultstate="collapsed" desc="clr FLAG">
     //konec, nuluj flag IFS0.4
 5:     
+    li16    v0, (1 << IFS_BIT)
+    sw      v0, (IFS_REG_CLR)
     
+    /*
 #ifdef PIC32MZ    
     li16    v0, (1 << 4)
     sw      v0, (IFS0CLR)
@@ -313,6 +371,7 @@ iVector_timer1:
     li	    v0, (1 << 17)
     sw      v0, (IFS0CLR)
 #endif   
+    */
     //</editor-fold>
 
     eret

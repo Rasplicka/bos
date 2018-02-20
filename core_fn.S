@@ -828,6 +828,27 @@ pauseEvents:
     
 //errors
     
+    
+#ifdef PIC32MZ
+.align 2    
+.global intVectors
+.ent intVectors
+intVectors:
+    
+    li	    v1, 0x9D000000
+    la	    v0, iVector0
+    subu    v0, v1
+    //ins	    v0, zero, 0, 1 
+    
+    //li	    v0, 0x10000
+    sw	    v0, (OFF000)
+    
+    jrc	    ra
+    
+.end intVectors    
+
+#endif    
+    
 //<editor-fold defaultstate="collapsed" desc="iVector0 CPU Timer">
 .align 2    
 .global iVector0
@@ -846,7 +867,11 @@ iVector0:
     #define	    IFS_BIT	    0
     #define	    IFS_REG_CLR	    IFS0CLR     
 #elif defined PIC32MZ
-    //...
+    #define	    IFS_BIT	    0
+    #define	    IFS_REG_CLR	    IFS0CLR  
+    
+    MIPS32_TO_MICROMIPS
+    
 #endif    
     
     //nuluj flag
@@ -859,31 +884,66 @@ iVector0:
     //pokracuje v generalException
     b	    general_exception_shared_point
     
-    //EPC=processException (ERET do teto fce)
-    //la	    v0, processException
-    //mtc0    v0, _CP0_EPC
-    //ehb
-    
-    //eret
-    
 .end iVector0  
     
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="general_exception">
+
+#ifdef POC32MZ    
+    
+.align 2    
+.global _simple_tlb_refill_exception_handler    
+.ent _simple_tlb_refill_exception_handler
+_simple_tlb_refill_exception_handler:
+    //pokracuje do general exception
+.end _simple_tlb_refill_exception_handler     
+    
+.align 2    
+.global _cache_err_exception_handler    
+.ent _cache_err_exception_handler
+_cache_err_exception_handler:
+    //pokracuje do general exception
+.end _cache_err_exception_handler     
+    
+#endif    
+    
 .align 2    
 .global _general_exception_handler    
 .ent _general_exception_handler    
 _general_exception_handler:    
+  
+    //MZ exception i interrupt (EBASE + xxx) vzdy nastavi ISA mode tak, jak je
+    //v cfg bitu BOOTISA = MIPS32/MICROMIPS
+    //Free compilator musi mit v cfg bitech nastaveno  BOOTISA = MIPS32
+    //protoze negeneruje microMIPS kod, takze std. obsluha chyby (generovana compilatorem)
+    //na adrese 0x9D000180 je v MIPS32. (tuto neumim nahradit vlastni)
+    //(kdyby bylo BOOTISA = microMIPS, std. obsluha G.E. skolabuje)
+    //Tato std. obsluha vola _general_exception_handler, ktery je na liche adrese
+    //(.set micromips) a dojde k prepnuti na micromips. Proto fce
+    //_general_exception_handler pracuje v micromips.
+    //Take obsluha interruptu EBASE+OFFxxx (ignoruje b0) nastavi ISA mode tak,
+    //jak je nastaveno v BOOTISA, tzn. MIPS32, proto na zacatku obsluhy musi byt
+    //macro, ktere provede prepnuti do microMIPS
+    //Macro funguje spravne, nezavisle na tom, v jakem ISA modu CPU prave je,
+    //vzdy provede prepnuti na microMIPS
+    //Pokud by se provedla kompilace s kompilatorem, ktery kompiluje do microMIPS,
+    //bude vse fungovat take.
+    //ISA mode pred vstupem do exception je zalohovan config3.ISAONEXC
+    //ERET provede navrat i s prepnutim ISA mode podle suda/licha adresa    
     
-.global general_exception
-general_exception:
+    
+//.global general_exception
+//.ent general_exception    
+//general_exception:
 
     //nastavi parameter a vola fci processException(code)
     //param pro fci processException
   
     //<editor-fold defaultstate="collapsed" desc="err code">
     //zjisti, zda nastal TRAP (v c/c++ volani fce trap())
+    
+    .set micromips
     li	    s1, ERR_CODE_TRAP
     
     mfc0    t9, _CP0_CAUSE		//cause.b0-4
@@ -949,6 +1009,7 @@ general_exception_shared_point:
     bal	    removeRegEventProcID	//remove reg events    
     move    a0, s0			//a0=procID
     bal	    removeEventCacheProcID	//remove raised events
+    nop
     
     li16    v0, ON_ERROR_RESET_PROCESS
     bne	    v0, s4, 3f			//skok, neni RESET PROCESS
@@ -976,6 +1037,7 @@ general_exception_shared_point:
     la	    v0, proc_t
     lw	    v1, (proc_t_pos)		//proc_t_pos=proc_t (prvni process = system process)
     bne	    v0, v1, 5f			//skok, chyba pri normalnim behu
+    nop
     
     //chyba v obsluze event, zpet do system process
     la	    v0, systemProcessResumeError
@@ -998,10 +1060,11 @@ general_exception_shared_point:
     jrc	    v0
     //</editor-fold>
    
-.end _general_exception_handler  
+.end _general_exception_handler
+
     
-//</editor-fold>
-     
+//</editor-fold>    
+
     
 //<editor-fold defaultstate="collapsed" desc="getProcID">
 .align 2    
@@ -1014,6 +1077,7 @@ getProcID:
     lw	    v0, (proc_t_pos)
     la	    v1, proc_t
     bne	    v0, v1, 1f			    //skok, neni prvni (system) proces
+    nop
     
     //systemProcess, aktualni procID je v errorProcID
     lw	    v0, (errorProcID)
@@ -1524,7 +1588,7 @@ systemProcess:
 3:  //next    
     addiu   s0, EVENT_CACHE_ISIZE
     bne	    s0, s1, 2b			    //skok, neni za tabulkou
-    
+    nop
     //je za eventCache
 
 5:    
@@ -1545,6 +1609,7 @@ systemProcess:
     //sw	    zero, (onErrorResume)   //meni chovani pro error
     la	    a0, systemProcess		    //param, adresa pristiho cyklu
     bal	    doEventsL			    //prepni process
+    nop
     
 systemProcessResumeError:    
     //v eventCache byly polozky ukonceneho procesu nastaveny na 0xFF, neni treba defragmentovat

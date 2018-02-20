@@ -30,7 +30,7 @@ void m1_start()
 {
     //testSystemTimer();
     systemTimerRegInterval(&testSystemTimer, 1000);
-    rtcRegTimeAlarm(&testRTC, 0, 5);
+    //rtcRegTimeAlarm(&testRTC, 0, 5);
     while(1)
     {
         doEvents();

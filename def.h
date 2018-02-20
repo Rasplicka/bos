@@ -4,8 +4,8 @@
 //#define PIC32MZ
 //#define PIC32MM0064
 //#define PIC32MM0064_28pin
-#define PIC32MM0256
-#define PIC32MM0256_36pin
+//#define PIC32MM0256
+//#define PIC32MM0256_36pin
 #define MICROMIPS  
 
 // </editor-fold>
@@ -26,6 +26,11 @@
 #ifdef PIC32MM0064
 #define		RAM_SIZE            8*1024
 #define     STACK_SIZE          3*1024
+#endif
+
+#ifdef PIC32MZ
+#define		RAM_SIZE            512*1024
+#define     STACK_SIZE          64*1024
 #endif
 
 
@@ -257,11 +262,11 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="RTC">
-#define     RTC
+//#define     RTC
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="ubtn">
-#define     UBTN
+//#define     UBTN
 
 #define     UBTN_DOWN       1
 #define     UBTN_UP         2

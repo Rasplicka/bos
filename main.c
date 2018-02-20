@@ -111,6 +111,11 @@ void main()
     
     startupStack();                         //nastavi sp pro startup OS
     setClock(CLOCK_CFG.CLK_NORMAL);                 
+    
+#ifdef PIC32MZ
+    intVectors();
+#endif    
+    
     // </editor-fold>
     
     //2. set safe mode ---------------------------------------------------------
@@ -125,11 +130,10 @@ void main()
     
     //nuluje celou oblast pro OS data
     clearSystemData(OS_DATA_BASE, OS_DATA_SIZE); 
-    
     systemInit();   //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
     pinSetting();   //provede vychozi nastaveni periferii, prideluje IO piny
     timer1Init();   //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
-
+    
 #ifdef RTC    
     //povoli RTC modul, nastavi 1/1/2001, nastav day_ms, podle aktualniho casu
     rtcInit();
@@ -413,6 +417,14 @@ static void systemInit()
     asm("li	    $2, 0x76543210");
     asm("mtc0   $2, $12, 3");
     asm("ehb");    
+    
+    //CAUSE.IV (CAUSE.23) = 1
+    asm("li	    $3, 1");     
+    asm("mfc0   $2, $13, 0");
+    asm("ins	$2, $3, 23, 1");
+    asm("mtc0   $2, $13, 0");
+    asm("ehb");
+    
 #endif    
     
 }
@@ -501,20 +513,62 @@ static inline void cpuTimerInit()
     
     //$9=CP0_COUNT, $11=CP0_COMPARE
     asm("li	    $2, 0xFFFFFFFF");       //v0=0xFFFFFFFF
+    //asm("li	    $2, 0xFFF");       //v0=0xFFFFFFFF
     asm("mtc0   $2, $11");              //CP0_COMPARE=v0
     asm("ehb");
     asm("mtc0   $0, $9");               //CP0_COUNT=0 (zero)
     asm("ehb");
     
-#ifdef PIC32MM
+//#ifdef PIC32MM
     //Core Timer interrupt param
     IPC0bits.CTIP=1;        //Priority=1
     IPC0bits.CTIS=0;        //Subpriority=0
     IFS0bits.CTIF=0;        //Flag=0
     IEC0bits.CTIE=1;        //Enable=1
-#endif    
+//#endif    
+    
+//#ifdef PIC32MM    
+    
+
     
 }
 
 #endif
 
+
+static void test()
+{
+    //int* c=0;
+    //int b=*c;
+    //trap();
+    
+    asm("mtc0   $0, $9");               //CP0_COUNT=0 (zero)
+    asm("ehb"); 
+    asm("li	    $2, 0xFFF");            //v0=0xFFFFFFFF
+    asm("mtc0   $2, $11");              //CP0_COMPARE=v0
+    asm("ehb");
+
+    asm("ei");
+    asm("ehb");
+    
+    int a=0;
+    
+    //int b=a/0;
+    while(1)
+    {
+        a++;
+    }       
+    
+}
+
+/*
+ void _general_exception_context() //__at(0x9D000180)__section(".app_excpt")
+{
+    int a=0;
+}
+
+void _general_exception_handler (void)
+{
+    int b=0;
+}
+*/

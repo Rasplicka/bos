@@ -46,7 +46,11 @@ void pinSetting()
     
 #ifdef __32MM0256GPM064__     
     
-#endif       
+#endif  
+    
+#ifdef PIC32MZ
+
+#endif    
     
 }
 

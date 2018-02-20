@@ -45,7 +45,6 @@
     
 //</editor-fold>
 
-	
 //<editor-fold defaultstate="collapsed" desc="podminene skoky BAL_xxx">
 .macro _BAL_FBT first_reg, val_reg, addr
 //skok, first > val
@@ -185,6 +184,33 @@
     
     
 //</editor-fold>    	
+
+//<editor-fold defaultstate="collapsed" desc="MIPS32_TO_MICROMIPS">
+.macro MIPS32_TO_MICROMIPS
+	
+	.align 2
+        .set noreorder
+
+        .word 0x10000003	    //pokud je v microMIPS mode, tento code nic nedela
+        .word 0x00000000	    //pokud je v MIPS32 mode, provede skok +16
+
+        .set    micromips
+    li      t9, 2		    //microMIPS instrukce
+    b	    1001f		    //microMIPS instrukce skoku
+    nop
+
+        .align 2		    // Device not in proper ISA mode
+        .set nomicromips
+    la      t9, (1001f)		    //MIPS32 instrukce
+    jr	    t9			    //MIPS32 instrukce skoku, _startup zacina na liche adrese, prepne do microMIPS
+    nop
+	.align 2
+        .set micromips
+	
+1001:
     
+.endm  
+    
+    //</editor-fold>    
     
     

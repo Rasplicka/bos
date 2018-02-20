@@ -73,6 +73,7 @@ void setClock(char mode)
     //FNOSC = PLL (SYSCLK a PBCLK from PLL)
     //PLLSRC = FRC (src PLL from FRC)
 
+    /*
     if(mode==0)
     {
         //default mode
@@ -110,6 +111,7 @@ void setClock(char mode)
     {
         //alt mode2
     }
+    */
 }
 
 #endif

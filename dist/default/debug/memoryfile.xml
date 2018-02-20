@@ -3,15 +3,15 @@
   <executable name="dist/default/debug/BOS2.X.debug.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
-      <length>263312</length>                 
-      <used>10048</used>                     
-      <free>253264</free>                     
+      <length>2098304</length>                 
+      <used>9896</used>                     
+      <free>2088408</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
-      <length>33280</length>                 
-      <used>11132</used>                     
-      <free>22148</free>                     
+      <length>524928</length>                 
+      <used>68744</used>                     
+      <free>456184</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

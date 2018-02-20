@@ -12,7 +12,10 @@ static char getFreeProcessID(char defaultId);
 static int* getEmptyProcessTableItem();
 static void systemInit();
 static inline void cpuTimerInit();
+static void test();
 
+void _general_exception_context();
+void _general_exception_handler (void);
 
 //interrupt vektory musi byt zde
 #ifdef PIC32MM0064
@@ -43,4 +46,8 @@ extern void __attribute__((interrupt(), vector(32))) iVector_rtc();         //RT
 //extern void __attribute__((interrupt(), vector(71))) iVector_i2c3Slave();   //I2C3 Master Mode
 //extern void __attribute__((interrupt(), vector(72))) iVector_i2c3Master();  //I2C3 Master Mode
 //extern void __attribute__((interrupt(), vector(73))) iVector_i2c3Bus();     //I2C3 Master Mode
+#endif
+
+#ifdef PIC32MZ
+//extern void __attribute__((interrupt(), vector(0)))  iVector0();            //CPU timer
 #endif
