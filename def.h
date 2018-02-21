@@ -29,6 +29,7 @@
 #endif
 
 #ifdef PIC32MZ
+#define     EBASE               0x9D000000
 #define		RAM_SIZE            512*1024
 #define     STACK_SIZE          64*1024
 #endif
@@ -262,7 +263,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="RTC">
-//#define     RTC
+#define     RTC
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="ubtn">

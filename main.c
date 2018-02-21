@@ -108,14 +108,11 @@ void main()
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
-    
+
+    initCPU();
     startupStack();                         //nastavi sp pro startup OS
     setClock(CLOCK_CFG.CLK_NORMAL);                 
-    
-#ifdef PIC32MZ
-    intVectors();
-#endif    
-    
+   
     // </editor-fold>
     
     //2. set safe mode ---------------------------------------------------------
@@ -519,6 +516,14 @@ static inline void cpuTimerInit()
     asm("mtc0   $0, $9");               //CP0_COUNT=0 (zero)
     asm("ehb");
     
+ #ifdef PIC32MZ
+    //OFF000 = offset interrupt vektoru 0 (CPU TIMER)
+    extern void iVector0();
+    uint off=(uint)&iVector0;
+    off-=EBASE;
+    OFF000=off;
+#endif    
+    
 //#ifdef PIC32MM
     //Core Timer interrupt param
     IPC0bits.CTIP=1;        //Priority=1
@@ -527,7 +532,8 @@ static inline void cpuTimerInit()
     IEC0bits.CTIE=1;        //Enable=1
 //#endif    
     
-//#ifdef PIC32MM    
+     
+    
     
 
     

@@ -135,8 +135,8 @@ timer1Init:
     li	    t9, 0x0030
     sw	    t9, (T1CON)		    //setting (ON=0), src=PBCLK3 (200MHz), div=1:256, idle-run, 
     
-    
-    li	    v1, 0x9D000000
+    //OFF004
+    li	    v1, EBASE
     la	    v0, iVector_timer1
     subu    v0, v1
     sw	    v0, (OFF004)
@@ -355,23 +355,7 @@ iVector_timer1:
 5:     
     li16    v0, (1 << IFS_BIT)
     sw      v0, (IFS_REG_CLR)
-    
-    /*
-#ifdef PIC32MZ    
-    li16    v0, (1 << 4)
-    sw      v0, (IFS0CLR)
-#endif    
-   
-#ifdef PIC32MM0064   
-    li	    v0, (1 << 11)
-    sw      v0, (IFS0CLR)
-#endif     
-    
-#ifdef PIC32MM0256   
-    li	    v0, (1 << 17)
-    sw      v0, (IFS0CLR)
-#endif   
-    */
+
     //</editor-fold>
 
     eret

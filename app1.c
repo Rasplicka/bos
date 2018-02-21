@@ -6,21 +6,21 @@
 
 #define     _LED_INV_REG    LATHINV
 #define     _LED_INV_VAL    0b001
-
+int delay=10;
 #endif
 
 #ifdef PIC32MM0064
 
 #define     _LED_INV_REG    LATBINV
 #define     _LED_INV_VAL    0b100000
-
+int delay=1;
 #endif  
 
 #ifdef PIC32MM0256
 
 #define     _LED_INV_REG    LATBINV
 #define     _LED_INV_VAL    0b100000          //RB5                
-
+int delay=1;
 #endif
 
 static void testSystemTimer(int a, int b, int c);
@@ -29,27 +29,28 @@ static void testRTC(char hour, char min, uint date);
 void m1_start()
 {
     //testSystemTimer();
-    systemTimerRegInterval(&testSystemTimer, 1000);
-    //rtcRegTimeAlarm(&testRTC, 0, 5);
+    //systemTimerRegInterval(&testSystemTimer, 1000);
+    rtcRegTimeAlarm(&testRTC, 0, 2);
+    rtcRegTimeAlarm(&testRTC, 0, 4);
+    
     while(1)
     {
         doEvents();
     }
     
     int x=0;
-    while(x<1000)
+    while(x<100000000)
     {
         //do LATxINV zapise 1 na prislusnou pozici
         _LED_INV_REG = _LED_INV_VAL;
         
         int a, b=0;
-        for(a=0; a<100000; a++)
+        for(a=0; a<(100000 * delay); a++)
         {
             b++;
             if(a>0 && a % 1000 == 0)
             {
                 doEvents();
-
             }
         }
         //stack overflow
@@ -80,9 +81,9 @@ void m1_start()
 
 static void testSystemTimer(int a, int b, int c)
 {
-    int d=a+b;
+    //int d=a+b;
     _LED_INV_REG = _LED_INV_VAL;
-    doEvents();
+    //doEvents();
     
     /*
     char x;
@@ -112,5 +113,5 @@ static void testSystemTimer(int a, int b, int c)
 
 static void testRTC(char hour, char min, uint date)
 {
-    int a=0;
+    _LED_INV_REG = _LED_INV_VAL;
 }

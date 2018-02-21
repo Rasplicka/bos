@@ -1,8 +1,7 @@
 #include "xc.h"
 #include "def.h"  
 #include "asm_macro.S"
-  
-    
+ 
 /*
  * Author Jiri Rasplicka, 2017, (all rights reserved)
  * Version 1.0       
@@ -10,23 +9,31 @@
  * This file is shared to the PIC32MM, PIC32MZ
  * 
  */
-
     
 //!!! 2/2018 vyrazeny instrukce NOP v delay slotu, po skocich b16, beq, bne, bltz, bgtz, ...
-//compiler xc32, v1.44 je vklada automaticky, dle typu CPU   
+//.set reorder je vklada automaticky  
     
-//.set mips32    
-.set micromips     
-    
-//.section os_alloc_stack_here
-//tuto sekci linker vlozi jako posledni v data RAM
-//definuje prvni volne misto v RAM    
-//stack_area:	    .dword	    0x0	    //dword proto, aby byla zarovnana na 8 bytes
-//v pripade, ze by linker umistoval tuto sekci jinam, bylo by mozne fci malloc alokovat
-//libovolna data v heap, kterou linker vzdy umistuje hned za data. Adresa techto dat
-//by definovala zacatek oblasti stacku    
+.set micromips 
+.set reorder			//vklada nop do branch delay slotu
     
 .section .asm_fn, code     
+    
+//<editor-fold defaultstate="collapsed" desc="initCPU">
+.global initCPU
+.ent initCPU
+initCPU:
+
+#ifdef PIC32MZ
+    //init EBASE
+    li	    v0, EBASE 
+    mtc0    v0, _CP0_EBASE
+#endif
+    
+    jrc	    ra
+    
+.end initCPU 
+    
+//</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="startupStack">
 .align 2
@@ -77,6 +84,7 @@ clearSystemData:
  
 //<editor-fold defaultstate="collapsed" desc="allocStack">   
     
+    //<editor-fold defaultstate="collapsed" desc="MACRO _TEST_COLLISION">
 .macro _TEST_COLLISION st1, af1, st2, af2, collide
     //st1 = start oblasti 1
     //af1 = after oblast 1
@@ -93,7 +101,9 @@ clearSystemData:
     
 1001:
    
-.endm     
+.endm  
+    //</editor-fold>
+   
     
 .align 2
 .global allocStack
@@ -159,14 +169,16 @@ allocStack:
 1:
     //pouzije dalsi polozku proc_t, za jejiz stack se pokusi vlozit novy stack
     
-    lbu32    t9, TH_T_ID*4(t7)
+    lbu32   t9, TH_T_ID*4(t7)		//procID
     beqz    t9, 6f 			//skok, polozka neni pouzita
     //nop
     
     lw	    t4, TH_T_START_SP*4(t7)	//top stacku = start adresa noveho stacku
+    //!!!
+    addiu   t4, 4			//posun nad akt. stack
 
     
-    //nyni bude prochazi vsechny polozky proc_t, vynecha aktualni (a1), (s7) a prazdnou
+    //nyni bude prochazet vsechny polozky proc_t, vynecha aktualni (a1), (s7) a prazdnou
     //a bude zjistovat, zda novy stack (t4-t5) neni v kolizi s jiz existujicim
 2:     
     //nastav t5 (start+size)
@@ -178,14 +190,16 @@ allocStack:
     _BAL_FBT t5, t3, 5f			//skok, testovana oblast je mimo stack_area
     
 3:  //prochazeni proc_t    
-    lbu32    t9, TH_T_ID*4(t6)
+    lbu32   t9, TH_T_ID*4(t6)		//procID
     beqz    t9, 4f			//skok, prazdna polozka
     //nop
     beq	    t6, a1, 4f			//skok, toto je nova polozka (pro kterou se hleda stack)	    
     //nop
     beq	    t6, t7, 4f			//skok, za touto polozkou je test oblast (proto nemuze byt v kolizi)
     //nop
-    lw32    v1, TH_T_START_SP*4(t6)	//stack TOP (after)
+    lw32    v1, TH_T_START_SP*4(t6)	//stack TOP !!!(after)
+    //!!!
+    addiu   v1, 4			//stack after
     lw32    v0, TH_T_STACK_BASE*4(t6)	//stack BOTTOM (start)
     
     //macro, v pripade kolize skok na 5f
@@ -827,28 +841,7 @@ pauseEvents:
 //</editor-fold>
     
 //errors
-    
-    
-#ifdef PIC32MZ
-.align 2    
-.global intVectors
-.ent intVectors
-intVectors:
-    
-    li	    v1, 0x9D000000
-    la	    v0, iVector0
-    subu    v0, v1
-    //ins	    v0, zero, 0, 1 
-    
-    //li	    v0, 0x10000
-    sw	    v0, (OFF000)
-    
-    jrc	    ra
-    
-.end intVectors    
-
-#endif    
-    
+   
 //<editor-fold defaultstate="collapsed" desc="iVector0 CPU Timer">
 .align 2    
 .global iVector0
@@ -1236,7 +1229,7 @@ addRegEvent:
 //b4-7   var0 - 32bit
 //b8-11  var1 - 32bit    
 //b12-16 fn_addr    
-
+    
     la	    v0, regEventTable
     addiu   v1, v0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
     b16	    2f
@@ -1433,7 +1426,6 @@ raiseEvent:
     //vyvolani udalosti v a0 (adresa polozky v regEventTable)
     //prochazi eventCache a hleda volnou polozku, tu vyplni daty
     //pracuje v rezimu DI, jinak by v prubehu mohl interupt menit eventCache (interrupt vola raiseEventInt)
-
     
     //eventCache
     la	    v0, eventCache
@@ -1545,11 +1537,7 @@ systemProcess:
     //ale aby pridavalo nove events na konec tabulky.
     //kriticke casti systemProcess jsou v rezimu DI
     
-    
-    
-    //la	    v0, systemProcessResumeError
-    //sw	    v0, (onErrorResume)		    //meni chovani pro error
-    
+
 1:
     //pozn.:
     //c/c++ fce uklada nad svuj stack param a0-a2 (event fn ma max. 3 parametry)

@@ -49,7 +49,17 @@ void pinSetting()
 #endif  
     
 #ifdef PIC32MZ
-
+    //test led PORTH.0-2
+    ANSELHCLR=0b111;            //digital
+    TRISHCLR=0b111;             //output
+    LATHCLR=0b111;              //000
+    
+    //test buttons PORTB.12-14
+    int a=(0b111 << 12);
+    ANSELBCLR=a;                //digital
+    TRISBSET=a;                 //input
+    
+    
 #endif    
     
 }

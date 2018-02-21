@@ -7,7 +7,8 @@
  * Version 1.0    
  * RTC, used by BOS core
  * This file is shared to the PIC32MM, PIC32MZ
-     
+ */
+    
 //date a time se cte z RTC modulu
 //presny cas (ms 32-bit) od zacatku dne je v day_ms, kterou incrementuje timer1
 //day_ms se synchronizuje s RTC kazdou minutu (alarm interrupt)    
@@ -24,23 +25,34 @@
      
 //0b HHHH.HHHH-MMMM.MMMM-SSSS.SSSS-xxxx xxxx		//RTCTIME
 //      1    4    3    5    0    2			//14:35:02
- */ 
+ 
     
 #ifdef RTC
 
+.set reorder
 .set micromips
 .section .asm_rtc, code  
     
 #ifdef PIC32MM 
     
-    #define	    WRLOCK	    0x0800		//RTCCON1.b11  
-    #define	    TIME_SYNC	    0x0004
-    #define	    ALARM_SYNC	    0x0002
+    #define	    WRLOCK	    0x800		//RTCCON1.b11  
+    #define	    TIME_SYNC	    0x4
+    #define	    ALARM_SYNC	    0x2
     #define	    RTCCON1_SET	    0xC3FF0000		//ALARM enable, ON, ... 
     #define	    RTCCON1_ON	    0x00008000	    
     #define	    RTCCON2_SET	    0x3E800001		//clock=Low Power RC oscilator (32.0kHz)  
     
-#endif	    //MM        
+#endif	    //MM   
+  
+#ifdef PIC32MZ 
+    
+    #define	    WRLOCK	    0x8			//RTCCON.b4  
+    #define	    TIME_SYNC	    0x4
+    //#define	    RTCCON_SET	    0x0			//ALARM enable, ON, ... 
+    #define	    RTCCON_ON	    0x00008000	
+    #define	    RTC_ALRM	    0xC300		//alarm every minute
+    
+#endif	    //MZ     
     
 //<editor-fold defaultstate="collapsed" desc="MACRO">
     
@@ -92,7 +104,7 @@
 //restore interrupt  , zaloha v t9   
    
     beqz    t9, 1001f			//skok pokud nema povolit interrupt (zaloha EI v t9)
-    nop
+    //nop
     ei
     
 1001:
@@ -101,10 +113,61 @@
     
 //</editor-fold>  
     
-//<editor-fold defaultstate="collapsed" desc="_SYSKEY_WRLOCK">
-.macro _SYSKEY_WRLOCK   
+//<editor-fold defaultstate="collapsed" desc="_DISABLE_DMA_INT">
+.macro _DISABLE_DMA_INT
+//zakaze DMA (nastavi SUSPEND), zalohu DMACON do t8 
+//zakaza interrupt (DI)	      , zalohu bitu do t9
+//meni t8, t9, v0    
+    
+    mfc0    t9, _CP0_STATUS
+    ext     t9, t9, 0, 1
+    di
+
+    //zaloha DMACON
+    lw      t8, (DMACON)
+    //ext	    t8, t8, 12, 1 
+    
+    //DMA suspend 
+    addiu   v0, zero, 0x1000			//set b12 (suspend)
+    sw      v0, (DMACONSET)
+    
+1001:
+    //cakat, dokud se DMA neuvolni
+    lw      v0, (DMACON)
+    ext     v0, v0, 11, 1			//DMA busy
+    bnez    v0, 1001b
+    //nop    
+    
+.endm 
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="_RESTORE_DMA_INT">
+.macro _RESTORE_DMA_INT    
+//restore DMA suspend, zaloha v t8 (cely DMACON)
+//restore interrupt  , zaloha v t9   
+   
+    sw	    t8, (DMACON)
+    //beqz    t8, 1001f			//skok, pokud DMA bylo SUSPEND, zaloha v t8
+    //nop
+    //nuluj DMA SUSPEND
+    //addiu   v0, zero, 0x1000		//DMACON.12 = SUSPEND, nulovat
+    //sw      v0, (DMACONCLR)
+
+//1001:    
+    beqz    t9, 1002f			//skok pokud nema povolit interrupt (zaloha EI v t9)
+    //nop
+    ei
+    
+1002:
+.endm    
+    
+//</editor-fold>      
+    
+//<editor-fold defaultstate="collapsed" desc="_SYSKEY_WRLOCK_ENABLE">
+.macro _SYSKEY_WRLOCK_ENABLE   
 //nuluj RTCCON1.WRLock, pouze po syskey    
     
+#ifdef PIC32MM    
 1001:
     //nastavi RTCCON.3, ceka dokud neni nastaven
     move    v0, zero
@@ -123,22 +186,84 @@
     li	    v1, WRLOCK
     and	    v0, v1
     bnez    v0, 1001b			//skok, WRLOCK neni 0
-    nop
- 
+    //nop
+#endif    
+
+#ifdef PIC32MZ    
+1001:
+    //nastavi RTCCON.3, ceka dokud neni nastaven
+    move    v0, zero
+    sw      v0, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //nastav RTCCON.3 (RTCWREN)
+    li16    v0, WRLOCK			//SET RTCCON.WREN
+    sw      v0, (RTCCONSET)
+    sync
+
+    lw      v0, (RTCCON)		//ceka na WREN=1 (obcas se musi opakovat unlock 2x)
+    li	    v1, WRLOCK
+    and	    v0, v1    
+    beqz    v0, 1001b
+    //nop   
+
+1002:
+    //cekani na sync, RTCCON.2
+    lw      v0, (RTCCON)            //ceka na sync=0
+    ext     v0, v0, 2, 1
+    bnez    v0, 1002b
+    
+    
+#endif     
+    
 .endm    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="_WRLOCK_DISABLE">
+.macro _WRLOCK_DISABLE    
+    
+#ifdef PIC32MM
+    //WRLOCK=1
+    li	    v0, WRLOCK			//set RTCCON1.WRLOCK
+    sw      v0, (RTCCON1SET)    
+#endif     
+    
+#ifdef PIC32MZ     
+    //WRLOCK=0
+    li	    v0, WRLOCK			//set RTCCON.WRLOCK
+    sw      v0, (RTCCONCLR)
+#endif 
+    
+.endm  
+    
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="_DATETIME_SYNC">
 
 .macro _DATETIME_SYNC
-//ceka, dokud RTCSTAT.b2 != 0 (pri 1 probiha zmena RTC)
-    
+
+#ifdef PIC32MM    
+    //ceka, dokud RTCSTAT.b2 != 0 (pri 1 probiha zmena RTC)
 1001:    
     lw	    v0, (RTCSTAT)
     li	    v1, TIME_SYNC
     and	    v0, v1
     bnez    v0, 1001b
-    nop
+    //nop
+#endif     
+    
+#ifdef PIC32MZ
+    //cekani na sync, RTCCON.2
+1001:     
+    lw      v0, (RTCCON)            //ceka na sync=0
+    li	    v1, TIME_SYNC
+    and	    v0, v1
+    bnez    v0, 1001b
+    //nop 
+#endif 
     
 .endm  
     
@@ -147,14 +272,20 @@
 //<editor-fold defaultstate="collapsed" desc="_ALARM_SYNC">
 
 .macro _ALARM_SYNC    
-//ceka, dokud RTCSTAT.b1 != 0 (pri 1 probiha zmena RTC)
-    
-1001:    
+
+#ifdef PIC32MM     
+1001:  
+    //ceka, dokud RTCSTAT.b1 != 0 (pri 1 probiha zmena RTC)
     lw	    v0, (RTCSTAT)
     li	    v1, ALARM_SYNC
     and	    v0, v1
     bnez    v0, 1001b
-    nop
+    //nop
+#endif 
+    
+#ifdef PIC32MZ
+    
+#endif     
     
 .endm  
     
@@ -177,6 +308,10 @@ rtcInit:
     
     _PUSH   ra
     //POZOR, v prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma suspend
+    
+//<editor-fold defaultstate="collapsed" desc="PIC32MM">
+    
+#ifdef PIC32MM    
     
     //test, zda je RTC modul zapnuty, pokud ano, nemeni nastaveni date/time
     //RTC zustava zapnuty pri RESETu i probuzeni ze sleep modu
@@ -224,10 +359,6 @@ rtcInit:
     sw	    v0, (IEC1SET)					//enable
 #endif    
     
-#ifdef PIC32MZ   
- 
-#endif 
-    
     //</editor-fold>
     
     //t9=stav CP0.STATUS.EI, disable interrupt
@@ -235,7 +366,7 @@ rtcInit:
     _DISABLE_INT			//meni t8, t9, v0
     
     //nuluj RTCCON1.WRLOCK
-    _SYSKEY_WRLOCK			//meni v0, v1
+    _SYSKEY_WRLOCK_ENABLE			//meni v0, v1
     _DATETIME_SYNC			//nemi v0, v1
     _ALARM_SYNC				//meni v0, v1
 
@@ -259,16 +390,91 @@ rtcInit:
     sw	    v0, (RTCCON1SET)
 
     //WRLOCK=1
-    li	    v0, WRLOCK			//set RTCCON1.WRLOCK
-    sw      v0, (RTCCON1SET)
+    _WRLOCK_DISABLE
+    //li	    v0, WRLOCK			//set RTCCON1.WRLOCK
+    //sw      v0, (RTCCON1SET)
 
      //restore interrupt
     _RESTORE_INT			//ze zalohy t9, meni v0
+
+#endif	    //PIC32MM
     
-1:    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="PIC32MZ">
+#ifdef PIC32MZ   
+    
+    //test, zda je RTC modul zapnuty, pokud ano, nemeni nastaveni date/time
+    //RTC zustava zapnuty pri RESETu i probuzeni ze sleep modu
+    lw	    v0, (RTCCON)
+    ext	    v0, v0, 15, 1		//RTCCON.15=ON
+    bnez    v0, 1f
+    //nop
+    
+    //<editor-fold defaultstate="collapsed" desc="interrupt priority...">
+    
+    //OFF166
+    li	    v1, EBASE
+    la	    v0, iVector_rtc
+    subu    v0, v1
+    sw	    v0, (OFF166)
+    
+     //priority IPC41.b18-20
+    li	    t9, (0b111 << 18)
+    sw	    t9, (IPC41CLR)					//nuluj bity
+    li	    t9, (RTC_INTERRUPT_PRIORITY << 18)
+    sw	    t9, (IPC41SET)					//nastav bity
+    
+    //subpriority IPC41.b16-17
+    li	    t9, (0b11 << 16)
+    sw	    t9, (IPC41CLR)					//nuluj bity
+    li	    t9, (RTC_INTERRUPT_SUBPRIORITY << 16)
+    sw	    t9, (IPC41SET)					//nastav bity
+   
+    //IEC5.b6, IFS5.b6
+    li	    v0, (1 << 6)
+    sw	    v0, (IFS5CLR)					//flag
+    sw	    v0, (IEC5SET)					//enable
+    
+    //</editor-fold>
+
+    //t9=stav CP0.STATUS.EI, disable interrupt
+    //t8=stav DMA.SUSPEND
+    _DISABLE_DMA_INT			//meni t8, t9, v0
+    
+    //nuluj RTCCON1.WRLOCK
+    _SYSKEY_WRLOCK_ENABLE			//meni v0, v1
+    //_DATETIME_SYNC			//nemi v0, v1
+    //_ALARM_SYNC				//meni v0, v1    
+    
+    //set time, date
+    li      v0, 0x00000000              //00:00:00
+    sw      v0, (RTCTIME)
+    //sw	    v0, (ALRMTIME)
+    //sw	    v0, (ALRMDATE)
+    li      v0, 0x01010102              //2001, leden, 1, den v tydnu 7=SO (1=NE, 2=PO)
+    sw      v0, (RTCDATE)
+    
+    //set alarm interrupt
+    li	    v0, RTC_ALRM
+    sw	    v0, (RTCALRM)
+    
+    //ON=1
+    li	    v0, RTCCON_ON
+    sw	    v0, (RTCCONSET)
+    
+    //WRLOCK=0
+    _WRLOCK_DISABLE
+    
+    _RESTORE_DMA_INT			//meni t8, t9, v0
+    
+#endif	    //PIC32MZ  
+    
+//</editor-fold>
+    
+1:      
     //nastav day_ms, aby byla synchronizonava s RTC
     bal	    setDayMs
-    nop
     
     _POP    ra
     jrc     ra
@@ -322,14 +528,14 @@ rtcSetTime:
 //0b HHHH.HHHH-MMMM.MMMM-SSSS.SSSS-xxxx xxxx    
     
     _PUSH   ra
-
     
+#ifdef PIC32MM
     
     //POZOR, v dalsim prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma s
     _DISABLE_INT			//meni t8, t9, v0
     
     //nuluj RTCCON1.WRLOCK
-    _SYSKEY_WRLOCK			//meni v0, v1
+    _SYSKEY_WRLOCK_ENABLE			//meni v0, v1
     _DATETIME_SYNC			//nemi v0, v1
     _ALARM_SYNC				//meni v0, v1
 
@@ -337,14 +543,38 @@ rtcSetTime:
     sw      a0, (RTCTIME)
     
     //WRLOCK=1
-    li	    v0, WRLOCK			//set RTCCON1.WRLOCK
-    sw      v0, (RTCCON1SET)
+    _WRLOCK_DISABLE
+    //li	    v0, WRLOCK			//set RTCCON1.WRLOCK
+    //sw      v0, (RTCCON1SET)
     
     //restore interrupt
     _RESTORE_INT			//ze zalohy t9, meni v0    
     
+#endif
+    
+#ifdef PIC32MZ    
+    //POZOR, v dalsim prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma s
+    _DISABLE_DMA_INT			//meni t8, t9, v0
+    
+    //nuluj RTCCON1.WRLOCK
+    _SYSKEY_WRLOCK_ENABLE			//meni v0, v1
+    _DATETIME_SYNC			//nemi v0, v1
+    _ALARM_SYNC				//meni v0, v1
+
+    //set time, date
+    sw      a0, (RTCTIME)
+    
+    //WRLOCK=0
+    _WRLOCK_DISABLE
+    //li	    v0, WRLOCK			//set RTCCON1.WRLOCK
+    //sw      v0, (RTCCON1SET)
+    
+    //restore interrupt
+    _RESTORE_DMA_INT			//ze zalohy t9, meni v0       
+#endif    
+    
     bal	    setDayMs
-    nop
+    //nop
     
     _POP    ra
     jrc     ra
@@ -366,7 +596,7 @@ rtcSetDate:
 //0b RRRR.RRRR-MMMM.MMMM-DDDD.DDDD-xxxx xWWW - week day
 //0b HHHH.HHHH-MMMM.MMMM-SSSS.SSSS-xxxx xxxx    
    
-    
+#ifdef PIC32MM    
     //POZOR, v dalsim prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma s
     _DISABLE_INT			//meni t8, t9, v0
     
@@ -379,11 +609,30 @@ rtcSetDate:
     sw      a0, (RTCDATE)
     
     //WRLOCK=1
-    li	    v0, WRLOCK			//set RTCCON1.WRLOCK
-    sw      v0, (RTCCON1SET)
+    _WRLOCK_DISABLE
     
     //restore interrupt
     _RESTORE_INT			//ze zalohy t9, meni v0    
+#endif
+    
+#ifdef PIC32MZ    
+    //POZOR, v dalsim prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma s
+    _DISABLE_DMA_INT			//meni t8, t9, v0
+    
+    //nuluj RTCCON1.WRLOCK
+    _SYSKEY_WRLOCK_ENABLE		//meni v0, v1
+    _DATETIME_SYNC			//nemi v0, v1
+    _ALARM_SYNC				//meni v0, v1
+
+    //set time, date
+    sw      a0, (RTCDATE)
+    
+    //WRLOCK=0
+    _WRLOCK_DISABLE
+    
+    //restore interrupt
+    _RESTORE_DMA_INT			//ze zalohy t9, meni v0    
+#endif    
     
     jrc     ra
     
@@ -398,9 +647,16 @@ rtcSetDate:
 .ent rtcGetHalfSecond
 rtcGetHalfSecond:    
     
+#ifdef PIC32MM    
     //RTCSTAT.b0
     lw	    v0, (RTCSTAT)
     ext	    v0, v0, 0, 1
+#endif    
+    
+#ifdef PIC32MZ     
+    lw	    v0, (RTCCON)
+    ext	    v0, v0, 1, 1
+#endif     
     
     jrc	    ra
     
@@ -541,7 +797,47 @@ rtcEvents:
 .ent iVector_rtc
 iVector_rtc:
    
+   /* 
+#ifdef PIC32MM0064 
+    #define	    RTC_IFS_BIT	    14
+    #define	    RTC_IFS_REG_CLR	    IFS0CLR     
+#endif
+    
+#ifdef PIC32MM0256 
+    #define	    RTC_IFS_BIT	    0
+    #define	    RTC_IFS_REG_CLR	    IFS1CLR     
+#endif    
+    
+#ifdef PIC32MZ
+    #define	    RTC_IFS_BIT	    6
+    #define	    RTC_IFS_REG_CLR	    IFS5CLR 
+     
+    MIPS32_TO_MICROMIPS  
+#endif  
+    */
+    
+    
+    
     //allarm jednou za minutu pri sec=00
+#ifdef PIC32MM0064    
+    li	    v0, (1 << 14)	//nuluj flag
+    sw	    v0, (IFS0CLR)
+#endif
+    
+#ifdef PIC32MM0256    
+    li	    v0, (1 << 0)	//nuluj flag
+    sw	    v0, (IFS1CLR)
+#endif 
+    
+#ifdef PIC32MZ    
+    MIPS32_TO_MICROMIPS 
+    //IFS5.b6
+    li	    v0, (1 << 6)	//nuluj flag
+    sw	    v0, (IFS5CLR)	
+    
+#endif     
+    
+    
     
     //nastav day_ms, podle aktualniho casu
     //musi uchovat Hi/Lo, jsou spolecne pro vsechny SRS
@@ -555,16 +851,12 @@ iVector_rtc:
     
     //obsluha udalosti rtcAlarm
     bal	    rtcEvents		//meni a0-a3, v0, v1, t6-t9
-    
-#ifdef PIC32MM0064    
-    li	    v0, (1 << 14)	//nuluj flag
-    sw	    v0, (IFS0CLR)
-#endif
-    
-#ifdef PIC32MM0256    
-    li	    v0, (1 << 0)	//nuluj flag
-    sw	    v0, (IFS1CLR)
-#endif    
+
+    //clear flag
+    /*
+    li16    v0, (1 << RTC_IFS_BIT)
+    sw      v0, (RTC_IFS_REG_CLR)
+    */
     
     eret
 

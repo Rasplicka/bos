@@ -46,29 +46,30 @@ section                    address  length [bytes]      (dec)  Description
 .asm_fn                 0x9d000190           0x60          96   
 .text._on_bootstrap     0x9d0001f0            0x8           8   
 .vectors                0x9d000200           0x48          72   
-.asm_fn                 0x9d000248          0x7cc        1996   
-.text                   0x9d000a14          0x6bc        1724  App's exec code 
-.dinit                  0x9d0010d0          0x490        1168   
-.text                   0x9d001560          0x444        1092  App's exec code 
-.asm_timer1             0x9d0019a4          0x148         328   
-.text                   0x9d001aec          0x108         264  App's exec code 
-.text._cache_err_except 0x9d001bf4           0xd8         216   
-.text.simple_tlb_refill 0x9d001ccc           0xd8         216   
-.text                   0x9d001da4           0xc4         196  App's exec code 
-.tlb.__pic32_tlb_init_e 0x9d001e68           0xbc         188   
-.text                   0x9d001f24           0xb8         184  App's exec code 
-.text.main_entry        0x9d001fdc           0x54          84   
-.rodata                 0x9d002030           0xa0         160  Read-only const 
-.rodata                 0x9d0020d0           0xa0         160  Read-only const 
-.rodata                 0x9d002170           0xa0         160  Read-only const 
-.rodata                 0x9d002210           0xa0         160  Read-only const 
-.rodata                 0x9d0022b0           0x50          80  Read-only const 
-.text._bootstrap_except 0x9d002300           0x48          72   
-.text._cache_err_except 0x9d002348           0x48          72   
-.text._simple_tlb_refil 0x9d002390           0x48          72   
-.text                   0x9d0023d8           0x84         132  App's exec code 
-.text                   0x9d00245c           0x40          64  App's exec code 
-      Total kseg0_program_mem used  :      0x247c        9340  0.4% of 0x200000
+.asm_fn                 0x9d000248          0x820        2080   
+.text                   0x9d000a68          0x744        1860  App's exec code 
+.dinit                  0x9d0011ac          0x4a0        1184   
+.asm_rtc                0x9d00164c          0x470        1136   
+.text                   0x9d001abc          0x444        1092  App's exec code 
+.asm_timer1             0x9d001f00          0x168         360   
+.text                   0x9d002068          0x14c         332  App's exec code 
+.text._cache_err_except 0x9d0021b4           0xd8         216   
+.text.simple_tlb_refill 0x9d00228c           0xd8         216   
+.text                   0x9d002364           0xbc         188  App's exec code 
+.tlb.__pic32_tlb_init_e 0x9d002420           0xbc         188   
+.text                   0x9d0024dc           0xb8         184  App's exec code 
+.text.main_entry        0x9d002594           0x54          84   
+.rodata                 0x9d0025e8           0xa0         160  Read-only const 
+.rodata                 0x9d002688           0xa0         160  Read-only const 
+.rodata                 0x9d002728           0xa0         160  Read-only const 
+.rodata                 0x9d0027c8           0xa0         160  Read-only const 
+.rodata                 0x9d002868           0x50          80  Read-only const 
+.text._bootstrap_except 0x9d0028b8           0x48          72   
+.text._cache_err_except 0x9d002900           0x48          72   
+.text._simple_tlb_refil 0x9d002948           0x48          72   
+.text                   0x9d002990           0x84         132  App's exec code 
+.text                   0x9d002a14           0x40          64  App's exec code 
+      Total kseg0_program_mem used  :      0x2a34       10804  0.5% of 0x200000
 
 kseg0 Boot-Memory Usage
 section                    address  length [bytes]      (dec)  Description
@@ -82,28 +83,28 @@ section                    address  length [bytes]      (dec)  Description
 .bev_excpt              0xbfc00380           0x10          16  BEV-Exception 
          Total kseg1_boot_mem used  :       0x220         544  47.2% of 0x480
         --------------------------------------------------------------------------
-         Total Program Memory used  :      0x269c        9884  0.5% of 0x200480
+         Total Program Memory used  :      0x2c54       11348  0.5% of 0x200480
         --------------------------------------------------------------------------
 
 
 kseg0 Data-Memory Usage
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-.sdata                  0x80000000           0x6c         108  Small init data 
-.sbss                   0x8000006c          0x12c         300  Small uninit data 
+.sdata                  0x80000000           0x78         120  Small init data 
+.sbss                   0x80000078          0x12c         300  Small uninit data 
 .os_stack               0x8006fa10        0x10000       65536   
 .os                     0x8007fa10          0x5f0        1520   
-         Total kseg0_data_mem used  :     0x10788       67464  12.9% of 0x80000
+         Total kseg0_data_mem used  :     0x10794       67476  12.9% of 0x80000
         --------------------------------------------------------------------------
-            Total Data Memory used  :     0x10788       67464  12.9% of 0x80000
+            Total Data Memory used  :     0x10794       67476  12.9% of 0x80000
         --------------------------------------------------------------------------
 
 
 Dynamic Data-Memory Reservation
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-heap                    0x800001a0           0x10          16  Reserved for heap 
-stack                   0x800001c8        0x6f840      456768  Reserved for stack 
+heap                    0x800001a8           0x10          16  Reserved for heap 
+stack                   0x800001d0        0x6f830      456752  Reserved for stack 
 
         --------------------------------------------------------------------------
 
@@ -1448,7 +1449,7 @@ END GROUP
  *(.got)
                 0x80000000                . = ALIGN (0x4)
 
-.sdata          0x80000000       0x6c
+.sdata          0x80000000       0x78
                 0x80000000                _sdata_begin = .
  *(.sdata .sdata.* .gnu.linkonce.s.*)
  .sdata         0x80000000        0x8 build/default/production/clock_cfgBits_mm.o
@@ -1459,74 +1460,75 @@ END GROUP
  .sdata         0x80000018        0x8 build/default/production/globals.o
  .sdata         0x80000020        0x8 build/default/production/periph.o
  .sdata         0x80000028        0x8 build/default/production/user_apps.o
- .sdata         0x80000030        0x8 build/default/production/app1.o
- .sdata         0x80000038        0x8 build/default/production/app2.o
- .sdata         0x80000040        0x8 build/default/production/app3.o
- .sdata         0x80000048       0x24 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(pic32_init_cache.o)
-                0x80000048                __pic32_icache_size
-                0x8000004c                __pic32_icache_linesize
-                0x80000050                __pic32_icache_ways
-                0x80000054                __pic32_dcache_size
-                0x80000058                __pic32_dcache_linesize
-                0x8000005c                __pic32_dcache_ways
-                0x80000060                __pic32_scache_size
-                0x80000064                __pic32_scache_linesize
-                0x80000068                __pic32_scache_ways
-                0x8000006c                . = ALIGN (0x4)
-                0x8000006c                _sdata_end = .
+ .sdata         0x80000030        0xc build/default/production/app1.o
+                0x80000038                delay
+ .sdata         0x8000003c        0xc build/default/production/app2.o
+ .sdata         0x80000048        0xc build/default/production/app3.o
+ .sdata         0x80000054       0x24 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(pic32_init_cache.o)
+                0x80000054                __pic32_icache_size
+                0x80000058                __pic32_icache_linesize
+                0x8000005c                __pic32_icache_ways
+                0x80000060                __pic32_dcache_size
+                0x80000064                __pic32_dcache_linesize
+                0x80000068                __pic32_dcache_ways
+                0x8000006c                __pic32_scache_size
+                0x80000070                __pic32_scache_linesize
+                0x80000074                __pic32_scache_ways
+                0x80000078                . = ALIGN (0x4)
+                0x80000078                _sdata_end = .
 
 .lit8
  *(.lit8)
 
 .lit4
  *(.lit4)
-                0x8000006c                . = ALIGN (0x4)
-                0x8000006c                _data_end = .
-                0x8000006c                _bss_begin = .
+                0x80000078                . = ALIGN (0x4)
+                0x80000078                _data_end = .
+                0x80000078                _bss_begin = .
 
-.sbss           0x8000006c      0x12c
-                0x8000006c                _sbss_begin = .
+.sbss           0x80000078      0x12c
+                0x80000078                _sbss_begin = .
  *(.dynsbss)
  *(.sbss .sbss.* .gnu.linkonce.sb.*)
- .sbss          0x8000006c       0x20 build/default/production/clock_cfgBits_mm.o
-                0x8000006c                LED1_BASE
-                0x80000070                LED1_BIT
-                0x80000074                LED2_BASE
-                0x80000078                LED2_BIT
-                0x8000007c                LED3_BASE
-                0x80000080                LED3_BIT
-                0x80000084                LED4_BASE
-                0x80000088                LED4_BIT
- .sbss          0x8000008c       0x20 build/default/production/clock_cfgBits_mz.o
- .sbss          0x800000ac       0x20 build/default/production/main.o
- .sbss          0x800000cc       0x20 build/default/production/globals.o
- .sbss          0x800000ec       0x20 build/default/production/periph.o
- .sbss          0x8000010c       0x20 build/default/production/user_apps.o
- .sbss          0x8000012c       0x20 build/default/production/app1.o
- .sbss          0x8000014c       0x20 build/default/production/app2.o
- .sbss          0x8000016c       0x20 build/default/production/app3.o
+ .sbss          0x80000078       0x20 build/default/production/clock_cfgBits_mm.o
+                0x80000078                LED1_BASE
+                0x8000007c                LED1_BIT
+                0x80000080                LED2_BASE
+                0x80000084                LED2_BIT
+                0x80000088                LED3_BASE
+                0x8000008c                LED3_BIT
+                0x80000090                LED4_BASE
+                0x80000094                LED4_BIT
+ .sbss          0x80000098       0x20 build/default/production/clock_cfgBits_mz.o
+ .sbss          0x800000b8       0x20 build/default/production/main.o
+ .sbss          0x800000d8       0x20 build/default/production/globals.o
+ .sbss          0x800000f8       0x20 build/default/production/periph.o
+ .sbss          0x80000118       0x20 build/default/production/user_apps.o
+ .sbss          0x80000138       0x20 build/default/production/app1.o
+ .sbss          0x80000158       0x20 build/default/production/app2.o
+ .sbss          0x80000178       0x20 build/default/production/app3.o
  *(.scommon)
- .scommon       0x8000018c        0xc build/default/production/clock_cfgBits_mm.o
-                0x8000018c                SYSTEM_STATUS
-                0x80000190                defaultAppStartParam
- .scommon       0x80000198        0x0 build/default/production/clock_cfgBits_mz.o
- .scommon       0x80000198        0x0 build/default/production/main.o
- .scommon       0x80000198        0x0 build/default/production/globals.o
- .scommon       0x80000198        0x0 build/default/production/periph.o
- .scommon       0x80000198        0x0 build/default/production/user_apps.o
- .scommon       0x80000198        0x0 build/default/production/app1.o
- .scommon       0x80000198        0x0 build/default/production/app2.o
- .scommon       0x80000198        0x0 build/default/production/app3.o
-                0x80000198                _sbss_end = .
-                0x80000198                . = ALIGN (0x4)
+ .scommon       0x80000198        0xc build/default/production/clock_cfgBits_mm.o
+                0x80000198                SYSTEM_STATUS
+                0x8000019c                defaultAppStartParam
+ .scommon       0x800001a4        0x0 build/default/production/clock_cfgBits_mz.o
+ .scommon       0x800001a4        0x0 build/default/production/main.o
+ .scommon       0x800001a4        0x0 build/default/production/globals.o
+ .scommon       0x800001a4        0x0 build/default/production/periph.o
+ .scommon       0x800001a4        0x0 build/default/production/user_apps.o
+ .scommon       0x800001a4        0x0 build/default/production/app1.o
+ .scommon       0x800001a4        0x0 build/default/production/app2.o
+ .scommon       0x800001a4        0x0 build/default/production/app3.o
+                0x800001a4                _sbss_end = .
+                0x800001a4                . = ALIGN (0x4)
 
-.bss            0x80000198        0x0
+.bss            0x800001a4        0x0
  *(.dynbss)
  *(COMMON)
-                0x80000198                . = ALIGN ((. != 0x0)?0x4:0x1)
-                0x80000198                . = ALIGN (0x4)
-                0x80000198                _end = .
-                0x80000198                _bss_end = .
+                0x800001a4                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x800001a4                . = ALIGN (0x4)
+                0x800001a4                _end = .
+                0x800001a4                _bss_end = .
                 0x00080000                _bmxdudba_address = 0x80000
                 0x00080000                _bmxdupba_address = 0x80000
 
@@ -1639,7 +1641,7 @@ END GROUP
  *.elf(.debug_sfnames)
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x238
+.debug_aranges  0x00000000      0x258
  *.elf(.debug_aranges)
  *(.debug_aranges)
  .debug_aranges
@@ -1655,99 +1657,104 @@ END GROUP
  .debug_aranges
                 0x00000098       0x20 build/default/production/core_fn.o
  .debug_aranges
-                0x000000b8       0x20 build/default/production/periph.o
+                0x000000b8       0x20 build/default/production/rtc.o
  .debug_aranges
-                0x000000d8       0x20 build/default/production/periph_fn.o
+                0x000000d8       0x20 build/default/production/periph.o
  .debug_aranges
-                0x000000f8       0x20 build/default/production/user_apps.o
+                0x000000f8       0x20 build/default/production/periph_fn.o
  .debug_aranges
-                0x00000118       0x20 build/default/production/app1.o
+                0x00000118       0x20 build/default/production/user_apps.o
  .debug_aranges
-                0x00000138       0x20 build/default/production/app2.o
+                0x00000138       0x20 build/default/production/app1.o
  .debug_aranges
-                0x00000158       0x20 build/default/production/app3.o
+                0x00000158       0x20 build/default/production/app2.o
  .debug_aranges
-                0x00000178       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
+                0x00000178       0x20 build/default/production/app3.o
  .debug_aranges
-                0x00000198       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
+                0x00000198       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_aranges
-                0x000001b8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
+                0x000001b8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
  .debug_aranges
-                0x000001d8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
+                0x000001d8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
  .debug_aranges
-                0x000001f8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
+                0x000001f8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
  .debug_aranges
-                0x00000218       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
+                0x00000218       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
+ .debug_aranges
+                0x00000238       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
 
 .debug_pubnames
  *.elf(.debug_pubnames)
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x5508
+.debug_info     0x00000000     0x5618
  *.elf(.debug_info .gnu.linkonce.wi.*)
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x66f build/default/production/clock_cfgBits_mm.o
  .debug_info    0x0000066f      0x6a4 build/default/production/clock_cfgBits_mz.o
- .debug_info    0x00000d13     0x15c0 build/default/production/main.o
- .debug_info    0x000022d3      0x6b5 build/default/production/globals.o
- .debug_info    0x00002988       0x41 build/default/production/timer1.o
- .debug_info    0x000029c9       0x42 build/default/production/core_fn.o
- .debug_info    0x00002a0b      0x8a8 build/default/production/periph.o
- .debug_info    0x000032b3       0x44 build/default/production/periph_fn.o
- .debug_info    0x000032f7      0x746 build/default/production/user_apps.o
- .debug_info    0x00003a3d      0x750 build/default/production/app1.o
- .debug_info    0x0000418d      0x6ca build/default/production/app2.o
- .debug_info    0x00004857      0x736 build/default/production/app3.o
- .debug_info    0x00004f8d       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_info    0x00005082       0xce c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
- .debug_info    0x00005150       0xd6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
- .debug_info    0x00005226       0xe8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
- .debug_info    0x0000530e       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
- .debug_info    0x00005403      0x105 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
+ .debug_info    0x00000d13     0x15ec build/default/production/main.o
+ .debug_info    0x000022ff      0x6b5 build/default/production/globals.o
+ .debug_info    0x000029b4       0x41 build/default/production/timer1.o
+ .debug_info    0x000029f5       0x42 build/default/production/core_fn.o
+ .debug_info    0x00002a37       0x3e build/default/production/rtc.o
+ .debug_info    0x00002a75      0x8a8 build/default/production/periph.o
+ .debug_info    0x0000331d       0x44 build/default/production/periph_fn.o
+ .debug_info    0x00003361      0x7bc build/default/production/user_apps.o
+ .debug_info    0x00003b1d      0x758 build/default/production/app1.o
+ .debug_info    0x00004275      0x6de build/default/production/app2.o
+ .debug_info    0x00004953      0x74a build/default/production/app3.o
+ .debug_info    0x0000509d       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_info    0x00005192       0xce c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
+ .debug_info    0x00005260       0xd6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
+ .debug_info    0x00005336       0xe8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
+ .debug_info    0x0000541e       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
+ .debug_info    0x00005513      0x105 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
 
-.debug_abbrev   0x00000000      0xc20
+.debug_abbrev   0x00000000      0xc33
  *.elf(.debug_abbrev)
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0xb0 build/default/production/clock_cfgBits_mm.o
  .debug_abbrev  0x000000b0       0xdd build/default/production/clock_cfgBits_mz.o
- .debug_abbrev  0x0000018d      0x29a build/default/production/main.o
- .debug_abbrev  0x00000427       0xca build/default/production/globals.o
- .debug_abbrev  0x000004f1       0x14 build/default/production/timer1.o
- .debug_abbrev  0x00000505       0x14 build/default/production/core_fn.o
- .debug_abbrev  0x00000519      0x146 build/default/production/periph.o
- .debug_abbrev  0x0000065f       0x14 build/default/production/periph_fn.o
- .debug_abbrev  0x00000673      0x137 build/default/production/user_apps.o
- .debug_abbrev  0x000007aa      0x13f build/default/production/app1.o
- .debug_abbrev  0x000008e9      0x109 build/default/production/app2.o
- .debug_abbrev  0x000009f2      0x13e build/default/production/app3.o
- .debug_abbrev  0x00000b30       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_abbrev  0x00000b58       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
- .debug_abbrev  0x00000b80       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
- .debug_abbrev  0x00000ba8       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
- .debug_abbrev  0x00000bd0       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
- .debug_abbrev  0x00000bf8       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
+ .debug_abbrev  0x0000018d      0x297 build/default/production/main.o
+ .debug_abbrev  0x00000424       0xca build/default/production/globals.o
+ .debug_abbrev  0x000004ee       0x14 build/default/production/timer1.o
+ .debug_abbrev  0x00000502       0x14 build/default/production/core_fn.o
+ .debug_abbrev  0x00000516       0x14 build/default/production/rtc.o
+ .debug_abbrev  0x0000052a      0x146 build/default/production/periph.o
+ .debug_abbrev  0x00000670       0x14 build/default/production/periph_fn.o
+ .debug_abbrev  0x00000684      0x151 build/default/production/user_apps.o
+ .debug_abbrev  0x000007d5      0x127 build/default/production/app1.o
+ .debug_abbrev  0x000008fc      0x109 build/default/production/app2.o
+ .debug_abbrev  0x00000a05      0x13e build/default/production/app3.o
+ .debug_abbrev  0x00000b43       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_abbrev  0x00000b6b       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
+ .debug_abbrev  0x00000b93       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
+ .debug_abbrev  0x00000bbb       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
+ .debug_abbrev  0x00000be3       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
+ .debug_abbrev  0x00000c0b       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
 
-.debug_line     0x00000000     0x1071
+.debug_line     0x00000000     0x11e5
  *.elf(.debug_line)
  *(.debug_line)
  .debug_line    0x00000000       0x9b build/default/production/clock_cfgBits_mm.o
  .debug_line    0x0000009b       0xc4 build/default/production/clock_cfgBits_mz.o
- .debug_line    0x0000015f      0x1bb build/default/production/main.o
- .debug_line    0x0000031a       0xbb build/default/production/globals.o
- .debug_line    0x000003d5       0x7f build/default/production/timer1.o
- .debug_line    0x00000454      0x260 build/default/production/core_fn.o
- .debug_line    0x000006b4      0x16b build/default/production/periph.o
- .debug_line    0x0000081f       0x5f build/default/production/periph_fn.o
- .debug_line    0x0000087e       0xd5 build/default/production/user_apps.o
- .debug_line    0x00000953      0x11d build/default/production/app1.o
- .debug_line    0x00000a70      0x115 build/default/production/app2.o
- .debug_line    0x00000b85      0x11d build/default/production/app3.o
- .debug_line    0x00000ca2       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_line    0x00000d49       0x94 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
- .debug_line    0x00000ddd       0x98 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
- .debug_line    0x00000e75       0xa6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
- .debug_line    0x00000f1b       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
- .debug_line    0x00000fc2       0xaf c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
+ .debug_line    0x0000015f      0x1cd build/default/production/main.o
+ .debug_line    0x0000032c       0xbb build/default/production/globals.o
+ .debug_line    0x000003e7       0x80 build/default/production/timer1.o
+ .debug_line    0x00000467      0x260 build/default/production/core_fn.o
+ .debug_line    0x000006c7      0x105 build/default/production/rtc.o
+ .debug_line    0x000007cc      0x16b build/default/production/periph.o
+ .debug_line    0x00000937       0x5f build/default/production/periph_fn.o
+ .debug_line    0x00000996      0x131 build/default/production/user_apps.o
+ .debug_line    0x00000ac7      0x11d build/default/production/app1.o
+ .debug_line    0x00000be4      0x115 build/default/production/app2.o
+ .debug_line    0x00000cf9      0x11d build/default/production/app3.o
+ .debug_line    0x00000e16       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_line    0x00000ebd       0x94 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-reset.o)
+ .debug_line    0x00000f51       0x98 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-on-bootstrap.o)
+ .debug_line    0x00000fe9       0xa6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(defaultinterrupt.o)
+ .debug_line    0x0000108f       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
+ .debug_line    0x00001136       0xaf c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
 
 .debug_frame    0x00000000      0x52c
  *.elf(.debug_frame)
@@ -1756,8 +1763,8 @@ END GROUP
  .debug_frame   0x0000002c      0x15c build/default/production/main.o
  .debug_frame   0x00000188       0x48 build/default/production/globals.o
  .debug_frame   0x000001d0       0xfc build/default/production/periph.o
- .debug_frame   0x000002cc       0x68 build/default/production/user_apps.o
- .debug_frame   0x00000334       0x68 build/default/production/app1.o
+ .debug_frame   0x000002cc       0x6c build/default/production/user_apps.o
+ .debug_frame   0x00000338       0x64 build/default/production/app1.o
  .debug_frame   0x0000039c       0x48 build/default/production/app2.o
  .debug_frame   0x000003e4       0x64 build/default/production/app3.o
  .debug_frame   0x00000448       0x2c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
@@ -1951,8 +1958,8 @@ LOAD data_init
 .reginfo        0x00000000       0x18
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MZ2048ECM144/crt0_mips32r2.o
 
-.stack          0x800001c8      0x400
- .stack         0x800001c8      0x400 stack
+.stack          0x800001d0      0x400
+ .stack         0x800001d0      0x400 stack
 
 .os_stack       0x8006fa10    0x10000
  .os_stack      0x8006fa10    0x10000 build/default/production/main.o
@@ -2195,71 +2202,82 @@ LOAD data_init
                 0xbfc00480       0x2c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\debug-exception-return.o
                 0xbfc00480                __DbgExecReturn
 
-.asm_fn         0x9d000248      0x7cc
- .asm_fn        0x9d000248      0x7cc build/default/production/core_fn.o
-                0x9d000249                startupStack
-                0x9d00025d                clearSystemData
-                0x9d00026d                allocStack
-                0x9d000345                setSrsValue
-                0x9d000381                startEvents
-                0x9d0003c5                doEvents
-                0x9d000417                doEventsError
-                0x9d000465                doEventsL
-                0x9d00050d                getGP
-                0x9d000511                restartApp
-                0x9d00051b                restartAppId
-                0x9d000575                defragTableW
-                0x9d0005b5                defragTableB
-                0x9d0005f5                compareTimerMs
-                0x9d000619                pauseEvents
-                0x9d000655                intVectors
-                0x9d00066c                iVector0
-                0x9d00069d                _general_exception_handler
-                0x9d00075d                getProcID
-                0x9d000781                getProcTableItem
-                0x9d0007a5                getErrorBehavior
-                0x9d0007d1                getRegEvent
-                0x9d0007f9                addRegEvent
-                0x9d000825                UnregEvent
-                0x9d00087d                removeRegEventProcID
-                0x9d0008d5                removeEventCacheProcID
-                0x9d0008fd                raiseEvent
-                0x9d000949                raiseEventInt
-                0x9d000985                systemProcess
+.asm_fn         0x9d000248      0x820
+ .asm_fn        0x9d000248      0x820 build/default/production/core_fn.o
+                0x9d000249                initCPU
+                0x9d000255                startupStack
+                0x9d000269                clearSystemData
+                0x9d000279                allocStack
+                0x9d000355                setSrsValue
+                0x9d000391                startEvents
+                0x9d0003d5                doEvents
+                0x9d000427                doEventsError
+                0x9d000475                doEventsL
+                0x9d00051d                getGP
+                0x9d000521                restartApp
+                0x9d00052b                restartAppId
+                0x9d000585                defragTableW
+                0x9d0005c5                defragTableB
+                0x9d000605                compareTimerMs
+                0x9d000629                pauseEvents
+                0x9d000664                iVector0
+                0x9d000695                _general_exception_handler
+                0x9d000769                getProcID
+                0x9d000791                getProcTableItem
+                0x9d0007b9                getErrorBehavior
+                0x9d0007ed                getRegEvent
+                0x9d00081d                addRegEvent
+                0x9d00084d                UnregEvent
+                0x9d0008b1                removeRegEventProcID
+                0x9d000915                removeEventCacheProcID
+                0x9d000941                raiseEvent
+                0x9d000991                raiseEventInt
+                0x9d0009d1                systemProcess
 
-.text           0x9d000a14      0x6bc
- .text          0x9d000a14      0x6bc build/default/production/main.o
-                0x9d000a14                main
-                0x9d000a8c                processException
-                0x9d000ac0                trap
-                0x9d000ae0                softReset
-                0x9d000b3c                regProcess
+.text           0x9d000a68      0x744
+ .text          0x9d000a68      0x744 build/default/production/main.o
+                0x9d000a68                main
+                0x9d000b40                processException
+                0x9d000b74                trap
+                0x9d000b94                softReset
+                0x9d000bf0                regProcess
 
-.dinit          0x9d0010d0      0x490
- .dinit         0x9d0010d0      0x490 data_init
+.dinit          0x9d0011ac      0x4a0
+ .dinit         0x9d0011ac      0x4a0 data_init
 
-.text           0x9d001560      0x444
- .text          0x9d001560      0x444 build/default/production/periph.o
-                0x9d001560                portSet
-                0x9d0015a0                portClear
-                0x9d0015e0                portInv
-                0x9d001620                testLedSet
-                0x9d00170c                testLedClear
-                0x9d0017f8                testLedInv
-                0x9d0018e4                signalizeError
-                0x9d001968                periphInitX
+.asm_rtc        0x9d00164c      0x470
+ .asm_rtc       0x9d00164c      0x470 build/default/production/rtc.o
+                0x9d00164d                rtcInit
+                0x9d001799                rtcGetTime
+                0x9d0017b5                rtcGetDate
+                0x9d0017d1                rtcSetTime
+                0x9d0018a1                rtcSetDate
+                0x9d001961                rtcGetHalfSecond
+                0x9d001971                rtcRegTimeAlarm
+                0x9d001a74                iVector_rtc
 
-.asm_timer1     0x9d0019a4      0x148
- .asm_timer1    0x9d0019a4      0x148 build/default/production/timer1.o
-                0x9d0019a5                timer1Init
-                0x9d001a45                systemTimerRegInterval
-                0x9d001a68                iVector_timer1
+.text           0x9d001abc      0x444
+ .text          0x9d001abc      0x444 build/default/production/periph.o
+                0x9d001abc                portSet
+                0x9d001afc                portClear
+                0x9d001b3c                portInv
+                0x9d001b7c                testLedSet
+                0x9d001c68                testLedClear
+                0x9d001d54                testLedInv
+                0x9d001e40                signalizeError
+                0x9d001ec4                periphInitX
 
-.text           0x9d001aec      0x108
- .text          0x9d001aec      0x108 build/default/production/user_apps.o
-                0x9d001aec                pinSetting
-                0x9d001b0c                userAppsStart
-                0x9d001ba8                userAppError
+.asm_timer1     0x9d001f00      0x168
+ .asm_timer1    0x9d001f00      0x168 build/default/production/timer1.o
+                0x9d001f01                timer1Init
+                0x9d001fa1                systemTimerRegInterval
+                0x9d001fc4                iVector_timer1
+
+.text           0x9d002068      0x14c
+ .text          0x9d002068      0x14c build/default/production/user_apps.o
+                0x9d002068                pinSetting
+                0x9d0020cc                userAppsStart
+                0x9d002168                userAppError
 
 .text.general_exception
                 0x9d000010       0xdc
@@ -2268,30 +2286,30 @@ LOAD data_init
                 0x9d000010                _general_exception_context
 
 .text._cache_err_exception_context
-                0x9d001bf4       0xd8
+                0x9d0021b4       0xd8
  .text._cache_err_exception_context
-                0x9d001bf4       0xd8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(cache-err-exception.o)
-                0x9d001bf4                _cache_err_exception_context
+                0x9d0021b4       0xd8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(cache-err-exception.o)
+                0x9d0021b4                _cache_err_exception_context
 
 .text.simple_tlb_refill_context
-                0x9d001ccc       0xd8
+                0x9d00228c       0xd8
  .text.simple_tlb_refill_context
-                0x9d001ccc       0xd8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(simple-tlb-refill-exception.o)
-                0x9d001ccc                _simple_tlb_refill_exception_context
+                0x9d00228c       0xd8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(simple-tlb-refill-exception.o)
+                0x9d00228c                _simple_tlb_refill_exception_context
 
-.text           0x9d001da4       0xc4
- .text          0x9d001da4       0xc4 build/default/production/app1.o
-                0x9d001da4                m1_start
+.text           0x9d002364       0xbc
+ .text          0x9d002364       0xbc build/default/production/app1.o
+                0x9d002364                m1_start
 
 .tlb.__pic32_tlb_init_ebi_sqi
-                0x9d001e68       0xbc
+                0x9d002420       0xbc
  .tlb.__pic32_tlb_init_ebi_sqi
-                0x9d001e68       0xbc c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(pic32_init_tlb_ebi_sqi.o)
-                0x9d001e68                __pic32_tlb_init_ebi_sqi
+                0x9d002420       0xbc c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(pic32_init_tlb_ebi_sqi.o)
+                0x9d002420                __pic32_tlb_init_ebi_sqi
 
-.text           0x9d001f24       0xb8
- .text          0x9d001f24       0xb8 build/default/production/app3.o
-                0x9d001f24                m3_start
+.text           0x9d0024dc       0xb8
+ .text          0x9d0024dc       0xb8 build/default/production/app3.o
+                0x9d0024dc                m3_start
 
 .text           0x9d000110       0x64
  .text          0x9d000110       0x64 build/default/production/app2.o
@@ -2307,65 +2325,65 @@ LOAD data_init
                 0x9d0001dd                setPortPullDown
 
 .text.main_entry
-                0x9d001fdc       0x54
+                0x9d002594       0x54
  .text.main_entry
-                0x9d001fdc       0x54 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MZ2048ECM144/crt0_mips32r2.o
-                0x9d002010                __crt0_exit
+                0x9d002594       0x54 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MZ2048ECM144/crt0_mips32r2.o
+                0x9d0025c8                __crt0_exit
 
-.rodata         0x9d002030       0xa0
- .rodata        0x9d002030       0x50 build/default/production/clock_cfgBits_mm.o
-                0x9d002030                BUS_MODE
-                0x9d002034                COLOR
-                0x9d002058                stdColorMap
-                0x9d002078                PERIPH_TYPE
-                0x9d00207c                SPI_STATE
- .rodata        0x9d002080       0x50 build/default/production/clock_cfgBits_mz.o
+.rodata         0x9d0025e8       0xa0
+ .rodata        0x9d0025e8       0x50 build/default/production/clock_cfgBits_mm.o
+                0x9d0025e8                BUS_MODE
+                0x9d0025ec                COLOR
+                0x9d002610                stdColorMap
+                0x9d002630                PERIPH_TYPE
+                0x9d002634                SPI_STATE
+ .rodata        0x9d002638       0x50 build/default/production/clock_cfgBits_mz.o
 
-.rodata         0x9d0020d0       0xa0
- .rodata        0x9d0020d0       0x50 build/default/production/main.o
- .rodata        0x9d002120       0x50 build/default/production/globals.o
+.rodata         0x9d002688       0xa0
+ .rodata        0x9d002688       0x50 build/default/production/main.o
+ .rodata        0x9d0026d8       0x50 build/default/production/globals.o
 
-.rodata         0x9d002170       0xa0
- .rodata        0x9d002170       0x50 build/default/production/periph.o
- .rodata        0x9d0021c0       0x50 build/default/production/user_apps.o
+.rodata         0x9d002728       0xa0
+ .rodata        0x9d002728       0x50 build/default/production/periph.o
+ .rodata        0x9d002778       0x50 build/default/production/user_apps.o
 
-.rodata         0x9d002210       0xa0
- .rodata        0x9d002210       0x50 build/default/production/app1.o
- .rodata        0x9d002260       0x50 build/default/production/app2.o
+.rodata         0x9d0027c8       0xa0
+ .rodata        0x9d0027c8       0x50 build/default/production/app1.o
+ .rodata        0x9d002818       0x50 build/default/production/app2.o
 
-.rodata         0x9d0022b0       0x50
- .rodata        0x9d0022b0       0x50 build/default/production/app3.o
+.rodata         0x9d002868       0x50
+ .rodata        0x9d002868       0x50 build/default/production/app3.o
 
 .text._bootstrap_exception_handler
-                0x9d002300       0x48
+                0x9d0028b8       0x48
  .text._bootstrap_exception_handler
-                0x9d002300       0x48 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
-                0x9d002300                _bootstrap_exception_handler
+                0x9d0028b8       0x48 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-bootstrap-exception-handler.o)
+                0x9d0028b8                _bootstrap_exception_handler
 
 .text._cache_err_exception_handler
-                0x9d002348       0x48
+                0x9d002900       0x48
  .text._cache_err_exception_handler
-                0x9d002348       0x48 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
-                0x9d002348                _cache_err_exception_handler
+                0x9d002900       0x48 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-cache-err-exception-handler.o)
+                0x9d002900                _cache_err_exception_handler
 
 .text._simple_tlb_refill_exception_handler
-                0x9d002390       0x48
+                0x9d002948       0x48
  .text._simple_tlb_refill_exception_handler
-                0x9d002390       0x48 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
-                0x9d002390                _simple_tlb_refill_exception_handler
+                0x9d002948       0x48 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-simple-tlb-refill-exception-handler.o)
+                0x9d002948                _simple_tlb_refill_exception_handler
 
-.text           0x9d0023d8       0x84
- .text          0x9d0023d8       0x44 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\pic32_software_reset.o
-                0x9d0023d8                __pic32_software_reset
- .text          0x9d00241c       0x40 build/default/production/globals.o
-                0x9d00241c                globalsBeforeProcess
-                0x9d00243c                globalsAfterProcess
+.text           0x9d002990       0x84
+ .text          0x9d002990       0x44 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\pic32_software_reset.o
+                0x9d002990                __pic32_software_reset
+ .text          0x9d0029d4       0x40 build/default/production/globals.o
+                0x9d0029d4                globalsBeforeProcess
+                0x9d0029f4                globalsAfterProcess
 
-.text           0x9d00245c       0x40
- .text          0x9d00245c       0x28 build/default/production/clock_cfgBits_mz.o
-                0x9d00245c                setClock
- .text          0x9d002484       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-nmi-handler.o)
-                0x9d002484                _nmi_handler
+.text           0x9d002a14       0x40
+ .text          0x9d002a14       0x28 build/default/production/clock_cfgBits_mz.o
+                0x9d002a14                setClock
+ .text          0x9d002a3c       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed\libpic32.a(default-nmi-handler.o)
+                0x9d002a3c                _nmi_handler
 
 .text._on_reset
                 0x9d000174        0x8

@@ -6,28 +6,28 @@
 
 #define     _LED_INV_REG    LATHINV
 #define     _LED_INV_VAL    0b010
-
+int delay=10;
 #endif
 
 #ifdef PIC32MM0064
 
 #define     _LED_INV_REG    LATBINV
 #define     _LED_INV_VAL    0b0                 //nic
-
+int delay=1;
 #endif
 
 #ifdef PIC32MM0256
 
 #define     _LED_INV_REG    LATBINV
 #define     _LED_INV_VAL    0b10000000          //RB7                
-
+int delay=1;
 #endif
 
 static void testSystemTimer(int a);
 
 void m2_start()
 {
-    systemTimerRegInterval(&testSystemTimer, 500);
+    systemTimerRegInterval(&testSystemTimer, 5000);
     while(1)
     {
         doEvents();
@@ -39,7 +39,7 @@ void m2_start()
         _LED_INV_REG = _LED_INV_VAL;
         
         int a, b=0;
-        for(a=0; a<150000; a++)
+        for(a=0; a<(150000*delay); a++)
         {
             b++;
             if(a % 1000 == 0)

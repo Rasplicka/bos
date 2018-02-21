@@ -3,11 +3,12 @@
  * Author Jiri Rasplicka, 2017
  */
 
-extern void intVectors();
-extern void _general_exception_handler();
-extern void _simple_tlb_refill_exception_handler();
+
+//extern void _general_exception_handler();
+//extern void _simple_tlb_refill_exception_handler();
 
 //core_fn.S
+extern void initCPU();
 extern void startupStack();
 extern int allocStack(int, int*);
 extern void clearSystemData(uint, uint);
