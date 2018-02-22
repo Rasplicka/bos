@@ -227,6 +227,16 @@
 
 #endif
 
+#ifdef PIC32MZ
+
+#define     PORTA_BASE      0xBF860000
+#define     PORTB_BASE      0xBF860100
+#define     PORTC_BASE      0xBF860200
+#define     PORTD_BASE      0xBF860300
+#define     PORTE_BASE      0xBF860400
+
+#endif
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="string/chars">
@@ -267,7 +277,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="ubtn">
-//#define     UBTN
+#define     UBTN
 
 #define     UBTN_DOWN       1
 #define     UBTN_UP         2

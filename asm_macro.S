@@ -46,105 +46,105 @@
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="podminene skoky BAL_xxx">
-.macro _BAL_FBT first_reg, val_reg, addr
+.macro _B_FBT first_reg, val_reg, addr
 //skok, first > val
 //meni t9
     
     subu    t9, \first_reg, \val_reg
     bgtz    t9, \addr
-    nop
+    //nop
     
 .endm    
     
-.macro _BAL_FBTC first_reg, val_const, addr
+.macro _B_FBTC first_reg, val_const, addr
 //skok, first > val_const
 //meni t9
     
     li	    t9, \val_const
     subu    t9, \first_reg, t9
     bgtz    t9, \addr
-    nop
+    //nop
     
 .endm  
     
-.macro _BAL_FBE first_reg, val_reg, addr
+.macro _B_FBE first_reg, val_reg, addr
 //skok, first >= val_reg
 //meni t9
 
     subu    t9, \first_reg, \val_reg
     bgez    t9, \addr
-    nop
+    //nop
     
 .endm     
     
-.macro _BAL_FBEC first_reg, val_const, addr
+.macro _B_FBEC first_reg, val_const, addr
 //skok, first >= val_const
 //meni t9
     
     li	    t9, \val_const
     subu    t9, \first_reg, t9
     bgez    t9, \addr
-    nop
+    //nop
     
 .endm      
     
-.macro _BAL_FLT first_reg, val_reg, addr
+.macro _B_FLT first_reg, val_reg, addr
 //skok, first < val
 //meni t9
     
     subu    t9, \first_reg, \val_reg
     bltz    t9, \addr
-    nop
+    //nop
     
 .endm  
     
-.macro _BAL_FLTC first_reg, val_const, addr
+.macro _B_FLTC first_reg, val_const, addr
 //skok, first < val_const
 //meni t9
     
     li	    t9, \val_const
     subu    t9, \first_reg, t9
     bltz    t9, \addr
-    nop
+    //nop
     
 .endm     
     
-.macro _BAL_FLE first_reg, val_reg, addr
+.macro _B_FLE first_reg, val_reg, addr
 //skok, first <= val_reg
 //meni t9
 
     subu    t9, \first_reg, \val_reg
     blez    t9, \addr
-    nop
+    //nop
     
 .endm 
     
-.macro _BAL_FLEC reg, const, addr
+.macro _B_FLEC reg, const, addr
     
     li	    t9, \const
     subu    t9, \reg, t9 
     blez    t9, \addr
-    nop
+    //nop
     
 .endm    
     
-.macro _BAL_EQC	reg, const, addr    
+.macro _B_EQC	reg, const, addr    
 //skok, reg = const    
 //meni t9
     
     li	    t9, \const
     beq	    \reg, t9, \addr
-    nop
+    //nop
     
 .endm
     
-.macro _BAL_NEQC reg, const, addr    
+.macro _B_NEQC reg, const, addr    
 //skok, reg != const    
 //meni t9
     
     li	    t9, \const
     bne	    \reg, t9, \addr
-    nop
+    //nop
     
 .endm    
     
@@ -155,7 +155,7 @@
     
     li	    t9, \val
     bne	    \reg, \val, 1001f
-    nop
+    //nop
     
     //reg=val, nastav set_reg
     li	    \set_reg, \set_result
@@ -170,13 +170,13 @@
     
     li	    t9, \val
     bne	    \reg, \val, 1001f
-    nop
+    //nop
     
     //reg=val, nastav set_reg
     li	    \set_reg, \set_result
-    nop
+    //nop
     b16	    \branch
-    nop
+    //nop
     
 1001:    
     

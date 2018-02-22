@@ -350,15 +350,15 @@ iVector_timer1:
     
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="clr FLAG">
+    //<editor-fold defaultstate="collapsed" desc="clr FLAG, eret">
     //konec, nuluj flag IFS0.4
 5:     
-    li16    v0, (1 << IFS_BIT)
+    li	    v0, (1 << IFS_BIT)
     sw      v0, (IFS_REG_CLR)
-
+    sync
+    eret
     //</editor-fold>
 
-    eret
   
 .end iVector_timer1
   

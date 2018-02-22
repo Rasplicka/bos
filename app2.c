@@ -24,10 +24,12 @@ int delay=1;
 #endif
 
 static void testSystemTimer(int a);
+static void testButton(int event, int value, int index);
 
 void m2_start()
 {
-    systemTimerRegInterval(&testSystemTimer, 5000);
+    ubtnRegEvent(&testButton, 11, 20);
+    //systemTimerRegInterval(&testSystemTimer, 5000);
     while(1)
     {
         doEvents();
@@ -79,4 +81,20 @@ static void testSystemTimer(int a)
         while(x==0) { doEvents(); }
     }
     */
+}
+
+static void testButton(int event, int value, int index)
+{
+    //if(value==1)
+    //{
+        if(event==UBTN_DOWN)
+        {
+            _LED_INV_REG = _LED_INV_VAL;
+        }
+    
+        if(event==UBTN_UP)
+        {
+            _LED_INV_REG = _LED_INV_VAL;
+        }
+    //}
 }

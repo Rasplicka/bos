@@ -88,6 +88,7 @@ items:		.space			BUTTONS_TABLE_CAPA * ITEM_SIZE
     
 //</editor-fold>
   
+.set reorder    
 .set micromips   
 .section .ubtn, code
 .align 2
@@ -97,20 +98,26 @@ items:		.space			BUTTONS_TABLE_CAPA * ITEM_SIZE
 //<editor-fold defaultstate="collapsed" desc="MACRO">
 .macro _DEFINE_BUTTON port, bit, mode, value
     .word	\port		//PORTx_BASE, base addr portu 
-    .byte	\bit 		//bit_index (A2)
+    .hword	\bit 		//bit_index (A2)
     .byte	\mode 		//mode 0=down, repeat, long down, up, long up, 1=down, up
-    .hword	\value 		//value, ktera bude odeslana v event, param1
+    .byte 	\value 		//value, ktera bude odeslana v event, param1
 .endm
 //</editor-fold>    
     
 buttons_table:
 //tabulka obsahuje popis vsech tlacitek, je zakoncena 0x0 (velikost se urci automaticky: buttons_table_end - buttons_table)
+    //		   word        hword    byte	byte
+    //             port base   pin      mode	value
     
-    //             port base   pin    mode  value
-    _DEFINE_BUTTON PORTA_BASE, 2    , 0,    32		//A.2
-    _DEFINE_BUTTON PORTA_BASE, 3    , 0,    33		//A.3
+    /*
+    _DEFINE_BUTTON PORTA_BASE, BIT2,	0,	32		//A.2
+    _DEFINE_BUTTON PORTA_BASE, BIT3,	0,	33		//A.3
+    */
     
-    
+    //PIC32MZ test buttons
+    _DEFINE_BUTTON PORTB_BASE, BIT12,	0,	5		//B.12
+    _DEFINE_BUTTON PORTB_BASE, BIT13,	0,	15		//B.13
+    _DEFINE_BUTTON PORTB_BASE, BIT14,	0,	25		//B.14
     
  //konec tabulky, musi byt zakonceno 0x0!
 buttons_table_end:    
@@ -134,25 +141,19 @@ ubtnStart:
     la	    s0, items		    //RAM tabulka items
     addiu   s1, zero, 0xF	    //button UP state (nastavi u vsech tlacitek)
     
-    li16    v1, 1
-    
 1:  //cyklus pro vsechny tlacitka
     //nastav default hodnoty, nastav port
     lw	    t1, (t0)		//t1=base addr registru portu
     beqz    t1, 9f		//skok, konec buttons_table
-    nop
+    //nop
     
-    lbu	    t9, 4(t0)		//load bit_index
-    sllv    v0, v1, t9		//v0 ma nastaveny odpovidajici bit
-    
+    lhu	    v0, 4(t0)		//load bit_mask
+
+    //TRIS=1 (IN), ANSEL=0 (DIGITAL), PULL-UP
     //TRISbit=1
     sw32    v0, (TRIS_OFFSET + SET_OFFSET)(t1)
     //ANSELbit=0 
     sw32    v0, (ANSEL_OFFSET + CLR_OFFSET)(t1)
-    //LAT
-    //sw	    v0, (LAT_OFFSET + SET_OFFSET)(t1)
-    //PORT
-    //sw	    v0, (PORT_OFFSET + SET_OFFSET)(t1)
     //CNPU=1 (pull-up)
     sw32    v0, (CNPU_OFFSET + SET_OFFSET)(t1)
     //CNPD=0 (pull-down)
@@ -161,20 +162,16 @@ ubtnStart:
     sb      s1, UP_STATE_OFF(s0)	    //UP_state=0xF  (button=UP)
     sb	    zero, DOWN_STATE_OFF(s0)	    //DOWN_state=0x0
     
-    
     //next button
     addiu   t0, BUTTONS_TABLE_ISIZE
     addiu   s0, ITEM_SIZE	
 	
-    nop
     b16	    1b
-    nop
 9:    
     
     //doEvents
     la	    a0, ubtnGo
     bal	    doEventsL
-    nop
     
 .end ubtnStart  
     
@@ -200,27 +197,21 @@ ubtnGo:
 next:
     lw	    t1, (s2)		    //t1=base addr registru portu
     beqz    t1, end		    //skok konec
-    nop    
     
     //zjisti akt. stav pinu do v0
-    lw32    v0, PORT_OFFSET(t1)		    //load port
-    lbu	    t9, 4(s2)			    //load bit_index
-    srlv    v0, v0, t9			    //cteny bit do v0
-    ext	    v0, v0, 0, 1		    //v0=stav pinu
+    lw32    v0, PORT_OFFSET(t1)		    //load PORTx
+    lhu	    v1, 4(s2)			    //bit mask
+    and	    v0, v1			    //v0=stav bitu (v0=0x0 pin LOW)
     
     beqz    v0, pin_down		    //skok, pin=0-down
-    nop    
     
     //pin je up
     lbu	    t9, UP_STATE_OFF(s0)
     bne	    t9, s1, up_test_change	    //skok, potencialni zmena stavu
-    nop
     
     //trva stav UP
     sb	    zero, DOWN_STATE_OFF(s0)	    //down_state=0
-    nop
     b16	    loop
-    nop
     
 up_test_change:
     //mozna zmena stavu na UP
@@ -228,92 +219,72 @@ up_test_change:
     addiu   t9, 1
     sb	    t9, UP_STATE_OFF(s0)	    //save novy up_state
     bne	    t9, s1, loop		    //skok, zmena stavu zatim nenastala (up_state != 0xF)
-    nop
     
     //zmena stavu na UP
     sb	    zero, DOWN_STATE_OFF(s0)	    //down_state=0
     lbu	    t9, LONG_COUNT_OFF(s0)
     beqz    t9, send_up			    //skok, pri down nenastalo long_down, bude odesilat up
-    nop
     
     //send long_up
     li16    a0, UBTN_UP_LONG		    //btn up long
-    lhu	    a1, 6(s2)			    //value z buttons_table
+    lbu	    a1, 7(s2)			    //value z buttons_table
     move    a2, zero
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
-    nop
-    
-    nop
+
     b16	    loop
-    nop
     
 send_up:
     //send up
     li16    a0, UBTN_UP			    //btn up long
-    lhu	    a1, 6(s2)			    //value z buttons_table
+    lbu	    a1, 7(s2)			    //value z buttons_table
     move    a2, zero
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
-    nop
-    
-    nop
-    b16	    loop
-    nop    
 
+    b16	    loop
     
 pin_down:
     lbu	    t9, DOWN_STATE_OFF(s0)
     bne	    t9, s1, down_test_change	    //skok, potencialni zmena stavu
-    nop    
     
     //trva stav down
     sb	    zero, UP_STATE_OFF(s0)	    //up_state=0
-    nop    
     
-    lbu	    t9, 5(s2)			    //load mode
+    lbu	    t9, 6(s2)			    //load mode
     bnez    t9, loop			    //skok, mode=1
-    nop
     
     lw32    a0, REP_TIME_OFF(s0)	    //load repeatTime
     
     //a0=time (vraci rozdil od now [ms])
     bal	    compareTimerMs		    //meni t8, t9
-    nop
     
     lbu	    s3, REP_COUNT_OFF(s0)	    //load repeatCount
     beqz    s3, rep_0			    //skok, repeatCount=0 	
-    nop
     
     //repeatCount > 0
     addiu   v0, (-REPEAT_NEXT_MS)
     bltz    v0, test_long		    //skok, nevyprsel cas
-    nop
     
 send_rep:    
     //cas vyprsel, odeslat repeat
     li16    a0, UBTN_REPEAT		    //btn repeat
-    lhu	    a1, 6(s2)			    //value z buttons_table    
+    lbu	    a1, 7(s2)			    //value z buttons_table    
     move    a2, s3			    //repeat count
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
-    nop
     
     lw      t9, (timer_ms)
     sw32    t9, REP_TIME_OFF(s0)	    //nastav now repeatTime
     addiu   s3, 1			    //repeatC++
     andi    s3, 0xFF			    //nuluj b8-b31	
     beqz    s3, test_long		    //skok, pokud doslo k preteceni repeatC
-    nop
+
     sb	    s3, REP_COUNT_OFF(s0)	    //uloz repeatCount
-    
-    nop
+
     b16	    test_long
-    nop
-    
-    
+   
 rep_0:
     //repeat_count=0, v0=pocet ms
     addiu   v0, (-REPEAT_FIRST_MS)
     bgez    v0, send_rep		    //skok, cas vyprsel
-    nop    
     
 test_long:    
     //test cas long
@@ -321,31 +292,25 @@ test_long:
     
     //a0=time (vraci rozdil od now [ms])
     bal	    compareTimerMs		    //meni t8, t9
-    nop
     
     addiu   v0, (-LONG_DOWN_MS)
     bltz    v0, loop			    //skok, cas jeste nevyprsel
-    nop
     
     //cas vyprsel
     lbu	    s3, LONG_COUNT_OFF(s0)	    //load longCount
     li16    a0, UBTN_DOWN_LONG		    //btn long down
-    lhu	    a1, 6(s2)			    //value z buttons_table    
+    lbu	    a1, 7(s2)			    //value z buttons_table    
     move    a2, s3			    //longCount
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
-    nop    
     
     lw      t9, (timer_ms)
     sw32    t9, LONG_TIME_OFF(s0)	    //nastav now longTime
     addiu   s3, 1			    //longC++
     andi    s3, 0xFF			    //nuluj b8-b31
     beqz    s3, loop			    //skok, pokud doslo k preteceni longC
-    nop
     sb	    s3, LONG_COUNT_OFF(s0)	    //uloz repeatCount
-    
-    nop
+
     b16	    loop
-    nop    
     
 down_test_change:
     //mozna zmena stavu na down
@@ -353,7 +318,6 @@ down_test_change:
     addiu   t9, 1
     sb	    t9, DOWN_STATE_OFF(s0)	    //save novy down_state
     bne	    t9, s1, loop		    //skok, zmena stavu zatim nenastala (down_state != 0xF)
-    nop    
 
     //nastala zmena na down
     sb	    zero, UP_STATE_OFF(s0)	    //up_state=0
@@ -365,10 +329,9 @@ down_test_change:
     
     //send down
     li16    a0, UBTN_DOWN		    //btn down
-    lhu	    a1, 6(s2)			    //value z buttons_table
+    lbu	    a1, 7(s2)			    //value z buttons_table
     move    a2, zero
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
-    nop
     
     //pokracuje loop
    
@@ -376,16 +339,13 @@ loop:
     //next button
     addiu   s0, ITEM_SIZE		    //items ++
     addiu   s2, BUTTONS_TABLE_ISIZE	    //button_table ++
-    
-    nop
+
     b16	    next
-    nop
     
 end:    
     //doEvents
     la	    a0, ubtnGo
     bal	    doEventsL
-    nop    
 
 .end ubtnGo  
     
@@ -398,20 +358,24 @@ end:
 .ent ubtnRegEvent
 ubtnRegEvent:
 //a0=adresa fce
+//a1=value min
+//a2=value max    
     
     _PUSH   ra
     
-    move    a3, zero		    
-    move    a2, zero		    
+    
+    move    a3, a2		    //value max		    
+    move    a2, a1		    //value min		    
 
     bal	    getProcID		    //meni v0, v1
     sll	    a1, v0, 8		    //procID do b8-b15
-    ori	    a1, UBTN_EVENT_ID	    
+    ori	    a1, UBTN_EVENT_ID	 
+    
         
     //a0=fn, 
     //a1=eventID, procID, (var2=0, var3=0)
-    //a2=0 (var0) 
-    //a3=0 (var1)
+    //a2=value min (var0) 
+    //a3=value max (var1)
     bal	    addRegEvent		    //meni t9, v0, v1
     
     //v0=0 error, jinak adresa polozky
@@ -451,6 +415,15 @@ runEvent:
     
     //nasel polozku v regEventTable
     move    a0, v0			//adresa polozky v regEventTable
+    
+    //test, zda value (t6) je v rozsahu var0-var1
+    lbu	    t8, RET_V0(a0)
+    //first_reg, val_reg, addr
+    _B_FLT t6, t8, 1b			//meni t9, skok pri value(t6) < min(t8)
+    
+    lbu	    t8, RET_V1(a0)
+    //first_reg, val_reg, addr
+    _B_FBT t6, t8, 1b			//meni t9, skok pri value(t6) > max(t8)
     
     //a0=adresa polozky v regEventTable (pouzije z ni procID a fn addr)
     //a1=p0

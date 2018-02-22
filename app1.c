@@ -25,14 +25,16 @@ int delay=1;
 
 static void testSystemTimer(int a, int b, int c);
 static void testRTC(char hour, char min, uint date);
+static void testButton(int event, int value, int index);
 
 void m1_start()
 {
     //testSystemTimer();
     //systemTimerRegInterval(&testSystemTimer, 1000);
-    rtcRegTimeAlarm(&testRTC, 0, 2);
-    rtcRegTimeAlarm(&testRTC, 0, 4);
+    //rtcRegTimeAlarm(&testRTC, 0, 1);
+    //rtcRegTimeAlarm(&testRTC, 0, 2);
     
+    ubtnRegEvent(&testButton, 1, 10);
     while(1)
     {
         doEvents();
@@ -114,4 +116,20 @@ static void testSystemTimer(int a, int b, int c)
 static void testRTC(char hour, char min, uint date)
 {
     _LED_INV_REG = _LED_INV_VAL;
+}
+
+static void testButton(int event, int value, int index)
+{
+    //if(value==0)
+    //{
+        if(event==UBTN_DOWN)
+        {
+            _LED_INV_REG = _LED_INV_VAL;
+        }
+    
+        if(event==UBTN_UP)
+        {
+            _LED_INV_REG = _LED_INV_VAL;
+        }
+    //}
 }

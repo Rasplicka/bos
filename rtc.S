@@ -49,8 +49,8 @@
     #define	    WRLOCK	    0x8			//RTCCON.b4  
     #define	    TIME_SYNC	    0x4
     //#define	    RTCCON_SET	    0x0			//ALARM enable, ON, ... 
-    #define	    RTCCON_ON	    0x00008000	
-    #define	    RTC_ALRM	    0xC300		//alarm every minute
+    #define	    RTCCON_ON	    0x8000	
+    #define	    RTC_ALRM	    0xC3FF		//alarm every minute
     
 #endif	    //MZ     
     
@@ -450,8 +450,8 @@ rtcInit:
     //set time, date
     li      v0, 0x00000000              //00:00:00
     sw      v0, (RTCTIME)
-    //sw	    v0, (ALRMTIME)
-    //sw	    v0, (ALRMDATE)
+    sw	    v0, (ALRMTIME)
+    sw	    v0, (ALRMDATE)
     li      v0, 0x01010102              //2001, leden, 1, den v tydnu 7=SO (1=NE, 2=PO)
     sw      v0, (RTCDATE)
     
@@ -797,7 +797,7 @@ rtcEvents:
 .ent iVector_rtc
 iVector_rtc:
    
-   /* 
+    
 #ifdef PIC32MM0064 
     #define	    RTC_IFS_BIT	    14
     #define	    RTC_IFS_REG_CLR	    IFS0CLR     
@@ -814,30 +814,6 @@ iVector_rtc:
      
     MIPS32_TO_MICROMIPS  
 #endif  
-    */
-    
-    
-    
-    //allarm jednou za minutu pri sec=00
-#ifdef PIC32MM0064    
-    li	    v0, (1 << 14)	//nuluj flag
-    sw	    v0, (IFS0CLR)
-#endif
-    
-#ifdef PIC32MM0256    
-    li	    v0, (1 << 0)	//nuluj flag
-    sw	    v0, (IFS1CLR)
-#endif 
-    
-#ifdef PIC32MZ    
-    MIPS32_TO_MICROMIPS 
-    //IFS5.b6
-    li	    v0, (1 << 6)	//nuluj flag
-    sw	    v0, (IFS5CLR)	
-    
-#endif     
-    
-    
     
     //nastav day_ms, podle aktualniho casu
     //musi uchovat Hi/Lo, jsou spolecne pro vsechny SRS
@@ -851,13 +827,11 @@ iVector_rtc:
     
     //obsluha udalosti rtcAlarm
     bal	    rtcEvents		//meni a0-a3, v0, v1, t6-t9
-
-    //clear flag
-    /*
-    li16    v0, (1 << RTC_IFS_BIT)
-    sw      v0, (RTC_IFS_REG_CLR)
-    */
     
+    //clear flag
+    li	    v0, (1 << RTC_IFS_BIT)
+    sw      v0, (RTC_IFS_REG_CLR) 
+    sync			//bez sync je interrupt volan 2x (MZ)
     eret
 
 .end iVector_rtc

@@ -58,30 +58,7 @@ startupStack:
     
 .end startupStack  
 //</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="clearProcTable">
-.align 2
-.global clearSystemData
-.ent clearSystemData
-clearSystemData: 
-//a0=startAddr
-//a1=size
-    
-    //Tato fce nuluje obsah dat pro OS (sekce .os)
-    
-    addu    a1, a0		//after
-    
-1:    
-    sw	    zero, (a0)
-    addiu   a0, 4
-    bne	    a0, a1, 1b
-  
-    jrc	    ra
-    
-.end clearSystemData   
 
-//</editor-fold>
- 
 //<editor-fold defaultstate="collapsed" desc="allocStack">   
     
     //<editor-fold defaultstate="collapsed" desc="MACRO _TEST_COLLISION">
@@ -92,8 +69,8 @@ clearSystemData:
     //af2 = after oblast 2
     
     //meni t9
-    _BAL_FBE \st2, \af1, 1001f		//meni t9
-    _BAL_FLE \af2, \st1, 1001f		//meni t9
+    _B_FBE \st2, \af1, 1001f		//meni t9
+    _B_FLE \af2, \st1, 1001f		//meni t9
     
     //nop
     b16	    \collide
@@ -187,7 +164,7 @@ allocStack:
     
     //kontrola, zda testovana oblast neni mimo stack_area
     //reg1, reg2, skok
-    _BAL_FBT t5, t3, 5f			//skok, testovana oblast je mimo stack_area
+    _B_FBT t5, t3, 5f			//skok, testovana oblast je mimo stack_area
     
 3:  //prochazeni proc_t    
     lbu32   t9, TH_T_ID*4(t6)		//procID
@@ -249,6 +226,29 @@ allocStack:
    
 .end allocStack    
 //</editor-fold>    
+    
+//<editor-fold defaultstate="collapsed" desc="clearProcTable">
+.align 2
+.global clearSystemData
+.ent clearSystemData
+clearSystemData: 
+//a0=startAddr
+//a1=size
+    
+    //Tato fce nuluje obsah dat pro OS (sekce .os)
+    
+    addu    a1, a0		//after
+    
+1:    
+    sw	    zero, (a0)
+    addiu   a0, 4
+    bne	    a0, a1, 1b
+  
+    jrc	    ra
+    
+.end clearSystemData   
+
+//</editor-fold>  
     
 //<editor-fold defaultstate="collapsed" desc="setSrsValue">         
     
@@ -626,147 +626,6 @@ restartAppId:
 .end restartApp 
     
 //</editor-fold>
-   
-    
-//<editor-fold defaultstate="collapsed" desc="defragTableW">
-    
-.align 2
-.global defragTableW
-.ent defragTableW
-defragTableW:
-//a0=adresa tabulky
-//a1=item size [bytes] (delitelne 4)
-//a2=max. pocet polozek, item cnt
-//meni t7-t9, v0, v1, a0-a2
-    
-    //tabulka musi obsahovat polozky word (velikost polozky min. 1 word, delitelna 4)
-    //posouva polozky v tabulce tak, aby mezi nimi nebyly neplatne polozky
-    //tzn. prvni nulova polozka je konec tabulky
-    //polozka musi zacinat word, ktery urcuje jeji platnost. Hodnota 0x0 = polozka je neplatna, hodnota != 0x0, polozka je platna
-    
-    
-    //a0=src
-    //t7=dest
-    move    t7, a0
-    
-1:
-    lw	    t9, (a0)		    //load src data
-    beqz    t9, 3f		    //skok, src data=0
-    //nop
-    
-    //src data neni 0
-    bne	    t7, a0, 4f		    //skok src != dest, bude presun
-    //nop
-    
-    //src=dest, zadny presun
-2:    
-    addu    t7, a1		    //dest++
-    
-3:
-    addu    a0, a1		    //src++
-    addiu   a2, -1		    //item cnt--
-    bne	    a2, zero, 1b	    //neni konec
-    //nop
-    
-    //je konec, prosel vsechny polozky
-    jrc	    ra
-    //nop
-    
-4:
-    //presun dat ze src do dest
-    move    v0, a0		    //src
-    move    v1, t7		    //dest
-    move    t8, a1		    //size bytes
-    
-5:    
-    lw	    t9, (v0)
-    sw	    t9, (v1)
-    addiu   v0, 4
-    addiu   v1, 4
-    addiu   t8, -4
-    bnez    t8, 5b		    //skok, polozka pokracuje
-    //nop
-    
-    //src[0]=0x0
-    sw	    zero, (a0)
-    //nop
-    b16	    2b
-    //nop
-    
-.end defragTableW    
-    
-//</editor-fold>
-
-//<editor-fold defaultstate="collapsed" desc="defragTableB">
-    
-.align 2
-.global defragTableB
-.ent defragTableB
-defragTableB:
-//a0=adresa tabulky
-//a1=item size [bytes] (delitelne 1)
-//a2=max. pocet polozek, item cnt
-//meni t7-t9, v0, v1, a0-a2    
-    
-    //tabulka musi obsahovat polozky word (velikost polozky min. 1 word, delitelna 4)
-    //posouva polozky v tabulce tak, aby mezi nimi nebyly neplatne polozky
-    //tzn. prvni nulova polozka je konec tabulky
-    //polozka musi zacinat word, ktery urcuje jeji platnost. Hodnota 0x0 = polozka je neplatna, hodnota != 0x0, polozka je platna
-    
-    
-    //a0=src
-    //t7=dest
-    move    t7, a0
-    
-1:
-    lbu	    t9, (a0)		    //load src data
-    beqz    t9, 3f		    //skok, src data=0
-    //nop
-    
-    //src data neni 0
-    bne	    t7, a0, 4f		    //skok src != dest, bude presun
-    //nop
-    
-    //src=dest, zadny presun
-2:    
-    addu    t7, a1		    //dest++
-    
-3:
-    addu    a0, a1		    //src++
-    addiu   a2, -1		    //item cnt--
-    bne	    a2, zero, 1b	    //neni konec
-    //nop
-    
-    //je konec, prosel vsechny polozky
-    jrc	    ra
-    //nop
-    
-4:
-    //presun dat ze src do dest
-    move    v0, a0		    //src
-    move    v1, t7		    //dest
-    move    t8, a1		    //size bytes
-    
-5:    
-    lbu	    t9, (v0)
-    sb	    t9, (v1)
-    addiu   v0, 1
-    addiu   v1, 1
-    addiu   t8, -1
-    bnez    t8, 5b		    //skok, polozka pokracuje
-    //nop
-    
-    //src[0]=0x0
-    sb	    zero, (a0)
-    //nop
-    b16	    2b
-    //nop
-    
-    
-.end defragTableB    
-    
-//</editor-fold>        
-    
     
 //<editor-fold defaultstate="collapsed" desc="compareTimerMs">
     
@@ -868,7 +727,7 @@ iVector0:
 #endif    
     
     //nuluj flag
-    li16    v0, (1 << IFS_BIT)	    
+    li	    v0, (1 << IFS_BIT)	    
     sw	    v0, (IFS_REG_CLR)
     
     //param pro fci processException
@@ -1058,6 +917,49 @@ general_exception_shared_point:
     
 //</editor-fold>    
 
+//<editor-fold defaultstate="collapsed" desc="getErrorBehavior">
+.align 2    
+.global getErrorBehavior   
+.ent getErrorBehavior
+getErrorBehavior:     
+//a0=adresa polozky proc_t
+//a1=err code
+    
+    lw	    t9, TH_T_ID*4(a0)		    //load word, b8-15 = behavior
+    
+    li16    v0, ERR_CODE_TIME_LIMIT_EXCEED
+    bne	    v0, a1, 1f			    //skok, neni CPU timer limit error		
+    //CPU timer limit error
+    ext	    v0, t9, 8, 2		    //b8-9
+    b16	    4f
+    
+1:
+    li16    v0, ERR_CODE_GENERAL_EXCEPTION
+    bne	    v0, a1, 2f			    //skok, neni GE
+    //General Exception
+    ext	    v0, t9, 10, 2		    //b10-11
+    b16	    4f    
+    
+2:
+    li16    v0, ERR_CODE_TRAP
+    bne	    v0, a1, 3f    
+    //trap
+    ext	    v0, t9, 12, 2		    //b12-13
+    b16	    4f    
+    
+3:
+    //stack overflow
+    move    v0, zero			    //RESET_SYSTEM
+    
+4:    
+    //v0=ON_ERROR, 0=RESET_SYSTEM, 1=RESET_PROCESS, 2=REMOVE_PROCESS
+ 
+    jrc	    ra
+    
+.end getErrorBehavior 
+    
+//</editor-fold>
+   
     
 //<editor-fold defaultstate="collapsed" desc="getProcID">
 .align 2    
@@ -1111,49 +1013,6 @@ getProcTableItem:
     jrc	    ra
     
 .end getProcTableItem  
-    
-//</editor-fold>
-  
-//<editor-fold defaultstate="collapsed" desc="getErrorBehavior">
-.align 2    
-.global getErrorBehavior   
-.ent getErrorBehavior
-getErrorBehavior:     
-//a0=adresa polozky proc_t
-//a1=err code
-    
-    lw	    t9, TH_T_ID*4(a0)		    //load word, b8-15 = behavior
-    
-    li16    v0, ERR_CODE_TIME_LIMIT_EXCEED
-    bne	    v0, a1, 1f			    //skok, neni CPU timer limit error		
-    //CPU timer limit error
-    ext	    v0, t9, 8, 2		    //b8-9
-    b16	    4f
-    
-1:
-    li16    v0, ERR_CODE_GENERAL_EXCEPTION
-    bne	    v0, a1, 2f			    //skok, neni GE
-    //General Exception
-    ext	    v0, t9, 10, 2		    //b10-11
-    b16	    4f    
-    
-2:
-    li16    v0, ERR_CODE_TRAP
-    bne	    v0, a1, 3f    
-    //trap
-    ext	    v0, t9, 12, 2		    //b12-13
-    b16	    4f    
-    
-3:
-    //stack overflow
-    move    v0, zero			    //RESET_SYSTEM
-    
-4:    
-    //v0=ON_ERROR, 0=RESET_SYSTEM, 1=RESET_PROCESS, 2=REMOVE_PROCESS
- 
-    jrc	    ra
-    
-.end getErrorBehavior 
     
 //</editor-fold>
    
@@ -1610,3 +1469,142 @@ systemProcessResumeError:
 .end systemProcess  
     
 //</editor-fold>    
+
+//<editor-fold defaultstate="collapsed" desc="defragTableW">
+    
+.align 2
+.global defragTableW
+.ent defragTableW
+defragTableW:
+//a0=adresa tabulky
+//a1=item size [bytes] (delitelne 4)
+//a2=max. pocet polozek, item cnt
+//meni t7-t9, v0, v1, a0-a2
+    
+    //tabulka musi obsahovat polozky word (velikost polozky min. 1 word, delitelna 4)
+    //posouva polozky v tabulce tak, aby mezi nimi nebyly neplatne polozky
+    //tzn. prvni nulova polozka je konec tabulky
+    //polozka musi zacinat word, ktery urcuje jeji platnost. Hodnota 0x0 = polozka je neplatna, hodnota != 0x0, polozka je platna
+    
+    
+    //a0=src
+    //t7=dest
+    move    t7, a0
+    
+1:
+    lw	    t9, (a0)		    //load src data
+    beqz    t9, 3f		    //skok, src data=0
+    //nop
+    
+    //src data neni 0
+    bne	    t7, a0, 4f		    //skok src != dest, bude presun
+    //nop
+    
+    //src=dest, zadny presun
+2:    
+    addu    t7, a1		    //dest++
+    
+3:
+    addu    a0, a1		    //src++
+    addiu   a2, -1		    //item cnt--
+    bne	    a2, zero, 1b	    //neni konec
+    //nop
+    
+    //je konec, prosel vsechny polozky
+    jrc	    ra
+    //nop
+    
+4:
+    //presun dat ze src do dest
+    move    v0, a0		    //src
+    move    v1, t7		    //dest
+    move    t8, a1		    //size bytes
+    
+5:    
+    lw	    t9, (v0)
+    sw	    t9, (v1)
+    addiu   v0, 4
+    addiu   v1, 4
+    addiu   t8, -4
+    bnez    t8, 5b		    //skok, polozka pokracuje
+    //nop
+    
+    //src[0]=0x0
+    sw	    zero, (a0)
+    //nop
+    b16	    2b
+    //nop
+    
+.end defragTableW    
+    
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="defragTableB">
+    
+.align 2
+.global defragTableB
+.ent defragTableB
+defragTableB:
+//a0=adresa tabulky
+//a1=item size [bytes] (delitelne 1)
+//a2=max. pocet polozek, item cnt
+//meni t7-t9, v0, v1, a0-a2    
+    
+    //tabulka musi obsahovat polozky word (velikost polozky min. 1 word, delitelna 4)
+    //posouva polozky v tabulce tak, aby mezi nimi nebyly neplatne polozky
+    //tzn. prvni nulova polozka je konec tabulky
+    //polozka musi zacinat word, ktery urcuje jeji platnost. Hodnota 0x0 = polozka je neplatna, hodnota != 0x0, polozka je platna
+    
+    
+    //a0=src
+    //t7=dest
+    move    t7, a0
+    
+1:
+    lbu	    t9, (a0)		    //load src data
+    beqz    t9, 3f		    //skok, src data=0
+    //nop
+    
+    //src data neni 0
+    bne	    t7, a0, 4f		    //skok src != dest, bude presun
+    //nop
+    
+    //src=dest, zadny presun
+2:    
+    addu    t7, a1		    //dest++
+    
+3:
+    addu    a0, a1		    //src++
+    addiu   a2, -1		    //item cnt--
+    bne	    a2, zero, 1b	    //neni konec
+    //nop
+    
+    //je konec, prosel vsechny polozky
+    jrc	    ra
+    //nop
+    
+4:
+    //presun dat ze src do dest
+    move    v0, a0		    //src
+    move    v1, t7		    //dest
+    move    t8, a1		    //size bytes
+    
+5:    
+    lbu	    t9, (v0)
+    sb	    t9, (v1)
+    addiu   v0, 1
+    addiu   v1, 1
+    addiu   t8, -1
+    bnez    t8, 5b		    //skok, polozka pokracuje
+    //nop
+    
+    //src[0]=0x0
+    sb	    zero, (a0)
+    //nop
+    b16	    2b
+    //nop
+    
+    
+.end defragTableB    
+    
+//</editor-fold>       

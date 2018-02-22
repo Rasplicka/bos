@@ -26,7 +26,7 @@ extern void general_exception();
 
 extern char getProcID();
 extern void* getProcTableItem(char id);
-
+extern void UnregEvent(void*);
 extern void systemProcess();
 
 //periph_fn.S
@@ -65,7 +65,7 @@ extern void iVector_i2c3Bus();
 #ifdef UBTN
 //ubtn.S
 extern void ubtnStart();
-extern int  ubtnRegEvent(void*);
+extern int  ubtnRegEvent(void*, char min_value, char max_value);
 
 #endif
 
