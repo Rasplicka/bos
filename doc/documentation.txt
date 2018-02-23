@@ -72,17 +72,20 @@ ale zkompilovaná bude pouze jedna (ze souboru usb_device_mm_v2.c) díky definici 
 nebylo definováno USB_DEVICE_INIT_V2, pou?ije se soubor usb_device_mm.c (pro ?adu MM) nebo usb_device_mz
 (pro ?adu MZ)
 
+hotove
+timer1 MM+MZ
+RTC    MM+MZ
+UBTN   MM+MZ
+ukonceni procesu
 
-- predelat timer1 ok
-- upravit NOP ok
-- predelat RTC ok
-- processRemove
-- events 
+dodelat
+-interrupt MZ (moznost preruseni vyssi prioryty) 
+
 
 #if defined BUFSIZE && BUFSIZE >= 1024
 #if defined (MAX) && ! defined (MIN) 
 
 interrupt priority/sub/SRS-MM, SRS-MZ
-cpuTimer    1/0/0 (pouze safe mode)
+cpuTimer    1/0/1 (pouze safe mode)
 timer1      2/0/1
 RTC         2/1/1

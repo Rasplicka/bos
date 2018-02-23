@@ -87,6 +87,39 @@
 .endm
 //</editor-fold>    
     
+//<editor-fold defaultstate="collapsed" desc="_GET_Y_FROM_BCD">
+.macro _GET_Y_FROM_BCD src, dest
+    //do t0 year 2000-2099
+    ext     \dest, \src, 28, 4		    //4 bits desitky
+    li	    t9, 10
+    mul     \dest, t9              
+    ext     t9, \src, 24, 4		    //4 bits jednotky
+    addu    \dest, t9			    //dest=rok 0-99
+.endm
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="_GET_M_FROM_BCD">
+.macro _GET_M_FROM_BCD src, dest
+    //month 1-12
+    ext     \dest, \src, 20, 4	    //4 bits desitky
+    li      t9, 10
+    mul     \dest, t9
+    ext     t9, \src, 16, 4         //4 bits jednotky
+    addu    \dest, t9
+.endm
+//</editor-fold>
+     
+//<editor-fold defaultstate="collapsed" desc="_GET_D_FROM_BCD">
+.macro _GET_D_FROM_BCD src, dest    
+    //day 1-31
+    ext     \dest, \src, 12, 4	    //4 bits desitky
+    li      t9, 10
+    mul     \dest, t9
+    ext     t9, \src, 8, 4	    //4 bits jednotky
+    addu    \dest, t9
+.endm  
+//</editor-fold>        
+    
 //<editor-fold defaultstate="collapsed" desc="_DISABLE_INT">
 .macro _DISABLE_INT
 //zakaza interrupt (DI)	      , zalohu bitu do t9
@@ -482,44 +515,44 @@ rtcInit:
 .end rtcInit
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="rtcGetTime">
+//<editor-fold defaultstate="collapsed" desc="rtcGetTimeBCD">
 
 .align 2    
-.global rtcGetTime
-.ent rtcGetTime
-rtcGetTime:
+.global rtcGetTimeBCD
+.ent rtcGetTimeBCD
+rtcGetTimeBCD:
     
     _DATETIME_SYNC			//nemi v0, v1
     lw	    v0, (RTCTIME)
     
     jrc	    ra
     
-.end rtcGetTime 
+.end rtcGetTimeBCD 
     
 //</editor-fold>
   
-//<editor-fold defaultstate="collapsed" desc="rtcGetDate">
+//<editor-fold defaultstate="collapsed" desc="rtcGetDateBCD">
     
 .align 2    
-.global rtcGetDate
-.ent rtcGetDate
-rtcGetDate:
+.global rtcGetDateBCD
+.ent rtcGetDateBCD
+rtcGetDateBCD:
     
     _DATETIME_SYNC			//nemi v0, v1
     lw	    v0, (RTCDATE)
     
     jrc	    ra
     
-.end rtcGetDate  
+.end rtcGetDateBCD  
     
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="rtcSetTime">
+//<editor-fold defaultstate="collapsed" desc="rtcSetTimeBCD">
     
 .align 2
-.global rtcSetTime    
-.ent rtcSetTime
-rtcSetTime:
+.global rtcSetTimeBCD    
+.ent rtcSetTimeBCD
+rtcSetTimeBCD:
 //a0=BCD time
     
 //bcd format
@@ -579,16 +612,16 @@ rtcSetTime:
     _POP    ra
     jrc     ra
     
-.end rtcSetTime 
+.end rtcSetTimeBCD 
     
 //</editor-fold>
    
-//<editor-fold defaultstate="collapsed" desc="rtcSetDate">
+//<editor-fold defaultstate="collapsed" desc="rtcSetDateBCD">
     
 .align 2
-.global rtcSetDate    
-.ent rtcSetDate
-rtcSetDate:
+.global rtcSetDateBCD    
+.ent rtcSetDateBCD
+rtcSetDateBCD:
 //a0=BCD time
     
 //bcd format
@@ -636,7 +669,7 @@ rtcSetDate:
     
     jrc     ra
     
-.end rtcSetDate 
+.end rtcSetDateBCD 
     
 //</editor-fold>   
     
@@ -697,8 +730,140 @@ rtcRegTimeAlarm:
 .end rtcRegTimeAlarm   
 
 //</editor-fold>
- 
+
+    
+//<editor-fold defaultstate="collapsed" desc="rtcGetHour">
+    
+.align 2    
+.global rtcGetHour
+.ent rtcGetHour
+rtcGetHour:
+    
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    t8, (RTCTIME)
+    
+    //src, dest
+    _GET_HOUR_FROM_BCD t8, v0		//meni t9
+    
+    jrc	    ra
+    
+.end rtcGetHour  
+    
+//</editor-fold>    
    
+//<editor-fold defaultstate="collapsed" desc="rtcGetMinute">
+    
+.align 2    
+.global rtcGetMinute
+.ent rtcGetMinute
+rtcGetMinute:
+    
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    t8, (RTCTIME)
+    
+    //src, dest
+    _GET_MIN_FROM_BCD t8, v0		//meni t9
+    
+    jrc	    ra
+    
+.end rtcGetMinute  
+    
+//</editor-fold>     
+  
+//<editor-fold defaultstate="collapsed" desc="rtcGetSecond">
+    
+.align 2    
+.global rtcGetSecond
+.ent rtcGetSecond
+rtcGetSecond:
+    
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    t8, (RTCTIME)
+    
+    //src, dest
+    _GET_SEC_FROM_BCD t8, v0		//meni t9
+    
+    jrc	    ra
+    
+.end rtcGetSecond  
+    
+//</editor-fold>     
+    
+//<editor-fold defaultstate="collapsed" desc="rtcGetYear">
+    
+.align 2    
+.global rtcGetYear
+.ent rtcGetYear
+rtcGetYear:
+    
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    t8, (RTCDATE)
+    
+    //src, dest
+    _GET_Y_FROM_BCD t8, v0		//meni t9
+    
+    jrc	    ra
+    
+.end rtcGetYear  
+    
+//</editor-fold>      
+    
+//<editor-fold defaultstate="collapsed" desc="rtcGetMonth">
+    
+.align 2    
+.global rtcGetMonth
+.ent rtcGetMonth
+rtcGetMonth:
+    
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    t8, (RTCDATE)
+    
+    //src, dest
+    _GET_M_FROM_BCD t8, v0		//meni t9
+    
+    jrc	    ra
+    
+.end rtcGetMonth  
+    
+//</editor-fold>     
+    
+//<editor-fold defaultstate="collapsed" desc="rtcGetDay">
+    
+.align 2    
+.global rtcGetDay
+.ent rtcGetDay
+rtcGetDay:
+    
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    t8, (RTCDATE)
+    
+    //src, dest
+    _GET_D_FROM_BCD t8, v0		//meni t9
+    
+    jrc	    ra
+    
+.end rtcGetDay  
+    
+//</editor-fold>     
+    
+//<editor-fold defaultstate="collapsed" desc="rtcGetDayOfWeek">
+    
+.align 2    
+.global rtcGetDayOfWeek
+.ent rtcGetDayOfWeek
+rtcGetDayOfWeek:
+    
+    //1=NE, 2=PO, ... 7=SO
+    _DATETIME_SYNC			//nemi v0, v1
+    lw	    v0, (RTCDATE)
+    ext	    v0, v0, 0, 3
+    
+    jrc	    ra
+    
+.end rtcGetDayOfWeek  
+    
+//</editor-fold>     
+    
 //locals
     
 //<editor-fold defaultstate="collapsed" desc="setDayMs">

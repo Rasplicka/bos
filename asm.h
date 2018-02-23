@@ -26,7 +26,7 @@ extern void general_exception();
 
 extern char getProcID();
 extern void* getProcTableItem(char id);
-extern void UnregEvent(void*);
+extern void unregEvent(void*);
 extern void systemProcess();
 
 //periph_fn.S
@@ -71,10 +71,19 @@ extern int  ubtnRegEvent(void*, char min_value, char max_value);
 
 #ifdef RTC
 extern void rtcInit();
-extern void rtcSetTime(uint);
-extern void rtcSetDate(uint);
-extern uint rtcGetTime();
-extern uint rtcGetDate();
+extern void rtcSetTimeBCD(uint);
+extern void rtcSetDateBCD(uint);
+extern uint rtcGetTimeBCD();
+extern uint rtcGetDateBCD();
+
+extern char rtcGetHour();
+extern char rtcGetMinute();
+extern char rtcGetSecond();
+extern char rtcGetYear();
+extern char rtcGetMonth();
+extern char rtcGetDay();
+extern char rtcGetDayOfWeek();
+
 extern char rtcGetHalfSecond();
 extern int  rtcRegTimeAlarm(void*, char, char);
 #endif

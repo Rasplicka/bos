@@ -1117,11 +1117,11 @@ addRegEvent:
     
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="UnregEvent">
+//<editor-fold defaultstate="collapsed" desc="unregEvent">
 .align 2    
-.global UnregEvent    
-.ent UnregEvent
-UnregEvent: 
+.global unregEvent    
+.ent unregEvent
+unregEvent: 
 //a0=fn addr
     
     //meni t7-t9, v0, v1, a0-a2 (defragTableW)
@@ -1169,7 +1169,7 @@ UnregEvent:
     ei
     jrc	    ra
     
-.end UnregEvent 
+.end unregEvent 
     
 //</editor-fold>        
     

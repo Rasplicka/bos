@@ -1,77 +1,167 @@
-Priklady pouziti system timer
-Umoznuje dve funkce
-a)generovat delay
-b)generovat interval
+Priklady pouziti system timer (timer1)
+--------------------------------------
 
-Obe funkce, po uplynuti zvoleneho casu (ms) nastavi status byte, kterym indikuji
-aplikaci, ze nastala casova udalost.
-Delay - generuje pouze jednu udalost a po jejim vyvolani se automaticky odstrani
-Interval - generuje udalosti stale, dokud aplikace nezavola fci systemTimerUnregInterval()
+Definice ovlivnujici chovani system timeru:
+#define     TIMER1_INTERVAL         10              //def.h, definuje interval [ms] interruptu
+                                                    //od timer1 a tim minimalni casovy usek v OS
+                                                    //std. nastaveni pro radu MM=10, MZ=1
 
-Adresa Status bytu je predana pri registraci udalosti z aplikace.
-Status byte by nemel byt alokovan na zasobniku, protoze zde hrozi nebezpeci, ze
-kdyby doslo k chybe v aplikaci a byla by restartovana bez predchoziho volani
-systemTimerUnregInterval(), adresa Status bytu je stale pouzivana OS k nastaveni udalosti,
-tzn. ze tuto adresu systemovy timer meni.
+OS vyuziva timer1, ktery tim padem nemohou pouzivat aplikace.
+Misto toho ale OS poskytuje funkce pro generovani casovych useku. Nejmensi casovy
+usek je nastaven v TIMER1_INTERVAL v souboru def.h.. Pro radu MM je nastaveno 
+na 10, tzn. 10ms, pro radu MZ 1ms. Takze kazdych 10ms (1ms) dochazi k interruptu 
+od timeru1 a OS muze obsluhovat casove udalosti.
 
-Pouziti systemTimerRegDelay:
------------------------------
-//uvnitr fce by nemela byt promena status deklarovana, protoze by byla na zasobniku
-static char status;                                     //alokace mimo zasobnik
+funkce pauseEvent(ms)
+---------------------
+Pozastavi provadeni aktualniho procesu na stanovenou dobu. Mezitim bezi ostatni
+procesy. OS zajisti pauzu minimalne na pozadovanou dobu, ale muze trvat o neco dele.
 
-static void testSystemTimerDelay()
+void test()
 {
-    //fce provadi On/Off LED
-    //po uplynuti pozadovane doby system nastavi promenou status=1
-    //zaroven uvolni polozku v systemovem casovaci (aplikace nevola systemTimerUnregInterval())
-    
+    //blikani LED
     while(1)
     {
-        setLedOn();                                     //LED on
-        status=0;                                       //nuluj status
-        if(systemTimerRegDelay(&status, 1000) == 0)    //regitrace delay (1000ms)        
-        {
-            //chyba, neni volny system timer...
-        }
-        
-        while(status==0) { doEvents(); }                //ceka na udalost (OS nastavi status=1), mezi tim umozni vykonavat ostatni procesy
+        //Zapne LED na 100ms
+        testLedSet(1);
+        pauseEvents(100);
 
-        setLedOff();                                    //LED off
-        status=0;                                       //nuluj status
-        if(systemTimerRegDelay(&status, 500) == 0)     //regitrace delay (500ms)
-        {
-            //chyba, neni volny system timer...
-        }
-        while(status==0) { doEvents(); }                //ceka na udalost (OS nastavi status=1), mezi tim umozni vykonavat ostatni procesy
+        //Vypne LED na 500ms
+        testLedClear(1);
+        pauseEvents(500);
     }
 }
 
-Pouziti systemTimerRegInterval:
---------------------------------
-//uvnitr fce by nemela byt promena status deklarovana, protoze by byla na zasobniku
-static char status;                                     //alokace mimo zasobnik
+Generovani casoveho intervalu  
+-----------------------------
+OS muze pravidelne generovat udalost, tedy volat zadanou fci, v urcenem 
+intervalu [ms]. Nejprve je nutne registrovat prijemce udalosti pomoci fce
+systemTimerRegInterval(void* fn, uint ms)
 
-static void testSystemTimerInterval()
+void app_start()
 {
-    //fce provadi 10x On/Off LED
- 
-    status=0;                                           //nuluj status
-    
-    //po registraci bude OS periodicky nastavovat status=1
-    if(systemTimerRegInterval(&status, 300) == 0)      //regitrace intervalu (300ms) 
+    //registrace udalosti. Prvni param. je adresa fce, druhy doba intervalu v ms
+    systemTimerRegInterval(&testSystemTimer, 1000);
+
+    while(1)
     {
-        //chyba, neni volny system timer...
-    }
-    
-    int x=0;
-    while(x < 20)                                      //LED blika 10x on, 10x off
-    {
-        while(status==0) { doEvents(); }                //ceka na udalost (OS nastavi status=1), mezi tim umozni vykonavat ostatni procesy
-        InvertLed();                                    //Invertuj stav LED
-        status=0;                                       //nuluj status
-        x++;    
+        doEvents();
     }
 
-    //uvolni polozku v systemovem casovaci
-    systemTimerUnregInterval(&status);
+}
+
+void testSystemTimer()
+{
+    //tuto fci vola pravidelne OS, kazdych 1000 ms
+
+    //invertuje stav LED
+    testLedInv(1); 
+}
+
+Pokud jiz tento casovy interval nebude aplikace pouzivat, musi registraci zrusit
+volanim fce unregEvent(void* fn), kde fn je adresa fce, ktera se pouzila pri
+registraci udalosti
+
+void stopTimer()
+{
+    //pokracovani predchoziho prikladu
+    //ukonci volani fce testSystemTimer
+    unregEvent(&testSystemTimer);
+}
+
+Aplikace muze zaregistrovat vice casovych intervalu. Nasledujici priklad registruje
+dva. Prvni bezi stale, druhy probehne pouze 5x.
+
+int counter=0;
+
+void app_start()
+{
+    //prvni registrace udalosti, interval 1000 ms
+    systemTimerRegInterval(&test1, 1000);
+
+    //druha registrace udalosti, interval 500 ms
+    systemTimerRegInterval(&test2, 500);
+
+    while(1)
+    {
+        doEvents();
+    }
+}
+
+void test1()
+{
+    //tuto fci vola pravidelne OS, kazdych 1000 ms
+
+    //invertuje stav LED1 
+    testLedInv(1); 
+}
+
+void test2()
+{
+    //tuto fci vola pravidelne OS pouze 5x, kazdych 500 ms
+
+    //invertuje stav LED2
+    testLedInv(2); 
+
+    counter++;
+
+    if(counter==5)
+    {
+        //zrusi registraci teto udalosti
+        unregEvent(&test2);
+    }
+}
+
+Chcete-li mit jistotu, ze registrace probehla bez chyby - napr. ze tabulka
+registraci neni plna, muzete pouzit tento zapis
+
+if(systemTimerRegInterval(&test1, 1000) == NULL)
+{
+    //nastala chyba
+
+}
+else
+{
+    //registrace pribehla v poradku
+
+}
+
+
+Navic v OS je pronema time_ms, ktera obsahuje pocet ms od zapnuti systemu. 
+OS ji pravidelne aktualizuje (v interruptu timer1). Je bezne pristupna, ale
+aplikace ji nesmi menit. Na zaklade jeji hodnoty totiz system generuje 
+registrovane intervaly. Protoze je typu uint a obsahuje pocet ms, dojde k jejimu
+preteceni jednou za 49 dnu. Chcete-li ji pouzivat k mereni casoveho useku,
+pouzijte fci compareTimerMs, ktera respektuje moznost preteceni 
+(ale mereny usek musi byt kratsi nez 49 dnu)
+Dale je v systemu promena day_ms, ktera cita pocet ms od zacatku dne. Podle ni
+lze zjistit aktualni denni cas. Ale pouze v pripade, ze je aktivni RTC modul, ktery
+tuto promenou synchronizuje kazdou minutu.
+Pro zjisteni denniho casu a hlavne data je lepsi pouzit fce RTC modulu.
+
+
+Vyuziti promene time_ms pro mereni doby
+---------------------------------------
+
+void app_start()
+{
+    //zaznamenat aktualni cas
+    uint before=time_ms;
+
+    //budeme merit jak dlouho trva fce go()
+    go();
+
+    //do delay se vlozi doba [ms], ktera uplynula
+    uint delay=compareTimerMs(before);
+}
+
+
+Vyuziti promene day_ms pro zjisteni denniho casu
+------------------------------------------------
+void app_start()
+{
+    //zjisti aktualni denni cas (musi byt definovano RTC v def.h)
+    uint second=(day_ms/1000) % 60;
+    uint minute=(day_ms/1000/60) % 60;
+    uint hour=(day_ms/1000/60/60);
 }

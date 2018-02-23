@@ -1,0 +1,76 @@
+RTC
+---
+
+Definice ovlivnujici chovani RTC modulu:
+#define     RTC                                     //def.h, OS aktivuje modul RTC
+
+Generovani udalosti v zadanem case  
+----------------------------------
+OS pracuje s RTC modulem na chipu a poskytuje sluzby k nemu vztazene, predevsim 
+generuje udalost v zadany cas a take poskytuje informaci o aktualnim datu.
+Po registraci OS generuje udalost v urcitou hodinu a minutu (pri sec=00). 
+Nejprve je nutne registrovat prijemce udalosti pomoci fce 
+rtcRegTimeAlarm(void* fn, char hour, char minute)
+
+void start_app()
+{
+    //generuje udalost v 13:55, kazdy den
+    rtcRegTimeAlarm(&testRTC, 13, 55);
+    while(1)
+    {
+        doEvents();
+    }
+}
+
+void testRTC(char hour, char min, uint date)
+{
+    //param hour a min obsahuji aktualni cas
+    //param date obsahuje datum, v BCD formatu: 0xYYMMDD0W (W=day of week, 1-7, 1=NE)
+    
+    //tato fce je volana v 13:55, kazdy den
+
+    //zjisti datum
+    char month = rtcGetMonth();
+    char day = rtcGetDay();
+
+    if(month == 3 && day == 5)
+    {
+        //kod zde se provede pouze konkretni den a cas v roce: 5. brezna, 13:55
+            
+    }
+}
+
+Dale je mozne zjistit, nebo nastavi, aktualni cas a datum v modulu RTC, 
+ve formatu BCD (prirozeny format pouzivany RTC modulem)
+
+void start_app()
+{
+    //zapis bcd hodnoty
+    uint bcd_time=0x15223500;               //15:22:35
+    rtcSetTimeBCD(bcd_time);
+
+    uint bcd_date=0x18053001;               //2018/05/30, NE
+    rtcSetDateBCD(bcd_date);
+
+    //cteni bcd hodnoty
+    bcd_time = rtcGetTimeBCD();
+    bcd_date = rtcGetDateBCD();
+}
+
+Nebo muzete cist informace v binarnich hodnotach.
+
+void start_app()
+{
+    //zjisteni aktualni hodiny - stejne existuji fce rtcGetMinute(), rtcGetSecond()
+    char hour=rtcGetHour();
+
+    //zjisteni aktualniho data (den) - stejne existuje fce rtcGetMonth()
+    char day=rtcGetDay();
+
+    //zjisteni aktualniho data (rok), vraci posledni dvojcisli (vraci 18 pro rok 2018)
+    char year=rtcGetYear();
+
+    //zjisteni aktualniho data (den v tydnu), vraci cislo dne, NE=1, PO=2, ... SO=7
+    char dow=rtcGetDayOfWeek();
+}
+

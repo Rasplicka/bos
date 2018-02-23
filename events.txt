@@ -1,0 +1,8 @@
+Udalosti
+--------
+
+Pocet vsech udalosti, ktere mohou aplikace registrovat, je dan hodnotou
+REG_EVENT_TABLE_CAPA, ktera je definovana v def.h. Velikost jedne polozky
+je 16 bytes a alokuje se v RAM (sekce .os). Tzn, ze pokud je hodnota 
+REG_EVENT_TABLE_CAPA nastavena na 20, je mozne registrovat celkem 20 udalosti,
+a pro tyto zaznamy se vyhradi oblast 320 bytes v RAM.
