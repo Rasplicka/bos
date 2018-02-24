@@ -12,7 +12,7 @@
 //date a time se cte z RTC modulu
 //presny cas (ms 32-bit) od zacatku dne je v day_ms, kterou incrementuje timer1
 //day_ms se synchronizuje s RTC kazdou minutu (alarm interrupt)    
-//(doba spusteni OS je v timer_ms)
+//(doba spusteni OS je v time_ms)
 
 //Poskytuje event - RTC ALARM, v zadanou hodinu a minutu
 //do fce predava i aktualni datum v BCD formatu (obsah RTCDATE)     
@@ -336,8 +336,8 @@ rtcInit:
 //nastavi time_ms (long int) a date_century
 //vraci v0=ok, muze pokracovat, 1=chyba, nelze spustiti OS 
 
-    #define	RTC_INTERRUPT_PRIORITY		2
-    #define	RTC_INTERRUPT_SUBPRIORITY	1	
+    #define	RTC_INTERRUPT_PRIORITY		1
+    #define	RTC_INTERRUPT_SUBPRIORITY	2	
     
     _PUSH   ra
     //POZOR, v prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma suspend
@@ -898,7 +898,8 @@ setDayMs:
     
     mul	    t9, t8	//second * 1000
     
-    sw	    t9, (day_ms)
+    //lw	    t8, (day_ms)
+    sw	    t9, (day_ms)		//rozdil cca 100ms / minutu
     
     jrc	    ra
     
@@ -964,22 +965,25 @@ iVector_rtc:
    
     
 #ifdef PIC32MM0064 
-    #define	    RTC_IFS_BIT	    14
-    #define	    RTC_IFS_REG_CLR	    IFS0CLR     
+    #define	    RTC_IFS_BIT		14
+    #define	    RTC_IFS_REG_CLR	IFS0CLR     
 #endif
     
 #ifdef PIC32MM0256 
-    #define	    RTC_IFS_BIT	    0
-    #define	    RTC_IFS_REG_CLR	    IFS1CLR     
+    #define	    RTC_IFS_BIT		0
+    #define	    RTC_IFS_REG_CLR	IFS1CLR     
 #endif    
     
 #ifdef PIC32MZ
-    #define	    RTC_IFS_BIT	    6
-    #define	    RTC_IFS_REG_CLR	    IFS5CLR 
+    #define	    RTC_IFS_BIT		6
+    #define	    RTC_IFS_REG_CLR	IFS5CLR 
      
-    MIPS32_TO_MICROMIPS  
+    _MIPS32_TO_MICROMIPS  
+    _INT_PROLOGUE
+    
 #endif  
     
+       
     //nastav day_ms, podle aktualniho casu
     //musi uchovat Hi/Lo, jsou spolecne pro vsechny SRS
     mflo    s0			//uchova Lo
@@ -993,10 +997,32 @@ iVector_rtc:
     //obsluha udalosti rtcAlarm
     bal	    rtcEvents		//meni a0-a3, v0, v1, t6-t9
     
+    
+    //test
+    /*
+    li	    t9, 0xFFFFFF
+1:
+    addiu   t8, 1
+    addiu   t8, 1
+    addiu   t8, 1
+    addiu   t8, 1
+    addiu   t8, 1
+    addiu   t8, 1
+    
+    addiu   t9, -1
+    bnez    t9, 1b
+    */
+
+   
     //clear flag
     li	    v0, (1 << RTC_IFS_BIT)
-    sw      v0, (RTC_IFS_REG_CLR) 
+    sw      v0, (RTC_IFS_REG_CLR)     
     sync			//bez sync je interrupt volan 2x (MZ)
+    
+#ifdef PIC32MZ    
+    _INT_EPILOGUE
+#endif 
+    
     eret
 
 .end iVector_rtc

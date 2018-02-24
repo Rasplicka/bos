@@ -2,20 +2,20 @@
 
 //globals
 void main();
-void processException(char procId, char code, void* addr);
+//void processException(char procId, char code, void* addr);
 void trap();
 void softReset();
 
 //locals
-int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param);
+int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, char default_procID);
 static char getFreeProcessID(char defaultId);
 static int* getEmptyProcessTableItem();
 static void systemInit();
 static inline void cpuTimerInit();
 static void test();
 
-void _general_exception_context();
-void _general_exception_handler (void);
+//void _general_exception_context();
+//void _general_exception_handler (void);
 
 //interrupt vektory musi byt zde
 #ifdef PIC32MM0064

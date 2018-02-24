@@ -4,8 +4,9 @@
 
 #ifdef PIC32MZ
 
+//red LED
 #define     _LED_INV_REG    LATHINV
-#define     _LED_INV_VAL    0b001
+#define     _LED_INV_VAL    0b001                               
 int delay=10;
 #endif
 
@@ -30,11 +31,20 @@ static void testButton(int event, int value, int index);
 void m1_start()
 {
     //testSystemTimer();
-    //systemTimerRegInterval(&testSystemTimer, 1000);
+    systemTimerRegInterval(&testSystemTimer, 1000);
     //rtcRegTimeAlarm(&testRTC, 0, 1);
     //rtcRegTimeAlarm(&testRTC, 0, 2);
+
+    while(1)
+    {
+        doEvents();
+    }
+    
+    /*
     
     ubtnRegEvent(&testButton, 1, 10);
+    //trap();
+    
     while(1)
     {
         doEvents();
@@ -78,7 +88,9 @@ void m1_start()
             }
         }
         x++;
-    }    
+    } 
+    */
+    
 }
 
 static void testSystemTimer(int a, int b, int c)

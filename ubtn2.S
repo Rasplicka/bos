@@ -271,7 +271,7 @@ send_rep:
     move    a2, s3			    //repeat count
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     
-    lw      t9, (timer_ms)
+    lw      t9, (time_ms)
     sw32    t9, REP_TIME_OFF(s0)	    //nastav now repeatTime
     addiu   s3, 1			    //repeatC++
     andi    s3, 0xFF			    //nuluj b8-b31	
@@ -303,7 +303,7 @@ test_long:
     move    a2, s3			    //longCount
     bal	    runEvent			    //meni a0-a3, v0, v1, t5-t9
     
-    lw      t9, (timer_ms)
+    lw      t9, (time_ms)
     sw32    t9, LONG_TIME_OFF(s0)	    //nastav now longTime
     addiu   s3, 1			    //longC++
     andi    s3, 0xFF			    //nuluj b8-b31
@@ -321,7 +321,7 @@ down_test_change:
 
     //nastala zmena na down
     sb	    zero, UP_STATE_OFF(s0)	    //up_state=0
-    lw      t9, (timer_ms)		    //now	
+    lw      t9, (time_ms)		    //now	
     sw32    t9, REP_TIME_OFF(s0)	    //reteatTime=now
     sw32    t9, LONG_TIME_OFF(s0)	    //longTime=now
     sb	    zero, REP_COUNT_OFF(s0)	    //nuluj repeatCount

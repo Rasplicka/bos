@@ -45,7 +45,7 @@ typedef struct
     char TimeLimitExceedBehavior;           //If the process time limit exceed
     char GeneralExceptionBehavior;          //If an general exception occurs
     char TrapBehavior;                      //If trap() function is called
-    char defaultID;                         //default value for processID (OS can not use this value)
+    char dummy;                         
     
     unsigned int TimeLimitValue;            //Defines process time limit (safe mode)
     

@@ -79,7 +79,8 @@ UBTN   MM+MZ
 ukonceni procesu
 
 dodelat
--interrupt MZ (moznost preruseni vyssi prioryty) 
+-interrupt MZ (moznost preruseni vyssi priority) 
+-SRSCTL.ESS error SRS?
 
 
 #if defined BUFSIZE && BUFSIZE >= 1024

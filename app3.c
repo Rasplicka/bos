@@ -29,8 +29,8 @@ static void testButton(int event, int value, int index);
 
 void m3_start()
 {
-    //systemTimerRegInterval(&testSystemTimer, 2000);
-    ubtnRegEvent(&testButton, 21, 30);
+    systemTimerRegInterval(&testSystemTimer, 200);
+    //ubtnRegEvent(&testButton, 21, 30);
     while(1)
     {
         doEvents();

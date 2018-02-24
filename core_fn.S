@@ -270,12 +270,13 @@ setSrsValue:
     move    v1, zero			//SRS index
     la	    t8, stack_area
     li	    t7, SRS_STACK_SIZE
-
+    
 1:    
     addiu   v1, 1			//SRS index++
     
     //nastav previous SRS=v1
     mfc0    t9, _CP0_SRSCTL
+    ehb
     ins	    t9, v1, 6, 4
     mtc0    t9, _CP0_SRSCTL
     ehb
@@ -288,7 +289,6 @@ setSrsValue:
     wrpgpr  sp, t8
     
     bne	    v1, v0, 1b			//skok, existuje dalsi SRS
-    //nop
     
     //konec
     jrc	    ra
@@ -366,12 +366,17 @@ doEvents:
     
 1:    
     //chyba stack overflow
-    la	    t9, (processException)   //adresa error fce
-    li	    a0, ERR_STACK_OVERFLOW        //param (stack overflow)
-
+    //STATUS.EXL=1
+    li16    v1, 1
+    mfc0    v0, _CP0_STATUS
+    ins	    v0, v1, 1, 1
+    mtc0    v0, _CP0_STATUS
     
-    jrc	    t9
-    //nop
+    //param pro fci processException
+    li	    s1, ERR_STACK_OVERFLOW		    //param (stack overflow)
+    
+    //pokracuje v generalException
+    b	    general_exception_shared_point
     
 2:    
     
@@ -400,22 +405,21 @@ doEventsError:
     
     //<editor-fold defaultstate="collapsed" desc="next process">
     //vyber dalsi proces, t8=adresa aktualni polozky v proc_t ------------------
+    lw	    t8, (proc_t_pos)		    //process table (musi zde byt, pro pripad skoku sem z GE)
     lw	    v0, (proc_t_after)
 1:    
-    addu    t8, PROC_T_ISIZE	    //dalsi polozka proc_t
-    bne	    t8, v0, 2f		    //skok, neni za proc_t
-    //nop
+    addu    t8, PROC_T_ISIZE		    //dalsi polozka proc_t
+    bne	    t8, v0, 2f			    //skok, neni za proc_t
     
     //je za posledni polozkou, nastav prvni
-    la	    t8, proc_t		    //nastav prvni polozku proc_t
+    la	    t8, proc_t			    //nastav prvni polozku proc_t
 
 2:    
-    lbu	    t9, TH_T_ID*4(t8)	    //load procID
-    beqz    t9, 1b		    //skok, polozka je prazdna
-    //nop
+    lbu	    t9, TH_T_ID*4(t8)		    //load procID
+    beqz    t9, 1b			    //skok, polozka je prazdna
 
     //t8=adresa polozky v proc_t
-    sw	    t8, (proc_t_pos)	    //ulozit adresu akt. polozky proc_t
+    sw	    t8, (proc_t_pos)		    //ulozit adresu akt. polozky proc_t
     //--------------------------------------------------------------------------
     //</editor-fold>
     
@@ -432,9 +436,9 @@ doEventsError:
     //mthi    v1 
 
     //lw      $1,  TH_T_REGS + 4 (t8)       //at
-    lwp     v0, TH_T_V0*4(t8)	    //v0, v1
-    lwp     a0, TH_T_A0*4(t8)	    //a0, a1
-    lwp     a2, TH_T_A2*4(t8)	    //a2, a3
+    lwp     v0, TH_T_V0*4(t8)		    //v0, v1
+    lwp     a0, TH_T_A0*4(t8)		    //a0, a1
+    lwp     a2, TH_T_A2*4(t8)		    //a2, a3
 
     //s0-s7 v memory model
     lwm32   s0-s7, TH_T_S0*4(t8)
@@ -442,9 +446,13 @@ doEventsError:
     lwp     gp, TH_T_GP*4(t8)	    //gp, sp
     lwp     fp, TH_T_FP*4(t8)	    //fp, ra
     
+    //zajisti exit na konci hlavni fce app
+    move    t9, ra			    //navrat do app v t9 
+    lw	    ra, TH_T_EXIT*4(t8)		    //do ra vlozi exitProcess
+    
     //</editor-fold>   
 
-    jrc	    ra
+    jrc	    t9
     //nop
 .end doEvents    
 //</editor-fold>    
@@ -463,10 +471,7 @@ doEventsL:
 #endif      
     
     move    ra, a0			    //param v a0 pouzije jako ra (navratova adresa)
-    
-#ifdef MICROMIPS    
     ori	    ra, 0x1			    //micromips (licha adresa zajisti prepnuti do micromips po "jrc ra")
-#endif    
 
     lw	    t8, (proc_t_pos)		    //process table
     
@@ -487,12 +492,17 @@ doEventsL:
     
 1:    
     //chyba stack overflow
-    la	    t9, (processException)   //adresa error fce
-    li	    a0, ERR_STACK_OVERFLOW        //param (stack overflow)
-
+    //STATUS.EXL=1
+    li16    v1, 1
+    mfc0    v0, _CP0_STATUS
+    ins	    v0, v1, 1, 1
+    mtc0    v0, _CP0_STATUS
     
-    jrc	    t9
-    //nop
+    //param pro fci processException
+    li	    s1, ERR_STACK_OVERFLOW		    //param (stack overflow)
+    
+    //pokracuje v generalException
+    b	    general_exception_shared_point
     
 2: 
 #endif  
@@ -548,19 +558,23 @@ doEventsL:
     //mtlo    v0
     //mthi    v1 
 
-    lwp     v0, TH_T_V0*4(t8)	    //v0, v1
-    lwp     a0, TH_T_A0*4(t8)	    //a0, a1
-    lwp     a2, TH_T_A2*4(t8)	    //a2, a3
+    lwp     v0, TH_T_V0*4(t8)		    //v0, v1
+    lwp     a0, TH_T_A0*4(t8)		    //a0, a1
+    lwp     a2, TH_T_A2*4(t8)		    //a2, a3
 
     //s0-s7 v memory model
     lwm32   s0-s7, TH_T_S0*4(t8)
 
-    lwp     gp, TH_T_GP*4(t8)	    //gp, sp
-    lwp     fp, TH_T_FP*4(t8)	    //fp, ra
+    lwp     gp, TH_T_GP*4(t8)		    //gp, sp
+    lwp     fp, TH_T_FP*4(t8)		    //fp, ra
+    
+    //zajisti exit na konci hlavni fce app
+    move    t9, ra			    //navrat do app v t9
+    lw	    ra, TH_T_EXIT*4(t8)		    //do ra vlozi exitProcess
     
     //</editor-fold>   
 
-    jrc	    ra
+    jrc	    t9
     //nop
 .end doEventsL    
 //</editor-fold>        
@@ -633,13 +647,13 @@ restartAppId:
 .global compareTimerMs
 .ent compareTimerMs    
 compareTimerMs:
-//a0=porovnavany cas (predpoklada se, ze je starsi, nez soucasny - timer_ms)
+//a0=porovnavany cas (predpoklada se, ze je starsi, nez soucasny - time_ms)
 //vraci kolik ms uplynulo od zadaneho casu    
 //meni t8,t9 (v0)    
     
     //je-li timer nastaven na 10ms, rozdil je po 10ms
     
-    lw	    t9, (timer_ms)
+    lw	    t9, (time_ms)
     subu    v0, t9, a0
      
     bltz    v0, 1f
@@ -647,7 +661,7 @@ compareTimerMs:
     jrc	    ra
     
 1:
-    //doslo k preteceni timer_ms
+    //doslo k preteceni time_ms
     li	    t8, 0xFFFFFFFF
     subu    v0, t8, a0 
     addu    v0, t9
@@ -670,7 +684,7 @@ pauseEvents:
     
     move    a2, ra		    //zaloha ra
     move    v1, a0		    //pocet ms cekani
-    lw	    a0, timer_ms	    //pocatecni time_ms
+    lw	    a0, time_ms	    //pocatecni time_ms
     
 1:
     //test, zda je jiz Threading (muze volat doEvents)
@@ -722,7 +736,7 @@ iVector0:
     #define	    IFS_BIT	    0
     #define	    IFS_REG_CLR	    IFS0CLR  
     
-    MIPS32_TO_MICROMIPS
+    _MIPS32_TO_MICROMIPS
     
 #endif    
     
@@ -742,7 +756,7 @@ iVector0:
     
 //<editor-fold defaultstate="collapsed" desc="general_exception">
 
-#ifdef POC32MZ    
+#ifdef PIC32MZ    
     
 .align 2    
 .global _simple_tlb_refill_exception_handler    
@@ -784,10 +798,11 @@ _general_exception_handler:
     //ISA mode pred vstupem do exception je zalohovan config3.ISAONEXC
     //ERET provede navrat i s prepnutim ISA mode podle suda/licha adresa    
     
+    //MZ - deleni nulou hlasi CAUSE.EXCCODE = 0xD - jako trap
     
-//.global general_exception
-//.ent general_exception    
-//general_exception:
+#ifdef PIC32MZ
+    _MIPS32_TO_MICROMIPS 
+#endif    
 
     //nastavi parameter a vola fci processException(code)
     //param pro fci processException
@@ -795,7 +810,6 @@ _general_exception_handler:
     //<editor-fold defaultstate="collapsed" desc="err code">
     //zjisti, zda nastal TRAP (v c/c++ volani fce trap())
     
-    .set micromips
     li	    s1, ERR_CODE_TRAP
     
     mfc0    t9, _CP0_CAUSE		//cause.b0-4
@@ -803,10 +817,9 @@ _general_exception_handler:
     
 #ifdef PIC32MM    
     ext	    t9, t9, 2, 4
-#else 
-    //!!!zkontrolovat na MZ, zda trap = b0-4 (podle doc. ano)
-    //ale je divny, pro MM ma b2-5 
-    ext	    t9, t9, 0, 5
+#endif     
+#ifdef PIC32MZ 
+    ext	    t9, t9, 2, 5
 #endif    
     
     li	    t8, 0x0D			//trap code=0x0D
@@ -820,12 +833,12 @@ general_exception_shared_point:
 1:  
     
     //<editor-fold defaultstate="collapsed" desc="userAppError">
-    //a0=err code
-    mfc0    s2, _CP0_EPC		//do a1 adresu chyby
+    //s1=err code
+    mfc0    s2, _CP0_EPC		//do s2 adresu chyby
     
     //zjisti procID
     bal	    getProcID
-    move    s0, v0			//do a2 procID
+    move    s0, v0			//do s0 procID
     
     //s0=procID, s1=err code, s2=bad addr
 
@@ -833,9 +846,12 @@ general_exception_shared_point:
     move    a0, s0			//procID
     move    a1, s1			//code
     move    a2, s2			//addr
-    bal	    userAppError
-    //</editor-fold>
+    la	    v0, userAppError		//s prepnutim micromips/mips32
+    
+    //addr_reg, arg_cnt
+    _CALL_C v0, 3
 
+    //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="najdi proc_t polozku">
     move    a0, s0			//procID
@@ -1016,6 +1032,33 @@ getProcTableItem:
     
 //</editor-fold>
    
+//<editor-fold defaultstate="collapsed" desc="exitProcess">
+.align 2    
+.global exitProcess    
+.ent exitProcess
+exitProcess:   
+    
+    bal	    getProcID			//meni v0, v1
+    move    s0, v0
+    
+    move    a0, s0			//a0=procID
+    bal	    removeRegEventProcID	//remove reg events    
+    move    a0, s0			//a0=procID
+    bal	    removeEventCacheProcID	//remove raised events
+    nop
+    
+    move    a0, s0			//procID
+    bal	    getProcTableItem
+    //v0 = adresa v proc_t
+    sw32    zero, TH_T_ID*4(v0)		//nuluje procID
+    
+    la	    v0, doEventsError
+    jrc	    v0
+    
+.end exitProcess  
+    
+//</editor-fold>     
+    
 //events
     
 //<editor-fold defaultstate="collapsed" desc="getRegEvent">
@@ -1319,7 +1362,14 @@ raiseEvent:
     jrc	    ra
     
 9:    
+
+    //chyba
+    lbu	    t9, RET_PROCID(a0)	    
+    sb	    t9, (errEventCachePrID)
+    lbu	    t9, RET_EVENTID(a0)	    
+    sb	    t9, (errEventCacheEvID)    
     ei
+    
     move    v0, zero
     jrc	    ra
 
@@ -1372,6 +1422,12 @@ raiseEventInt:
     jrc	    ra
     
 9:    
+    //chyba
+    lbu	    t9, RET_PROCID(a0)	    
+    sb	    t9, (errEventCachePrID)
+    lbu	    t9, RET_EVENTID(a0)	    
+    sb	    t9, (errEventCacheEvID)
+    
     move    v0, zero
     jrc	    ra
 
@@ -1396,15 +1452,38 @@ systemProcess:
     //ale aby pridavalo nove events na konec tabulky.
     //kriticke casti systemProcess jsou v rezimu DI
     
-
-1:
-    //pozn.:
+        //pozn.:
     //c/c++ fce uklada nad svuj stack param a0-a2 (event fn ma max. 3 parametry)
     //proto se sp posune, aby fce nezapisovala nad svuj stack
     //v c/c++ sem totiz volajici uklada parametry (ale nevim, proc volana fce dela to same,
     //tj. kopiruje a0-a2 do stacku volajici fce)
     
     
+    //<editor-fold defaultstate="collapsed" desc="eventCache error">
+    //test eventCache error (full)
+    lbu	    a0, (errEventCachePrID)
+    beqz    a0, 1f
+    
+    //je signalizovana chyba, nektera udalost se nevesla do eventCache a byla zahozena
+    //errEventCachePrID a errEventCacheEvID obsahuji info o posledni
+    
+    lbu	    a1, (errEventCacheEvID)
+    
+    la	    t9, userAppEventError
+    
+    //addr_reg, arg_cnt
+    _CALL_C t9, 2
+    //addiu   sp, -8			    //viz. pozn
+    //jalr    t9
+    //addiu   sp, 8			    //viz. pozn
+    
+    sb	    zero, (errEventCachePrID)
+    sb	    zero, (errEventCacheEvID)
+    
+    //</editor-fold>
+
+    
+1:
     la	    s0, eventCache		    //eventCache
     addiu   s1, s0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)   
     li	    s2, 0xFF
@@ -1424,9 +1503,9 @@ systemProcess:
     lw	    a2, EVC_P2(s0)		    //p2
     
     sw	    t9, (errorProcID)		    //nastav aktualni procID
-    addiu   sp, -12			    //viz. pozn
-    jalr    v0				    //skok do fce
-    addiu   sp, 12			    //viz. pozn
+    //addr_reg, arg_cnt
+    _CALL_C v0, 3
+
     //po navratu z event fn
     sb	    s2, EVC_PROCID(s0)		    //oznac jako dokonceno (ale ne empty, aby polozku neobsadilo raiseEvent z interruptu)
     di

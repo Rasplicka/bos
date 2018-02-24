@@ -3,10 +3,11 @@
 #include "globals.h"
 
 /*
- * Author Jiri Rasplicka, 2017, (all rights reserved)
+ * Author Jiri Rasplicka 
+ * Copyright (c) 2017, All rights reserved.
  * Version 1.0       
  * BOS user apps interface
- * This file is shared to the PIC32MM, PIC32MZ
+ * This file is shared for the PIC32MM, PIC32MZ
  * 
  */
 
@@ -49,16 +50,13 @@ void pinSetting()
 #endif  
     
 #ifdef PIC32MZ
+
     //test led PORTH.0-2
-    ANSELHCLR=0b111;            //digital
-    TRISHCLR=0b111;             //output
-    LATHCLR=0b111;              //000
+    setPortDigOut(PORTH_BASE, BIT0 | BIT1 | BIT2);
+    LATHCLR=(BIT0 | BIT1 | BIT2);
     
     //test buttons PORTB.12-14
-    int a=(0b111 << 12);
-    ANSELBCLR=a;                //digital
-    TRISBSET=a;                 //input
-    
+    setPortDigIn(PORTB_BASE, BIT12 | BIT13 | BIT14);                            //ubtn provede nastaveni take
     
 #endif    
     
@@ -71,22 +69,21 @@ void userAppsStart()
     APP_START_PARAM p1;
     p1.TimeLimitExceedBehavior = ON_ERROR.RESET_PROCESS;
     p1.GeneralExceptionBehavior = ON_ERROR.RESET_PROCESS;
-    p1.TrapBehavior = ON_ERROR.RESET_SYSTEM;
-    p1.defaultID = 1;
+    p1.TrapBehavior = ON_ERROR.REMOVE_PROCESS;
     p1.TimeLimitValue = 0xFFFF;
     
     
-    if(regProcess(&m1_start, 1024, &p1) < 0)
+    if(regProcess(&m1_start, 1024, &p1, 0x1) < 0)
     {
         //error, cannot run app
     }
     
-    if(regProcess(&m2_start, 1024, &defaultAppStartParam) < 0)
+    if(regProcess(&m2_start, 1024, &defaultAppStartParam, 0x2) < 0)
     {
         //error, cannot run app
     }
     
-    if(regProcess(&m3_start, 1024, &defaultAppStartParam) < 0) 
+    if(regProcess(&m3_start, 1024, &defaultAppStartParam, 0x3) < 0) 
     {
         //error, cannot run app
     }
@@ -115,4 +112,10 @@ void userAppError(char procId, char code, void* addr)
 
     }
     */
+}
+
+void userAppEventError(char procId, char eventId)
+{
+    int a=procId;
+    int b=eventId;
 }

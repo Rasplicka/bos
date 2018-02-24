@@ -6,7 +6,6 @@
 //#define PIC32MM0064_28pin
 //#define PIC32MM0256
 //#define PIC32MM0256_36pin
-#define MICROMIPS  
 
 // </editor-fold>
 
@@ -35,15 +34,18 @@
 #endif
 
 
-#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+//#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
 #define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 
 #define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception
 #define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
-//#define     TIMER1_EVENT_CAPA       16              //kapacita timer1_event tabulky, tj. max. pocet spustenych systemovych casovacu
-//#define     TIMER1_EVENT_ISIZE      12              //velikost jedne polozky
+
+#ifdef PIC32MZ
+#define     TIMER1_INTERVAL         1               //interval ms
+#else
 #define     TIMER1_INTERVAL         10              //interval ms
+#endif
 
 // </editor-fold>
 
@@ -93,7 +95,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
-#define     PROC_T_ISIZE    92          //velikost polozky v proc_t
+#define     PROC_T_ISIZE    96          //velikost polozky v proc_t
 #define     PROC_T_CAPA     8           //kapacita proc_t
 
 //cislovani pro pouziti v c/c++ (index word), v asm se musi vynasobit 4
@@ -122,7 +124,7 @@
 #define	    TH_T_RA			21
 
 #define     TH_T_LIMIT      22
-
+#define     TH_T_EXIT       23
 //#define	    TH_T_LO			30
 //#define	    TH_T_HI			31
 // </editor-fold>
@@ -234,6 +236,11 @@
 #define     PORTC_BASE      0xBF860200
 #define     PORTD_BASE      0xBF860300
 #define     PORTE_BASE      0xBF860400
+#define     PORTF_BASE      0xBF860500
+#define     PORTG_BASE      0xBF860600
+#define     PORTH_BASE      0xBF860700
+#define     PORTJ_BASE      0xBF860800
+#define     PORTK_BASE      0xBF860900
 
 #endif
 

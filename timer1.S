@@ -3,26 +3,19 @@
 #include "def.h"  
 
 /*
- * Author Jiri Rasplicka, 2017, (all rights reserved)
- * Version 1.0       
+ * Author Jiri Rasplicka 
+ * Copyright (c) 2017, All rights reserved.      
  * timer1, used by BOS core (system timer)
- * This file is shared to the PIC32MM, PIC32MZ
+ * This file is shared for the PIC32MM, PIC32MZ
      
- timer_ms (uint) cita pocet ms od zapnuti pouziva jej systemovy citac (delay, interval), po preteceni se nuluje (perioda cca 49 dnu)
- day_ms (uint) pocita pocet ms od zacatku dne, bezi pouze pokud je definovano RTC, ktery jej kazdou minutu synchronizuje  
- spolu s RTC DD/MM/YYYY urcuje den/cas
- udalosti spoustene v konkretni cas pouzivaji day_ms    
-     
-systemove citace pracuji tak, ze po registraci (systemTimerRegInterval, nebo systemTimerRegDelay) odmeruji stanoveny
-cas a po jeho uplynuti nastavi state byte. Aplikace testuje hodnotu state bytu a podle toho pozna ze nastala udalost
-(je to tak proto, aby timer1_interrupt probehl co nejrychleji)     
- 
-systemTimerRegDelay po uplynuti provede automaticky systemTimerUnregInterval, zatimco systemTimerRegInterval bezi trvale
-a systemTimerUnregInterval musi provest aplikace.
-     
-Max. pocet registrovanych udalosti pro casovac je v TIMER1_EVENT_CAPA
+time_ms (uint) cita pocet ms od zapnuti, po preteceni se nuluje (perioda cca 49 dnu)
+day_ms (uint) pocita pocet ms od zacatku dne, bezi pouze pokud je definovano RTC, ktery jej kazdou minutu synchronizuje  
+spolu s RTC DD/MM/YYYY urcuje den/cas
+    
+Interval events pracuji tak, ze po registraci (systemTimerRegInterval) odmeruji stanoveny
+cas a po jeho uplynuti vola raiseEventInt. Systemovy proces pak tuto udalost spusti.
    
-interval interruptu timer je nastaven v TIMER1_INTERVAL, pro MM 10ms, pro MZ 1ms. (o tuto hodnotu se zvysuje timer_ms i day_ms)     
+interval interruptu timer1 je nastaven v TIMER1_INTERVAL, pro MM 10ms, pro MZ 1ms. (o tuto hodnotu se zvysuje time_ms i day_ms)     
 
 ukazka pouziti casovacu viz. doc/system timer     
  */    
@@ -45,9 +38,9 @@ timer1Init:
     //MZ - src muze byt PBCLK3, nebo SOSC
     
     #define	TIMER1_INTERRUPT_PRIORITY	2
-    #define	TIMER1_INTERRUPT_SUBPRIORITY	0
+    #define	TIMER1_INTERRUPT_SUBPRIORITY	1
      
-    sw	    zero, (timer_ms)			//timer_ms (uint) cita pocet ms od zapnuti
+    sw	    zero, (time_ms)			//time_ms (uint) cita pocet ms od zapnuti
     sw	    zero, (day_ms)			//day_ms (uint) pocita pocet ms od zacatku dne, pouze pokud je definovano RTC
     
     sw	    zero, (T1CON)			//timer1 OFF (ON bit=0)
@@ -129,11 +122,15 @@ timer1Init:
     //<editor-fold defaultstate="collapsed" desc="PIC32MZ">
 #ifdef PIC32MZ
     //TIMER1_INTERVAL (def.h) definuje interval v ms (10-MM, 1-MZ)
-    //pro 200MHz PR1=781 - 1ms  
-    #define	PR1_VALUE			(781250/(1000/TIMER1_INTERVAL))    
+    //CPU=200MHz, PBCLK=100MHz, divide / 8 (T1CON)   
+    //PR1_VALUE=12500 (1ms)
+    //!!!pri zmene TIMER1_INTERVAL=10 je PR1_VALUE prilis velke (zmenit divide v T1CON)
+    #define	PBCLK3			    100000000
+    #define	PR1_VALUE		    (PBCLK3 / 8 /(1000/TIMER1_INTERVAL))    //divide 8
+    //#define	PR1_VALUE		    (PBCLK3 / 64 /(1000/TIMER1_INTERVAL))   //divide 64
     
-    li	    t9, 0x0030
-    sw	    t9, (T1CON)		    //setting (ON=0), src=PBCLK3 (200MHz), div=1:256, idle-run, 
+    li	    t9, 0x0010
+    sw	    t9, (T1CON)						//setting (ON=0), src=PBCLK3 (100MHz), div=1:8, idle-run, 
     
     //OFF004
     li	    v1, EBASE
@@ -296,13 +293,15 @@ iVector_timer1:
     #define	    IFS_BIT	    4
     #define	    IFS_REG_CLR	    IFS0CLR 
      
-    MIPS32_TO_MICROMIPS  
+    _MIPS32_TO_MICROMIPS  
+    _INT_PROLOGUE
+    
 #endif    
     
     
-    lw	    v0, (timer_ms)	    
-    addiu   v0, TIMER1_INTERVAL		//timer_ms += TIMER1_INTERVAL (10ms)
-    sw	    v0, (timer_ms)
+    lw	    v0, (time_ms)	    
+    addiu   v0, TIMER1_INTERVAL		//time_ms += TIMER1_INTERVAL (10ms)
+    sw	    v0, (time_ms)
     
 #ifdef RTC
     lw	    v0, (day_ms)
@@ -352,10 +351,16 @@ iVector_timer1:
 
     //<editor-fold defaultstate="collapsed" desc="clr FLAG, eret">
     //konec, nuluj flag IFS0.4
-5:     
+5:    
+    
     li	    v0, (1 << IFS_BIT)
     sw      v0, (IFS_REG_CLR)
     sync
+    
+#ifdef PIC32MZ    
+    _INT_EPILOGUE
+#endif    
+    
     eret
     //</editor-fold>
 

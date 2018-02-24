@@ -1,6 +1,6 @@
 
 
-//<editor-fold defaultstate="collapsed" desc="STACK POP/PUSH">
+//<editor-fold defaultstate="collapsed" desc="STACK _POP/_PUSH">
 
 .macro _PUSH reg
     addiu   sp, sp, -4
@@ -45,7 +45,7 @@
     
 //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="podminene skoky BAL_xxx">
+//<editor-fold defaultstate="collapsed" desc="podminene skoky _B_xxx">
 .macro _B_FBT first_reg, val_reg, addr
 //skok, first > val
 //meni t9
@@ -185,8 +185,8 @@
     
 //</editor-fold>    	
 
-//<editor-fold defaultstate="collapsed" desc="MIPS32_TO_MICROMIPS">
-.macro MIPS32_TO_MICROMIPS
+//<editor-fold defaultstate="collapsed" desc="_MIPS32_TO_MICROMIPS">
+.macro _MIPS32_TO_MICROMIPS
 	
 	.align 2
         .set noreorder
@@ -212,6 +212,81 @@
 	.set reorder
 .endm  
     
-    //</editor-fold>    
+//</editor-fold>    
     
+//<editor-fold defaultstate="collapsed" desc="_INT_PROLOGUE, _INT_EPILOGUE">
+.macro _INT_PROLOGUE 
+//toto makro nuluje STATUS.EXL, nastavi STATUS.IPL, zalohuje EPC
+//aby v prubehu interruptu mohl nastat jiny interrupt s vyssi prioritou (pouze MZ)
     
+    //meni v0, v1
+    
+    //EPC - zaloha
+    mfc0    v0, _CP0_EPC
+    _PUSH   v0
+    
+    //SRSCTL.PSS - zaloha
+    mfc0    v0, _CP0_SRSCTL
+    ext	    v0, v0, 6, 4
+    _PUSH   v0
+    
+    //VIEW_IPL - zaloha
+    mfc0    v0, _CP0_VIEW_IPL
+    _PUSH   v0
+    
+    //nastav status IPL
+    mfc0    v0, _CP0_CAUSE		    //aktualni IPL
+    ext	    v0, v0, 10, 8		    //aktualni IPL
+    
+    //STATUS.EXL nuluj
+    mfc0    v1, _CP0_STATUS
+    //ehb
+    ins	    v1, v0, 10, 9
+    ins	    v1, zero, 1, 1
+    mtc0    v1, _CP0_STATUS    
+    
+.endm 
+    
+.macro _INT_EPILOGUE
+//ukoncuje interrupt, kde bylo volano _INT_PROLOGUE (pouze MZ)    
+    
+    //meni v0, v1
+    
+    li16    v1, 1
+    mfc0    v0, _CP0_STATUS
+    ins	    v0, v1, 1, 1
+    mtc0    v0, _CP0_STATUS
+    
+    _POP    v0
+    mtc0    v0, _CP0_VIEW_IPL		    //obnov IPL ve STATUS
+    
+    _POP    v1
+    mfc0    v0, _CP0_SRSCTL
+    ins	    v0, v1, 6, 4
+    mtc0    v0, _CP0_SRSCTL		    //obnov PSS
+    
+    _POP    v1
+    mtc0    v1, _CP0_EPC		    //obnov EPC
+    
+.endm 
+    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="_CALL_C">
+.macro _CALL_C addr_reg, arg_cnt
+    //volaci c/c++ fce z assembleru
+    //pozn.:
+    //c/c++ fce uklada nad svuj stack params a0-a3 
+    //proto se sp posune, aby fce nezapisovala nad svuj stack
+    //v c/c++ sem totiz volajici uklada parametry (ale nevim, proc volana fce dela to same,
+    //tj. kopiruje a0-a3 do stacku volajici fce)    
+    //volani jalr zajisti prepnuti ISA (micromips/mips32)
+    
+    addiu   sp, (-4 * \arg_cnt)	    	    //viz. pozn
+    jalr    \addr_reg			    //skok do fce
+    addiu   sp, (4 * \arg_cnt)		    //viz. pozn
+    
+.endm  
+    
+//</editor-fold>
+  

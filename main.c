@@ -63,19 +63,21 @@ char regEventTable[REG_EVENT_T_SIZE]            __section(".os");
 char eventCache[EVENT_C_SIZE]                   __section(".os");
 
 //.os vars 
-uint* proc_t_pos    __section(".os") = 0;
-uint* proc_t_after  __section(".os") = 0;
-char proc_t_count   __section(".os") = 0;
+uint* proc_t_pos        __section(".os") = 0;
+uint* proc_t_after      __section(".os") = 0;
+char proc_t_count       __section(".os") = 0;
+char errEventCacheEvID  __section(".os") = 0;                                   //eventID posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
+char errEventCachePrID  __section(".os") = 0;                                   //procID  posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
 
-uint timer_ms       __section(".os");                                           //timer1
-uint day_ms         __section(".os");                                           //timer1
+uint time_ms           __section(".os");                                           //timer1
+uint day_ms             __section(".os");                                           //timer1
 
-void* errorProcID   __section(".os");
+void* errorProcID       __section(".os");
 
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-char ballast[40]    __section(".os");
+char ballast[40]        __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
@@ -141,7 +143,6 @@ void main()
     defaultAppStartParam.GeneralExceptionBehavior=ON_ERROR.RESET_PROCESS;
     defaultAppStartParam.TrapBehavior=ON_ERROR.RESET_PROCESS;
     defaultAppStartParam.TimeLimitValue=SAFE_MODE_TIME_LIMIT_VALUE;
-    defaultAppStartParam.defaultID=0x0;
     // </editor-fold>
     
     //4. init system drivers ---------------------------------------------------
@@ -158,14 +159,10 @@ void main()
 
     //6. run user apps ---------------------------------------------------------
     //jako prvni spustit system process
-    defaultAppStartParam.defaultID=0xFE;
-    regProcess(&systemProcess, 1024, &defaultAppStartParam);
-    defaultAppStartParam.defaultID=0x0;
+    regProcess(&systemProcess, 1024, &defaultAppStartParam, 0xFE);
     
 #ifdef UBTN
-    defaultAppStartParam.defaultID=0xF0;
-    regProcess(&ubtnStart, 512, &defaultAppStartParam);
-    defaultAppStartParam.defaultID=0x0;
+    regProcess(&ubtnStart, 512, &defaultAppStartParam, 0xF0);
 #endif    
           
     //user apps
@@ -187,50 +184,6 @@ void main()
     }
 }
 
-void processException(char procId, char code, void* addr)
-{
-    /*
-    int behavior;
-    
-    //zjisti pozadovanou akci
-    if(code==ERR_CODE_TIME_LIMIT_EXCEED)
-    {
-        //LongLasting error - chovani podle b.8-9
-        behavior=(proc_t_pos[TH_T_ID] & 0x00000300) >> 8;
-    }
-    else if(code==ERR_CODE_GENERAL_EXCEPTION)
-    {
-        //General Exception - chovani podle b.10-11
-        behavior=(proc_t_pos[TH_T_ID] & 0x00000C00) >> 10;
-    }
-    else if(code==ERR_CODE_TRAP)
-    {
-        //TRAP instruction - chovani podle b.12-13
-        behavior=(proc_t_pos[TH_T_ID] & 0x00003000) >> 12;        
-    }
-    else
-    {
-        //code=ERROR_STACK_OVERFLOW, stack overflow, reset
-        behavior=ON_ERROR.RESET_SYSTEM;
-    }
-    
-    //proved akci
-    if(behavior==ON_ERROR.RESET_PROCESS)
-    {
-        removeEvents(procId);
-        restartApp();
-    }
-    else if(behavior==ON_ERROR.REMOVE_PROCESS)
-    {
-        removeEvents(procId);
-        removeProcess(procId);
-    } 
-    else
-    {
-        softReset();
-    }
-    */
-}
 
 void trap()
 {
@@ -251,9 +204,8 @@ void softReset()
     while(1){}    
 }
 
-
 //local fn
-int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param)
+int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, char default_procID)
 {
     //prvede registraci procesu v proc_t
     //vlozi do proc_t adresu start fce a vychozi hodnotu pro stack(top adresa)
@@ -265,7 +217,7 @@ int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param)
     if(proc_t_count >= PROC_T_CAPA) { return -1; } 
 
     //najdi volne procID
-    char id = getFreeProcessID(param->defaultID);
+    char id = getFreeProcessID(default_procID);
     if(id < 1) { return -1; }
     
     //najdi volnou polozku v proc_t
@@ -289,7 +241,7 @@ int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param)
         tab[TH_T_GP]=getGP();
         tab[TH_T_START_ADDR]=(int)start_addr;                       //START_ADDR pro pripad restartu app
         tab[TH_T_LIMIT]=param->TimeLimitValue;
-
+        tab[TH_T_EXIT]=(int)&exitProcess;
         //ok
         return id;
     }
@@ -421,10 +373,14 @@ static void systemInit()
     asm("ins	$2, $3, 23, 1");
     asm("mtc0   $2, $13, 0");
     asm("ehb");
+
+    //nepouziva auto-prologue - epilogue, viz. INTCTL - pritom nefunguje prepinani SRS
     
 #endif    
     
 }
+
+
 
 static void blick()
 {
@@ -459,47 +415,7 @@ static void blick()
     
 }
 
-/*
-static void setClock(int cl)
-{
-    //PIC32MM0256, nsatveni pro pouziti FRC(interni) 8MHz, pres system PLL (PLLODIV=96MHz)
-    //1.Nastavi PLLMULT (f pro USB musi byt 96/2 MHz)
-    //2.Nastavi REFCLK (f pro SPI, UART, apod... 48MHz) 
-    //3.Nastavi SYSCLK a PBCLK (SYSCLK pro CPU, PBCLK pro preriph, 24MHz) (PLLODIV = /4)
-    
 
-    //if(cl==CLOCK.INTERNAL_FRC_24MHz)
-    {
-        
-    }
-    
-    //SYSKEY unlock
-    SYSKEY = 0xAA996655; 
-    SYSKEY = 0x556699AA;
-    
-    //nastaveni pro POSC Q=12MHz: SPLLCONbits.PLLMULT = 0x4 (externi krystal 12 MHz)
-    //natsaveni pro FRC     8MHz: SPLLCONbits.PLLMULT = 0x6 (podle doc. by melo byt 0x5)
-    
-    SPLLCONbits.PLLMULT=0x6;        // x 12 (8x12=96 MHz) USB
-    SPLLCONbits.PLLODIV=0x2;        // / 4  (96/4=24 MHz) CPU
-    
-    //SYSKEY force lock
-    SYSKEY = 0x00000000;            
-    
-    //ceka na dokonceni
-    while(REFO1CONbits.ACTIVE==1)
-    { }
-    
-    //nastaveni REFCLK pro SPI, UART,...
-    REFO1CONbits.ROSEL=7;                   //input SPLL (96MHz)
-    //na vstupu REFCLK je / 2, f=48MHz
-    REFO1CONbits.RODIV=0;                   //RODIV / 1, pouzije freq. 48MHz
-
-    //trim     
-    REFO1TRIMbits.ROTRIM=0;
-    REFO1CONbits.ON=1;
-}
-*/
 
 #ifdef SAFE_PROCESS 
 
@@ -510,7 +426,7 @@ static inline void cpuTimerInit()
     
     //$9=CP0_COUNT, $11=CP0_COMPARE
     asm("li	    $2, 0xFFFFFFFF");       //v0=0xFFFFFFFF
-    //asm("li	    $2, 0xFFF");       //v0=0xFFFFFFFF
+    //asm("li	    $2, 0xFFF");        //v0=0xFFFFFFFF
     asm("mtc0   $2, $11");              //CP0_COMPARE=v0
     asm("ehb");
     asm("mtc0   $0, $9");               //CP0_COUNT=0 (zero)
@@ -532,49 +448,6 @@ static inline void cpuTimerInit()
     IEC0bits.CTIE=1;        //Enable=1
 //#endif    
     
-     
-    
-    
-
-    
 }
 
-#endif
-
-
-static void test()
-{
-    //int* c=0;
-    //int b=*c;
-    //trap();
-    
-    asm("mtc0   $0, $9");               //CP0_COUNT=0 (zero)
-    asm("ehb"); 
-    asm("li	    $2, 0xFFF");            //v0=0xFFFFFFFF
-    asm("mtc0   $2, $11");              //CP0_COMPARE=v0
-    asm("ehb");
-
-    asm("ei");
-    asm("ehb");
-    
-    int a=0;
-    
-    //int b=a/0;
-    while(1)
-    {
-        a++;
-    }       
-    
-}
-
-/*
- void _general_exception_context() //__at(0x9D000180)__section(".app_excpt")
-{
-    int a=0;
-}
-
-void _general_exception_handler (void)
-{
-    int b=0;
-}
-*/
+#endif  //SAFE_PROCESS 
