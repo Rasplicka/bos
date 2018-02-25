@@ -63,7 +63,7 @@ void setClock(char mode)
 
     if(mode==CLOCK_CFG.CLK_NORMAL)
     {
-        //default mode
+        //default mode (100%)
         //SYSKEY unlock
         SYSKEY = 0xAA996655; 
         SYSKEY = 0x556699AA;
@@ -92,11 +92,15 @@ void setClock(char mode)
     }
     else if (mode==CLOCK_CFG.CLK_ALT1)
     {
-        //alt mode1
+        //alt mode1 (50%)
+    }
+    else if (mode==CLOCK_CFG.CLK_ALT2)
+    {
+        //alt mode2 (25%)
     }
     else
     {
-        //alt mode2
+        //alt mode3 (10%)
     }
 }
 

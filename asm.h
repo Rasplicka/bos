@@ -27,6 +27,7 @@ extern void general_exception();
 extern char getProcID();
 extern void* getProcTableItem(char id);
 extern void exitProcess();
+extern void clearWDT();
 extern void unregEvent(void*);
 extern void systemProcess();
 

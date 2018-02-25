@@ -11,9 +11,12 @@
 //OS status
 struct
 {
-    unsigned Threading : 1;
-    unsigned dummy     : 7;
-    unsigned Errors    : 8; 
+    unsigned Threading  : 1;            //startup=0, run=1
+    unsigned NormalMode : 1;
+    unsigned IdleMode   : 1;
+    unsigned SleepMode  : 1;
+    unsigned dummy      : 4;
+    unsigned Errors     : 8; 
     
 }SYSTEM_STATUS;
 
@@ -29,8 +32,9 @@ struct
 {
     char CLK_NORMAL;
     char CLK_ALT1;              
-    char CLK_ALT2;              
-}CLOCK_CFG = { 0, 1, 2 };
+    char CLK_ALT2;  
+    char CLK_ALT3; 
+}CLOCK_CFG = { 0, 1, 2, 3 };
 
 struct
 {

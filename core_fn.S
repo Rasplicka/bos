@@ -1057,7 +1057,22 @@ exitProcess:
     
 .end exitProcess  
     
-//</editor-fold>     
+//</editor-fold>  
+    
+//<editor-fold defaultstate="collapsed" desc="clearWDT">
+.align 2    
+.global clearWDT    
+.ent clearWDT
+clearWDT:
+    
+    li	    v0, 0x5743
+    sh	    v0, (WDTCON+2)
+    
+    jrc	    ra
+    
+.end clearWDT  
+    
+//</editor-fold>      
     
 //events
     
@@ -1481,9 +1496,13 @@ systemProcess:
     sb	    zero, (errEventCacheEvID)
     
     //</editor-fold>
-
-    
+   
 1:
+    
+#ifdef WATCH_DOG_TIMER
+    bal	    clearWDT
+#endif    
+    
     la	    s0, eventCache		    //eventCache
     addiu   s1, s0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)   
     li	    s2, 0xFF

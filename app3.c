@@ -7,7 +7,7 @@
 
 #define     _LED_INV_REG    LATHINV
 #define     _LED_INV_VAL    0b100
-int delay=10;
+int delay=3;
 #endif
 
 #ifdef PIC32MM0064
@@ -29,12 +29,14 @@ static void testButton(int event, int value, int index);
 
 void m3_start()
 {
+    /*
     systemTimerRegInterval(&testSystemTimer, 200);
     //ubtnRegEvent(&testButton, 21, 30);
     while(1)
     {
         doEvents();
     }    
+    */
     
     while(1)
     {
@@ -42,7 +44,7 @@ void m3_start()
         _LED_INV_REG = _LED_INV_VAL;
         
         int a, b=0;
-        for(a=0; a<(120000*delay); a++)
+        for(a=0; a<(420000); a++)
         {
             b++;
             if(a % 1000 == 0)

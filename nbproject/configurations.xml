@@ -8,6 +8,7 @@
       <itemPath>errors.txt</itemPath>
       <itemPath>events.txt</itemPath>
       <itemPath>rtc.txt</itemPath>
+      <itemPath>oscilator.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"

@@ -122,15 +122,26 @@ timer1Init:
     //<editor-fold defaultstate="collapsed" desc="PIC32MZ">
 #ifdef PIC32MZ
     //TIMER1_INTERVAL (def.h) definuje interval v ms (10-MM, 1-MZ)
-    //CPU=200MHz, PBCLK=100MHz, divide / 8 (T1CON)   
-    //PR1_VALUE=12500 (1ms)
+    //CPU=200MHz, PBCLK=100MHz, T1_PR1_VALUE=12500 (1ms)
     //!!!pri zmene TIMER1_INTERVAL=10 je PR1_VALUE prilis velke (zmenit divide v T1CON)
-    #define	PBCLK3			    100000000
-    #define	PR1_VALUE		    (PBCLK3 / 8 /(1000/TIMER1_INTERVAL))    //divide 8
-    //#define	PR1_VALUE		    (PBCLK3 / 64 /(1000/TIMER1_INTERVAL))   //divide 64
+    //pri pouziti SOSC je nutne v sleep modu pozastavit timer1, protoze SOSC bezi stale
     
-    li	    t9, 0x0010
-    sw	    t9, (T1CON)						//setting (ON=0), src=PBCLK3 (100MHz), div=1:8, idle-run, 
+    //SLEEP mode timer1 je pozastaven
+    //IDLE  mode timer1 bezi dal (a spousti events)
+    
+    //#ifdef SOSC_CLK_TO_TIMER1
+	//timer1 pouziva SOSC (32.768kHz)
+	//#define	T1_PR1_VALUE		    33
+	//li	    t9, 0x2		    
+	//sw	    t9, (T1CON)		    //setting (ON=0), src=T1CLKI (SOSC), div=1:1, idle-run, 
+    //#else
+	//timer1 pouziva PBCLK3 (100MHz)
+	#define	T1_PBCLK3		    100000000
+	#define	T1_PR1_VALUE		    (T1_PBCLK3 / 8 /(1000/TIMER1_INTERVAL))    //divide 8
+	//#define PR1_VALUE		    (T1_PBCLK3 / 64 /(1000/TIMER1_INTERVAL))   //divide 64
+	li	    t9, 0x0010
+	sw	    t9, (T1CON)		    //setting (ON=0), src=PBCLK3 (100MHz), div=1:8, idle-run, 
+    //#endif
     
     //OFF004
     li	    v1, EBASE
@@ -160,7 +171,7 @@ timer1Init:
     
     
     //PR1 je komparativni reg. (pro 32.0kHz a 10ms = 320) 
-    li	    t9, PR1_VALUE
+    li	    t9, T1_PR1_VALUE
     sw	    t9, (PR1)
     
     //T1CON.b15 = ON

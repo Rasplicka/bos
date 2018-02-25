@@ -30,10 +30,12 @@ static void testButton(int event, int value, int index);
 
 void m1_start()
 {
+    setClock(CLOCK_CFG.CLK_ALT3);
+    
     //testSystemTimer();
-    systemTimerRegInterval(&testSystemTimer, 1000);
-    //rtcRegTimeAlarm(&testRTC, 0, 1);
-    //rtcRegTimeAlarm(&testRTC, 0, 2);
+    //systemTimerRegInterval(&testSystemTimer, 1000);
+    rtcRegTimeAlarm(&testRTC, 0, 1);
+    rtcRegTimeAlarm(&testRTC, 0, 2);
 
     while(1)
     {

@@ -1,11 +1,38 @@
 //obsahuje globalni definice pro C/C++ i ASM
 
 // <editor-fold defaultstate="collapsed" desc="CPU">
-//#define PIC32MZ
+#ifdef PIC32MZ
+
+//XTAL 24MHz
+//#define     CFG_POSC_XTAL               24
+//#define     CFG_CLKSYS_POSC
+
+//XTAL 12MHz
+//#define     CFG_POSC_XTAL               12
+//#define     CFG_CLKSYS_POSC
+
+//FRC 8MHz
+#define     CFG_CLKSYS_FRC
+
+
+//XTAL SOSC 37.768kHz (RTC, timer1)
+//CFG_SOSC_ENABLE povoli sec. oscilator, pokud je pripojen XTAL 32.768kHz
+//jinak muze byt priveden ext. signal 32.768kHz na SOSCO
+//pokud ma RTC tento signal pouzit, musi byt definovano SOSC_CLK_TO_RTC
+//jinak pouzije LPRC (timer1 vzdy pouziva PBCLK3)
+//#define     CFG_SOSC_ENABLE                                   //SOSCO + SOSCI je pripojen XTAL 32.768kHz      
+//#define     SOSC_CLK_TO_RTC                                   //na vstupu SOSCO je 32.768kHz, pouzije ho RTC         
+
+//watch dog timer
+#define     WATCH_DOG_TIMER
+
+#endif
 //#define PIC32MM0064
 //#define PIC32MM0064_28pin
 //#define PIC32MM0256
 //#define PIC32MM0256_36pin
+
+
 
 // </editor-fold>
 

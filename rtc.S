@@ -46,10 +46,17 @@
   
 #ifdef PIC32MZ 
     
+    #ifdef  SOSC_CLK_TO_RTC
+	//SOSC 32.768kHz
+	#define	    RTCCON_SET	    0x200		//SOSCO input (zkusebni deska nema ext. s.osc.)
+    #else
+	//LPRC
+	#define	    RTCCON_SET	    0x0			//LPRC
+    #endif	
+    
     #define	    WRLOCK	    0x8			//RTCCON.b4  
     #define	    TIME_SYNC	    0x4
-    //#define	    RTCCON_SET	    0x0			//ALARM enable, ON, ... 
-    #define	    RTCCON_ON	    0x8000	
+    #define	    RTCCON_ON	    0x8000
     #define	    RTC_ALRM	    0xC3FF		//alarm every minute
     
 #endif	    //MZ     
@@ -347,7 +354,7 @@ rtcInit:
 #ifdef PIC32MM    
     
     //test, zda je RTC modul zapnuty, pokud ano, nemeni nastaveni date/time
-    //RTC zustava zapnuty pri RESETu i probuzeni ze sleep modu
+    //RTC zustava zapnuty pri RESETu i probuzeni ze sleep modu (nuluje ho pouze PowerOnReset)
     lw	    v0, (RTCCON1)
     ext	    v0, v0, 15, 1		//RTCCON.15=ON
     bnez    v0, 1f			//skok, RTC modul je zapnuty
@@ -438,7 +445,7 @@ rtcInit:
 #ifdef PIC32MZ   
     
     //test, zda je RTC modul zapnuty, pokud ano, nemeni nastaveni date/time
-    //RTC zustava zapnuty pri RESETu i probuzeni ze sleep modu
+    //RTC zustava zapnuty pri RESETu i probuzeni ze sleep modu (nuluje ho pouze PowerOnReset)
     lw	    v0, (RTCCON)
     ext	    v0, v0, 15, 1		//RTCCON.15=ON
     bnez    v0, 1f
@@ -491,6 +498,10 @@ rtcInit:
     //set alarm interrupt
     li	    v0, RTC_ALRM
     sw	    v0, (RTCALRM)
+    
+    //nastavi CLKSEL 0x0=LPRC, 0x200=SOSCO
+    li	    v0, RTCCON_SET
+    sw	    v0, (RTCCONSET)
     
     //ON=1
     li	    v0, RTCCON_ON

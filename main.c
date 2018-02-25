@@ -113,8 +113,11 @@ void main()
 
     initCPU();
     startupStack();                         //nastavi sp pro startup OS
-    setClock(CLOCK_CFG.CLK_NORMAL);                 
-   
+    setClock(CLOCK_CFG.CLK_NORMAL);  
+    
+#ifdef WATCH_DOG_TIMER
+    clearWDT();
+#endif    
     // </editor-fold>
     
     //2. set safe mode ---------------------------------------------------------
@@ -165,6 +168,11 @@ void main()
     regProcess(&ubtnStart, 512, &defaultAppStartParam, 0xF0);
 #endif    
           
+    
+#ifdef WATCH_DOG_TIMER
+    clearWDT();
+#endif
+    
     //user apps
     userAppsStart();
      
@@ -175,6 +183,10 @@ void main()
    
     globalsAfterProcess();
     SYSTEM_STATUS.Threading = 1;
+    SYSTEM_STATUS.NormalMode= 1;
+    SYSTEM_STATUS.IdleMode =  0;
+    SYSTEM_STATUS.SleepMode = 0;
+    
     startEvents(); 
     // </editor-fold>
     

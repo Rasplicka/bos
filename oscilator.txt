@@ -1,0 +1,85 @@
+MZ
+- System PLL, zdroj POSC (XTAL), nebo FRC 8MHz
+- pri pouziti USB musi byt XTAL, 12 nebo 24 MHz
+- System PLL produkuje 200MHz (XTAL 12MHz = 198MHz )
+- Frekvence CPU se muze menit nastavenim PBCLK7
+- timer1 je napajen z PBCLK3 (100MHz) (bezi v IDLE, nebezi ve SLEEP)
+
+SLEEP
+- zastavi PBCLKx
+- WDT bezi dal
+- probuzeni zpusobi interrupt IPL>STATUS.IPL, reset
+- IO pin change, WDT, ADC, UART
+- nebo periph. napajene z SOSC RTC, input capture, nebo LPRC (RTCC)
+- interrupt kde IPL<=IPL>STATUS.IPL zpusobi prechod do IDLE
+
+IDLE
+- PBCLK bezi dal
+- periferie viz nastaveni kazde SIDL
+- CPU halted
+- probuzeni zpusobi interrupt IPL>STATUS.IPL, reset
+
+PBCLK3 ma frekvenci 100MHz, pouziva ji timer1. Ostatni PBCLK take,
+ale app je muzou menit podle potreby.
+Je-li pouzit SOSC, RTC muze byt taktovan z nej.
+PBCLK7 je frekvence CPU, lze ji menit - ruzne mody rychlosti / spotreby
+
+Pri prechodu do sleep je timer1 zastaven. Po ukonceni (pokracuje za instrukci
+HALT) time_ms je nulovano, day_ms se nstavi z RTC (je-li modul pouzit)
+
+Pri idle timer1 pracuje a muze spustit event.
+Pri sleep timer1 nepracuje, RTC ano a muze spustit events
+
+Prechod do IDLE/SLEEP provede systemProcess, pokud nastaly podminky.
+timer1 interrupt provede probuzeni a muze vyvolat event pri idle
+RTC minute interrupt provede probuzeni a muze vyvolat event pri sleep i idle.
+Pokud trvaji podminky IDLE/SLEEP, systemProcess opet prejde do spanku.
+
+do idle/sleep prejde instrukci wait, podle bitu OSCCON.SLPEN
+
+
+
+
+MZ
+--
+K taktovani muze byt pouzit primarni oscilator s vnejsim krystalem 12MHz, 
+nebo 24MHz. Obe tyto hodnoty umoznuji taktovat USB modul. Pokud neni
+USB modul pouzit, je mozne procesor taktovat internim FRC oscilatorem, ktery
+dava 8MHz. 
+Signal z primarniho oscilatoru, nebo FRC, je priveden do PLL, kde je upraven
+na 200MHz. Za PLL je SYSCLK rozdelen do osmi vetvi PBCLK1-8. Vsechny tyto
+vetve maji registr PBxDIV, ve kterem mohou byt nasledne deleny na nizsi hodnotu.
+Z techto osmi vetvi jsou taktovany ruzne periferie a PBCLK7 napaji CPU.
+Vychozi nastaveni PBxDIV je takove, ze vstupni takt 200MHz je delen dvema, krome
+signalu pro CPU. Zde je ponechano 200MHz.
+Z vetve PBCLK3 je taktovan systemem pouzivany timer1, a proto jej aplikace
+nesmi zmenit, pro spravnou funkci musi zustat 100MHz.
+Ostatni vetve mohou aplikace nastavit podle potreby.
+BOS nabizi funkci setClock(), ktera meni kmitocet pro CPU, prave zmenou deleni
+v PBCLK7. Jsou mozne 4 volby: 
+setClock(CLOCK_CFG.CLK_NORMAL) - 200MHz (nastaveno po startu)
+setClock(CLOCK_CFG.CLK_ALT1)   - 100MHz
+setClock(CLOCK_CFG.CLK_ALT2)   -  50MHz
+setClock(CLOCK_CFG.CLK_ALT3)   -  20MHz
+
+(pri pouziti krystalu 12MHz je SYSCLK 198MHz)
+
+RTC modul je taktovan z interniho LPRC oscilatoru 32kHz. Potrebujete-li presne
+mereni casu, muze byt pouzit sekundarni oscilator s krystalem 32.768kHz.
+V tom pripade je treba v def.h definovat CFG_SOSC_ENABLE.
+Druha moznost je pouzit externi signal 32.768kHz, provedeny na vyvod SOSCO.
+V obou pripadech, ma-li byt tento signal pouzit RTC modulem, musi se v def.h
+definovat SOSC_CLK_TO_RTC.
+
+Systemovy timer1 (i interni PBCLKx) bezi i v pripade, ze procesor prejde do IDLE
+modu. CPU se ale zastavi. Udalosti vyvolane timerem1 budou funkci i v IDLE modu. 
+Na dobu jejich obsluhy bude CPU probuzen, ale pote opet prejde do IDLE.
+Periferni moduly take mohou pracovat, v zavislosti na nastaveni SIDL bitu.
+
+Ve SPEEP modu je interni taktovani zastaveno. Nicmene, takt pro RTC modul stale
+pracuje a BOS spousti udalosti z RTC. Probuzeni zajisti i jakykoliv jiny interrupt.
+
+
+
+
+  
