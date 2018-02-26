@@ -129,19 +129,12 @@ timer1Init:
     //SLEEP mode timer1 je pozastaven
     //IDLE  mode timer1 bezi dal (a spousti events)
     
-    //#ifdef SOSC_CLK_TO_TIMER1
-	//timer1 pouziva SOSC (32.768kHz)
-	//#define	T1_PR1_VALUE		    33
-	//li	    t9, 0x2		    
-	//sw	    t9, (T1CON)		    //setting (ON=0), src=T1CLKI (SOSC), div=1:1, idle-run, 
-    //#else
-	//timer1 pouziva PBCLK3 (100MHz)
-	#define	T1_PBCLK3		    100000000
-	#define	T1_PR1_VALUE		    (T1_PBCLK3 / 8 /(1000/TIMER1_INTERVAL))    //divide 8
-	//#define PR1_VALUE		    (T1_PBCLK3 / 64 /(1000/TIMER1_INTERVAL))   //divide 64
-	li	    t9, 0x0010
-	sw	    t9, (T1CON)		    //setting (ON=0), src=PBCLK3 (100MHz), div=1:8, idle-run, 
-    //#endif
+    //timer1 pouziva PBCLK3 (100MHz)
+    #define	T1_PBCLK3		    100000000
+    #define	T1_PR1_VALUE		    (T1_PBCLK3 / 8 /(1000/TIMER1_INTERVAL))    //divide 8
+    //#define PR1_VALUE			    (T1_PBCLK3 / 64 /(1000/TIMER1_INTERVAL))   //divide 64
+    li	    t9, 0x0010
+    sw	    t9, (T1CON)			    //setting (ON=0), src=PBCLK3 (100MHz), div=1:8, idle-run, 
     
     //OFF004
     li	    v1, EBASE

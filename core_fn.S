@@ -13,12 +13,57 @@
 //!!! 2/2018 vyrazeny instrukce NOP v delay slotu, po skocich b16, beq, bne, bltz, bgtz, ...
 //.set reorder je vklada automaticky  
     
+//<editor-fold defaultstate="collapsed" desc="MACRO">
+    
+.macro _SET_SLEEP_MODE
+//meni t9    
+    lbu	    t9, (SYSTEM_STATUS)
+    ori	    t9, 0x1
+    sb	    t9, (SYSTEM_STATUS)    
+.endm
+    
+.macro _CLR_SLEEP_MODE
+//meni t9    
+    lbu	    t9, (SYSTEM_STATUS)
+    andi    t9, 0b11111110
+    sb	    t9, (SYSTEM_STATUS)    
+.endm    
+    
+.macro _SET_IDLE_MODE
+//meni t9    
+    lbu	    t9, (SYSTEM_STATUS)
+    ori	    t9, 0x2
+    sb	    t9, (SYSTEM_STATUS)      
+.endm 
+    
+.macro _CLR_IDLE_MODE
+//meni t9    
+    lbu	    t9, (SYSTEM_STATUS)
+    andi    t9, 0b11111101
+    sb	    t9, (SYSTEM_STATUS)    
+.endm     
+    
+.macro _GET_SLEEP_MODE ret
+//meni t9, ret    
+    lbu	    t9, (SYSTEM_STATUS)
+    ext	    \ret, t9, 0, 1		    //skok, je v SLEEP modu
+.endm    
+    
+.macro _GET_IDLE_MODE ret
+//meni t9, ret    
+    lbu	    t9, (SYSTEM_STATUS)
+    ext	    \ret, t9, 1, 1		    //skok, je v SLEEP modu    
+.endm  
+    
+//</editor-fold>        
+    
 .set micromips 
 .set reorder			//vklada nop do branch delay slotu
     
 .section .asm_fn, code     
     
 //<editor-fold defaultstate="collapsed" desc="initCPU">
+.align 2    
 .global initCPU
 .ent initCPU
 initCPU:
@@ -302,7 +347,7 @@ setSrsValue:
 .global startEvents
 .ent startEvents    
 startEvents:
-    //start, spusti prvni proces v process table
+    //start, spusti prvni proces v process table (systemProcess)
     
 #ifdef SAFE_PROCESS    
     //nuluj count
@@ -325,11 +370,20 @@ startEvents:
     addu    k1, k0
     sw	    k1, (proc_t_after)
     
+    //nastav canSleep a canIdle pro systemProcess
+    lbu	    v0, TH_T_ID*4(k0)
+    sb	    v0, (errorProcID)			//nastav procID na systemProcess
+    
+    li16    a0, 1
+    bal	    setCanSleep				//meni v0, v1, t7-t9, a0
+    li16    a0, 1
+    bal	    setCanIdle				//meni v0, v1, t7-t9, a0
+    
     lw32    ra, TH_T_RA*4(k0)			//load start addr
     lw32    sp, TH_T_SP*4(k0)			//load sp
     
     jrc	    ra
-    //nop						//musi zde zustat
+    //nop					//musi zde zustat
     
 .end startEvents
 //</editor-fold>        
@@ -991,7 +1045,7 @@ getProcID:
     nop
     
     //systemProcess, aktualni procID je v errorProcID
-    lw	    v0, (errorProcID)
+    lbu	    v0, (errorProcID)
     jrc	    ra
     
 1:
@@ -1009,6 +1063,9 @@ getProcID:
 .ent getProcTableItem
 getProcTableItem: 
 //a0=procID
+    
+    //meni v0, v1, t9
+    
     la	    v0, proc_t
     addiu   v1, v0, (PROC_T_ISIZE * PROC_T_CAPA)
     b16	    2f
@@ -1072,7 +1129,146 @@ clearWDT:
     
 .end clearWDT  
     
-//</editor-fold>      
+//</editor-fold> 
+    
+//<editor-fold defaultstate="collapsed" desc="startWDT">
+.align 2    
+.global startWDT    
+.ent startWDT
+startWDT:
+    
+    li	    v0, 0x5743
+    sh	    v0, (WDTCON+2)
+    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on    
+    
+    jrc	    ra
+    
+.end startWDT  
+    
+//</editor-fold>     
+   
+//<editor-fold defaultstate="collapsed" desc="setCanSleep">
+.align 2    
+.global setCanSleep    
+.ent setCanSleep
+setCanSleep:
+//a0=1 enable, 0=disable
+//nastavuje canSleep ve STATUS byte aktualniho processu
+    
+    //meni v0, v1, t7-t9, a0
+    _PUSH   ra
+    
+    move    t7, a0			//zaloha
+    
+    bal	    getProcID			//meni v0, v1, v0 vraci procID
+    move    a0, v0
+    
+    bal	    getProcTableItem		//meni v0, v1, t9
+    beqz    v0, 9f
+
+    //v0=adresa polozky
+    lw	    v1, TH_T_ID*4(v0)
+    ins	    v1, t7, 16, 1		//b16=sleep	    
+    sw	    v1, TH_T_ID*4(v0)
+    
+    //nastav sleepStatus (zajisti v systemProcess test, zda muze prejit do sleep modu)
+    li16    v1, 1   
+    sb	    v1, (sleepStatus)
+    
+    bnez    t7, 9f			//skok, nebyl zrusen sleep mode
+    
+    //pokud nejaky proces nastavi sleep=0, pak bude okamzite nastaveno SYSTEM_STATUS.SLEEP=0
+    _CLR_SLEEP_MODE			//meni t9
+    
+9:    
+    _POP    ra
+    jrc	    ra
+    
+.end setCanSleep  
+    
+//</editor-fold>     
+    
+//<editor-fold defaultstate="collapsed" desc="setCanIdle">
+.align 2    
+.global setCanIdle    
+.ent setCanIdle
+setCanIdle:
+//a0=1 enable, 0=disable
+//nastavuje canSleep ve STATUS byte aktualniho processu
+
+    //meni v0, v1, t7-t9, a0
+    _PUSH   ra
+    
+    move    t7, a0			//zaloha
+    
+    bal	    getProcID			//meni v0, v1, v0 vraci procID
+    move    a0, v0
+    
+    bal	    getProcTableItem		//meni v0, v1, t9
+    beqz    v0, 9f
+
+    //v0=adresa polozky
+    lw	    v1, TH_T_ID*4(v0)
+    ins	    v1, t7, 17, 1		//b17=Idle	    
+    sw	    v1, TH_T_ID*4(v0)
+    
+    //nastav idleStatus (zajisti v systemProcess test, zda muze prejit do idle modu)
+    li16    v1, 1   
+    sb	    v1, (idleStatus)    
+    
+    bnez    t7, 9f			//skok, nebyl zrusen sleep mode
+    
+    //pokud nejaky proces nastavi idle=0, pak bude okamzite nastaveno SYSTEM_STATUS.IDLE=0
+    _CLR_IDLE_MODE			//meni t9
+    
+9:    
+    _POP    ra
+    jrc	    ra
+    
+.end setCanIdle  
+    
+//</editor-fold>    
+   
+//<editor-fold defaultstate="collapsed" desc="getCanSleepAll">
+.align 2    
+.global getCanSleepAll    
+.ent getCanSleepAll
+getCanSleepAll: 
+//a0=procID
+    
+    //meni v0, v1, t9
+    //v0.b0 vraci canSleep, v0.b1 vraci canIdle
+    //v0.b0 nebo v0.b1 jsou nastaveny, pokud jsou nastaveny ve vsech procesech
+    
+    la	    t8, proc_t
+    addiu   t9, t8, (PROC_T_ISIZE * PROC_T_CAPA)
+    li16    v0, 0x3
+    b16	    2f
+    
+1:
+    addiu   t8, PROC_T_ISIZE
+    beq	    t8, t9, 9f
+2:    
+    lbu	    v1, TH_T_ID*4(t8)
+    beqz    v1, 1b			    //skok, nepouzita polozka
+    
+    lbu	    v1, (TH_T_ID*4)+2(t8)	    //load byte 2
+    and	    v0, v1
+    
+    b16	    1b
+    
+    
+9:    
+    //ok, nasel polozku
+    ext	    v0, v0, 0, 2		    //pouze b0-b1
+    jrc	    ra				    //v0=adresa polozky
+    
+.end getCanSleepAll  
+    
+//</editor-fold>    
+    
     
 //events
     
@@ -1449,7 +1645,7 @@ raiseEventInt:
 .end raiseEventInt  
     
 //</editor-fold>    
-   
+    
 //<editor-fold defaultstate="collapsed" desc="systemProcess">
 .align 2    
 .global systemProcess    
@@ -1488,10 +1684,8 @@ systemProcess:
     
     //addr_reg, arg_cnt
     _CALL_C t9, 2
-    //addiu   sp, -8			    //viz. pozn
-    //jalr    t9
-    //addiu   sp, 8			    //viz. pozn
-    
+
+    //nuluj priznak eventCache Error
     sb	    zero, (errEventCachePrID)
     sb	    zero, (errEventCacheEvID)
     
@@ -1499,7 +1693,7 @@ systemProcess:
    
 1:
     
-#ifdef WATCH_DOG_TIMER
+#ifdef WATCHDOG_TIMER
     bal	    clearWDT
 #endif    
     
@@ -1521,7 +1715,7 @@ systemProcess:
     lw	    a1, EVC_P1(s0)		    //p1
     lw	    a2, EVC_P2(s0)		    //p2
     
-    sw	    t9, (errorProcID)		    //nastav aktualni procID
+    sb	    t9, (errorProcID)		    //nastav aktualni procID
     //addr_reg, arg_cnt
     _CALL_C v0, 3
 
@@ -1551,7 +1745,93 @@ systemProcess:
     
 7:  //ok, cela eventCache je prazdna (nyni muze interrupt pridat novou polozku)
     ei
-    //sw	    zero, (onErrorResume)   //meni chovani pro error
+    
+    //<editor-fold defaultstate="collapsed" desc="SLEEP">
+    
+    //test sleep
+    lbu	    v0, (sleepStatus)
+    beqz    v0, 10f			    //skok, sleepStatus=0, tzn. neni sleep ani nenastala zadna zmena
+    
+    //musi testovat sleep
+    bal	    getCanSleepAll		    //meni v0, v1, t9
+    ext	    v1, v0, 0, 1		    //b0=sleep status
+    beqz    v1, 9f
+    
+    //ret = return val (0,1)
+    _GET_SLEEP_MODE v0			    //meni t9
+    bnez    v0, 8f			    //skok, je v SLEEP modu
+
+    //neni ve sleep modu, prechod do sleep modu
+    //addr_reg, arg_cnt
+    la	    v0, (beforeSleep)
+    _CALL_C v0, 0
+    
+    //nastav SYSTEM_STATUS.SLEEP=1
+    _SET_SLEEP_MODE			    //meni t9
+
+8:    
+    //can sleep
+#ifdef PIC32MZ    
+    bal	    gotoSleepMZ
+#endif
+#ifdef PIC32MM    
+    bal	    gotoSleepMM
+#endif
+    
+    //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do SLEEP)
+    b16	    1b
+
+9:
+    sb	    zero, (sleepStatus)		    //neni sleep (pokud nastane nejaka zmena - volani setSleep, nastavi se i sleepStatus)
+    //neni sleep mode
+    _CLR_SLEEP_MODE			    //meni t9
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="IDLE">
+   
+10:
+    //test idle 
+    lbu	    v0, (idleStatus)
+    beqz    v0, 15f			    //skok, sleepStatus=0, tzn. neni sleep ani nenastala zadna zmena
+    
+    //musi testovat idle
+    bal	    getCanSleepAll		    //meni v0, v1, t9
+    ext	    v1, v0, 1, 1		    //b1=idle status
+    beqz    v1, 14f
+    
+    //ret = return val (0,1)
+    _GET_IDLE_MODE v0			    //meni t9
+    bnez    v0, 11f			    //skok, je v IDLE modu
+
+    //neni ve sleep modu, prechod do sleep modu
+    la	    v0, (beforeIdle)
+    _CALL_C v0, 0 
+    
+    //nastav SYSTEM_STATUS.SLEEP=1
+    _SET_IDLE_MODE			    //meni t9    
+    
+11:    
+    //can idle
+#ifdef PIC32MZ    
+    bal	    gotoIdleMZ
+#endif
+#ifdef PIC32MM    
+    bal	    gotoIdleMM
+#endif
+    
+    //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do IDLE)
+    b16	    1b
+    
+14:    
+    sb	    zero, (idleStatus)		    //neni idle (pokud nastane nejaka zmena - volani setIdle, nastavi se i idleStatus)
+    //neni v IDLE mode
+    _CLR_SLEEP_MODE			    //meni t9
+    
+    //</editor-fold>
+
+15:    
+    //exit systemProcess
     la	    a0, systemProcess		    //param, adresa pristiho cyklu
     bal	    doEventsL			    //prepni process
     nop
@@ -1704,5 +1984,85 @@ defragTableB:
     
     
 .end defragTableB    
+    
+//</editor-fold>       
+    
+//<editor-fold defaultstate="collapsed" desc="gotoSleepMZ">
+    
+.align 2
+.ent gotoSleepMZ
+gotoSleepMZ:
+    
+#ifdef WATCHDOG_TIMER 
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT off
+#endif         
+    
+    //unlock
+    sw      zero, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //OSCCON.b4 = SLEEP(1)/IDLE(0)
+    li	    v1, 0x10
+    sw	    v1, (OSCCONSET)		    //set OSCCON.SLPEN
+    
+    //lock
+    sw      zero, (SYSKEY)
+    
+    //prechod do SLEEP
+    wait
+    
+    //po probuzeni
+#ifdef WATCHDOG_TIMER    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on
+#endif  
+    
+    jrc	    ra
+    
+.end gotoSleepMZ  
+    
+//</editor-fold>      
+    
+//<editor-fold defaultstate="collapsed" desc="gotoIdleMZ">
+    
+.align 2
+.ent gotoIdleMZ
+gotoIdleMZ:
+    
+#ifdef WATCHDOG_TIMER 
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT off
+#endif    
+    
+    //unlock
+    sw      zero, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //OSCCON.b4 = SLEEP(1)/IDLE(0)
+    li	    v1, 0x10
+    sw	    v1, (OSCCONCLR)		    //clr OSCCON.SLPEN
+    
+    //lock
+    sw      zero, (SYSKEY)
+    
+    //prechod do SLEEP
+    wait
+    
+    //po probuzeni
+#ifdef WATCHDOG_TIMER    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on
+#endif      
+    
+    jrc	    ra    
+    
+.end gotoIdleMZ  
     
 //</editor-fold>       

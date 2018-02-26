@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/bos2/bos2/app1.c</file>
-            <file>file:/E:/bos2/bos2/doc/documentation.txt</file>
-            <file>file:/E:/bos2/bos2/main.c</file>
-            <file>file:/E:/bos2/bos2/structures.h</file>
-            <file>file:/E:/bos2/bos2/core_fn.S</file>
-            <file>file:/E:/bos2/bos2/ubtn2.S</file>
-            <file>file:/E:/bos2/bos2/main.h</file>
-            <file>file:/E:/bos2/bos2/rtc.S</file>
-            <file>file:/E:/bos2/bos2/asm.h</file>
-            <file>file:/E:/bos2/bos2/def.h</file>
-            <file>file:/E:/bos2/bos2/timer1.S</file>
-            <file>file:/E:/bos2/bos2/asm_macro.S</file>
-            <file>file:/E:/bos2/bos2/periph_fn.S</file>
-            <file>file:/E:/bos2/bos2/user_apps.h</file>
-            <file>file:/E:/bos2/bos2/user_apps.c</file>
-            <file>file:/E:/bos2/bos2/app3.c</file>
+            <file>file:/D:/bos2/BOS2.X/timer1.S</file>
+            <file>file:/D:/bos2/BOS2.X/def.h</file>
+            <file>file:/D:/bos2/BOS2.X/structures.h</file>
+            <file>file:/D:/bos2/BOS2.X/rtc.txt</file>
+            <file>file:/D:/bos2/BOS2.X/periph.c</file>
+            <file>file:/D:/bos2/BOS2.X/rtc.S</file>
+            <file>file:/D:/bos2/BOS2.X/doc/systemTimer.txt</file>
+            <file>file:/D:/bos2/BOS2.X/events.txt</file>
+            <file>file:/D:/bos2/BOS2.X/main.c</file>
+            <file>file:/D:/bos2/BOS2.X/asm.h</file>
+            <file>file:/D:/bos2/BOS2.X/clock_cfgBits_mz.c</file>
+            <file>file:/D:/bos2/BOS2.X/core_fn.S</file>
+            <file>file:/D:/bos2/BOS2.X/app1.c</file>
+            <file>file:/D:/bos2/BOS2.X/app2.c</file>
+            <file>file:/D:/bos2/BOS2.X/app3.c</file>
         </group>
     </open-files>
 </project-private>

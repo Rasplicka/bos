@@ -68,11 +68,13 @@ uint* proc_t_after      __section(".os") = 0;
 char proc_t_count       __section(".os") = 0;
 char errEventCacheEvID  __section(".os") = 0;                                   //eventID posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
 char errEventCachePrID  __section(".os") = 0;                                   //procID  posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
+char errorProcID        __section(".os") = 0;
 
-uint time_ms           __section(".os");                                           //timer1
+uint time_ms            __section(".os");                                           //timer1
 uint day_ms             __section(".os");                                           //timer1
 
-void* errorProcID       __section(".os");
+char sleepStatus        __section(".os") = 0;
+char idleStatus         __section(".os") = 0;
 
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
@@ -110,14 +112,15 @@ void main()
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
-
+   
+#ifdef WATCHDOG_TIMER    
+    startWDT();                             //WDT on
+#endif    
+    
     initCPU();
     startupStack();                         //nastavi sp pro startup OS
     setClock(CLOCK_CFG.CLK_NORMAL);  
-    
-#ifdef WATCH_DOG_TIMER
-    clearWDT();
-#endif    
+  
     // </editor-fold>
     
     //2. set safe mode ---------------------------------------------------------
@@ -169,7 +172,7 @@ void main()
 #endif    
           
     
-#ifdef WATCH_DOG_TIMER
+#ifdef WATCHDOG_TIMER
     clearWDT();
 #endif
     
@@ -182,10 +185,10 @@ void main()
     // <editor-fold defaultstate="collapsed" desc="start os">
    
     globalsAfterProcess();
-    SYSTEM_STATUS.Threading = 1;
-    SYSTEM_STATUS.NormalMode= 1;
-    SYSTEM_STATUS.IdleMode =  0;
     SYSTEM_STATUS.SleepMode = 0;
+    SYSTEM_STATUS.IdleMode =  0;
+    SYSTEM_STATUS.Threading = 1;
+
     
     startEvents(); 
     // </editor-fold>
@@ -243,7 +246,7 @@ int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, c
         //ok, stack allocated, set process item at proc_t
         proc_t_count++;
         
-        //proc_t[0]= byte[0]=ID, byte[1]=b0-b3 je TimeLimitExceedBehavior, b4-7 je GeneralExceptionBehavior
+        //proc_t[0]= byte[0]=ID, byte[1]=b0-b1 je TimeLimitExceedBehavior, b2-3 je GeneralExceptionBehavior, b4-5 TrapBehavior
         int x1 = ((param->TimeLimitExceedBehavior) << 8);
         int x2 = ((param->GeneralExceptionBehavior) << 10);
         int x3 = ((param->TrapBehavior) << 12);
@@ -391,8 +394,6 @@ static void systemInit()
 #endif    
     
 }
-
-
 
 static void blick()
 {

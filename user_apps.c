@@ -119,3 +119,14 @@ void userAppEventError(char procId, char eventId)
     int a=procId;
     int b=eventId;
 }
+
+void beforeSleep()
+{
+    
+}
+
+void beforeIdle()
+{
+    int a=0;
+    int b=a+5;
+}

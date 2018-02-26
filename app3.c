@@ -37,6 +37,7 @@ void m3_start()
         doEvents();
     }    
     */
+    setCanIdle(1);
     
     while(1)
     {

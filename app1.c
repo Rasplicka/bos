@@ -30,7 +30,8 @@ static void testButton(int event, int value, int index);
 
 void m1_start()
 {
-    setClock(CLOCK_CFG.CLK_ALT3);
+    setCanIdle(1);
+    //setClock(CLOCK_CFG.CLK_ALT3);
     
     //testSystemTimer();
     //systemTimerRegInterval(&testSystemTimer, 1000);
@@ -130,6 +131,7 @@ static void testSystemTimer(int a, int b, int c)
 static void testRTC(char hour, char min, uint date)
 {
     _LED_INV_REG = _LED_INV_VAL;
+    setCanIdle(0);
 }
 
 static void testButton(int event, int value, int index)

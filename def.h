@@ -4,15 +4,15 @@
 #ifdef PIC32MZ
 
 //XTAL 24MHz
-//#define     CFG_POSC_XTAL               24
-//#define     CFG_CLKSYS_POSC
+#define     CFG_POSC_XTAL               24
+#define     CFG_CLKSYS_POSC
 
 //XTAL 12MHz
 //#define     CFG_POSC_XTAL               12
 //#define     CFG_CLKSYS_POSC
 
 //FRC 8MHz
-#define     CFG_CLKSYS_FRC
+//#define     CFG_CLKSYS_FRC
 
 
 //XTAL SOSC 37.768kHz (RTC, timer1)
@@ -24,7 +24,7 @@
 //#define     SOSC_CLK_TO_RTC                                   //na vstupu SOSCO je 32.768kHz, pouzije ho RTC         
 
 //watch dog timer
-#define     WATCH_DOG_TIMER
+#define     WATCHDOG_TIMER
 
 #endif
 //#define PIC32MM0064

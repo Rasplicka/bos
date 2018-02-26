@@ -32,14 +32,10 @@
 #pragma config POSCMOD =    EC              //x
 #pragma config OSCIOFNC =   OFF             //
 #pragma config FCKSM =      CSECME          //x CSDCMD
-#pragma config WDTPS =      PS1024           // doba cca 1s
-#pragma config WDTSPGM =    STOP            //
+#pragma config WDTPS =      PS1024          // doba cca 1s
+#pragma config WDTSPGM =    STOP            //STOP when flash is programming
+#pragma config FWDTEN =     OFF             //ON provede SW
 
-#ifdef WATCH_DOG_TIMER
-#pragma config FWDTEN =     ON              //ON
-#else
-#pragma config FWDTEN =     OFF              //OFF
-#endif
 
 #pragma config WINDIS =     NORMAL          //
 #pragma config FWDTWINSZ =  WINSZ_50        //

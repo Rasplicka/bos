@@ -1,0 +1,58 @@
+BOS zajistuje prechod procesoru do IDLE nebo SLEEP modu automaticky.
+
+IDLE
+----
+IDLE mod zastavi program a CPU je ve stavu HALT. Setri se tim energie. Taktovani
+PBCLKx bezi dal, takze perifeni moduly mohou pracovat. To lze povolit nebo 
+zakazat nastavenim SIDL bitu v konfiguracnim registru dane periferie.
+Timer1, vyuzivany systemem bezi dal, proto mohou byt volane udalosti, ktere
+spousti.
+
+BOS zajistuje automaticky prechod do stavu IDLE, pokud vsechny bezici
+procesy IDLE mod povoli, volanim fce setCanIdle(1), naopak proces muze IDLE mod
+zakazat volanim setCanIdle(0) - a toto je take  vychozi nastaveni kazdeho procesu 
+po jeho spusteni.
+
+Nastane-li v IDLE modu udalost, tato zpusobi docasne preruseni IDLE modu.
+OS vola funkci, ktera udalost obsluhuje. Po jejim provedeni se procesor vrati do
+stavu IDLE. Behem udalosti muze aplikace testovat, zda se po jejim ukonceni procesor
+vrati do IDLE, volanim fce getIdleStatus(), ktera vraci 1, pokud ano.
+V obsluze udalosti muze aplikace volat setCanIdle(0) a tim zakazat IDLE mod,
+takze po jejim dokonceni bude procesor pracovat v beznem modu.
+
+Pred prechodem z bezneho do ILDE modu, OS vola fci beforeIdle() z user_apps.c
+Zde jiz volani setCanIdle(0) nema efekt, po skonceni teto fce procesor vzdy 
+prechazi do usporneho modu. (Nicmene, po probuzeni z IDLE modu z duvodu obsluhy
+udalosti, by procesor jiz zustal v beznem modu)
+
+SLEEP
+-----
+Do SLEEP modu procesor prejde, ztejne jako do IDLE, pokud tento mod povoli vsechny
+bezici procesy. To lze volanim setCanSleep(1).
+
+SLEEP mode zastavi CPU a vsechny PBCLKx, takze periferie taktovane timto clk
+take nepracuji, nemohou vyvolat interrupt a vzbudit CPU k cinnosti. V tomto modu
+ma chip minimalni spotrebu.
+Protoze modul RTC je taktovan mimo PBCLKx, pracuje ve SLEEP modu dal a muze byt
+zdrojem probuzeni. Dale timto zdrojem muze byt napr. interrupt vyvolany zmenou
+stavu vstupniho pinu (input change notification) atd...
+ 
+Pokud tedy interrupt vyvola udalost, tato bude obslouzena pri docasnem probuzeni
+procesoru, a po jejim dokonceni opet prejde do SLEEP modu, pokud v obsluze udalosti
+neni SLEEP mod zakazan volanim setCanSleep(0). Behem udalosti muze aplikace 
+testovat, zda se po jejim ukonceni procesor vrati do SLEEP, volanim fce 
+getSleepStatus(), ktera vraci 1, pokud ano.
+
+Pred prechodem z bezneho do SLEEP modu, OS vola fci beforeSleep() z user_apps.c
+Zde jiz volani setCanSleep(0) nema efekt, po skonceni teto fce procesor vzdy 
+prechazi do usporneho modu. (Nicmene, po probuzeni z SLEEP modu z duvodu obsluhy
+udalosti, by procesor jiz zustal v beznem modu)
+
+Je-li povoleno prejit do IDLE i SLEEP modu, prednost ma SLEEP mod. Bude-li SLEEP
+mod ukoncen a nadale zustava povolen IDLE mod, prejde procesor do IDLE modu.
+
+BOS sice zajistuje automaticky prechod do IDLE nebo SLEEP modu, ale frekvence na
+jednotlivych PBCLKx pritom nemeni. Nezasahuje tedy nijak do registru PBxDIV. 
+
+
+

@@ -136,6 +136,11 @@ ubtnStart:
 //definice tlacitek je v buttons_table 
 //STATE 0xF0=UP, 0x0F=DOWN (mode 0,2), 0x0E=DOWN (mode 1)    
 
+    li16    a0, 1
+    bal	    setCanSleep
+    li16    a0, 1
+    bal	    setCanIdle
+    
     //nastav TRIS bit=1 (input), ANSEL bit=0 digital
     la	    t0, buttons_table
     la	    s0, items		    //RAM tabulka items

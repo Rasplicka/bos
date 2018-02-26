@@ -28,6 +28,9 @@ extern char getProcID();
 extern void* getProcTableItem(char id);
 extern void exitProcess();
 extern void clearWDT();
+extern void startWDT();
+extern void setCanSleep(char);
+extern void setCanIdle(char);
 extern void unregEvent(void*);
 extern void systemProcess();
 

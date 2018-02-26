@@ -11,11 +11,10 @@
 //OS status
 struct
 {
-    unsigned Threading  : 1;            //startup=0, run=1
-    unsigned NormalMode : 1;
-    unsigned IdleMode   : 1;
     unsigned SleepMode  : 1;
-    unsigned dummy      : 4;
+    unsigned IdleMode   : 1;
+    unsigned Threading  : 1;            //startup=0, run=1
+    unsigned dummy      : 5;
     unsigned Errors     : 8; 
     
 }SYSTEM_STATUS;
