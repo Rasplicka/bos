@@ -50,9 +50,10 @@ void app_start()
 
 }
 
-void testSystemTimer()
+void testSystemTimer(uint i)
 {
     //tuto fci vola pravidelne OS, kazdych 1000 ms
+    //param i obsahuje hodnotu intervalu, v tomto pripade i=1000
 
     //invertuje stav LED
     testLedInv(1); 
@@ -62,12 +63,11 @@ Pokud jiz tento casovy interval nebude aplikace pouzivat, musi registraci zrusit
 volanim fce unregEvent(void* fn), kde fn je adresa fce, ktera se pouzila pri
 registraci udalosti
 
-void stopTimer()
-{
+
     //pokracovani predchoziho prikladu
     //ukonci volani fce testSystemTimer
     unregEvent(&testSystemTimer);
-}
+
 
 Aplikace muze zaregistrovat vice casovych intervalu. Nasledujici priklad registruje
 dva. Prvni bezi stale, druhy probehne pouze 5x.
@@ -88,7 +88,7 @@ void app_start()
     }
 }
 
-void test1()
+void test1(uint i)
 {
     //tuto fci vola pravidelne OS, kazdych 1000 ms
 
@@ -96,7 +96,7 @@ void test1()
     testLedInv(1); 
 }
 
-void test2()
+void test2(uint i)
 {
     //tuto fci vola pravidelne OS pouze 5x, kazdych 500 ms
 
@@ -126,42 +126,32 @@ else
 
 }
 
-
-Navic v OS je pronema time_ms, ktera obsahuje pocet ms od zapnuti systemu. 
-OS ji pravidelne aktualizuje (v interruptu timer1). Je bezne pristupna, ale
-aplikace ji nesmi menit. Na zaklade jeji hodnoty totiz system generuje 
-registrovane intervaly. Protoze je typu uint a obsahuje pocet ms, dojde k jejimu
-preteceni jednou za 49 dnu. Chcete-li ji pouzivat k mereni casoveho useku,
-pouzijte fci compareTimerMs, ktera respektuje moznost preteceni 
-(ale mereny usek musi byt kratsi nez 49 dnu)
-Dale je v systemu promena day_ms, ktera cita pocet ms od zacatku dne. Podle ni
-lze zjistit aktualni denni cas. Ale pouze v pripade, ze je aktivni RTC modul, ktery
-tuto promenou synchronizuje kazdou minutu.
-Pro zjisteni denniho casu a hlavne data je lepsi pouzit fce RTC modulu.
-
-
-Vyuziti promene time_ms pro mereni doby
+Vyuziti fce getTimeMs() pro mereni doby
 ---------------------------------------
+
+Navic OS poskytuje informaci o case, volanim fce getTimeMs() ktera vraci pocet ms
+od zapnuti systemu. 
+OS ji pravidelne aktualizuje (v interruptu timer1). Protoze obsahuje promenou 
+typu uint a cita pocet ms, dochazi k jejimu preteceni jednou za 49 dnu. 
+Chcete-li tento udaj pouzivat k mereni casoveho useku, pouzijte fci compareTimeMs,
+ktera respektuje moznost preteceni (ale mereny usek musi byt kratsi nez 49 dnu)
 
 void app_start()
 {
     //zaznamenat aktualni cas
-    uint before=time_ms;
+    uint before=getTimeMs();
 
-    //budeme merit jak dlouho trva fce go()
+    //budeme merit, jak dlouho trva fce go()
     go();
 
     //do delay se vlozi doba [ms], ktera uplynula
-    uint delay=compareTimerMs(before);
+    uint delay=compareTimeMs(before);
 }
 
+Behem IDLE modu timer1 normalne pokracuje v cinnosti, proto fce getTimeMs() 
+vraci platnou hodnoty.
+Ve SLEEP modu je timer1 pozastaven a po probuzeni fce getTimeMs() vraci tomu
+odpovidajici udaj. V dobe spanku necita.
 
-Vyuziti promene day_ms pro zjisteni denniho casu
-------------------------------------------------
-void app_start()
-{
-    //zjisti aktualni denni cas (musi byt definovano RTC v def.h)
-    uint second=(day_ms/1000) % 60;
-    uint minute=(day_ms/1000/60) % 60;
-    uint hour=(day_ms/1000/60/60);
-}
+Chce-li aplikace ziskat informace o realnem case, musi pouzit fce modulu RTC.
+

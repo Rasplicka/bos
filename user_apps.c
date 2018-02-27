@@ -67,9 +67,9 @@ void userAppsStart()
     //Calls OS on startup
     
     APP_START_PARAM p1;
-    p1.TimeLimitExceedBehavior = ON_ERROR.RESET_PROCESS;
+    p1.TimeLimitExceedBehavior = ON_ERROR.REMOVE_PROCESS;
     p1.GeneralExceptionBehavior = ON_ERROR.RESET_PROCESS;
-    p1.TrapBehavior = ON_ERROR.REMOVE_PROCESS;
+    p1.TrapBehavior = ON_ERROR.RESET_PROCESS;
     p1.TimeLimitValue = 0xFFFF;
     
     

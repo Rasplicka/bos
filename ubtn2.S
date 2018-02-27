@@ -260,7 +260,7 @@ pin_down:
     lw32    a0, REP_TIME_OFF(s0)	    //load repeatTime
     
     //a0=time (vraci rozdil od now [ms])
-    bal	    compareTimerMs		    //meni t8, t9
+    bal	    compareTimeMs		    //meni t8, t9
     
     lbu	    s3, REP_COUNT_OFF(s0)	    //load repeatCount
     beqz    s3, rep_0			    //skok, repeatCount=0 	
@@ -296,7 +296,7 @@ test_long:
     lw32    a0, LONG_TIME_OFF(s0)	    //load longTime
     
     //a0=time (vraci rozdil od now [ms])
-    bal	    compareTimerMs		    //meni t8, t9
+    bal	    compareTimeMs		    //meni t8, t9
     
     addiu   v0, (-LONG_DOWN_MS)
     bltz    v0, loop			    //skok, cas jeste nevyprsel

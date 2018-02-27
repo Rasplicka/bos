@@ -29,13 +29,17 @@ static void testButton(int event, int value, int index);
 
 void m2_start()
 {
-    setCanIdle(1);
+    
+    //setCanIdle(1);
+    /* 
     //ubtnRegEvent(&testButton, 11, 20);
     systemTimerRegInterval(&testSystemTimer, 500);
     while(1)
     {
         doEvents();
     }
+    */
+    ubtnRegEvent(&testButton, 0, 0xFF);
     
     while(1)
     {
@@ -99,6 +103,9 @@ static void testButton(int event, int value, int index)
 {
     //if(value==1)
     //{
+    //setCanIdle(1);
+    //exitProcess();
+    /*
         if(event==UBTN_DOWN)
         {
             _LED_INV_REG = _LED_INV_VAL;
@@ -108,5 +115,6 @@ static void testButton(int event, int value, int index)
         {
             _LED_INV_REG = _LED_INV_VAL;
         }
+    */
     //}
 }

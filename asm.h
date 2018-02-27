@@ -20,8 +20,11 @@ extern void doEventsError();
 extern uint getGP();
 //extern void restartApp();
 //extern void restartAppId(char id);
-extern uint compareTimerMs(uint);
+extern uint compareTimeMs(uint);
 extern void pauseEvents(uint);                       //time ms
+extern uint getTimeMs();
+extern uint getDayMs();
+
 extern void general_exception();
 
 extern char getProcID();

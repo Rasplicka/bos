@@ -61,7 +61,7 @@
 #endif
 
 
-//#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
 #define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 
 #define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception

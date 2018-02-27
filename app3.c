@@ -7,7 +7,7 @@
 
 #define     _LED_INV_REG    LATHINV
 #define     _LED_INV_VAL    0b100
-int delay=3;
+int delay=10;
 #endif
 
 #ifdef PIC32MM0064
@@ -45,7 +45,7 @@ void m3_start()
         _LED_INV_REG = _LED_INV_VAL;
         
         int a, b=0;
-        for(a=0; a<(420000); a++)
+        for(a=0; a<(200000 * delay); a++)
         {
             b++;
             if(a % 1000 == 0)

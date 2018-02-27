@@ -41,7 +41,7 @@ timer1Init:
     #define	TIMER1_INTERRUPT_SUBPRIORITY	1
      
     sw	    zero, (time_ms)			//time_ms (uint) cita pocet ms od zapnuti
-    sw	    zero, (day_ms)			//day_ms (uint) pocita pocet ms od zacatku dne, pouze pokud je definovano RTC
+    //sw	    zero, (day_ms)			//day_ms (uint) pocita pocet ms od zacatku dne, pouze pokud je definovano RTC
     
     sw	    zero, (T1CON)			//timer1 OFF (ON bit=0)
     sw	    zero, (TMR1)
@@ -307,11 +307,11 @@ iVector_timer1:
     addiu   v0, TIMER1_INTERVAL		//time_ms += TIMER1_INTERVAL (10ms)
     sw	    v0, (time_ms)
     
-#ifdef RTC
-    lw	    v0, (day_ms)
-    addiu   v0, TIMER1_INTERVAL
-    sw	    v0, (day_ms)
-#endif    
+//#ifdef RTC
+    //lw	    v0, (day_ms)
+    //addiu   v0, TIMER1_INTERVAL
+    //sw	    v0, (day_ms)
+//#endif    
    
     //<editor-fold defaultstate="collapsed" desc="events">
     
@@ -338,9 +338,9 @@ iVector_timer1:
     //nastala event
     
     move    a0, t0			//a0=adresa polozky v regEventTable, a1-a3 params
-    //a1-a3 nenastavuje
-    //meni t9, v0, v1
-    bal	    raiseEventInt
+    lw	    a1, RET_V0(t0)		//a1=interval
+    //a2-a3 nenastavuje
+    bal	    raiseEventInt		//meni t9, v0, v1
     
     //nove nastaveni var1 na puvodni hodnotu
     lw	    t2, RET_V0(t0)

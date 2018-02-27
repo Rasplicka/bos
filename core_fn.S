@@ -699,12 +699,12 @@ restartAppId:
     
 //timer1    
     
-//<editor-fold defaultstate="collapsed" desc="compareTimerMs">
+//<editor-fold defaultstate="collapsed" desc="compareTimeMs">
     
 .align 2
-.global compareTimerMs
-.ent compareTimerMs    
-compareTimerMs:
+.global compareTimeMs
+.ent compareTimeMs    
+compareTimeMs:
 //a0=porovnavany cas (predpoklada se, ze je starsi, nez soucasny - time_ms)
 //vraci kolik ms uplynulo od zadaneho casu    
 //meni t8,t9 (v0)    
@@ -725,7 +725,7 @@ compareTimerMs:
     addu    v0, t9
     jrc	    ra
     
-.end compareTimerMs 
+.end compareTimeMs 
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="pauseEvents">    
@@ -757,7 +757,7 @@ pauseEvents:
     
 2:    
     //porovnava aktualni time_ms s time_ms v a0 (pocatecni cas)
-    bal	    compareTimerMs	    //meni t9, t8, v0 vraci kolik uplynulo ms (po 10 ms)
+    bal	    compareTimeMs	    //meni t9, t8, v0 vraci kolik uplynulo ms (po 10 ms)
     //nop
     
     subu    v0, v1
@@ -770,6 +770,32 @@ pauseEvents:
 .end pauseEvents    
     
 //</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="pauseEvents">    
+.align 2
+.global getTimeMs
+.ent getTimeMs
+getTimeMs:   
+    
+    lw	    v0, (time_ms)
+    jrc	    ra
+    
+.end getTimeMs    
+    
+    /*
+.align 2
+.global getDayMs
+.ent getDayMs
+getDayMs:   
+    
+    lw	    v0, (time_ms)
+    jrc	    ra
+    
+.end getDayMs   
+    */
+    
+//</editor-fold>
+    
     
 //errors
    
@@ -1266,14 +1292,14 @@ resetProcessID:
     bal	    getProcTableItem		//meni v0, v1, t9
     beqz    v0, 9f			//skok, nenasel polozku
     //v0 = adresa v proc_t
-    lw32    v0, TH_T_START_SP*4(v0)	
-    sw32    v0, TH_T_SP*4(v0)		//SP=default
-    lw32    v0, TH_T_START_ADDR*4(v0)	
-    sw32    v0, TH_T_RA*4(v0)		//RA=default
+    lw32    v1, TH_T_START_SP*4(v0)	
+    sw32    v1, TH_T_SP*4(v0)		//SP=default
+    lw32    v1, TH_T_START_ADDR*4(v0)	
+    sw32    v1, TH_T_RA*4(v0)		//RA=default
     
-    lbu	    v0, (TH_T_ID*4 + 2)(v0)	//status byte
-    andi    v0, 0b11111100		//nuluje canSleep, canIdle (vychozi nastaveni procesu)
-    sb	    v0, (TH_T_ID*4 + 2)(v0)	//upraveny status byte
+    lbu	    v1, (TH_T_ID*4 + 2)(v0)	//status byte
+    andi    v1, 0b11111100		//nuluje canSleep, canIdle (vychozi nastaveni procesu)
+    sb	    v1, (TH_T_ID*4 + 2)(v0)	//upraveny status byte
     
 9:    
     _POP    ra

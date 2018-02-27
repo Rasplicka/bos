@@ -23,18 +23,25 @@ int delay=1;
 #define     _LED_INV_VAL    0b100000          //RB5                
 int delay=1;
 #endif
-
-static void testSystemTimer(int a, int b, int c);
+static void longTime();
+static void testSystemTimer(int i);
 static void testRTC(char hour, char min, uint date);
 static void testButton(int event, int value, int index);
 
+static int restart=0;
+
 void m1_start()
 {
-    setCanIdle(1);
+    //if(restart==0)
+    //{
+    //    setCanIdle(1);
+    //}
+    //rtcRegTimeAlarm(&testRTC, 0, 1);
     //setClock(CLOCK_CFG.CLK_ALT3);
     
     //testSystemTimer();
     //systemTimerRegInterval(&testSystemTimer, 1000);
+    /*
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
 
@@ -42,19 +49,25 @@ void m1_start()
     {
         doEvents();
     }
+    */
+    longTime();
     
-    /*
+        //zaznamenat aktualni cas
+    uint before=getTimeMs();
+
+    //budeme merit jak dlouho trva fce go()
+    longTime();
+
+    //do delay se vlozi doba [ms], ktera uplynula
+    uint delayx=compareTimeMs(before);
     
-    ubtnRegEvent(&testButton, 1, 10);
+    systemTimerRegInterval(&testSystemTimer, 155);
+    
+    //ubtnRegEvent(&testButton, 1, 10);
     //trap();
     
-    while(1)
-    {
-        doEvents();
-    }
-    
     int x=0;
-    while(x<100000000)
+    while(x<10)
     {
         //do LATxINV zapise 1 na prislusnou pozici
         _LED_INV_REG = _LED_INV_VAL;
@@ -72,6 +85,11 @@ void m1_start()
         //m1_start()
         x++;
     }    
+    
+    //uint day=getDayMs();
+    //uint second=(day/1000) % 60;
+    //uint minute=(day/1000/60) % 60;
+    //uint hour=(day/1000/60/60);
     
     //int* ad=0;
     //int dat=*ad;
@@ -92,14 +110,33 @@ void m1_start()
         }
         x++;
     } 
-    */
+    
     
 }
 
-static void testSystemTimer(int a, int b, int c)
+static void longTime()
 {
+        int a, b=0;
+        for(a=0; a<190000; a++)
+        {
+            b++;
+            if(a % 1000 == 0)
+            {
+                doEvents();
+            }
+        }    
+}
+
+static void testSystemTimer(int i)
+{
+    int a=0, b=0, c=0;
+    for(a=0; a<1000; a++)
+    {
+        b=a*2;
+        c=a+b;
+    }
     //int d=a+b;
-    _LED_INV_REG = _LED_INV_VAL;
+    //_LED_INV_REG = _LED_INV_VAL;
     //doEvents();
     
     /*
@@ -130,14 +167,19 @@ static void testSystemTimer(int a, int b, int c)
 
 static void testRTC(char hour, char min, uint date)
 {
-    _LED_INV_REG = _LED_INV_VAL;
-    setCanIdle(0);
+    //_LED_INV_REG = _LED_INV_VAL;
+    //setCanIdle(0);
+    //restart=1;
+    //restartProcess();
 }
 
 static void testButton(int event, int value, int index)
 {
+    trap();
+    //exitProcess();
     //if(value==0)
     //{
+        /*
         if(event==UBTN_DOWN)
         {
             _LED_INV_REG = _LED_INV_VAL;
@@ -147,5 +189,6 @@ static void testButton(int event, int value, int index)
         {
             _LED_INV_REG = _LED_INV_VAL;
         }
+        */
     //}
 }

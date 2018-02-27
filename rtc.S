@@ -518,7 +518,7 @@ rtcInit:
     
 1:      
     //nastav day_ms, aby byla synchronizonava s RTC
-    bal	    setDayMs
+    //bal	    setDayMs
     
     _POP    ra
     jrc     ra
@@ -617,7 +617,7 @@ rtcSetTimeBCD:
     _RESTORE_DMA_INT			//ze zalohy t9, meni v0       
 #endif    
     
-    bal	    setDayMs
+    //bal	    setDayMs
     //nop
     
     _POP    ra
@@ -878,6 +878,7 @@ rtcGetDayOfWeek:
 //locals
     
 //<editor-fold defaultstate="collapsed" desc="setDayMs">
+    /*
 .align 2     
 //.global setDayMs    
 .ent setDayMs
@@ -915,6 +916,7 @@ setDayMs:
     jrc	    ra
     
 .end setDayMs 
+    */
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="rtcEvents">
@@ -997,6 +999,7 @@ iVector_rtc:
        
     //nastav day_ms, podle aktualniho casu
     //musi uchovat Hi/Lo, jsou spolecne pro vsechny SRS
+    /*
     mflo    s0			//uchova Lo
     mfhi    s1			//uchova Hi
     
@@ -1004,6 +1007,7 @@ iVector_rtc:
     
     mthi    s1			//obnov Hi
     mtlo    s0			//obnov Lo
+    */
     
     //obsluha udalosti rtcAlarm
     bal	    rtcEvents		//meni a0-a3, v0, v1, t6-t9
