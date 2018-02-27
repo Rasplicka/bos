@@ -646,6 +646,7 @@ getGP:
 //</editor-fold>   
   
 //<editor-fold defaultstate="collapsed" desc="restartApp, restartAppId">
+    /*
 .align 2
 .global restartApp
 .ent restartApp
@@ -692,8 +693,11 @@ restartAppId:
     jrc	    ra
     
 .end restartApp 
+    */
     
 //</editor-fold>
+    
+//timer1    
     
 //<editor-fold defaultstate="collapsed" desc="compareTimerMs">
     
@@ -909,7 +913,7 @@ general_exception_shared_point:
     
     //<editor-fold defaultstate="collapsed" desc="najdi proc_t polozku">
     move    a0, s0			//procID
-    bal	    getProcTableItem		
+    bal	    getProcTableItem		//meni v0, v1, t9
     beqz    v0, 9f			//chyba nenasel polozku v proc_t (nemelo by nikdy nastat)
     move    s3, v0			//proc_t item, zaloha do s3
     //</editor-fold>
@@ -920,13 +924,31 @@ general_exception_shared_point:
     bal	    getErrorBehavior
     
     //v0=behavior
-    beqz    v0, 9f			//skok, behavior = reset
+    li16    v1, ON_ERROR_RESET_SYSTEM
+    beq     v0, v1, 9f			//skok, behavior = reset
     
     //RESET PROCESS, nebo REMOVE PROCESS
-    move    s4, v0			//s4 = zaloha behavior
+    li16    v1, ON_ERROR_REMOVE_PROCESS
+    beq	    v0, v1, 3f			//skok, behavior =  REMOVE_PROCESS
+  
+    //RESET PROCESS
+    move    a0, s0			//a0=procID
+    bal	    resetProcess		//meni t6-t9, v0, v1, a0-a2
+    b16	    4f
+3:    
+    //REMOVE PROCESS
+    move    a0, s0			//a0=procID
+    bal	    removeProcess		//meni t6-t9, v0, v1, a0-a2
+
+    //po RESET PROCESS, nebo EXIT PROCESS
+    
+    
+    //move    s4, v0			//s4 = zaloha behavior
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="remove events procesu">
+    //provede v pripade RESET_PROCESS i REMOVE_PROCESS
+    /*
     move    a0, s0			//a0=procID
     bal	    removeRegEventProcID	//remove reg events    
     move    a0, s0			//a0=procID
@@ -935,22 +957,36 @@ general_exception_shared_point:
     
     li16    v0, ON_ERROR_RESET_PROCESS
     bne	    v0, s4, 3f			//skok, neni RESET PROCESS
+    */
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="RESET PROCESS">
     //RESET PROCESS
+    /*
     lw32    v0, TH_T_START_SP*4(s3)	
     sw32    v0, TH_T_SP*4(s3)		//SP=default
     lw32    v0, TH_T_START_ADDR*4(s3)	
     sw32    v0, TH_T_RA*4(s3)		//RA=default
+    
+    lbu	    v0, (TH_T_ID*4 + 2)(s3)	//status byte
+    andi    v0, 0b11111100		//nuluje canSleep, canIdle
+    sb	    v0, (TH_T_ID*4 + 2)(s3)	//upraveny status byte
 
     b16	    4f
+    */
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="REMOVE PROCESS">
+    /*
 3:
     //REMOVE PROCESS
     sw32    zero, TH_T_ID*4(s3)		//nuluje procID
+    
+    //zajisti novy test zda muze prejit do SLEEP, IDLE
+    li16    v1, 1
+    sb	    v1, (sleepStatus)
+    sb	    v1, (idleStatus)
+    */
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ERET, normalni beh, nebo system process">
@@ -975,7 +1011,7 @@ general_exception_shared_point:
     eret 
     //</editor-fold>
  
-    //<editor-fold defaultstate="collapsed" desc="reset, unknown error">
+    //<editor-fold defaultstate="collapsed" desc="sw reset, unknown error">
 9:    
     //reset, nebo neznama chyba
     la	    v0, softReset
@@ -1030,13 +1066,14 @@ getErrorBehavior:
     
 //</editor-fold>
    
+//process  
     
 //<editor-fold defaultstate="collapsed" desc="getProcID">
 .align 2    
 .global getProcID    
 .ent getProcID
 getProcID:     
-    //vraci v0 = aktualni procID
+    //vraci v0 = procID aktualniho procesu
     //meni v0, v1
   
     lw	    v0, (proc_t_pos)
@@ -1044,7 +1081,7 @@ getProcID:
     bne	    v0, v1, 1f			    //skok, neni prvni (system) proces
     nop
     
-    //systemProcess, aktualni procID je v errorProcID
+    //bezi jako event v systemProcessu, aktualni procID je v errorProcID
     lbu	    v0, (errorProcID)
     jrc	    ra
     
@@ -1088,33 +1125,165 @@ getProcTableItem:
 .end getProcTableItem  
     
 //</editor-fold>
-   
-//<editor-fold defaultstate="collapsed" desc="exitProcess">
-.align 2    
-.global exitProcess    
-.ent exitProcess
-exitProcess:   
+  
+//<editor-fold defaultstate="collapsed" desc="exitProcess, exitProcessID">
+.align 2  
+.global exitProcess
+.ent exitProcess    
+exitProcess:     
     
     bal	    getProcID			//meni v0, v1
-    move    s0, v0
+    move    a0, v0
     
-    move    a0, s0			//a0=procID
-    bal	    removeRegEventProcID	//remove reg events    
-    move    a0, s0			//a0=procID
-    bal	    removeEventCacheProcID	//remove raised events
+.global exitProcessID    
+exitProcessID:    
+    //a0=procID
+    
+    bal	    removeProcess		//meni t6-t9, v0, v1, a0-a2
+    
+    //zjisti, zda je normalni beh, nebo systemProcess - (exitProcess volano z event)
+    la	    v0, proc_t
+    lw	    v1, (proc_t_pos)		//proc_t_pos=proc_t (prvni process = system process)
+    bne	    v0, v1, 1f			//skok, normalni beh   
+
+    //exitProcess volano z event, navrat do systemProcess
+    la	    ra, systemProcessResumeError
+    jrc	    ra
+    
+1:    
+    //normalni beh
+    la	    ra, (doEventsError)		//prepnuti dalsiho procesu, neuklada regs
+    jrc	    ra
+
+.end exitProcess  
+    
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="restartProcess, restartProcessID">
+.align 2   
+.global restartProcess
+.ent restartProcess    
+restartProcess:
+    
+    bal	    getProcID			//meni v0, v1
+    move    a0, v0
+    
+.global restartProcessID    
+restartProcessID:    
+    //a0=procID
+    
+    bal	    resetProcess		//meni t6-t9, v0, v1, a0-a2
+    
+    //zjisti, zda je normalni beh, nebo systemProcess - (exitProcess volano z event)
+    la	    v0, proc_t
+    lw	    v1, (proc_t_pos)		//proc_t_pos=proc_t (prvni process = system process)
+    bne	    v0, v1, 1f			//skok, normalni beh   
+
+    //exitProcess volano z event, navrat do systemProcess
+    la	    ra, systemProcessResumeError
+    jrc	    ra
+    
+1:    
+    //normalni beh
+    la	    ra, (doEventsError)		//prepnuti dalsiho procesu, neuklada regs
+    jrc	    ra
+    
+.end restartProcess 
+    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="removeProcess">
+.align 2    
+.ent removeProcess
+removeProcess:   
+//ukonci aktualni process
+    
+    //meni t6-t7, v0, v1, a0-a2 
+    
+    /*
+    move    t7, ra			//zaloha ra
+    bal	    getProcID			//meni v0, v1
+    move    a0, v0
+    move    ra,	t7			//obnov ra
+    
+removeProcessID:    
+    */
+    //skok sem, pokud je v a0 procID
+    _PUSH   ra
+    
+    move    t6, a0			//zaloha procID do t6
+    //move    a0, s0			//a0=procID
+    bal	    removeRegEventProcID	//meni t7-t9, v0, v1, a0-a2, remove reg events    
+    move    a0, t6			//a0=procID
+    bal	    removeEventCacheProcID	//meni t8, t9, v0, v1, remove raised events
     nop
     
-    move    a0, s0			//procID
-    bal	    getProcTableItem
+    move    a0, t6			//procID
+    bal	    getProcTableItem		//meni v0, v1, t9
+    beqz    v0, 9f			//skok, nenasel polozku
     //v0 = adresa v proc_t
     sw32    zero, TH_T_ID*4(v0)		//nuluje procID
     
-    la	    v0, doEventsError
-    jrc	    v0
+    //zajisti novy test zda muze prejit do SLEEP, IDLE
+    li16    v1, 1
+    sb	    v1, (sleepStatus)
+    sb	    v1, (idleStatus)
     
-.end exitProcess  
+9:    
+    _POP    ra
+    jrc	    ra
+    
+.end removeProcess  
     
 //</editor-fold>  
+    
+//<editor-fold defaultstate="collapsed" desc="resetProcess">
+.align 2    
+.ent resetProcess
+resetProcess:   
+//ukonci aktualni process
+    
+    //meni t6-t7, v0, v1, a0-a2 
+    /*
+    move    t7, ra			//zaloha ra
+    bal	    getProcID			//meni v0, v1
+    move    a0, v0
+    move    ra,	t7			//obnov ra
+    
+resetProcessID:    
+    */
+    //skok sem, pokud je v a0 procID
+    _PUSH   ra
+    
+    move    t6, a0			//zaloha procID do t6
+    //move    a0, s0			//a0=procID
+    bal	    removeRegEventProcID	//meni t7-t9, v0, v1, a0-a2, remove reg events    
+    move    a0, t6			//a0=procID
+    bal	    removeEventCacheProcID	//meni t8, t9, v0, v1, remove raised events
+    nop
+    
+    move    a0, t6			//procID
+    bal	    getProcTableItem		//meni v0, v1, t9
+    beqz    v0, 9f			//skok, nenasel polozku
+    //v0 = adresa v proc_t
+    lw32    v0, TH_T_START_SP*4(v0)	
+    sw32    v0, TH_T_SP*4(v0)		//SP=default
+    lw32    v0, TH_T_START_ADDR*4(v0)	
+    sw32    v0, TH_T_RA*4(v0)		//RA=default
+    
+    lbu	    v0, (TH_T_ID*4 + 2)(v0)	//status byte
+    andi    v0, 0b11111100		//nuluje canSleep, canIdle (vychozi nastaveni procesu)
+    sb	    v0, (TH_T_ID*4 + 2)(v0)	//upraveny status byte
+    
+9:    
+    _POP    ra
+    jrc	    ra
+    
+.end resetProcess  
+    
+//</editor-fold>     
+
+//WDT    
     
 //<editor-fold defaultstate="collapsed" desc="clearWDT">
 .align 2    
@@ -1149,127 +1318,6 @@ startWDT:
     
 //</editor-fold>     
    
-//<editor-fold defaultstate="collapsed" desc="setCanSleep">
-.align 2    
-.global setCanSleep    
-.ent setCanSleep
-setCanSleep:
-//a0=1 enable, 0=disable
-//nastavuje canSleep ve STATUS byte aktualniho processu
-    
-    //meni v0, v1, t7-t9, a0
-    _PUSH   ra
-    
-    move    t7, a0			//zaloha
-    
-    bal	    getProcID			//meni v0, v1, v0 vraci procID
-    move    a0, v0
-    
-    bal	    getProcTableItem		//meni v0, v1, t9
-    beqz    v0, 9f
-
-    //v0=adresa polozky
-    lw	    v1, TH_T_ID*4(v0)
-    ins	    v1, t7, 16, 1		//b16=sleep	    
-    sw	    v1, TH_T_ID*4(v0)
-    
-    //nastav sleepStatus (zajisti v systemProcess test, zda muze prejit do sleep modu)
-    li16    v1, 1   
-    sb	    v1, (sleepStatus)
-    
-    bnez    t7, 9f			//skok, nebyl zrusen sleep mode
-    
-    //pokud nejaky proces nastavi sleep=0, pak bude okamzite nastaveno SYSTEM_STATUS.SLEEP=0
-    _CLR_SLEEP_MODE			//meni t9
-    
-9:    
-    _POP    ra
-    jrc	    ra
-    
-.end setCanSleep  
-    
-//</editor-fold>     
-    
-//<editor-fold defaultstate="collapsed" desc="setCanIdle">
-.align 2    
-.global setCanIdle    
-.ent setCanIdle
-setCanIdle:
-//a0=1 enable, 0=disable
-//nastavuje canSleep ve STATUS byte aktualniho processu
-
-    //meni v0, v1, t7-t9, a0
-    _PUSH   ra
-    
-    move    t7, a0			//zaloha
-    
-    bal	    getProcID			//meni v0, v1, v0 vraci procID
-    move    a0, v0
-    
-    bal	    getProcTableItem		//meni v0, v1, t9
-    beqz    v0, 9f
-
-    //v0=adresa polozky
-    lw	    v1, TH_T_ID*4(v0)
-    ins	    v1, t7, 17, 1		//b17=Idle	    
-    sw	    v1, TH_T_ID*4(v0)
-    
-    //nastav idleStatus (zajisti v systemProcess test, zda muze prejit do idle modu)
-    li16    v1, 1   
-    sb	    v1, (idleStatus)    
-    
-    bnez    t7, 9f			//skok, nebyl zrusen sleep mode
-    
-    //pokud nejaky proces nastavi idle=0, pak bude okamzite nastaveno SYSTEM_STATUS.IDLE=0
-    _CLR_IDLE_MODE			//meni t9
-    
-9:    
-    _POP    ra
-    jrc	    ra
-    
-.end setCanIdle  
-    
-//</editor-fold>    
-   
-//<editor-fold defaultstate="collapsed" desc="getCanSleepAll">
-.align 2    
-.global getCanSleepAll    
-.ent getCanSleepAll
-getCanSleepAll: 
-//a0=procID
-    
-    //meni v0, v1, t9
-    //v0.b0 vraci canSleep, v0.b1 vraci canIdle
-    //v0.b0 nebo v0.b1 jsou nastaveny, pokud jsou nastaveny ve vsech procesech
-    
-    la	    t8, proc_t
-    addiu   t9, t8, (PROC_T_ISIZE * PROC_T_CAPA)
-    li16    v0, 0x3
-    b16	    2f
-    
-1:
-    addiu   t8, PROC_T_ISIZE
-    beq	    t8, t9, 9f
-2:    
-    lbu	    v1, TH_T_ID*4(t8)
-    beqz    v1, 1b			    //skok, nepouzita polozka
-    
-    lbu	    v1, (TH_T_ID*4)+2(t8)	    //load byte 2
-    and	    v0, v1
-    
-    b16	    1b
-    
-    
-9:    
-    //ok, nasel polozku
-    ext	    v0, v0, 0, 2		    //pouze b0-b1
-    jrc	    ra				    //v0=adresa polozky
-    
-.end getCanSleepAll  
-    
-//</editor-fold>    
-    
-    
 //events
     
 //<editor-fold defaultstate="collapsed" desc="getRegEvent">
@@ -1646,6 +1694,8 @@ raiseEventInt:
     
 //</editor-fold>    
     
+//systemProcess, sleep, idle
+    
 //<editor-fold defaultstate="collapsed" desc="systemProcess">
 .align 2    
 .global systemProcess    
@@ -1847,7 +1897,209 @@ systemProcessResumeError:
 .end systemProcess  
     
 //</editor-fold>    
+    
+//<editor-fold defaultstate="collapsed" desc="gotoSleepMZ">
+    
+.align 2
+.ent gotoSleepMZ
+gotoSleepMZ:
+    
+#ifdef WATCHDOG_TIMER 
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT off
+#endif         
+    
+    //unlock
+    sw      zero, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //OSCCON.b4 = SLEEP(1)/IDLE(0)
+    li	    v1, 0x10
+    sw	    v1, (OSCCONSET)		    //set OSCCON.SLPEN
+    
+    //lock
+    sw      zero, (SYSKEY)
+    
+    //prechod do SLEEP
+    wait
+    
+    //po probuzeni
+#ifdef WATCHDOG_TIMER    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on
+#endif  
+    
+    jrc	    ra
+    
+.end gotoSleepMZ  
+    
+//</editor-fold>      
+    
+//<editor-fold defaultstate="collapsed" desc="gotoIdleMZ">
+    
+.align 2
+.ent gotoIdleMZ
+gotoIdleMZ:
+    
+#ifdef WATCHDOG_TIMER 
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT off
+#endif    
+    
+    //unlock
+    sw      zero, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //OSCCON.b4 = SLEEP(1)/IDLE(0)
+    li	    v1, 0x10
+    sw	    v1, (OSCCONCLR)		    //clr OSCCON.SLPEN
+    
+    //lock
+    sw      zero, (SYSKEY)
+    
+    //prechod do SLEEP
+    wait
+    
+    //po probuzeni
+#ifdef WATCHDOG_TIMER    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on
+#endif      
+    
+    jrc	    ra    
+    
+.end gotoIdleMZ  
+    
+//</editor-fold>  
+    
+//<editor-fold defaultstate="collapsed" desc="setCanSleep">
+.align 2    
+.global setCanSleep    
+.ent setCanSleep
+setCanSleep:
+//a0=1 enable, 0=disable
+//nastavuje canSleep ve STATUS byte aktualniho processu
+    
+    //meni v0, v1, t7-t9, a0
+    _PUSH   ra
+    
+    move    t7, a0			//zaloha
+    
+    bal	    getProcID			//meni v0, v1, v0 vraci procID
+    move    a0, v0
+    
+    bal	    getProcTableItem		//meni v0, v1, t9
+    beqz    v0, 9f
 
+    //v0=adresa polozky
+    lw	    v1, TH_T_ID*4(v0)
+    ins	    v1, t7, 16, 1		//b16=sleep	    
+    sw	    v1, TH_T_ID*4(v0)
+    
+    //nastav sleepStatus (zajisti v systemProcess test, zda muze prejit do sleep modu)
+    li16    v1, 1   
+    sb	    v1, (sleepStatus)
+    
+    bnez    t7, 9f			//skok, nebyl zrusen sleep mode
+    
+    //pokud nejaky proces nastavi sleep=0, pak bude okamzite nastaveno SYSTEM_STATUS.SLEEP=0
+    _CLR_SLEEP_MODE			//meni t9
+    
+9:    
+    _POP    ra
+    jrc	    ra
+    
+.end setCanSleep  
+    
+//</editor-fold>     
+    
+//<editor-fold defaultstate="collapsed" desc="setCanIdle">
+.align 2    
+.global setCanIdle    
+.ent setCanIdle
+setCanIdle:
+//a0=1 enable, 0=disable
+//nastavuje canSleep ve STATUS byte aktualniho processu
+
+    //meni v0, v1, t7-t9, a0
+    _PUSH   ra
+    
+    move    t7, a0			//zaloha
+    
+    bal	    getProcID			//meni v0, v1, v0 vraci procID
+    move    a0, v0
+    
+    bal	    getProcTableItem		//meni v0, v1, t9
+    beqz    v0, 9f
+
+    //v0=adresa polozky
+    lw	    v1, TH_T_ID*4(v0)
+    ins	    v1, t7, 17, 1		//b17=Idle	    
+    sw	    v1, TH_T_ID*4(v0)
+    
+    //nastav idleStatus (zajisti v systemProcess test, zda muze prejit do idle modu)
+    li16    v1, 1   
+    sb	    v1, (idleStatus)    
+    
+    bnez    t7, 9f			//skok, nebyl zrusen sleep mode
+    
+    //pokud nejaky proces nastavi idle=0, pak bude okamzite nastaveno SYSTEM_STATUS.IDLE=0
+    _CLR_IDLE_MODE			//meni t9
+    
+9:    
+    _POP    ra
+    jrc	    ra
+    
+.end setCanIdle  
+    
+//</editor-fold>    
+   
+//<editor-fold defaultstate="collapsed" desc="getCanSleepAll">
+.align 2    
+.global getCanSleepAll    
+.ent getCanSleepAll
+getCanSleepAll: 
+//a0=procID
+    
+    //meni v0, v1, t9
+    //v0.b0 vraci canSleep, v0.b1 vraci canIdle
+    //v0.b0 nebo v0.b1 jsou nastaveny, pokud jsou nastaveny ve vsech procesech
+    
+    la	    t8, proc_t
+    addiu   t9, t8, (PROC_T_ISIZE * PROC_T_CAPA)
+    li16    v0, 0x3
+    b16	    2f
+    
+1:
+    addiu   t8, PROC_T_ISIZE
+    beq	    t8, t9, 9f
+2:    
+    lbu	    v1, TH_T_ID*4(t8)
+    beqz    v1, 1b			    //skok, nepouzita polozka
+    
+    lbu	    v1, (TH_T_ID*4)+2(t8)	    //load byte 2
+    and	    v0, v1
+    
+    b16	    1b
+    
+    
+9:    
+    //ok, nasel polozku
+    ext	    v0, v0, 0, 2		    //pouze b0-b1
+    jrc	    ra				    //v0=adresa polozky
+    
+.end getCanSleepAll  
+    
+//</editor-fold>        
+    
+//defrag    
+    
 //<editor-fold defaultstate="collapsed" desc="defragTableW">
     
 .align 2
@@ -1985,84 +2237,4 @@ defragTableB:
     
 .end defragTableB    
     
-//</editor-fold>       
-    
-//<editor-fold defaultstate="collapsed" desc="gotoSleepMZ">
-    
-.align 2
-.ent gotoSleepMZ
-gotoSleepMZ:
-    
-#ifdef WATCHDOG_TIMER 
-    li	    t9, 0x8000
-    sh	    t9, (WDTCONCLR)		    //WDT off
-#endif         
-    
-    //unlock
-    sw      zero, (SYSKEY)
-    li      v0, 0xaa996655
-    sw      v0, (SYSKEY)
-    li      v0, 0x556699aa
-    sw      v0, (SYSKEY)
-    
-    //OSCCON.b4 = SLEEP(1)/IDLE(0)
-    li	    v1, 0x10
-    sw	    v1, (OSCCONSET)		    //set OSCCON.SLPEN
-    
-    //lock
-    sw      zero, (SYSKEY)
-    
-    //prechod do SLEEP
-    wait
-    
-    //po probuzeni
-#ifdef WATCHDOG_TIMER    
-    li	    t9, 0x8000
-    sh	    t9, (WDTCONSET)		    //WDT on
-#endif  
-    
-    jrc	    ra
-    
-.end gotoSleepMZ  
-    
-//</editor-fold>      
-    
-//<editor-fold defaultstate="collapsed" desc="gotoIdleMZ">
-    
-.align 2
-.ent gotoIdleMZ
-gotoIdleMZ:
-    
-#ifdef WATCHDOG_TIMER 
-    li	    t9, 0x8000
-    sh	    t9, (WDTCONCLR)		    //WDT off
-#endif    
-    
-    //unlock
-    sw      zero, (SYSKEY)
-    li      v0, 0xaa996655
-    sw      v0, (SYSKEY)
-    li      v0, 0x556699aa
-    sw      v0, (SYSKEY)
-    
-    //OSCCON.b4 = SLEEP(1)/IDLE(0)
-    li	    v1, 0x10
-    sw	    v1, (OSCCONCLR)		    //clr OSCCON.SLPEN
-    
-    //lock
-    sw      zero, (SYSKEY)
-    
-    //prechod do SLEEP
-    wait
-    
-    //po probuzeni
-#ifdef WATCHDOG_TIMER    
-    li	    t9, 0x8000
-    sh	    t9, (WDTCONSET)		    //WDT on
-#endif      
-    
-    jrc	    ra    
-    
-.end gotoIdleMZ  
-    
-//</editor-fold>       
+//</editor-fold>        

@@ -18,8 +18,8 @@ extern void doEvents();
 extern void doEventsL(void* label);
 extern void doEventsError();
 extern uint getGP();
-extern void restartApp();
-extern void restartAppId(char id);
+//extern void restartApp();
+//extern void restartAppId(char id);
 extern uint compareTimerMs(uint);
 extern void pauseEvents(uint);                       //time ms
 extern void general_exception();
@@ -27,8 +27,13 @@ extern void general_exception();
 extern char getProcID();
 extern void* getProcTableItem(char id);
 extern void exitProcess();
+extern void exitProcessID(char id);
+extern void restartProcess();
+extern void restartProcessID(char id);
+
 extern void clearWDT();
 extern void startWDT();
+
 extern void setCanSleep(char);
 extern void setCanIdle(char);
 extern void unregEvent(void*);
