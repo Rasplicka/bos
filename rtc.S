@@ -645,7 +645,7 @@ rtcSetDateBCD:
     _DISABLE_INT			//meni t8, t9, v0
     
     //nuluj RTCCON1.WRLOCK
-    _SYSKEY_WRLOCK			//meni v0, v1
+    _SYSKEY_WRLOCK_ENABLE		//meni v0, v1
     _DATETIME_SYNC			//nemi v0, v1
     _ALARM_SYNC				//meni v0, v1
 
@@ -931,7 +931,7 @@ rtcEvents:
     _GET_HOUR_FROM_BCD a0, t7		//meni t9, t7=hour
     
     move    a0, zero			//hledani od zacatku regEventTable
-    li	    a1, RTC_TALARM_ID	
+    li	    a1, RTC_TALARM_ID		//time alarm eventID
 
 1:  
     //a0=adresa zacetku hledani

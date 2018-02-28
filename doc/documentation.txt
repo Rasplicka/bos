@@ -77,16 +77,16 @@ timer1 MM+MZ
 RTC    MM+MZ
 UBTN   MM+MZ
 ukonceni procesu
+-interrupt MZ (moznost preruseni vyssi priority) 
 
 dodelat
--interrupt MZ (moznost preruseni vyssi priority) 
--SRSCTL.ESS error SRS?
+
 
 
 #if defined BUFSIZE && BUFSIZE >= 1024
 #if defined (MAX) && ! defined (MIN) 
 
 interrupt priority/sub/SRS-MM, SRS-MZ
-cpuTimer    1/0/1 (pouze safe mode)
-timer1      2/0/1
-RTC         2/1/1
+cpuTimer    1/0 (pri safe mode)
+timer1      2/1
+RTC         1/2

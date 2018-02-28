@@ -1346,6 +1346,91 @@ startWDT:
    
 //events
     
+//<editor-fold defaultstate="collapsed" desc="regListener">
+.align 2
+.global	regListener    
+.ent regListener
+regListener:
+//a0=fn
+//a1=eventID
+//    
+    //vraci v0=adr polozky, 0x0=chyba
+    _PUSH   ra
+    
+    bal	    getProcID		    //meni v0, v1
+    sll	    v0, v0, 8		    
+    or	    a1, v0		    //eventID, procID, 0x0, 0x0 (byte 0,1,2,3)
+    li	    a2, 0xFFFFFFFF	    // -max
+    li	    a3, 0x7FFFFFFF	    // +max
+    
+    //a0=fn, 
+    //a1=eventID, procID, (var2=0, var3=0)
+    //a2=min (var0= -max) 
+    //a3=max (var1= +max)
+    bal	    addRegEvent		    //meni t9, v0, v1
+    
+    //v0=0 error, jinak adresa polozky
+    
+    _POP    ra
+    jrc	    ra 
+    
+.end regListener   
+    
+//</editor-fold>
+ 
+//<editor-fold defaultstate="collapsed" desc="raiseEventID">
+.align 2
+.global	raiseEventID    
+.ent raiseEventID
+raiseEventID:
+//a0=eventID
+//a1=param0
+//a2=param1
+//a3=param3    
+    
+    //meni a0-a3, v0, v1, t0-t9
+    //vraci v0=0x1 = OK, 0x0 = chyba
+    
+    _PUSH   ra
+    move    t0, a0
+    move    t1, a1
+    move    t2, a2
+    move    t3, a3
+    addiu   t4, zero, 0x1		//return val
+    move    a0, zero			//hledani od zacatku regEventTable
+    
+1:  
+    move    a1, t0			//eventID
+    
+    //a0=adresa zacetku hledani
+    //a1=eventID
+    bal	    getRegEvent			//meni v0, v1, t9, (vraci v0=adresa, nebo 0x0 - polozka neni)
+    beqz    v0, 9f			//skok, nenasel polozku
+    
+    //nasel polozku v regEventTable
+    move    a0, v0			//adresa polozky v regEventTable
+    
+    //a0=adresa polozky v regEventTable (pouzije z ni procID a fn addr)
+    //a1=p0
+    //a2=p2
+    //a3=p3
+    move    a1, t1			//param 0
+    move    a2, t2			//param 1
+    move    a3, t3			//param 2
+    bal	    raiseEvent			//meni t9, v0, v1 (vraci 0x1=OK, 0x0=chyba)
+    and	    t4, v0			//return val
+    b16	    1b
+    
+9:  
+    move    v0, t4			//return val
+    _POP    ra
+    jrc	    ra
+    
+.end raiseEventID   
+    
+//</editor-fold>    
+    
+    
 //<editor-fold defaultstate="collapsed" desc="getRegEvent">
 .align 2    
 .global getRegEvent    
@@ -1745,6 +1830,8 @@ systemProcess:
     //v c/c++ sem totiz volajici uklada parametry (ale nevim, proc volana fce dela to same,
     //tj. kopiruje a0-a2 do stacku volajici fce)
     
+    addiu   s3, zero, 0xFE		    //procID systemProcess
+    sb	    s3, (errorProcID)		    //aktualni procID
     
     //<editor-fold defaultstate="collapsed" desc="eventCache error">
     //test eventCache error (full)
@@ -1768,11 +1855,13 @@ systemProcess:
     //</editor-fold>
    
 1:
+    //pri SLEEP/IDLE, pokud periferie provede probuzeni, 
+    //ale stale trvaji podminky SLEEP/IDLE, opakuje systemProcess
     
 #ifdef WATCHDOG_TIMER
     bal	    clearWDT
 #endif    
-    
+   
     la	    s0, eventCache		    //eventCache
     addiu   s1, s0, (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)   
     li	    s2, 0xFF
@@ -1797,6 +1886,7 @@ systemProcess:
 
     //po navratu z event fn
     sb	    s2, EVC_PROCID(s0)		    //oznac jako dokonceno (ale ne empty, aby polozku neobsadilo raiseEvent z interruptu)
+    sb	    s3, (errorProcID)		    //zpet aktualni procID
     di
     ehb
     
@@ -1847,12 +1937,12 @@ systemProcess:
 
 8:    
     //can sleep
-#ifdef PIC32MZ    
-    bal	    gotoSleepMZ
-#endif
-#ifdef PIC32MM    
-    bal	    gotoSleepMM
-#endif
+//#ifdef PIC32MZ    
+//    bal	    gotoSleepMZ
+//#endif
+//#ifdef PIC32MM    
+    bal	    gotoSleep
+//#endif
     
     //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do SLEEP)
     b16	    1b
@@ -1889,12 +1979,12 @@ systemProcess:
     
 11:    
     //can idle
-#ifdef PIC32MZ    
-    bal	    gotoIdleMZ
-#endif
-#ifdef PIC32MM    
-    bal	    gotoIdleMM
-#endif
+//#ifdef PIC32MZ    
+//    bal	    gotoIdleMZ
+//#endif
+//#ifdef PIC32MM    
+    bal	    gotoIdle
+//#endif
     
     //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do IDLE)
     b16	    1b
@@ -1925,7 +2015,7 @@ systemProcessResumeError:
 //</editor-fold>    
     
 //<editor-fold defaultstate="collapsed" desc="gotoSleepMZ">
-    
+    /*
 .align 2
 .ent gotoSleepMZ
 gotoSleepMZ:
@@ -1961,11 +2051,55 @@ gotoSleepMZ:
     jrc	    ra
     
 .end gotoSleepMZ  
+    */
+//</editor-fold>  
     
-//</editor-fold>      
+//<editor-fold defaultstate="collapsed" desc="gotoSleep">
+    
+.align 2
+.ent gotoSleep
+gotoSleep:
+
+#ifdef WATCHDOG_TIMER 
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT off
+#endif         
+    
+    //unlock
+    sw      zero, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //OSCCON.b4 = SLEEP(1)/IDLE(0)
+    li	    v1, 0x10
+    sw	    v1, (OSCCONSET)		    //set OSCCON.SLPEN
+    
+    //lock
+    sw      zero, (SYSKEY)
+    
+    //prechod do SLEEP
+    wait
+    
+    //po probuzeni
+#ifdef WATCHDOG_TIMER    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on
+#endif  
+    
+#ifdef SAFE_PROCESS
+    mtc0    zero, _CP0_COUNT
+#endif  
+    
+    jrc	    ra
+    
+.end gotoSleep  
+    
+//</editor-fold>   
     
 //<editor-fold defaultstate="collapsed" desc="gotoIdleMZ">
-    
+    /*
 .align 2
 .ent gotoIdleMZ
 gotoIdleMZ:
@@ -2001,8 +2135,52 @@ gotoIdleMZ:
     jrc	    ra    
     
 .end gotoIdleMZ  
-    
+    */
 //</editor-fold>  
+    
+//<editor-fold defaultstate="collapsed" desc="gotoIdle">
+    
+.align 2
+.ent gotoIdle
+gotoIdle:    
+   
+#ifdef WATCHDOG_TIMER 
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT off
+#endif    
+    
+    //unlock
+    sw      zero, (SYSKEY)
+    li      v0, 0xaa996655
+    sw      v0, (SYSKEY)
+    li      v0, 0x556699aa
+    sw      v0, (SYSKEY)
+    
+    //OSCCON.b4 = SLEEP(1)/IDLE(0)
+    li	    v1, 0x10
+    sw	    v1, (OSCCONCLR)		    //clr OSCCON.SLPEN
+    
+    //lock
+    sw      zero, (SYSKEY)
+    
+    //prechod do SLEEP
+    wait
+    
+    //po probuzeni
+#ifdef WATCHDOG_TIMER    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONSET)		    //WDT on
+#endif      
+    
+#ifdef SAFE_PROCESS
+    mtc0    zero, _CP0_COUNT
+#endif      
+    
+    jrc	    ra  
+    
+.end gotoIdle  
+    
+//</editor-fold>    
     
 //<editor-fold defaultstate="collapsed" desc="setCanSleep">
 .align 2    

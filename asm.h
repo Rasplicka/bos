@@ -34,6 +34,9 @@ extern void exitProcessID(char id);
 extern void restartProcess();
 extern void restartProcessID(char id);
 
+extern uint regListener(void* fn, char eventID);
+extern uint raiseEventID(char eventID, int p0, int p1, int p2);
+
 extern void clearWDT();
 extern void startWDT();
 

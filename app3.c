@@ -26,18 +26,21 @@ int delay=1;
 static void testSystemTimer();
 static void testSystemTimer2();
 static void testButton(int event, int value, int index);
+static void listener(int p0, int p1, int p2);
 
 void m3_start()
 {
-    /*
-    systemTimerRegInterval(&testSystemTimer, 200);
+    
+    //systemTimerRegInterval(&testSystemTimer, 4000);
+    setCanSleep(1);
     //ubtnRegEvent(&testButton, 21, 30);
-    while(1)
-    {
-        doEvents();
-    }    
-    */
-    setCanIdle(1);
+    //while(1)
+    //{
+    //    doEvents();
+    //}    
+    
+    //setCanIdle(1);
+    //regListener(&listener, 155);
     
     while(1)
     {
@@ -112,4 +115,10 @@ static void testButton(int event, int value, int index)
             _LED_INV_REG = _LED_INV_VAL;
         }
     //}
+}
+
+static void listener(int p0, int p1, int p2)
+{
+    int a=p0+p1+p2;
+    
 }

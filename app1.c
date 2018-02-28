@@ -41,33 +41,22 @@ void m1_start()
     
     //testSystemTimer();
     //systemTimerRegInterval(&testSystemTimer, 1000);
-    /*
+    
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
-
+    setCanSleep(1);
     while(1)
     {
         doEvents();
     }
-    */
-    longTime();
-    
-        //zaznamenat aktualni cas
-    uint before=getTimeMs();
 
-    //budeme merit jak dlouho trva fce go()
-    longTime();
-
-    //do delay se vlozi doba [ms], ktera uplynula
-    uint delayx=compareTimeMs(before);
     
-    systemTimerRegInterval(&testSystemTimer, 155);
     
     //ubtnRegEvent(&testButton, 1, 10);
     //trap();
     
     int x=0;
-    while(x<10)
+    while(x<10000)
     {
         //do LATxINV zapise 1 na prislusnou pozici
         _LED_INV_REG = _LED_INV_VAL;
@@ -86,6 +75,7 @@ void m1_start()
         x++;
     }    
     
+    //raiseEventID(155, 0, 1, 2);
     //uint day=getDayMs();
     //uint second=(day/1000) % 60;
     //uint minute=(day/1000/60) % 60;
@@ -100,10 +90,10 @@ void m1_start()
         _LED_INV_REG = _LED_INV_VAL;
         
         int a, b=0;
-        for(a=0; a<190000; a++)
+        for(a=0; a<250000; a++)
         {
             b++;
-            if(a % 10000 == 0)
+            if(a % 100 == 0)
             {
                 doEvents();
             }
@@ -129,14 +119,9 @@ static void longTime()
 
 static void testSystemTimer(int i)
 {
-    int a=0, b=0, c=0;
-    for(a=0; a<1000; a++)
-    {
-        b=a*2;
-        c=a+b;
-    }
+
     //int d=a+b;
-    //_LED_INV_REG = _LED_INV_VAL;
+    _LED_INV_REG = _LED_INV_VAL;
     //doEvents();
     
     /*
@@ -167,7 +152,8 @@ static void testSystemTimer(int i)
 
 static void testRTC(char hour, char min, uint date)
 {
-    //_LED_INV_REG = _LED_INV_VAL;
+    _LED_INV_REG = _LED_INV_VAL;
+    setCanSleep(0);
     //setCanIdle(0);
     //restart=1;
     //restartProcess();

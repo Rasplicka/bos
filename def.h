@@ -1,5 +1,8 @@
 //obsahuje globalni definice pro C/C++ i ASM
 
+#define PIC32MM0256
+//#define PIC32MM
+
 // <editor-fold defaultstate="collapsed" desc="CPU">
 #ifdef PIC32MZ
 
@@ -33,46 +36,66 @@
 //#define PIC32MM0256_36pin
 
 
+//watch dog timer
+//#define     WATCHDOG_TIMER
 
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="System">
 //#define     SIMULATOR
 
-#define		RAM_BASE            0x80000000
-
-#define     SRS_STACK_SIZE      512             //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
-#define     STACK_CHECK_VALUE   0xF010E020
-
-#ifdef PIC32MM0256
-#define		RAM_SIZE            32*1024 
-#define     STACK_SIZE          8*1024
-#endif
-
-#ifdef PIC32MM0064
-#define		RAM_SIZE            8*1024
-#define     STACK_SIZE          3*1024
-#endif
-
-#ifdef PIC32MZ
-#define     EBASE               0x9D000000
-#define		RAM_SIZE            512*1024
-#define     STACK_SIZE          64*1024
-#endif
-
+#define		RAM_BASE                    0x80000000
+#define     SRS_STACK_SIZE              512         //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
+#define     STACK_CHECK_VALUE           0xF010E020
 
 #define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
-#define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF             //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
-
-#define     ENABLE_APP_RESTART_ON_ERROR             //povoluje restart procesu, pokud nastal general_exception
+#define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF     //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 #define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
 
-#ifdef PIC32MZ
-#define     TIMER1_INTERVAL         1               //interval ms
-#else
+#ifdef PIC32MM0256
+//------------------------------------------------------------------------------
+//BOS used RAM cca 10kB
+
+#define		RAM_SIZE                32*1024 
+#define     STACK_SIZE              8*1024
+#define		REG_EVENT_TABLE_CAPA    20              //max. pocet registraci udalosti (polozka 16 bytes) 320 B
+#define		EVENT_CACHE_CAPA        20              //velikost cache udalosti        (polozka 20 bytes) 400 B
+#define     PROC_T_CAPA             8               //kapacita proc_t (polozka 96 Bytes) 768 B
+
 #define     TIMER1_INTERVAL         10              //interval ms
+//------------------------------------------------------------------------------
 #endif
+
+#ifdef PIC32MM0064
+//------------------------------------------------------------------------------
+//BOS used RAM cca 4kB
+
+#define		RAM_SIZE                8*1024
+#define     STACK_SIZE              3*1024
+#define		REG_EVENT_TABLE_CAPA    16              //max. pocet registraci udalosti (polozka 16 bytes) 256 B
+#define		EVENT_CACHE_CAPA        12              //velikost cache udalosti        (polozka 20 bytes) 240 B
+#define     PROC_T_CAPA             4               //kapacita proc_t (polozka 96 Bytes) 384 B
+
+#define     TIMER1_INTERVAL         10              //interval ms
+//------------------------------------------------------------------------------
+#endif
+
+#ifdef PIC32MZ
+//------------------------------------------------------------------------------      
+//BOS used RAM cca 68kB (app. stack ~4kB)
+
+#define     EBASE                   0x9D000000
+#define		RAM_SIZE                512*1024        //512kB
+#define     STACK_SIZE              64*1024         //64kB (SRS stacks 7*512 = 3.5kB)
+#define		REG_EVENT_TABLE_CAPA    64              //max. pocet registraci udalosti (polozka 16 bytes) 1024 B
+#define		EVENT_CACHE_CAPA        64              //velikost cache udalosti        (polozka 20 bytes) 1280 B
+#define     PROC_T_CAPA             16              //kapacita proc_t (polozka 96 Bytes) 1.5kB
+
+#define     TIMER1_INTERVAL         1               //interval ms
+//------------------------------------------------------------------------------
+#endif
+
 
 // </editor-fold>
 
@@ -87,7 +110,6 @@
 #define     ON_ERROR_REMOVE_PROCESS             2
 
 // </editor-fold>
-
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 #define             USE_GRAPHICS                    //pouzije graphics
@@ -104,7 +126,6 @@
 #define             USE_TOUCHPAD                    //aktivuje vyssi fce touchpadu (nezavisle na konkretnim typu)
 #define             TOUCHPAD_XPT2046_INIT           //aktivuje modul touchpadu, typ XPT2046
 // </editor-fold>
-
 
 // <editor-fold defaultstate="collapsed" desc="Periph driver (SPI, I2C, ...)">
 //SPI ---------------------------------------------------
@@ -123,7 +144,6 @@
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
 #define     PROC_T_ISIZE    96          //velikost polozky v proc_t
-#define     PROC_T_CAPA     8           //kapacita proc_t
 
 //cislovani pro pouziti v c/c++ (index word), v asm se musi vynasobit 4
 //
@@ -159,8 +179,6 @@
 // <editor-fold defaultstate="collapsed" desc="Events">
 //regEventTable a eventCache
 #define		REG_EVENT_TABLE_ISIZE	16
-#define		REG_EVENT_TABLE_CAPA    20
-
 #define		RET_EVENTID		0
 #define		RET_PROCID		1
 #define		RET_V2			2
@@ -170,8 +188,6 @@
 #define		RET_FN			12
 
 #define		EVENT_CACHE_ISIZE	20
-#define		EVENT_CACHE_CAPA	20
-
 #define		EVC_PROCID		0    
 #define		EVC_P0			4
 #define		EVC_P1			8

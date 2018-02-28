@@ -190,17 +190,17 @@ systemTimerRegInterval:
     
     _PUSH   ra
     
-    move    a2, a1		    //time ms
+    move    a2, a1		    //interval ms
+    move    a3, a1		    //prvni nastaveni intervalu ms
     bal	    getProcID		    //meni v0, v1
     sll	    a1, v0, 8		    //procID do b8-b15
     ori	    a1, TIMER1_EVENT_ID	    
-    move    a3, zero
     
     //a0=fn, 
     //a1=eventID, procID, (var2=0, var3=0)
     //a2=time (var0) 
     //a3=zero (var1)
-    bal	    addRegEvent
+    bal	    addRegEvent		    //meni t9, v0, v1
     
     //v0=0 error, jinak adresa polozky
     
@@ -211,73 +211,6 @@ systemTimerRegInterval:
     
 //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="systemTimerRegDelay">
-    //zruseno (bud pouzit pauseEvent(ms), systemTimerRegInterval() + volani UnregEvent)
-    /*
-.align 2
-.global systemTimerRegDelay
-.ent systemTimerRegDelay
-systemTimerRegDelay:
-//a0=adresa status byte
-//a1=delay ms 
-//vraci v0=1 OK, v0=0 chyba, plna tabulka 
-    
-//po uplynuti casu nastavi status byte=1, nulovat ho pak musi app  
-//udalost nastane pouze jednou, app ji pak nemusi unreg (provede se automaticky)    
-    
-    
-    la	    v1, (timer1_events)
-    addiu   v0, zero, TIMER1_EVENT_CAPA
-
-1:    
-    lw	    t9, (v1)
-    bnez    t9, 2f
-    //nop
-    
-    //volna polozka
-    sw	    a0, (v1)				//adresa status byte
-    sw	    zero, 4(v1)				//default value = 0, neni repeat
-    sw	    a1, 8(v1)				//value
-   
-    li16    v0, 1				//vraci OK
-    jrc	    ra
-    
-2:
-    addiu   v1, TIMER1_EVENT_ISIZE
-    addiu   v0, -1
-    bnez    v0, 1b
-    //nop
-    
-    //v0=0, vraci chybu
-    jrc	    ra     
-    
-    
-.end systemTimerRegDelay
-    */
-    
-//</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="systemTimerUnregInterval">
-    //vola UnregEvent(fn)
-    /*
-.align 2
-.global systemTimerUnregInterval
-.ent systemTimerUnregInterval
-systemTimerUnregInterval:
-//a0=adresa fn    
-    
-    _PUSH   ra
-    
-    bal	    UnregEvent			//meni t7-t9, v0, v1, a0-a2
-    
-    _POP    ra
-    jrc	    ra
- 
-.end systemTimerUnregInterval  
-    */
-    
-//</editor-fold>
-   
 //<editor-fold defaultstate="collapsed" desc="iVector_timer1">
 .align 2    
 .global iVector_timer1   
