@@ -2079,6 +2079,8 @@ gotoSleep:
     //lock
     sw      zero, (SYSKEY)
     
+    mtc0    zero, _CP0_VIEW_IPL		    //STATUS.IPL=0
+    ehb
     //prechod do SLEEP
     wait
     

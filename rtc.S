@@ -376,8 +376,8 @@ rtcInit:
    
     //IEC0.b14, IFS0.b14
     li	    v0, (1 << 14)
-    sw	    v0, (IFS1CLR)					//flag
-    sw	    v0, (IEC1SET)					//enable
+    sw	    v0, (IFS0CLR)					//flag
+    sw	    v0, (IEC0SET)					//enable
 #endif
     
 #ifdef PIC32MM0256

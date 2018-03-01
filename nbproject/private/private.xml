@@ -5,18 +5,18 @@
         <group>
             <file>file:/D:/bos2/BOS2.X/timer1.S</file>
             <file>file:/D:/bos2/BOS2.X/def.h</file>
-            <file>file:/D:/bos2/BOS2.X/rtc.txt</file>
             <file>file:/D:/bos2/BOS2.X/rtc.S</file>
+            <file>file:/D:/bos2/BOS2.X/clock_cfgBits_mm.c</file>
             <file>file:/D:/bos2/BOS2.X/sleep_idle.txt</file>
-            <file>file:/D:/bos2/BOS2.X/events.txt</file>
+            <file>file:/D:/bos2/BOS2.X/main.h</file>
             <file>file:/D:/bos2/BOS2.X/main.c</file>
             <file>file:/D:/bos2/BOS2.X/asm.h</file>
             <file>file:/D:/bos2/BOS2.X/core_fn.S</file>
             <file>file:/D:/bos2/BOS2.X/ubtn2.S</file>
             <file>file:/D:/bos2/BOS2.X/app1.c</file>
             <file>file:/D:/bos2/BOS2.X/app2.c</file>
+            <file>file:/D:/bos2/BOS2.X/asm_macro.S</file>
             <file>file:/D:/bos2/BOS2.X/app3.c</file>
-            <file>file:/D:/bos2/BOS2.X/doc/documentation.txt</file>
             <file>file:/D:/bos2/BOS2.X/user_apps.c</file>
         </group>
     </open-files>

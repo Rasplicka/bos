@@ -44,7 +44,7 @@ void m1_start()
     
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
-    setCanSleep(1);
+    setCanIdle(1);
     while(1)
     {
         doEvents();
@@ -153,7 +153,7 @@ static void testSystemTimer(int i)
 static void testRTC(char hour, char min, uint date)
 {
     _LED_INV_REG = _LED_INV_VAL;
-    setCanSleep(0);
+    setCanIdle(0);
     //setCanIdle(0);
     //restart=1;
     //restartProcess();
