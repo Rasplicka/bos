@@ -53,8 +53,8 @@ timer1Init:
     //pro 32.0kHz PR1=320 - 10ms, PR1=32 - 1ms 
     #define	PR1_VALUE			(32000/(1000/TIMER1_INTERVAL))
 
-    //sw	    zero, (T1CON)	    //timer1 OFF (ON bit=0)
-    li	    t9, 0x0202 //0x0202
+    //sw    zero, (T1CON)	    //timer1 OFF (ON bit=0)
+    li	    t9, 0x0202		    //0x2202 pri SIDL=1
     sw	    t9, (T1CON)		    //setting (ON=0), src=LPRC (32kHz), div=1:1, idle-run, 
     
     //<editor-fold defaultstate="collapsed" desc="PIC32MM0064">

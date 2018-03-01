@@ -2076,6 +2076,10 @@ gotoSleep:
     li	    v1, 0x10
     sw	    v1, (OSCCONSET)		    //set OSCCON.SLPEN
     
+    //PWRCON MM - test sleep mode
+    li	    v1, 0x7
+    sw	    v1, (PWRCON)
+    
     //lock
     sw      zero, (SYSKEY)
     

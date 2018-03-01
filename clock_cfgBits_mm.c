@@ -19,7 +19,7 @@
 
 // FPOR
 #pragma config BOREN = BOR3             // Brown-out Reset Enable bits (Brown-out Reset enabled in hardware; SBOREN bit disabled)
-#pragma config RETVR = OFF              // Retention Voltage Regulator Enable bit (Retention regulator is disabled)
+#pragma config RETVR = ON               // Retention Voltage Regulator Enable bit (Retention regulator is disabled)
 #pragma config LPBOREN = ON             // Low Power Brown-out Enable bit (Low power BOR is enabled, when main BOR is disabled)
 
 // FWDT

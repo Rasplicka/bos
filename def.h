@@ -51,7 +51,7 @@
 //#define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
 
 //watch dog timer
-#define     WATCHDOG_TIMER
+//#define     WATCHDOG_TIMER
 
 #ifdef PIC32MM0256
 //------------------------------------------------------------------------------
@@ -327,7 +327,7 @@
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="ubtn">
-#define     UBTN
+//#define     UBTN
 
 #define     UBTN_DOWN       1
 #define     UBTN_UP         2

@@ -35,7 +35,7 @@ void m2_start()
 
     //ubtnRegEvent(&testButton, 11, 20);
     systemTimerRegInterval(&testSystemTimer, 2000);
-    setCanIdle(1);
+    setCanSleep(1);
     while(1)
     {
         doEvents();

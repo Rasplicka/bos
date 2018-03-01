@@ -343,8 +343,9 @@ rtcInit:
 //nastavi time_ms (long int) a date_century
 //vraci v0=ok, muze pokracovat, 1=chyba, nelze spustiti OS 
 
-    #define	RTC_INTERRUPT_PRIORITY		1
-    #define	RTC_INTERRUPT_SUBPRIORITY	2	
+    //!!! zmena kvuli testu
+    #define	RTC_INTERRUPT_PRIORITY		7
+    #define	RTC_INTERRUPT_SUBPRIORITY	3	
     
     _PUSH   ra
     //POZOR, v prubehu fce je t8 a t9 pouzito jako zaloha stavu interrupt a dma suspend

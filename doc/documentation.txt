@@ -80,6 +80,8 @@ ukonceni procesu
 -interrupt MZ (moznost preruseni vyssi priority) 
 
 dodelat
+sleep mode, MM se neumi probudit s sleep modu, pomoci RTC interruptu, pri idle to funguje.
+v idle modu zase neni funkci SIDL bit u timeru1, tzn. ze nelze zakazat interrupt od timeru1 v idle (to ale nepotrebuji)
 
 
 
