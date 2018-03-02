@@ -1,9 +1,12 @@
 //obsahuje globalni definice pro C/C++ i ASM
 
-#define PIC32MM0256
+//#define PIC32MM0256
 //#define PIC32MM
 
+
 // <editor-fold defaultstate="collapsed" desc="CPU">
+
+    // <editor-fold defaultstate="collapsed" desc="CPU MZ">
 #ifdef PIC32MZ
 
 //XTAL 24MHz
@@ -17,25 +20,27 @@
 //FRC 8MHz
 //#define     CFG_CLKSYS_FRC
 
+#endif
+    // </editor-fold>
 
-//XTAL SOSC 37.768kHz (RTC, timer1)
-//CFG_SOSC_ENABLE povoli sec. oscilator, pokud je pripojen XTAL 32.768kHz
-//jinak muze byt priveden ext. signal 32.768kHz na SOSCO
-//pokud ma RTC tento signal pouzit, musi byt definovano SOSC_CLK_TO_RTC
-//jinak pouzije LPRC (timer1 vzdy pouziva PBCLK3)
-//#define     CFG_SOSC_ENABLE                                   //SOSCO + SOSCI je pripojen XTAL 32.768kHz      
-//#define     SOSC_CLK_TO_RTC                                   //na vstupu SOSCO je 32.768kHz, pouzije ho RTC         
+    // <editor-fold defaultstate="collapsed" desc="CPU MM">
+#ifdef PIC32MM
 
-//watch dog timer
-#define     WATCHDOG_TIMER
+//externi XTAL 8MHz
+//#define     CFG_POSC_XTAL               8
+
+//interni FRC 8MHz (muze byt pouzit USB modul v modu DEVICE bez krystalu)
+#define     CFG_FRC
 
 #endif
-//#define PIC32MM0064
-//#define PIC32MM0064_28pin
-//#define PIC32MM0256
-//#define PIC32MM0256_36pin
+    // </editor-fold>
 
 
+//CFG_SOSC_ENABLE povoli sec. oscilator, pokud je pripojen XTAL 32.768kHz
+//#define     CFG_SOSC_ENABLE                                   //SOSCO + SOSCI je pripojen XTAL 32.768kHz      
+
+//pokud ma RTC modul pouzit signal z SOSC (jinak pouziva LPRC)
+//#define     SOSC_CLK_TO_RTC                                   //na vstupu SOSCO je 32.768kHz, pouzije ho RTC 
 
 // </editor-fold>
 
@@ -46,9 +51,9 @@
 #define     SRS_STACK_SIZE              512         //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
 #define     STACK_CHECK_VALUE           0xF010E020
 
-//#define     SAFE_PROCESS                            //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+//#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
 #define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF     //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
-//#define     ENABLE_CHECK_STACK_OVERFLOW             //povoluje kontrolovat stack overflow
+//#define     ENABLE_CHECK_STACK_OVERFLOW           //povoluje kontrolovat stack overflow
 
 //watch dog timer
 //#define     WATCHDOG_TIMER

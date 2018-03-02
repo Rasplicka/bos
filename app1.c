@@ -45,7 +45,7 @@ void m1_start()
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
     //test sleep mode
-    //setCanSleep(1);
+    setCanSleep(1);
     while(1)
     {
         doEvents();

@@ -119,6 +119,7 @@ void main()
     
     initCPU();
     startupStack();                         //nastavi sp pro startup OS
+    initClock();
     setClock(CLOCK_CFG.CLK_NORMAL);  
   
     // </editor-fold>

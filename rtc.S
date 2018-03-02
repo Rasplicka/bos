@@ -35,23 +35,26 @@
     
 #ifdef PIC32MM 
     
+    #ifdef  SOSC_CLK_TO_RTC
+	#define	    RTCCON2_SET	    0x3E800000		//clock=SOSC (ext. XTAL 32.768kHz) 
+    #else
+	#define	    RTCCON2_SET	    0x3E800001		//clock=LPRC oscilator (32.0kHz) 
+    #endif	
+    
     #define	    WRLOCK	    0x800		//RTCCON1.b11  
     #define	    TIME_SYNC	    0x4
     #define	    ALARM_SYNC	    0x2
     #define	    RTCCON1_SET	    0xC3FF0000		//ALARM enable, ON, ... 
     #define	    RTCCON1_ON	    0x00008000	    
-    #define	    RTCCON2_SET	    0x3E800001		//clock=Low Power RC oscilator (32.0kHz)  
     
 #endif	    //MM   
   
 #ifdef PIC32MZ 
     
     #ifdef  SOSC_CLK_TO_RTC
-	//SOSC 32.768kHz
-	#define	    RTCCON_SET	    0x200		//SOSCO input (zkusebni deska nema ext. s.osc.)
+	#define	    RTCCON_SET	    0x200		//clock=SOSC (ext. XTAL 32.768kHz), zkusebni deska nema ext. s.osc.
     #else
-	//LPRC
-	#define	    RTCCON_SET	    0x0			//LPRC
+	#define	    RTCCON_SET	    0x0			//clock=LPRC oscilator (32.0kHz) 
     #endif	
     
     #define	    WRLOCK	    0x8			//RTCCON.b4  

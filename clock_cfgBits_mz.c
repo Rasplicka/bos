@@ -106,8 +106,6 @@ void setClock(char mode)
     //nastavuje jeden ze 4 preddefinovanych modu CLK
     
     //SYSKEY unlock
-    //SYSKEY = 0xAA996655; 
-    //SYSKEY = 0x556699AA;
     SYSKEY = 0x0;
     SYSKEY = 0xAA996655; 
     SYSKEY = 0x556699AA;
@@ -139,6 +137,11 @@ void setClock(char mode)
     //SYSKEY force lock
     SYSKEY = 0x00000000;
 
+}
+
+void initClock()
+{
+    
 }
 
 #endif  //PIC32MZ

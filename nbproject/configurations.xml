@@ -95,10 +95,10 @@
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>PIC32MM0256GPM036</targetDevice>
+        <targetDevice>PIC32MZ2048ECM144</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>ICD3PlatformTool</platformTool>
+        <platformTool>PKOBSKDEPlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>2.05</languageToolchainVersion>
         <platform>3</platform>

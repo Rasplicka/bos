@@ -4,6 +4,7 @@ MZ
 - System PLL produkuje 200MHz (XTAL 12MHz = 198MHz )
 - Frekvence CPU se muze menit nastavenim PBCLK7
 - timer1 je napajen z PBCLK3 (100MHz) (bezi v IDLE, nebezi ve SLEEP)
+- periferie jsou napajeny z PBCLKx, viz. default setting
 
 SLEEP
 - zastavi PBCLKx
@@ -64,22 +65,57 @@ setClock(CLOCK_CFG.CLK_ALT3)   -  20MHz
 
 (pri pouziti krystalu 12MHz je SYSCLK 198MHz)
 
-RTC modul je taktovan z interniho LPRC oscilatoru 32kHz. Potrebujete-li presne
-mereni casu, muze byt pouzit sekundarni oscilator s krystalem 32.768kHz.
-V tom pripade je treba v def.h definovat CFG_SOSC_ENABLE.
-Druha moznost je pouzit externi signal 32.768kHz, provedeny na vyvod SOSCO.
-V obou pripadech, ma-li byt tento signal pouzit RTC modulem, musi se v def.h
-definovat SOSC_CLK_TO_RTC.
-
 Systemovy timer1 (i interni PBCLKx) bezi i v pripade, ze procesor prejde do IDLE
 modu. CPU se ale zastavi. Udalosti vyvolane timerem1 budou funkci i v IDLE modu. 
 Na dobu jejich obsluhy bude CPU probuzen, ale pote opet prejde do IDLE.
 Periferni moduly take mohou pracovat, v zavislosti na nastaveni SIDL bitu.
 
-Ve SPEEP modu je interni taktovani zastaveno. Nicmene, takt pro RTC modul stale
-pracuje a BOS spousti udalosti z RTC. Probuzeni zajisti i jakykoliv jiny interrupt.
+
+MM
+--
+BOS pouziva pro taktovani chipu system PLL. Na jejim vstupu muze byt signal
+z primarniho oscilatoru pri pouziti vnejsiho krystalu 8MHz, nebo interniho
+FRC oscilatoru, ktery take produkuje kmitocet 8MHz.
+Volba se provadi v def.h (CFG_POSC_XTAL, nebo CFG_FRC). PLL tento signal
+nasobi x12 na 96MHz. Ten je veden (a delen dvema) do USB modulu, REFCLK modulu
+a dale upraven na 24MHz k napajeni CPU a periferii.
+Nektere periferie mohou byt, podle nastaveni, taktovany z PBCLK (24MHz)
+nebo REFCLK (48MHz). Jde o SPI, UART, MCCP a SCCP. Takze napr. seriove porty
+mohou pracovat s vyssi krekvenci, nez jadro chipu.
+BOS nabizi funkci setClock(), ktera meni kmitocet pro CPU a PBCLK, zmenou deleni
+signalu v system PLL. 
+setClock(CLOCK_CFG.CLK_NORMAL) - 24MHz (nastaveno po startu)
+setClock(CLOCK_CFG.CLK_ALT1)   - 12MHz
+setClock(CLOCK_CFG.CLK_ALT2)   - 6MHz
+setClock(CLOCK_CFG.CLK_ALT3)   - 1.5MHz
+
+(fce setClock() nemeni REFCLK)
+Jadro BOSu signal REFCLK nepouziva, proto jej aplikace mohou upravit podle
+vlastni potreby. (ale nektere moduly, ktere nejsou soucasti jadra, jej pouzivat
+mohou, napr. SPI driver, proto se nedoporucuje menit jej).
+Systemovy timer1 bezi i v pripade, ze procesor prejde do IDLE modu. CPU se ale
+zastavi. Udalosti vyvolane timerem1 budou funkci i v IDLE modu. Na dobu jejich 
+obsluhy bude CPU probuzen, ale pote opet prejde do IDLE. Periferni moduly take 
+mohou pracovat, v zavislosti na nastaveni SIDL bitu.
 
 
 
 
-  
+
+MZ i MM
+-------
+RTC modul je taktovan z interniho LPRC oscilatoru 32kHz. Potrebujete-li presne
+mereni casu, muze byt pouzit sekundarni oscilator s krystalem 32.768kHz.
+V tom pripade je treba v def.h definovat CFG_SOSC_ENABLE, coz zajisti nastaveni
+konfiguracnich bitu pro SOSC.
+Druha moznost je pouzit externi signal 32.768kHz, privedeny na vyvod SOSCO.
+Ve verzi PIC32MM pritom musi byt jeste nastaven konfiguracni bit SOSCEN=ON, aby
+tento signal prochazel obvodem sekundarniho oscilatoru dale do chipu.
+V obou pripadech, (interni i externi) ma-li byt tento signal pouzit RTC modulem,
+musi se v def.h definovat SOSC_CLK_TO_RTC.
+
+Ve SPEEP modu je interni taktovani zastaveno. Proto nepracuje ani timer1 a 
+nespousti udalosti.
+
+Takt pro RTC modul stale pracuje spouseji se vyvolane RTC modulem. A nezalezi 
+na tom, zda je RTC taktovan z interniho LPRC, nebo externiho SOSC (SOSCO). 

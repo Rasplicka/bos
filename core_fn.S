@@ -2060,10 +2060,18 @@ gotoSleepMZ:
 .ent gotoSleep
 gotoSleep:
 
+    
+    
 #ifdef WATCHDOG_TIMER 
     li	    t9, 0x8000
     sh	    t9, (WDTCONCLR)		    //WDT off
 #endif         
+    
+#ifdef PIC32MM
+    //MM timer1 - OFF, je napajen z LPRC
+    li	    t9, (1<<15)
+    sw	    t9, (T1CONCLR)		    //T1CON.b15 = OFF
+#endif    
     
     //unlock
     sw      zero, (SYSKEY)
@@ -2087,6 +2095,12 @@ gotoSleep:
     ehb
     //prechod do SLEEP
     wait
+    
+#ifdef PIC32MM
+    //MM timer1 - ON, je napajen z LPRC
+    li	    t9, (1<<15)
+    sw	    t9, (T1CONSET)		    //T1CON.b15 = ON
+#endif      
     
     //po probuzeni
 #ifdef WATCHDOG_TIMER    
