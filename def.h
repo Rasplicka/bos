@@ -26,6 +26,9 @@
     // <editor-fold defaultstate="collapsed" desc="CPU MM">
 #ifdef PIC32MM
 
+#define PIC32MM0256
+#define TEST_BOARD_BOS1
+
 //externi XTAL 8MHz
 //#define     CFG_POSC_XTAL               8
 
@@ -261,19 +264,118 @@
 #define     ODC_SET         ODC_OFFSET + SET_OFFSET     //offset reg. pro SET open drain
 #define     ODC_CLR         ODC_OFFSET + CLR_OFFSET     //offset reg. pro CLR open drain
 
-#ifdef PIC32MM0064
-
-#define     PORTA_BASE      0xBF802600
-#define     PORTB_BASE      0xBF802700
-#define     PORTC_BASE      0xBF802800
-
-#endif
-
 #ifdef PIC32MM0256
 
 #define     PORTA_BASE      0xBF802BB0
 #define     PORTB_BASE      0xBF802CB0
 #define     PORTC_BASE      0xBF802DB0
+#define     PORTD_BASE      0xBF802EB0
+
+//RP IN
+#define     RP1_IN          1
+#define     RP2_IN          2
+#define     RP3_IN          3
+#define     RP4_IN          4
+#define     RP5_IN          5
+#define     RP6_IN          6
+#define     RP7_IN          7
+#define     RP8_IN          8
+#define     RP9_IN          9
+#define     RP10_IN         10
+#define     RP11_IN         11
+#define     RP12_IN         12
+#define     RP13_IN         13
+#define     RP14_IN         14
+#define     RP15_IN         15
+#define     RP16_IN         16
+#define     RP17_IN         17
+#define     RP18_IN         18
+#define     RP19_IN         19
+#define     RP20_IN         20
+#define     RP21_IN         21
+#define     RP22_IN         22
+#define     RP23_IN         23
+#define     RP24_IN         24
+
+#define     INT4_IO         RPINR1bits.INT4R
+#define     ICM1_IO         RPINR2bits.ICM1R
+#define     ICM2_IO         RPINR2bits.ICM2R
+#define     ICM3_IO         RPINR3bits.ICM3R
+#define     ICM4_IO         RPINR3bits.ICM4R
+#define     OCFA_IO         RPINR5bits.OCFAR
+#define     OCFB_IO         RPINR5bits.OCFBR
+#define     TCKIA_IO        RPINR6bits.TCKIAR
+#define     TCKIB_IO        RPINR6bits.TCKIBR
+#define     ICM5_IO         RPINR7bits.ICM5R
+#define     ICM6_IO         RPINR7bits.ICM6R
+#define     ICM7_IO         RPINR7bits.ICM7R
+#define     ICM8_IO         RPINR7bits.ICM8R
+#define     ICM9_IO         RPINR8bits.ICM9R
+#define     U3RX_IO         RPINR8bits.U3RXR
+#define     U2RX_IO         RPINR9bits.U2RXR
+#define     U2CTS_IO        RPINR9bits.U2CTSR
+#define     U3CTS_IO        RPINR10bits.U3CTSR
+#define     SDI2_IO         RPINR11bits.SDI2R
+#define     SCK2IN_IO       RPINR11bits.SCK2INR
+#define     SS2IN_IO        RPINR11bits.SS2INR
+#define     CLCINA_IO       RPINR12bits.CLCINAR
+#define     CLCINB_IO       RPINR12bits.CLCINBR
+
+//RP OUT
+#define     DEFAULT_IO      0
+#define     C1OUT_IO        1
+#define     C2OUT_IO        3
+#define     C3OUT_IO        3
+#define     U2TX_IO         4
+#define     U2RST_IO        5
+#define     U3TX_IO         6
+#define     U3RST_IO        7
+#define     SDO2_IO         8
+#define     SCK2OUT_IO      9
+#define     SS2OUT_IO       10
+#define     OCM4_IO         11
+#define     OCM5_IO         12
+#define     OCM6_IO         13
+#define     OCM7_IO         14
+#define     OCM8_IO         15
+#define     OCM9_IO         16
+#define     CLC1OUT_IO      17
+#define     CLC2OUT_IO      18
+#define     CLC3OUT_IO      19
+#define     CLC4OUT_IO      20
+
+#define     RP1_OUT         RPOR0bits.RP1R
+#define     RP2_OUT         RPOR0bits.RP2R
+#define     RP3_OUT         RPOR0bits.RP3R
+#define     RP4_OUT         RPOR0bits.RP4R
+#define     RP5_OUT         RPOR1bits.RP5R
+#define     RP6_OUT         RPOR1bits.RP6R
+#define     RP7_OUT         RPOR1bits.RP7R
+#define     RP8_OUT         RPOR1bits.RP8R
+#define     RP9_OUT         RPOR2bits.RP9R
+#define     RP10_OUT        RPOR2bits.RP10R
+#define     RP11_OUT        RPOR2bits.RP11R
+#define     RP12_OUT        RPOR2bits.RP12R
+#define     RP13_OUT        RPOR3bits.RP13R
+#define     RP14_OUT        RPOR3bits.RP14R
+#define     RP15_OUT        RPOR3bits.RP15R
+#define     RP16_OUT        RPOR3bits.RP16R
+#define     RP17_OUT        RPOR4bits.RP17R
+#define     RP18_OUT        RPOR4bits.RP18R
+#define     RP19_OUT        RPOR4bits.RP19R
+#define     RP20_OUT        RPOR4bits.RP20R
+#define     RP21_OUT        RPOR5bits.RP21R
+#define     RP22_OUT        RPOR5bits.RP22R
+#define     RP23_OUT        RPOR5bits.RP23R
+#define     RP24_OUT        RPOR5bits.RP24R
+
+#endif
+
+#ifdef PIC32MM0064
+
+#define     PORTA_BASE      0xBF802600
+#define     PORTB_BASE      0xBF802700
+#define     PORTC_BASE      0xBF802800
 
 #endif
 
@@ -361,7 +463,4 @@
 #define     USB_DEVICE_INIT
 
 // </editor-fold>
-
-#define     TEST_DRIVER_INIT
-#define     TEST_DRIVER_VERSION     2
 

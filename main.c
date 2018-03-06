@@ -46,21 +46,20 @@
  * interrupt stack (jeden, nebo sedm, velikost kazdeho SRS_STACK_SIZE)  //zacatek oblasti
  */
     
-#define     TIMER1_EVENT_T_SIZE     0 //(TIMER1_EVENT_CAPA * TIMER1_EVENT_ISIZE)  
+#define     TEST_DRIVER_INIT
+#define     TEST_DRIVER_VERSION     2
+
 #define     REG_EVENT_T_SIZE    (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)    
 #define     EVENT_C_SIZE        (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
-    
+#define     PROC_T_SIZE         (PROC_T_ISIZE * PROC_T_CAPA)
                                 //proccee_table + regEventTable + eventCache + vars (vars + ballast = 64B)
-#define     OS_DATA_SIZE        ((PROC_T_ISIZE * PROC_T_CAPA) + TIMER1_EVENT_T_SIZE + REG_EVENT_T_SIZE + EVENT_C_SIZE + 64)     //velikost .os
-#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)          //adresa .os
+#define     OS_DATA_SIZE        (PROC_T_SIZE +  REG_EVENT_T_SIZE + EVENT_C_SIZE + 64)      //velikost .os
+#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
 
 //process table (prvni polozka v sekci .os, proto definuje jeji adresu)   
-uint proc_t[(PROC_T_ISIZE / 4) * PROC_T_CAPA]   __section(".os") __at(OS_DATA_BASE);      
-//tabulka, kde se registruji casovace
-//char timer1_events[TIMER1_EVENT_T_SIZE]         __section(".os");               //timer1
-
-char regEventTable[REG_EVENT_T_SIZE]            __section(".os");
-char eventCache[EVENT_C_SIZE]                   __section(".os");
+uint proc_t[(PROC_T_SIZE / 4)]              __section(".os") __at(OS_DATA_BASE);      
+char regEventTable[REG_EVENT_T_SIZE]        __section(".os"); //__at(OS_DATA_BASE);
+char eventCache[EVENT_C_SIZE]               __section(".os"); //__at(OS_DATA_BASE);
 
 //.os vars 
 uint* proc_t_pos        __section(".os") = 0;
@@ -79,7 +78,7 @@ char idleStatus         __section(".os") = 0;
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-char ballast[44]        __section(".os");
+//char ballast[44]        __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE

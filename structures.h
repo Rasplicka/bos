@@ -8,8 +8,9 @@
  */
 
 //system -----------------------------------------------------------------------
+//RAM STRUCT
 //OS status
-struct
+struct 
 {
     unsigned SleepMode  : 1;
     unsigned IdleMode   : 1;
@@ -19,6 +20,21 @@ struct
     
 }SYSTEM_STATUS;
 
+//TEST LED
+struct
+{
+    void* LED1_BASE;
+    void* LED2_BASE;
+    void* LED3_BASE;
+    void* LED4_BASE;
+    short unsigned int LED1_BIT;
+    short unsigned int LED2_BIT;
+    short unsigned int LED3_BIT;
+    short unsigned int LED4_BIT;
+    
+}TEST_LED;
+
+//ROM STRUCT
 //definuje mod sbernice 8-bit, 16-bit, 32-bit
 const struct
 {
@@ -27,7 +43,7 @@ const struct
     char    _32bit;
 }BUS_MODE={0, 1, 2};
 
-struct
+const struct
 {
     char CLK_NORMAL;
     char CLK_ALT1;              
@@ -35,7 +51,7 @@ struct
     char CLK_ALT3; 
 }CLOCK_CFG = { 0, 1, 2, 3 };
 
-struct
+const struct
 {
     char RESET_SYSTEM;
     char RESET_PROCESS;
@@ -43,6 +59,7 @@ struct
     
 }ON_ERROR = { ON_ERROR_RESET_SYSTEM, ON_ERROR_RESET_PROCESS, ON_ERROR_REMOVE_PROCESS };
 
+//TYPEDEF
 typedef struct
 {
     char TimeLimitExceedBehavior;           //If the process time limit exceed
@@ -53,7 +70,6 @@ typedef struct
     unsigned int TimeLimitValue;            //Defines process time limit (safe mode)
     
 }APP_START_PARAM;
-
 
 typedef struct 
 {

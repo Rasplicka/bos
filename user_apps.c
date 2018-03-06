@@ -23,6 +23,14 @@ extern void m3_start();
 void pinSetting()
 {
     //Call OS on startup
+
+    //vstupni RP piny, do registru fce vlozi cislo RP pinu
+    //INT4_IO = RP1_IN; //ICM1_IO = RP5_IN; //SDI2_IO = RP8_IN;
+    
+    //vystupni RP piny, do registru RP pinu vlozi cislo fce
+    //RP2_OUT = C1OUT_IO; //RP3_OUT = SDO2_IO; //RP4_OUT = SCK2OUT_IO;
+    
+    
 #ifdef __32MM0256GPM036__ 
 
      //RB5, RB7
@@ -60,6 +68,96 @@ void pinSetting()
     
 #endif    
     
+#ifdef TEST_BOARD_BOS1    
+    
+    //DISPLEJE -----------------------------------------------------------------
+    
+    //RB7/pin47 - TOUCHPAD IRQ
+    setPortDigIn(PORTB_BASE, BIT7);                                     //47
+    
+    //RP23/pin2 - SPI2-IN (TOUCHPAD SDO)
+    SDI2_IO=RP23_IN;                                                    //2
+    
+    //PR16/pin15 - SPI2-OUT (DISP SDI)
+    RP16_OUT=SDO2_IO;                                                   //15
+    
+    //RP21/pin14 - SPI2-SCK
+    RP21_OUT=SCK2OUT_IO;                                                //14
+    
+    //RB6/pin46 - TOUCHPAD CS
+    setPortDigOut(PORTB_BASE, BIT6);                                    //46
+    
+    //RP22/pin13 CS DISP2
+    setPortDigOut(PORTA_BASE, BIT10);                                   //13
+    
+    //RB13/pin12 DC DISP
+    setPortDigOut(PORTB_BASE, BIT13);                                   //12
+    
+    //RA15/pin8 RESET DISP
+    setPortDigOut(PORTA_BASE, BIT15);                                   //8
+    
+    //RC8/pin4 CS DISP1
+    setPortDigOut(PORTC_BASE, BIT8);                                    //4
+    
+    //RC9/pin5 DISP LED ON
+    setPortDigOut(PORTC_BASE, BIT9);                                    //5
+    setPortOpenDrain(PORTC_BASE, BIT9, 1);
+    
+    //LED ----------------------------------------------------------------------
+    
+    //RA9/pin37 LED1
+    setPortDigOut(PORTA_BASE, BIT9);                                    //37
+    TEST_LED.LED1_BASE=(void*)PORTA_BASE;
+    TEST_LED.LED1_BIT=BIT9;
+    
+    //RD0/pin38 LED2
+    setPortDigOut(PORTD_BASE, BIT0);                                    //38
+    TEST_LED.LED2_BASE=(void*)PORTD_BASE;
+    TEST_LED.LED2_BIT=BIT0;
+    
+    //RC3/pin39 LED3
+    setPortDigOut(PORTC_BASE, BIT3);                                    //39
+    TEST_LED.LED3_BASE=(void*)PORTC_BASE;
+    TEST_LED.LED3_BIT=BIT3;
+    
+    //RC4/pin40 LED4
+    setPortDigOut(PORTC_BASE, BIT4);                                    //40
+    TEST_LED.LED1_BASE=(void*)PORTC_BASE;
+    TEST_LED.LED1_BIT=BIT4;
+    
+    //TLACITKA -----------------------------------------------------------------
+    
+    //RC1/pin28 B1
+    setPortDigIn(PORTC_BASE, BIT1);                                     //28
+    
+    //RC2/pin29 B2
+    setPortDigIn(PORTC_BASE, BIT2);                                     //29
+    
+    //RA3/pin33
+    setPortDigIn(PORTA_BASE, BIT3);                                     //33
+    
+    //RA8/pin34
+    setPortDigIn(PORTA_BASE, BIT8);                                     //34
+    
+    //PIEZO --------------------------------------------------------------------
+    //RC12/pin44
+    setPortDigOut(PORTC_BASE, BIT12);                                   //44
+    
+    //ANALOG INPUT -------------------------------------------------------------
+    //RB2/pin25
+    setPortAnalogIn(PORTB_BASE, BIT2);                                  //25
+    
+    //RB3/pin26
+    setPortAnalogIn(PORTB_BASE, BIT3);                                  //26
+    
+    //RC0/pin27
+    setPortAnalogIn(PORTC_BASE, BIT0);                                  //27
+    
+    
+    
+    
+#endif    
+
 }
 
 void userAppsStart()

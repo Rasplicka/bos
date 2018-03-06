@@ -23,6 +23,7 @@ int delay=1;
 int delay=1;
 #endif
 
+//static int testVar2=50;
 static int cnt=0;
 static void testSystemTimer(int a);
 static void testButton(int event, int value, int index);

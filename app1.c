@@ -23,6 +23,9 @@ int delay=1;
 #define     _LED_INV_VAL    0b100000          //RB5                
 int delay=1;
 #endif
+
+int testVar=100;
+
 static void longTime();
 static void testSystemTimer(int i);
 static void testRTC(char hour, char min, uint date);

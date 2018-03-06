@@ -54,7 +54,7 @@
 
 #pragma config IESO = OFF               // Two Speed Startup Enable bit (Two speed startup is disabled)
 #pragma config OSCIOFNC = OFF           // System Clock on CLKO Pin Enable bit (OSCO pin operates as a normal I/O)
-#pragma config FCKSM = SCECME           // Clock Switching and Fail-Safe Clock Monitor Enable bits (Clock switching is enabled; Fail-safe clock monitor is enabled)
+#pragma config FCKSM = CSECME           // Clock Switching and Fail-Safe Clock Monitor Enable bits (Clock switching is enabled; Fail-safe clock monitor is enabled)
 
 // FSEC
 #pragma config CP = OFF                 // Code Protection Enable bit (Code protection is disabled)
