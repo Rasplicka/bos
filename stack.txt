@@ -1,0 +1,167 @@
+BOS umoznuje beh vice procesu, kazdy proces ma vlastni stack. V okamziku prepnuti 
+procesu se ulozi hodnoty pouzitych registru vcetne SP a FP. Bez zachovani obsahu 
+stacku by preruzena fce nemohla pokracovat. Stack roste smerem dolu. 
+Aby to bylo spravne pochopeno, tak strucne pripomenu, jak compilator pracuje 
+s promennymi. Je zakladni rozdil mezi lokalni promenou (deklarovanou ve fci)
+a globalni.
+V programu existuji tedy promene globalni a lokalni. Globalni promena muze byt 
+viditelna v celem projektu, nebo pouze v jednom souboru. Pokud to neni nutne, 
+nepouzivejte globalni promene viditelne v celem projektu (tyka se to i funkci), 
+aby nedochazelo ke konfliktum v nazvech.
+
+int g1=0;                           //globalni promena viditelna v celem projektu
+static int sg1=0;                   //globalni promena viditelna v jednom souboru 
+void app_start()
+{
+    int a=0, b=0;                   //lokalni promene a,b. Ulozene na zasobniku
+}
+
+Klicove slovo static urcuje, ze v jinych souborech nebude promenna (funkce) 
+viditelna, ale v aktualnim souboru je dostupna ve vsech funkcich. 
+Globalni promene se neukladaji na zasobnik. Compilator je umisti do volne pameti
+RAM. (pokud neni deklarovana jako const, pak se ulozi ve flash)
+
+Na rozdil od vyssich programovacich jazyku
+-Klicove slovo STATIC ma jiny vyznam.
+
+-Promene, ktere nejsou na zasobniku, se ukladaji na hromadu (heap), ktera je
+spravovana managerem pameti, ktery ji dynamicky alokuje a uvolnuje. Neco takoveho 
+kompilator gcc nikdy neprovadi. 
+
+-Jestlize deklarujete globalni promenou, je pro ni trvale alokovane misto v RAM
+(I kdyz ji vyuziva uziv. aplikace, ktera bude ukoncena, globalni promena bude
+nadale umistena v pameti)
+
+Na zasobnik se tedy ukladaji lokalni promene, deklarovane uvnitr fce (a, b). 
+Pri vstupu do fce se uklada jak navratova adresa, tak vsechny promenne
+deklarovane ve funkci. S tim je ptreba pocitat. S tim je treba pocitat hlavne pri
+pouziti velkych poli uvnitr fce, protoze cele pole bude ulozene v zasobniku a muze
+zpusobit jeho preplneni.
+
+void app_start()
+{
+    int array[1000];                    //pole (4kB) vytvorene na zasobniku, zpusobi preplneni zasobniku, neni-li dostatecne veliky
+                                        //pole existuje pouze uvnitr fce
+    array[0]=0xFF;
+} 
+
+static int array[1000];                //pole vytvorene v RAM (v dobe kompilace), mimo zasobnik. RAM je alokovana trvale
+void app_start()
+{
+    array[0]=0xFF;
+} 
+
+Vytvorit pole na zasobniku je mozne, pokud je velikost zasobniku dostatecna.
+To musi zhodnotit programator. Je treba pocitat s tim, ze array v prikladu  ma 
+velikost 4kB. Vyhoda ulozeni dat v zasobniku spociva hlavne v tom, ze po skonceni 
+fce je prostor RAM opet uvolnen. Globalni proneme zabiraji prostor v RAM trvale.
+
+Kazdy proces definuje velikost sveho zasobniku pri spusteni a pak jiz nelze menit.
+//&app_start - adresa start fce
+//1024 - velikost zasobniku
+//&proc_param - adresa struktury, definujici parametry procesu
+//0x1 - proces ID
+regProcess(&app_start, 1024, &proc_param, 0x1) 
+
+BOS alokuje zasobnik pro jednotlive procesy. K tomu pouziva oblast v RAM, vyhrazenou
+pro zasobniky. Jeji celkova velikost STACK_SIZE je definovana v def.h. Pokud BOS 
+nenajde volne misto v teto oblasti, nebude proces spusten. (volani regProcess vraci
+chybu) Detailni rozlozeni RAM popisuje "Mapa RAM"
+
+Po ukonceni procesu je oblast zasobniku uvolnena a muze ji pouzit nove spusteny proces.
+BOS ale oblast zasobniku nedefragmentuje, tzn. ze po skonceni dvou procesu s velikosti
+zasobniku 1kB, nemusi vzniknout linearni prostor pro proces s pozadavkem 2kB.
+
+Protoze BOS vzdy spousti jeden systemovy proces, tento potrebuje take zasobnik.
+Systemovy proces predevsim zajistuje volani fci obsluhujici udalosti. Z toho plyne,
+za kazda takto zavolana fce pouziva zasobnik systemoveho procesu.
+
+Nasledujici priklad ukazuje, ze fce event() muze byt volana jak v ramci procesu
+appStart(), coz je aplikace uzivatele, tak jako obsluha udalosti casovace.
+V prvnim pripade vyuziva zasobnik aplikace, v druhem zasobnik systemoveho procesu.
+
+void appStart()
+{
+    systemTimerRegInterval(&event, 1000);           //fci event() vola systemProcess
+
+    int c=0;
+    while(1)
+    {
+        if(c % 1000 == 0)
+        {
+            event(0);                               //fci event() vola aplikace
+        }
+        c++;
+    }
+}
+
+static void event(int a)
+{
+    //
+    intTestLed(1);
+}
+
+Proto by velikost zasobniku systemProcessu mela byt stejna, jako velikost zasobniku 
+uziv. aplikaci. Definuje ji SYSPROC_STACK_SIZE v def.h
+
+Dale v oblasti pro zasobniky BOS alokuje zasobnik pro interrupt. Chovani interruptu
+se lisi pro rady MM/MK/MZ. Detail popisuje sekce Interrupt. Z toho take plyne,
+ze rada MM, ktera ma jen jednu sadu stinovych registru, pouziva jeden zasobnik
+pro interrupt, rada MZ sedm. Jejich velikost definuje SRS_STACK_SIZE v def.h
+
+Urceni velikosti zasobniku pro jednotlive aplikace je klicove. Prilis velky zasobnik
+zvytecne zabira RAM, maly naopak hrozi pretecenim. Protoze zasobniky jsou umisteny
+jeden za druhym, preteceni zasobniku vetsinou znamena prepsani jineho a tim padem
+kritickou chybu.
+Jadro microAptiv nepodporuje HW detekci preteceni zasobniku. U rady MZ by to bylo
+mozne realizovat s pouzitim MMU, kde by pak minimalni velikost zasobniku byla 4kB.
+Ale u rady MM takova moznost neexistuje.
+BOS proto pouziva sw detekci preteceni, ktera ma sva omezeni. Rozhodne je velmi
+dulezite, aby programator spravne navrhl velikost zasobniku.
+Myslenka Microchipu ohledne zasobniku je takova, za kompilator veskera data v RAM
+umistuje od spodni adresy 0x8000 0000, zatimco vrchol zasobniku umisti na konec
+RAM (0x8000 8000 v pripade velikost RAM 32kB) a predpoklada, ze zasobnik nikdy
+neklasne do oblasti, kde jsou data. Coz je opet pouze na odpovednosti programatora.
+
+SW detekce preteceni zasobniku
+Lze ji zapnout definovanim ENABLE_CHECK_STACK_OVERFLOW v def.h. Pracuje tak, ze
+pri kazdem prepnuti procesu se kontroluje, zda hodnota registru SP neni nizsi, nez
+hranice zasobniku daneho procesu. Dale BOS vlozi, pri spusteni procesu, na nejnizsi
+dve adresy v zasobniku testovaci hodnotu STACK_CHECK_VALUE, a pri prepinani procesu
+testuje, zda nedoslo k jeji prepsani. Pokud BOS detekuje chybu preteceni, je cely
+system resetovan. V pripade jinych chyb je mozne vybrat jednu z moznosti, jako
+ukoncit proces, resetovat proces, nebo cely system. Pri preteceni zasobniku je pouze
+jedna moznost, protoze mohlo dojit k prepsani dat ostatnich procesu.
+
+Pro ladeni systemu lze vyuzit fci checkStackSpace(). Pri jejim volani BOS provede
+kontrolu, kolik volneho mista v zasobniku je v tomto okamziku. Pokud je hodnota
+nizsi, nez v globalni promene checkStackSpaceValue, pak tuto promenou aktualizuje.
+Na konci fce checkStackSpace() je jeste volana fce 
+userAppCheckStackSpace(space, event) v souboru user_apps.c, ktere je predan udaj 
+o aktualni velikosti volneho mista v zasobniku a zda je prave spustena uziv. aplikace,
+nebo zda probiha obsluha udalosti (ta vyuziva zasobnik systemProcesu)
+Pri umisteni volani checkStackSpace() na vhodna mista v programu, behem faze
+ladeni, ziska programator prehled o vyuziti zasobniku aplikaci.
+
+void userAppCheckStackSpace(int space, int is_event)
+{
+    //space - vyjadruje aktualni hodnotu volneho mista ve stacku
+    //is_event=1 - fce je volana jako obsluha udalosti (bezi jako systemProcess)
+    //is_event=0 - fce neni volana jako obsluha udalosti
+    
+    if(space < 128 || checkStackSpaceValue < 128)
+    {
+        //napr. breakpoint
+    }
+}
+
+
+
+
+
+
+
+
+
+
+

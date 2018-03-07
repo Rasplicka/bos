@@ -1091,6 +1091,51 @@ getErrorBehavior:
 .end getErrorBehavior 
     
 //</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="checkStackSpace">
+.align 2
+.global checkStackSpace
+.ent checkStackSpace
+checkStackSpace:
+    
+    //do (checkStackSpaceValue) ulkada nejmensi nalezenou hodnotu
+    //ktera vyjadruje aktualni velikost stacku [bytes]
+    //pri volani fce zjisti, kolik bytes zbyva ve stacku
+
+    _PUSH   ra
+    lw	    t8, (proc_t_pos)
+    lw	    a0, TH_T_STACK_BASE*4(t8)	    //adresa stack_base
+    
+    sub	    a0, sp, a0			    //do t7 zbyvajici velikost stacku
+    
+    lw	    t7, (checkStackSpaceValue)
+    _B_FLT  t7, a0, 1f			    //meni t9
+					    //skok, prostor v sp je vetsi
+    //sp space < checkStackSpaceValue
+    sw	    a0, (checkStackSpaceValue)
+    
+1:
+    //test, zda je systemProcess
+    li16    a1, 0
+    la	    t9, proc_t
+    bne	    t9, t8, 2f
+    
+    //je systemProcess
+    li16    a1, 1
+    
+2:    
+    la	    t9, userAppCheckStackSpace
+    //a0=space
+    //a1=systemProcess (1=ano, 0=ne)
+    _CALL_C t9, 2
+    
+    _POP    ra
+    jrc	    ra
+    
+.end checkStackSpace  
+    
+//</editor-fold>
+  
    
 //process  
     

@@ -46,8 +46,8 @@
  * interrupt stack (jeden, nebo sedm, velikost kazdeho SRS_STACK_SIZE)  //zacatek oblasti
  */
     
-#define     TEST_DRIVER_INIT
-#define     TEST_DRIVER_VERSION     2
+//#define     TEST_DRIVER_INIT
+//#define     TEST_DRIVER_VERSION     2
 
 #define     REG_EVENT_T_SIZE    (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)    
 #define     EVENT_C_SIZE        (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
@@ -62,18 +62,19 @@ char regEventTable[REG_EVENT_T_SIZE]        __section(".os"); //__at(OS_DATA_BAS
 char eventCache[EVENT_C_SIZE]               __section(".os"); //__at(OS_DATA_BASE);
 
 //.os vars 
-uint* proc_t_pos        __section(".os") = 0;
-uint* proc_t_after      __section(".os") = 0;
-char proc_t_count       __section(".os") = 0;
-char errEventCacheEvID  __section(".os") = 0;                                   //eventID posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
-char errEventCachePrID  __section(".os") = 0;                                   //procID  posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
-char errorProcID        __section(".os") = 0;
+uint* proc_t_pos            __section(".os") = 0;
+uint* proc_t_after          __section(".os") = 0;
+char proc_t_count           __section(".os") = 0;
+char errEventCacheEvID      __section(".os") = 0;                               //eventID posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
+char errEventCachePrID      __section(".os") = 0;                               //procID  posdledni udalosti, ktera se nevesla do eventCache (byla zahozena)
+char errorProcID            __section(".os") = 0;
 
-uint time_ms            __section(".os");                                           //timer1
-//uint day_ms             __section(".os");                                           //timer1
+uint time_ms                __section(".os") = 0;                                   //timer1
+//uint day_ms               __section(".os");                                   //timer1
+int checkStackSpaceValue    __section(".os") = 0;
 
-char sleepStatus        __section(".os") = 0;
-char idleStatus         __section(".os") = 0;
+char sleepStatus            __section(".os") = 0;
+char idleStatus             __section(".os") = 0;
 
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
@@ -89,17 +90,17 @@ char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
 // <editor-fold defaultstate="collapsed" desc="Stack Size Compiler warning">
 #ifdef  PIC32MM
 //PIC32MM jeden zasobnik pro vsechny interrupt level
-#define     STACK_MINIMUM   ((PROC_T_CAPA * 1024) + (1 * SRS_STACK_SIZE))      
+//#define     STACK_MINIMUM   ((PROC_T_CAPA * 1024) + (1 * SRS_STACK_SIZE))      
 #endif
 
 #ifdef  PIC32MZ
 //PIC32MZ kazdy interrupt level ma svuj zasobnik
-#define     STACK_MINIMUM   ((PROC_T_CAPA * 1024) + (7 * SRS_STACK_SIZE))      
+//#define     STACK_MINIMUM   ((PROC_T_CAPA * 1024) + (7 * SRS_STACK_SIZE))      
 #endif
 
-#if (STACK_SIZE < STACK_MINIMUM)
-#warning Definition of STACK_SIZE is too small! Please, check STACK_SIZE in def.h
-#endif
+//#if (STACK_SIZE < STACK_MINIMUM)
+//#warning Definition of STACK_SIZE is too small! Please, check STACK_SIZE in def.h
+//#endif
 // </editor-fold>
 
 // </editor-fold>
@@ -111,7 +112,8 @@ void main()
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
-   
+    checkStackSpaceValue=0x7FFFFFFF;
+    
 #ifdef WATCHDOG_TIMER    
     startWDT();                             //WDT on
 #endif    
@@ -165,7 +167,7 @@ void main()
 
     //6. run user apps ---------------------------------------------------------
     //jako prvni spustit system process
-    regProcess(&systemProcess, 1024, &defaultAppStartParam, 0xFE);
+    regProcess(&systemProcess, SYSPROC_STACK_SIZE, &defaultAppStartParam, 0xFE);
     
 #ifdef UBTN
     regProcess(&ubtnStart, 512, &defaultAppStartParam, 0xF0);
@@ -198,7 +200,6 @@ void main()
         
     }
 }
-
 
 void trap()
 {

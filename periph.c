@@ -10,7 +10,7 @@
  * 
  */
 
-void portSet(uint base, uint bits)
+void setPortPin(uint base, uint bits)
 {
     //base=bazova adresa portu (PORTA_BASE, PORTB_BASE, ...)
     //bits=ovlinvene bity (BIT0, BIT0 | BIT1 | BIT5, ...)
@@ -22,7 +22,7 @@ void portSet(uint base, uint bits)
     *p=bits;
 }
 
-void portClear(uint base, uint bits)
+void clearPortPin(uint base, uint bits)
 {
     //base=bazova adresa portu (PORTA_BASE, PORTB_BASE, ...)
     //bits=ovlinvene bity (BIT0, BIT0 | BIT1 | BIT5, ...)
@@ -46,7 +46,7 @@ void portInv(uint base, uint bits)
     *p=bits;
 }
 
-void testLedSet(int num)             //test led
+void setTestLed(int num)             //test led
 {
     //num test led, nastavi pin=H
     
@@ -73,7 +73,7 @@ void testLedSet(int num)             //test led
     }    
 }
 
-void testLedClear(int num)             //test led
+void clearTestLed(int num)             //test led
 {
     //num test led, nastavi pin=L
     
@@ -100,7 +100,7 @@ void testLedClear(int num)             //test led
     }    
 }
 
-void testLedInv(int num)             //test led
+void invTestLed(int num)             //test led
 {
     //num test led, invertuje pin
     
@@ -127,6 +127,7 @@ void testLedInv(int num)             //test led
     }    
 }
 
+
 void signalizeError(int num, int code)
 {
     //num je test LED 1-4
@@ -138,10 +139,10 @@ void signalizeError(int num, int code)
         
         while(x > 0)
         {
-            testLedSet(num);
+            setTestLed(num);
             pauseEvents(60);
         
-            testLedClear(num);
+            clearTestLed(num);
             pauseEvents(400);
             
             x--;

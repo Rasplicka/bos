@@ -32,7 +32,7 @@ struct
     short unsigned int LED3_BIT;
     short unsigned int LED4_BIT;
     
-}TEST_LED;
+}TEST_LED = {NULL, NULL, NULL, NULL};
 
 //ROM STRUCT
 //definuje mod sbernice 8-bit, 16-bit, 32-bit

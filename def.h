@@ -67,6 +67,7 @@
 
 #define		RAM_SIZE                32*1024 
 #define     STACK_SIZE              8*1024
+#define     SYSPROC_STACK_SIZE      1024            //velikost zasobniku systemProcess
 #define		REG_EVENT_TABLE_CAPA    20              //max. pocet registraci udalosti (polozka 16 bytes) 320 B
 #define		EVENT_CACHE_CAPA        20              //velikost cache udalosti        (polozka 20 bytes) 400 B
 #define     PROC_T_CAPA             8               //kapacita proc_t (polozka 96 Bytes) 768 B

@@ -218,6 +218,18 @@ void userAppEventError(char procId, char eventId)
     int b=eventId;
 }
 
+void userAppCheckStackSpace(int space, int is_event)
+{
+    //space - vyjadruje aktualni hodnotu volneho mista ve stacku
+    //is_event=1 - fce je volana jako obsluha udalosti (bezi jako systemProcess)
+    //is_event=0 - fce neni volana jako obsluha udalosti
+    
+    if(space < 64)
+    {
+        //breakpoint
+    }
+}
+
 void beforeSleep()
 {
     

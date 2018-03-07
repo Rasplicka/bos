@@ -90,12 +90,12 @@ static void testSystemTimer2()
     while(1)
     {
         //_LED_INV_REG = _LED_INV_VAL;
-        testLedClear(3);
+        clearTestLed(3);
         pauseEvents(500);
         
         
         //_LED_INV_REG = _LED_INV_VAL;
-        testLedSet(3);
+        setTestLed(3);
         pauseEvents(50);
         
     }

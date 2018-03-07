@@ -10,6 +10,7 @@
       <itemPath>rtc.txt</itemPath>
       <itemPath>oscilator.txt</itemPath>
       <itemPath>sleep_idle.txt</itemPath>
+      <itemPath>stack.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
