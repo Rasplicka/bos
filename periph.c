@@ -58,12 +58,12 @@ void setTestLed(int num)             //test led
     }
     else if(num==2)
     {
-        p=(int*)(LED2_BASE + LAT_OFFSET + SET_OFFSET);
+        p=(LED2_BASE + LAT_OFFSET + SET_OFFSET);
         *p=LED2_BIT;
     }
     else if(num==3)
     {
-        p=(int*)(LED3_BASE + LAT_OFFSET + SET_OFFSET);
+        p=(LED3_BASE + LAT_OFFSET + SET_OFFSET);
         *p=LED3_BIT;
     }
     else if(num==4)

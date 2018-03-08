@@ -1,0 +1,18 @@
+BOS si vyhradi oblast RAM pro lokalni promene a tabulky proc_t, regEventTable 
+a eventCache. Tato oblast je v sekci .os a je na vrcholu RAM. 
+Jeji velikost urcuje hlavne kapacita techto tabulek, v def.h
+PROC_T_CAPA, REG_EVENT_TABLE_CAPA, EVENT_CACHE_CAPA.
+Pod ni je sekce .os_stack, kde jsou zasobniky. Velikost oblasti pro zasobniky 
+je v STACK_SIZE. BOS prideluje zasobnik kazdemu novemu procesu pri spusteni, 
+a take jeho zasobnik uvolni v pripade, ze je proces ukoncen. Tato oblast se 
+nedefragmentuje.
+Pokud BOS nenajde dost velkou oblast pro zasobnik, jakou pozaduje proces, tento
+nebude spusten.
+
+Ostatni globalni promene BOSu nemaji urcene umisteni v RAM a kompilator je umisti
+pri kompilaci, podle potreby.
+
+Vsechny promenne aplikaci take nemaji definovane umisteni a jejich adresu urcuje
+kompilator pri kompilaci.
+
+ 

@@ -6,16 +6,20 @@
 #include "def.h"
 #include "structures.h"
 
+#ifdef GRAPH
+#include graphics_struct.h
+#endif
+
 APP_START_PARAM defaultAppStartParam;                   //default app start param
 
-uint LED1_BASE=NULL;
+volatile void* LED1_BASE=NULL;
 uint LED1_BIT=0;
-uint LED2_BASE=NULL;
+volatile void* LED2_BASE=NULL;
 uint LED2_BIT=0;
-uint LED3_BASE=NULL;
+volatile void* LED3_BASE=NULL;
 uint LED3_BIT=0;
-uint LED4_BASE=NULL;
+volatile void* LED4_BASE=NULL;
 uint LED4_BIT=0;
 
-void globalsBeforeProcess();
-void globalsAfterProcess();
+int checkStackSpaceValue=0x7FFFFFFF;
+

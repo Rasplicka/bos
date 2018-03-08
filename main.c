@@ -12,6 +12,7 @@
  * 
  */
 
+
 // <editor-fold defaultstate="collapsed" desc="extern, add user app start function here">
 //define extern functions
 //user app start function add here, 
@@ -56,12 +57,24 @@
 #define     OS_DATA_SIZE        (PROC_T_SIZE +  REG_EVENT_T_SIZE + EVENT_C_SIZE + 64)      //velikost .os
 #define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
 
+//#ifdef PIC32MZ
+//#pragma region name=".sdata" origin=0x80000000 size=0x2000    
+//#pragma region name="os"   origin=0x8007E000 size=0x2000
+//int ext_array[256] __attribute__((region("os"))) ;    
+//#endif    
+    
+//#ifdef PIC32MM
+//#pragma region name="os" origin=0x80004000 size=0x2000
+//int ext_array[256] __attribute__((region("os"))) ;    
+//#endif 
+    
 //process table (prvni polozka v sekci .os, proto definuje jeji adresu)   
 uint proc_t[(PROC_T_SIZE / 4)]              __section(".os") __at(OS_DATA_BASE);      
 char regEventTable[REG_EVENT_T_SIZE]        __section(".os"); //__at(OS_DATA_BASE);
 char eventCache[EVENT_C_SIZE]               __section(".os"); //__at(OS_DATA_BASE);
 
 //.os vars 
+//__region(".os")
 uint* proc_t_pos            __section(".os") = 0;
 uint* proc_t_after          __section(".os") = 0;
 char proc_t_count           __section(".os") = 0;
@@ -71,7 +84,7 @@ char errorProcID            __section(".os") = 0;
 
 uint time_ms                __section(".os") = 0;                                   //timer1
 //uint day_ms               __section(".os");                                   //timer1
-int checkStackSpaceValue    __section(".os") = 0;
+//int checkStackSpaceValue    __section(".os") =0;
 
 char sleepStatus            __section(".os") = 0;
 char idleStatus             __section(".os") = 0;
@@ -79,7 +92,7 @@ char idleStatus             __section(".os") = 0;
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-//char ballast[44]        __section(".os");
+char ballast[44]        __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
@@ -112,7 +125,7 @@ void main()
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
-    checkStackSpaceValue=0x7FFFFFFF;
+    
     
 #ifdef WATCHDOG_TIMER    
     startWDT();                             //WDT on
@@ -123,6 +136,8 @@ void main()
     initClock();
     setClock(CLOCK_CFG.CLK_NORMAL);  
   
+    //init vars
+    //checkStackSpaceValue=0x7FFFFFFF;
     // </editor-fold>
     
     //2. set safe mode ---------------------------------------------------------
@@ -186,7 +201,7 @@ void main()
     //7. start multitasking ----------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="start os">
    
-    globalsAfterProcess();
+    //globalsAfterProcess();
     SYSTEM_STATUS.SleepMode = 0;
     SYSTEM_STATUS.IdleMode =  0;
     SYSTEM_STATUS.Threading = 1;

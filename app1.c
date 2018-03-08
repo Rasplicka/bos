@@ -30,6 +30,10 @@ static void longTime();
 static void testSystemTimer(int i);
 static void testRTC(char hour, char min, uint date);
 static void testButton(int event, int value, int index);
+static void call(int a, int b);
+static void call1(int a, int b);
+static void call2(int a, int b);
+static void call3(int a, int b);
 
 static int restart=0;
 
@@ -48,10 +52,16 @@ void m1_start()
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
     //test sleep mode
-    setCanSleep(1);
+    //setCanSleep(1);
+    int c=0;
     while(1)
     {
-        doEvents();
+        if(c % 100 == 0)
+        {
+            doEvents();
+            call(1,1);
+        }
+        c++;
     }
 
     
@@ -181,4 +191,44 @@ static void testButton(int event, int value, int index)
         }
         */
     //}
+}
+
+static void call(int a, int b)
+{
+    int p[50];
+    p[0]=0xff;
+    
+    checkStackSpace();
+    
+    call1(1,1);
+}
+
+static void call1(int a, int b)
+{
+    int p[50];
+    p[0]=0xff;
+    
+    checkStackSpace();
+    
+    call2(1,1);
+}
+
+static void call2(int a, int b)
+{
+    int p[50];
+    p[0]=0xff;
+    
+    checkStackSpace();
+    
+    call3(1,1);
+}
+
+static void call3(int a, int b)
+{
+    int p[50];
+    p[0]=0xff;
+    
+    checkStackSpace();
+    
+    //call1(1,1);
 }

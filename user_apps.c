@@ -63,6 +63,13 @@ void pinSetting()
     setPortDigOut(PORTH_BASE, BIT0 | BIT1 | BIT2);
     LATHCLR=(BIT0 | BIT1 | BIT2);
     
+    LED1_BASE=(void*)PORTH_BASE;
+    LED1_BIT=BIT0;
+    LED2_BASE=(void*)PORTH_BASE;
+    LED2_BIT=BIT1;
+    LED3_BASE=(void*)PORTH_BASE;
+    LED3_BIT=BIT2;    
+    
     //test buttons PORTB.12-14
     setPortDigIn(PORTB_BASE, BIT12 | BIT13 | BIT14);                            //ubtn provede nastaveni take
     
@@ -107,23 +114,23 @@ void pinSetting()
     
     //RA9/pin37 LED1
     setPortDigOut(PORTA_BASE, BIT9);                                    //37
-    TEST_LED.LED1_BASE=(void*)PORTA_BASE;
-    TEST_LED.LED1_BIT=BIT9;
+    LED1_BASE=(void*)PORTA_BASE;
+    LED1_BIT=BIT9;
     
     //RD0/pin38 LED2
     setPortDigOut(PORTD_BASE, BIT0);                                    //38
-    TEST_LED.LED2_BASE=(void*)PORTD_BASE;
-    TEST_LED.LED2_BIT=BIT0;
+    LED2_BASE=(void*)PORTD_BASE;
+    LED2_BIT=BIT0;
     
     //RC3/pin39 LED3
     setPortDigOut(PORTC_BASE, BIT3);                                    //39
-    TEST_LED.LED3_BASE=(void*)PORTC_BASE;
-    TEST_LED.LED3_BIT=BIT3;
+    LED3_BASE=(void*)PORTC_BASE;
+    LED3_BIT=BIT3;
     
     //RC4/pin40 LED4
     setPortDigOut(PORTC_BASE, BIT4);                                    //40
-    TEST_LED.LED1_BASE=(void*)PORTC_BASE;
-    TEST_LED.LED1_BIT=BIT4;
+    LED4_BASE=(void*)PORTC_BASE;
+    LED4_BIT=BIT4;
     
     //TLACITKA -----------------------------------------------------------------
     
@@ -223,10 +230,13 @@ void userAppCheckStackSpace(int space, int is_event)
     //space - vyjadruje aktualni hodnotu volneho mista ve stacku
     //is_event=1 - fce je volana jako obsluha udalosti (bezi jako systemProcess)
     //is_event=0 - fce neni volana jako obsluha udalosti
+
+    int min=checkStackSpaceValue;
     
     if(space < 64)
     {
         //breakpoint
+        int a=1;
     }
 }
 

@@ -1106,7 +1106,7 @@ checkStackSpace:
     lw	    t8, (proc_t_pos)
     lw	    a0, TH_T_STACK_BASE*4(t8)	    //adresa stack_base
     
-    sub	    a0, sp, a0			    //do t7 zbyvajici velikost stacku
+    subu    a0, sp, a0			    //do t7 zbyvajici velikost stacku
     
     lw	    t7, (checkStackSpaceValue)
     _B_FLT  t7, a0, 1f			    //meni t9

@@ -45,7 +45,8 @@ void m3_start()
     while(1)
     {
         //do LATxINV zapise 1 na prislusnou pozici
-        _LED_INV_REG = _LED_INV_VAL;
+        //_LED_INV_REG = _LED_INV_VAL;
+        invTestLed(3);
         
         int a, b=0;
         for(a=0; a<(200000 * delay); a++)

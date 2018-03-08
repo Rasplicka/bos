@@ -11,13 +11,3 @@
  * 
  */
 
-void globalsBeforeProcess()
-{
-    //tato fce se vola jako inicializace systemu, tesne pred prvnim spustenim (registraci) procesu
-
-}
-
-void globalsAfterProcess()
-{
-    //tato fce se vola jako inicializace systemu, tesne po registraci vsech procesu, ale pred prvnim spustenim procesu
-}

@@ -66,7 +66,8 @@ static void testSystemTimer(int a)
 {
     //int* p=0;
     //int x=*p;
-    _LED_INV_REG = _LED_INV_VAL;
+    invTestLed(2);
+    //_LED_INV_REG = _LED_INV_VAL;
     
     /*
     cnt++;

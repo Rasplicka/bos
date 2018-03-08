@@ -21,6 +21,7 @@ struct
 }SYSTEM_STATUS;
 
 //TEST LED
+/*
 struct
 {
     void* LED1_BASE;
@@ -33,6 +34,7 @@ struct
     short unsigned int LED4_BIT;
     
 }TEST_LED = {NULL, NULL, NULL, NULL};
+*/
 
 //ROM STRUCT
 //definuje mod sbernice 8-bit, 16-bit, 32-bit
@@ -352,3 +354,5 @@ typedef struct
     char    internalState;          //state ridi start/data/end signal
    
 }I2CControl;
+
+

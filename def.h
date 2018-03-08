@@ -54,12 +54,12 @@
 #define     SRS_STACK_SIZE              512         //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
 #define     STACK_CHECK_VALUE           0xF010E020
 
-//#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
 #define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF     //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
-//#define     ENABLE_CHECK_STACK_OVERFLOW           //povoluje kontrolovat stack overflow
+#define     ENABLE_CHECK_STACK_OVERFLOW           //povoluje kontrolovat stack overflow
 
 //watch dog timer
-//#define     WATCHDOG_TIMER
+#define     WATCHDOG_TIMER
 
 #ifdef PIC32MM0256
 //------------------------------------------------------------------------------
@@ -82,6 +82,7 @@
 
 #define		RAM_SIZE                8*1024
 #define     STACK_SIZE              3*1024
+#define     SYSPROC_STACK_SIZE      1024            //velikost zasobniku systemProcess
 #define		REG_EVENT_TABLE_CAPA    16              //max. pocet registraci udalosti (polozka 16 bytes) 256 B
 #define		EVENT_CACHE_CAPA        12              //velikost cache udalosti        (polozka 20 bytes) 240 B
 #define     PROC_T_CAPA             4               //kapacita proc_t (polozka 96 Bytes) 384 B
@@ -95,8 +96,9 @@
 //BOS used RAM cca 68kB (app. stack ~4kB)
 
 #define     EBASE                   0x9D000000
-#define		RAM_SIZE                512*1024        //512kB
-#define     STACK_SIZE              64*1024         //64kB (SRS stacks 7*512 = 3.5kB)
+#define		RAM_SIZE                512 * 1024      //512kB
+#define     STACK_SIZE              64  * 1024      //64kB (SRS stacks 7*512 = 3.5kB)
+#define     SYSPROC_STACK_SIZE      4   * 1024      //velikost zasobniku systemProcess
 #define		REG_EVENT_TABLE_CAPA    64              //max. pocet registraci udalosti (polozka 16 bytes) 1024 B
 #define		EVENT_CACHE_CAPA        64              //velikost cache udalosti        (polozka 20 bytes) 1280 B
 #define     PROC_T_CAPA             16              //kapacita proc_t (polozka 96 Bytes) 1.5kB

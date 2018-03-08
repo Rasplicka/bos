@@ -3,7 +3,7 @@
  * Author Jiri Rasplicka, 2017
  */
 
-
+//int __far checkStackSpaceValue;
 //extern void _general_exception_handler();
 //extern void _simple_tlb_refill_exception_handler();
 
@@ -26,6 +26,7 @@ extern uint getTimeMs();
 extern uint getDayMs();
 
 extern void general_exception();
+extern void checkStackSpace();
 
 extern char getProcID();
 extern void* getProcTableItem(char id);
