@@ -104,3 +104,12 @@ extern char rtcGetDayOfWeek();
 extern char rtcGetHalfSecond();
 extern int  rtcRegTimeAlarm(void*, char, char);
 #endif
+
+extern void cnStartPortA(char);
+extern void cnStopPortA();
+extern void cnStartPortB(char);
+extern void cnStopPortB();
+
+extern void cnEnable(uint, uint);
+extern void cnDisble(uint, uint);
+extern void cnRegEvent(void*, uint);

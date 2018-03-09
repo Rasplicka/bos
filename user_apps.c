@@ -72,7 +72,9 @@ void pinSetting()
     
     //test buttons PORTB.12-14
     setPortDigIn(PORTB_BASE, BIT12 | BIT13 | BIT14);                            //ubtn provede nastaveni take
-    
+    setPortPullUp(PORTB_BASE, BIT12 | BIT13 | BIT14, 1);    
+    TRISB=0xFFFF;
+    PORTB=0xFFFF;
 #endif    
     
 #ifdef TEST_BOARD_BOS1    
@@ -237,8 +239,8 @@ void userAppCheckStackSpace(int space, int is_event)
     {
         //breakpoint
         int a=1;
-        trap();
-        softReset();
+        //trap();
+        //softReset();
     }
 }
 

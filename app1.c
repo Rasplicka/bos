@@ -34,7 +34,7 @@ static void call(int a, int b);
 static void call1(int a, int b);
 static void call2(int a, int b);
 static void call3(int a, int b);
-
+static void cn(uint base, uint stat);
 static int restart=0;
 
 void m1_start()
@@ -48,20 +48,30 @@ void m1_start()
     
     //testSystemTimer();
     //systemTimerRegInterval(&testSystemTimer, 1000);
+    cnStartPortB(0);                                //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
+    cnEnable(PORTB_BASE, BIT12 | BIT13 | BIT14);                    //povoli PORTA.0, PORTA.1
     
+    cnRegEvent(&cn, PORTB_BASE);
+    //CNSTATB=0x0;
+    //CNSTATB=0xFFFFFFFF;
+    //CNSTATB=0x0;
+    volatile int xxx;
+    
+    //int st=CNSTATB;
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
     //test sleep mode
-    //setCanSleep(1);
+    setCanSleep(1);
     int c=0;
     while(1)
     {
         if(c % 100 == 0)
         {
             doEvents();
-            call(1,1);
+            //call(1,1);
         }
         c++;
+        //xxx=PORTB;
     }
 
     
@@ -233,3 +243,10 @@ static void call3(int a, int b)
     //call1(1,1);
 }
 
+static void cn(uint b, uint stat)
+{
+    setTestLed(1);
+    uint s=stat;
+    setCanSleep(0);
+    
+}

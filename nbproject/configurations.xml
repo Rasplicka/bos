@@ -66,6 +66,7 @@
         </logicalFolder>
         <logicalFolder name="f4" displayName="drivers" projectFiles="true">
           <itemPath>rtc.S</itemPath>
+          <itemPath>change_notif.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="modules" projectFiles="true">
           <itemPath>ubtn2.S</itemPath>

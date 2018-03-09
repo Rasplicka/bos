@@ -40,20 +40,20 @@ cnStartPortA:
     
     //OFF118
     li	    v1, EBASE
-    la	    v0, cnAInterrupt
+    la	    v0, iVector_cnPortA
     subu    v0, v1
     sw	    v0, (OFF118)
     
     //priority IPC29.b18-20
     li	    t9, (0b111 << 18)
     sw	    t9, (IPC29CLR)					//nuluj bity
-    li	    t9, (CN_INTERRUPT_PRIORITY << 2)
+    li	    t9, (CN_INTERRUPT_PRIORITY << 18)
     sw	    t9, (IPC29SET)					//nastav bity
     
     //subpriority IPC29.b16-17
     li	    t9, (0b11 << 16)
     sw	    t9, (IPC29CLR)					//nuluj bity    
-    li	    t9, (CN_INTERRUPT_SUBPRIORITY << 0)
+    li	    t9, (CN_INTERRUPT_SUBPRIORITY << 16)
     sw	    t9, (IPC29SET)					//nastav bity
     
     
@@ -67,7 +67,6 @@ cnStartPortA:
 .end cnStartPortA 
     
 //</editor-fold>
-    
 //<editor-fold defaultstate="collapsed" desc="cnStopPortA">
 .global cnStopPortA
 .ent cnStopPortA
@@ -87,7 +86,75 @@ cnStopPortA:
     
 //</editor-fold>
 
-
+//<editor-fold defaultstate="collapsed" desc="cnStartPortB">
+.global cnStartPortB
+.ent cnStartPortB
+cnStartPortB:
+//a0=SIDL (0=pracuje v IDLE/SLEEP, 1=nepracuje v IDLE/SLEEP)
+    
+    //nastavi registr CNSTATx, kde je ON (b15) a SIDL (b13)
+    
+    li	    t8, (PORTB_BASE + CNCON_OFFSET)
+    
+    
+    andi    a0, 0x1			//ponecha pouze b0
+    sll	    a0, 13			//SIDL
+    
+    li	    t9, (1 << 15)		//ON b15
+    or	    a0, t9			//ON + SIDL
+    
+    sw	    zero, (t8)			//nuluj CNSTAT
+    sw	    a0, (t8)			//nastav CNSTAT
+    
+    //OFF118
+    li	    v1, EBASE
+    la	    v0, iVector_cnPortB
+    subu    v0, v1
+    sw	    v0, (OFF119)
+    
+    //priority IPC29.b26-28
+    li	    t9, (0b111 << 26)
+    sw	    t9, (IPC29CLR)					//nuluj bity
+    li	    t9, (CN_INTERRUPT_PRIORITY << 26)
+    sw	    t9, (IPC29SET)					//nastav bity
+    
+    //subpriority IPC29.b24-25
+    li	    t9, (0b11 << 24)
+    sw	    t9, (IPC29CLR)					//nuluj bity    
+    li	    t9, (CN_INTERRUPT_SUBPRIORITY << 24)
+    sw	    t9, (IPC29SET)					//nastav bity
+    
+    
+    //IFS3.b23=0, IEC3.b23=1
+    li	    t9, (1<<23)
+    sw	    t9, (IFS3CLR)
+    sw	    t9, (IEC3SET)    
+    
+    jrc	    ra
+    
+.end cnStartPortB 
+    
+//</editor-fold>    
+//<editor-fold defaultstate="collapsed" desc="cnStopPortB">
+.global cnStopPortB
+.ent cnStopPortB
+cnStopPortB:
+    //nastavi registr CNSTATx, kde je ON (b15) a SIDL (b13)
+    
+    li	    t8, (PORTB_BASE + CNCON_OFFSET) 
+    sw	    zero, (t8)					//ON=0
+    
+    //IEC3.b23=0
+    li	    t9, (1<<23)
+    sw	    t9, (IEC3CLR)				//disable interrupt
+    
+    jrc	    ra
+    
+.end cnStopPortB 
+    
+//</editor-fold>    
+    
+    
 //<editor-fold defaultstate="collapsed" desc="cnEnable">
 .global cnEnable
 .ent cnEnable
@@ -219,22 +286,23 @@ iVector_cnPortA:
 #endif    
     
 #ifdef PIC32MZ
-    #define	    CN_IFS_BIT		22
-    #define	    CN_IFS_REG_CLR	IFS29CLR 
+    #define	    CNA_IFS_BIT		22
+    #define	    CNA_IFS_REG_CLR	IFS3CLR 
      
     _MIPS32_TO_MICROMIPS  
     _INT_PROLOGUE
     
 #endif  
     
+    lw	    t9, (PORTA)			//cteni portu
     li	    a0, PORTA_BASE
     lw	    a1, (CNSTATA)
-    bal	    cnEvents		//meni a0-a3, v0, v1, t6-t9
+    bal	    cnEvents			//meni a0-a3, v0, v1, t6-t9
     
     
     //clear flag
-    li	    v0, (1 << CN_IFS_BIT)
-    sw      v0, (CN_IFS_REG_CLR)     
+    li	    v0, (1 << CNA_IFS_BIT)
+    sw      v0, (CNA_IFS_REG_CLR)     
     sync			
     
 #ifdef PIC32MZ    
@@ -247,4 +315,48 @@ iVector_cnPortA:
     
 //</editor-fold>
    
+//<editor-fold defaultstate="collapsed" desc="iVector_cnPortB">
+.ent iVector_cnPortB
+iVector_cnPortB:
     
+#ifdef PIC32MM0064 
+    //#define	    RTC_IFS_BIT		14
+    //#define	    RTC_IFS_REG_CLR	IFS0CLR     
+#endif
+    
+#ifdef PIC32MM0256 
+    //#define	    RTC_IFS_BIT		0
+    //#define	    RTC_IFS_REG_CLR	IFS1CLR     
+#endif    
+    
+#ifdef PIC32MZ
+    #define	    CNB_IFS_BIT		23
+    #define	    CNB_IFS_REG_CLR	IFS3CLR 
+     
+    _MIPS32_TO_MICROMIPS  
+    _INT_PROLOGUE
+    
+#endif  
+    
+    lw	    t9, (PORTB)			//cteni portu
+    li	    a0, PORTB_BASE
+    lw	    a1, (CNSTATB)
+    bal	    cnEvents			//meni a0-a3, v0, v1, t6-t9
+    
+    
+    //clear flag
+    li	    v0, (1 << CNB_IFS_BIT)
+    sw      v0, (CNB_IFS_REG_CLR)     
+    sync			
+    
+#ifdef PIC32MZ    
+    _INT_EPILOGUE
+#endif 
+    
+    eret    
+    
+.end iVector_cnPortB 
+    
+//</editor-fold>
+   
+        
