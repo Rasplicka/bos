@@ -2,12 +2,13 @@
 
 //globals
 void main();
+int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, char default_procID);
+
 //void processException(char procId, char code, void* addr);
-void trap();
-void softReset();
+//void trap();
+//void softReset();
 
 //locals
-int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, char default_procID);
 static char getFreeProcessID(char defaultId);
 static int* getEmptyProcessTableItem();
 static void systemInit();

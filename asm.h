@@ -8,24 +8,24 @@
 //extern void _simple_tlb_refill_exception_handler();
 
 //core_fn.S
-extern void initCPU();
-extern void startupStack();
-extern int allocStack(int, int*);
-extern void clearSystemData(uint, uint);
-extern void setSrsValue();
-extern void startEvents();
+//extern void initCPU();
+//extern void startupStack();
+//extern int allocStack(int, int*);
+//extern void clearSystemData(uint, uint);
+//extern void setSrsValue();
+//extern void startEvents();
 extern void doEvents();
 extern void doEventsL(void* label);
 extern void doEventsError();
-extern uint getGP();
+//extern uint getGP();
 //extern void restartApp();
 //extern void restartAppId(char id);
 extern uint compareTimeMs(uint);
 extern void pauseEvents(uint);                       //time ms
 extern uint getTimeMs();
-extern uint getDayMs();
+//extern uint getDayMs();                           //DayMs zruseno
 
-extern void general_exception();
+//extern void general_exception();
 extern void checkStackSpace();
 
 extern char getProcID();
@@ -44,7 +44,7 @@ extern void startWDT();
 extern void setCanSleep(char);
 extern void setCanIdle(char);
 extern void unregEvent(void*);
-extern void systemProcess();
+//extern void systemProcess();
 
 //periph_fn.S
 extern void setPortDigOut(uint, uint);

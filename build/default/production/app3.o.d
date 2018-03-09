@@ -3,4 +3,4 @@ app3.c  \
 globals.h  \
 asm.h  \
 def.h  \
- structures.h 
+struct.h 

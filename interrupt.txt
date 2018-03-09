@@ -1,0 +1,11 @@
+Vyresit, jak v MZ nastavit interrupt z aplikace
+pro konkretni interrupt, napr. timer2 apod
+Jak zajistit, aby fce obsluhy byla v dosahu EBASE
+
+napr. pouzit sekci .vectors ?
+ktera zacina na 0x9D000200
+__section(".vectors") void vec_int() 
+{
+    checkStackSpace();
+
+}

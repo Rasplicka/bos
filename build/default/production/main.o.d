@@ -4,4 +4,4 @@ main.h  \
 globals.h  \
 asm.h  \
 def.h  \
- structures.h 
+ struct.h 

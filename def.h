@@ -212,6 +212,7 @@
 #define     TIMER1_EVENT_ID		    1
 #define     UBTN_EVENT_ID           5
 #define     RTC_TALARM_ID           10
+#define     CN_EVENT_ID             15
 
 // </editor-fold>
 
@@ -255,6 +256,9 @@
 #define     ODC_OFFSET      0x40                        //open drain
 #define	    CNPU_OFFSET	    0x50                        //pull-up
 #define	    CNPD_OFFSET	    0x60                        //pull-down
+#define     CNCON_OFFSET    0x70                        //change notification control
+#define     CNENA_OFFSET    0x80                        //change notification enable
+#define     CNSTAT_OFFSET   0x90                        ////change notification status
 
 #define	    CLR_OFFSET	    0x4                         //offset CLR registru
 #define	    SET_OFFSET	    0x8                         //offset SET registru

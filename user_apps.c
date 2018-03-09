@@ -237,6 +237,8 @@ void userAppCheckStackSpace(int space, int is_event)
     {
         //breakpoint
         int a=1;
+        trap();
+        softReset();
     }
 }
 

@@ -12,6 +12,7 @@
       <itemPath>sleep_idle.txt</itemPath>
       <itemPath>stack.txt</itemPath>
       <itemPath>ram.txt</itemPath>
+      <itemPath>interrupt.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -74,13 +75,11 @@
           <itemPath>periph_fn.S</itemPath>
         </logicalFolder>
       </logicalFolder>
-      <logicalFolder name="f2" displayName="user" projectFiles="true">
-        <itemPath>user_apps.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f3" displayName="user apps" projectFiles="true">
+      <logicalFolder name="f3" displayName="user_aplications" projectFiles="true">
         <itemPath>app1.c</itemPath>
         <itemPath>app2.c</itemPath>
         <itemPath>app3.c</itemPath>
+        <itemPath>user_apps.c</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"

@@ -118,6 +118,15 @@ char stack_area[STACK_SIZE] __at(STACK_DATA_BASE) __section(".os_stack");
 
 // </editor-fold>
 
+//core_fn.S extern fce pro tento modul (BOS startup)
+extern void initCPU();
+extern void startupStack();
+extern int allocStack(int, int*);
+extern void clearSystemData(uint, uint);
+extern void setSrsValue();
+extern uint getGP();
+extern void systemProcess();
+extern void startEvents();
 
 //global fn
 void main() 
@@ -216,26 +225,6 @@ void main()
     }
 }
 
-void trap()
-{
-    //vyvola general exception (trap)
-    asm("teq    $0, $0");
-}
-
-void softReset()
-{
-    //software reset
-    
-    SYSKEY = 0x00000000; 
-    SYSKEY = 0xAA996655;        //write key1 to SYSKEY
-    SYSKEY = 0x556699AA;        //write key2 to SYSKEY
-    RSWRSTSET = 1;
-    volatile int* p = &RSWRST;
-    *p;
-    while(1){}    
-}
-
-//local fn
 int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, char default_procID)
 {
     //prvede registraci procesu v proc_t
@@ -283,6 +272,7 @@ int regProcess(void* start_addr, int stack_size, const APP_START_PARAM* param, c
     }
 }
 
+//local fn
 static char getFreeProcessID(char defaultId)
 {
     //vraci ID procesu
@@ -443,7 +433,6 @@ static void blick()
     }
     
 }
-
 
 
 #ifdef SAFE_PROCESS 

@@ -3,4 +3,4 @@ clock_cfgBits_mz.c  \
 globals.h  \
  asm.h  \
 def.h  \
-structures.h 
+struct.h 
