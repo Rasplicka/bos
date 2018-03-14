@@ -28,6 +28,7 @@ static int cnt=0;
 static void testSystemTimer(int a);
 static void testButton(int event, int value, int index);
 static void listener(int p0, int p1, int p2);
+static void cn(uint base, uint stat);
 
 void m2_start()
 {
@@ -35,12 +36,16 @@ void m2_start()
     //setCanIdle(1);
 
     //ubtnRegEvent(&testButton, 11, 20);
-    systemTimerRegInterval(&testSystemTimer, 2000);
+    //systemTimerRegInterval(&testSystemTimer, 2000);
     setCanSleep(1);
+ 
+    /*
+    cnRegEvent(&cn, PORTB_BASE);
     while(1)
     {
         doEvents();
     }
+    */
 
     //ubtnRegEvent(&testButton, 0, 0xFF);
     //regListener(&listener, 155);
@@ -48,7 +53,8 @@ void m2_start()
     while(1)
     {
         //do LATxINV zapise 1 na prislusnou pozici
-        _LED_INV_REG = _LED_INV_VAL;
+        //_LED_INV_REG = _LED_INV_VAL;
+        invTestLed(2);
         
         int a, b=0;
         for(a=0; a<(150000*delay); a++)
@@ -64,9 +70,12 @@ void m2_start()
 
 static void testSystemTimer(int a)
 {
+    setCanSleep(1);
+    unregEvent(&testSystemTimer);
+    
     //int* p=0;
     //int x=*p;
-    invTestLed(2);
+    //invTestLed(2);
     //_LED_INV_REG = _LED_INV_VAL;
     
     /*
@@ -130,5 +139,19 @@ static void testButton(int event, int value, int index)
 static void listener(int p0, int p1, int p2)
 {
     int a=p0+p1+p2;
+    
+}
+
+static void cn(uint base, uint stat)
+{
+    if((stat & BIT13) != 0)
+    {
+        invTestLed(2);
+        setCanSleep(0);
+        systemTimerRegInterval(&testSystemTimer, 20000);
+    }
+    //setTestLed(1);
+    //uint s=stat;
+    //setCanSleep(0);
     
 }

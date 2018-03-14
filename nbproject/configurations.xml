@@ -41,7 +41,7 @@
         <itemPath>user_apps.h</itemPath>
       </logicalFolder>
       <itemPath>def.h</itemPath>
-      <itemPath>structures.h</itemPath>
+      <itemPath>struct.h</itemPath>
       <itemPath>asm_macro.S</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -66,7 +66,8 @@
         </logicalFolder>
         <logicalFolder name="f4" displayName="drivers" projectFiles="true">
           <itemPath>rtc.S</itemPath>
-          <itemPath>change_notif.S</itemPath>
+          <itemPath>change_notif_mz.S</itemPath>
+          <itemPath>change_notif_mm.S</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="modules" projectFiles="true">
           <itemPath>ubtn2.S</itemPath>
@@ -97,10 +98,10 @@
     <conf name="default" type="2">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <targetDevice>PIC32MZ2048ECM144</targetDevice>
+        <targetDevice>PIC32MM0256GPM048</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PKOBSKDEPlatformTool</platformTool>
+        <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>2.05</languageToolchainVersion>
         <platform>3</platform>
@@ -403,7 +404,6 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="memories.configurationmemory" value="true"/>
         <property key="memories.dataflash" value="true"/>
         <property key="memories.eeprom" value="true"/>

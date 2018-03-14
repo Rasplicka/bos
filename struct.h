@@ -61,6 +61,13 @@ const struct
     
 }ON_ERROR = { ON_ERROR_RESET_SYSTEM, ON_ERROR_RESET_PROCESS, ON_ERROR_REMOVE_PROCESS };
 
+const struct
+{
+    char    LOW_TO_HIGH;
+    char    HIGH_TO_LOW;
+    char    ANY_CHANGE;
+}CN_STYLE = {1, 2, 3};
+
 //TYPEDEF
 typedef struct
 {

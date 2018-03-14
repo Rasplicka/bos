@@ -32,7 +32,7 @@ void m3_start()
 {
     
     //systemTimerRegInterval(&testSystemTimer, 4000);
-    setCanSleep(1);
+    //setCanSleep(1);
     //ubtnRegEvent(&testButton, 21, 30);
     //while(1)
     //{

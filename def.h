@@ -3,7 +3,6 @@
 //#define PIC32MM0256
 //#define PIC32MM
 
-
 // <editor-fold defaultstate="collapsed" desc="CPU">
 
     // <editor-fold defaultstate="collapsed" desc="CPU MZ">
@@ -257,8 +256,11 @@
 #define	    CNPU_OFFSET	    0x50                        //pull-up
 #define	    CNPD_OFFSET	    0x60                        //pull-down
 #define     CNCON_OFFSET    0x70                        //change notification control
-#define     CNENA_OFFSET    0x80                        //change notification enable
+#define     CNEN_OFFSET     0x80                        //change notification enable    //MZ
+#define     CNEN0_OFFSET    0x80                        //change notification enable    //MM
 #define     CNSTAT_OFFSET   0x90                        ////change notification status
+#define     CNEN1_OFFSET    0xA0                        //change notification enable    //MM    
+#define     CNF_OFFSET      0xB0                        //change notification IF        //MM
 
 #define	    CLR_OFFSET	    0x4                         //offset CLR registru
 #define	    SET_OFFSET	    0x8                         //offset SET registru
@@ -399,6 +401,21 @@
 #define     PORTJ_BASE      0xBF860800
 #define     PORTK_BASE      0xBF860900
 
+#endif
+
+//port Change Notification
+#define     PORT_CN
+#ifdef PORT_CN
+    #define     PORT_CNA
+    #define     PORT_CNB
+    #define     PORT_CNC
+    #define     PORT_CND
+    #define     PORT_CNE
+    #define     PORT_CNF
+    #define     PORT_CNG
+    #define     PORT_CNH
+    #define     PORT_CNJ
+    #define     PORT_CNK
 #endif
 
 // </editor-fold>

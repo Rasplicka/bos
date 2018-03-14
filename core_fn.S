@@ -2113,6 +2113,11 @@ gotoSleep:
 #endif         
     
 #ifdef PIC32MM
+    //test, zda uplynulo alespon 5s po startup
+    //nesmi prejit do sleep driv, jinak nelze re-programovat chip!
+    lw	    t8, (time_ms)
+    _B_FLTC t8, 5000, 1f		    //meni t9
+    
     //MM timer1 - OFF, je napajen z LPRC
     li	    t9, (1<<15)
     sw	    t9, (T1CONCLR)		    //T1CON.b15 = OFF
@@ -2147,6 +2152,8 @@ gotoSleep:
     sw	    t9, (T1CONSET)		    //T1CON.b15 = ON
 #endif      
     
+1:    
+    
     //po probuzeni
 #ifdef WATCHDOG_TIMER    
     li	    t9, 0x8000
@@ -2162,46 +2169,6 @@ gotoSleep:
 .end gotoSleep  
     
 //</editor-fold>   
-    
-//<editor-fold defaultstate="collapsed" desc="gotoIdleMZ">
-    /*
-.align 2
-.ent gotoIdleMZ
-gotoIdleMZ:
-    
-#ifdef WATCHDOG_TIMER 
-    li	    t9, 0x8000
-    sh	    t9, (WDTCONCLR)		    //WDT off
-#endif    
-    
-    //unlock
-    sw      zero, (SYSKEY)
-    li      v0, 0xaa996655
-    sw      v0, (SYSKEY)
-    li      v0, 0x556699aa
-    sw      v0, (SYSKEY)
-    
-    //OSCCON.b4 = SLEEP(1)/IDLE(0)
-    li	    v1, 0x10
-    sw	    v1, (OSCCONCLR)		    //clr OSCCON.SLPEN
-    
-    //lock
-    sw      zero, (SYSKEY)
-    
-    //prechod do SLEEP
-    wait
-    
-    //po probuzeni
-#ifdef WATCHDOG_TIMER    
-    li	    t9, 0x8000
-    sh	    t9, (WDTCONSET)		    //WDT on
-#endif      
-    
-    jrc	    ra    
-    
-.end gotoIdleMZ  
-    */
-//</editor-fold>  
     
 //<editor-fold defaultstate="collapsed" desc="gotoIdle">
     

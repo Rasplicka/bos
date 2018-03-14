@@ -48,20 +48,26 @@ void m1_start()
     
     //testSystemTimer();
     //systemTimerRegInterval(&testSystemTimer, 1000);
+    
+    /*
+    setCanSleep(1);
     cnStartPortB(0);                                //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
     cnEnable(PORTB_BASE, BIT12 | BIT13 | BIT14);                    //povoli PORTA.0, PORTA.1
     
     cnRegEvent(&cn, PORTB_BASE);
-    //CNSTATB=0x0;
-    //CNSTATB=0xFFFFFFFF;
-    //CNSTATB=0x0;
-    volatile int xxx;
+    
+    while(1)
+    {
+        doEvents();
+    }
+    */
     
     //int st=CNSTATB;
     rtcRegTimeAlarm(&testRTC, 0, 1);
     rtcRegTimeAlarm(&testRTC, 0, 2);
     //test sleep mode
-    setCanSleep(1);
+    setCanSleep(0);
+    
     int c=0;
     while(1)
     {
@@ -145,8 +151,10 @@ static void testSystemTimer(int i)
 {
 
     //int d=a+b;
-    _LED_INV_REG = _LED_INV_VAL;
+    //_LED_INV_REG = _LED_INV_VAL;
     //doEvents();
+    setCanSleep(1);
+    unregEvent(&testSystemTimer);
     
     /*
     char x;
@@ -176,7 +184,8 @@ static void testSystemTimer(int i)
 
 static void testRTC(char hour, char min, uint date)
 {
-    _LED_INV_REG = _LED_INV_VAL;
+    invTestLed(1);
+    //_LED_INV_REG = _LED_INV_VAL;
     setCanSleep(0);
     //setCanIdle(0);
     //restart=1;
@@ -243,10 +252,16 @@ static void call3(int a, int b)
     //call1(1,1);
 }
 
-static void cn(uint b, uint stat)
+static void cn(uint base, uint stat)
 {
-    setTestLed(1);
-    uint s=stat;
-    setCanSleep(0);
+    if((stat & BIT12) != 0)
+    {
+        invTestLed(1);
+        setCanSleep(0);
+        systemTimerRegInterval(&testSystemTimer, 5000);
+    }
+    //setTestLed(1);
+    //uint s=stat;
+    //setCanSleep(0);
     
 }
