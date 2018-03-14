@@ -2474,3 +2474,33 @@ defragTableB:
 .end defragTableB    
     
 //</editor-fold>        
+    
+    
+    
+//presunout
+//<editor-fold defaultstate="collapsed" desc="strLen">
+.align 2    
+.global strLen    
+.ent strLen
+strLen:
+//a0=adresa stringu \0
+    
+    //vraci delku
+    li16    v0, 0
+    nop
+    b16	    2f
+    nop
+1:
+    addiu   v0, 1
+    addiu   a0, 1
+    
+2:    
+    lbu	    t9, (a0)
+    bnez    t9, 1b
+    nop
+    
+    jrc	    ra
+    
+.end strLen 
+    
+//</editor-fold>    

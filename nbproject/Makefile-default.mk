@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c timer1.S core_fn.S rtc.S change_notif_mz.S change_notif_mm.S ubtn2.S periph.c periph_fn.S app1.c app2.c app3.c user_apps.c
+SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c timer1.S core_fn.S rtc.S change_notif_mz.S change_notif_mm.S ubtn2.S periph.c periph_fn.S app1.c app2.c app3.c user_apps.c spi.c _display/ili9341/disp9341.c _display/ili9341/disp16_asm.S portWriter.c _display/graphics.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/clock_cfgBits_mm.o.d ${OBJECTDIR}/clock_cfgBits_mz.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/core_fn.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/change_notif_mz.o.d ${OBJECTDIR}/change_notif_mm.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/periph_fn.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/user_apps.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/_display/ili9341/disp9341.o ${OBJECTDIR}/_display/ili9341/disp16_asm.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/_display/graphics.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/clock_cfgBits_mm.o.d ${OBJECTDIR}/clock_cfgBits_mz.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/core_fn.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/change_notif_mz.o.d ${OBJECTDIR}/change_notif_mm.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/periph_fn.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/user_apps.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/_display/ili9341/disp9341.o.d ${OBJECTDIR}/_display/ili9341/disp16_asm.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/_display/graphics.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o
+OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/_display/ili9341/disp9341.o ${OBJECTDIR}/_display/ili9341/disp16_asm.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/_display/graphics.o
 
 # Source Files
-SOURCEFILES=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c timer1.S core_fn.S rtc.S change_notif_mz.S change_notif_mm.S ubtn2.S periph.c periph_fn.S app1.c app2.c app3.c user_apps.c
+SOURCEFILES=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c timer1.S core_fn.S rtc.S change_notif_mz.S change_notif_mm.S ubtn2.S periph.c periph_fn.S app1.c app2.c app3.c user_apps.c spi.c _display/ili9341/disp9341.c _display/ili9341/disp16_asm.S portWriter.c _display/graphics.c
 
 
 CFLAGS=
@@ -156,6 +156,13 @@ ${OBJECTDIR}/periph_fn.o: periph_fn.S  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/periph_fn.o.ok ${OBJECTDIR}/periph_fn.o.err 
 	@${FIXDEPS} "${OBJECTDIR}/periph_fn.o.d" "${OBJECTDIR}/periph_fn.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG -DICD3PlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/periph_fn.o.d"  -o ${OBJECTDIR}/periph_fn.o periph_fn.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/periph_fn.o.asm.d",--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1,--defsym=ICD3PlatformTool=1
 	
+${OBJECTDIR}/_display/ili9341/disp16_asm.o: _display/ili9341/disp16_asm.S  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_display/ili9341" 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp16_asm.o.d 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp16_asm.o 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp16_asm.o.ok ${OBJECTDIR}/_display/ili9341/disp16_asm.o.err 
+	@${FIXDEPS} "${OBJECTDIR}/_display/ili9341/disp16_asm.o.d" "${OBJECTDIR}/_display/ili9341/disp16_asm.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -D__DEBUG -DICD3PlatformTool=1 -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_display/ili9341/disp16_asm.o.d"  -o ${OBJECTDIR}/_display/ili9341/disp16_asm.o _display/ili9341/disp16_asm.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/_display/ili9341/disp16_asm.o.asm.d",--defsym=__ICD2RAM=1,--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1,--defsym=ICD3PlatformTool=1
+	
 else
 ${OBJECTDIR}/asm_macro.o: asm_macro.S  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -212,6 +219,13 @@ ${OBJECTDIR}/periph_fn.o: periph_fn.S  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/periph_fn.o 
 	@${RM} ${OBJECTDIR}/periph_fn.o.ok ${OBJECTDIR}/periph_fn.o.err 
 	@${FIXDEPS} "${OBJECTDIR}/periph_fn.o.d" "${OBJECTDIR}/periph_fn.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/periph_fn.o.d"  -o ${OBJECTDIR}/periph_fn.o periph_fn.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/periph_fn.o.asm.d",--gdwarf-2
+	
+${OBJECTDIR}/_display/ili9341/disp16_asm.o: _display/ili9341/disp16_asm.S  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_display/ili9341" 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp16_asm.o.d 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp16_asm.o 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp16_asm.o.ok ${OBJECTDIR}/_display/ili9341/disp16_asm.o.err 
+	@${FIXDEPS} "${OBJECTDIR}/_display/ili9341/disp16_asm.o.d" "${OBJECTDIR}/_display/ili9341/disp16_asm.o.asm.d" -t $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC} $(MP_EXTRA_AS_PRE)  -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_display/ili9341/disp16_asm.o.d"  -o ${OBJECTDIR}/_display/ili9341/disp16_asm.o _display/ili9341/disp16_asm.S -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  -Wa,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_AS_POST),-MD="${OBJECTDIR}/_display/ili9341/disp16_asm.o.asm.d",--gdwarf-2
 	
 endif
 
@@ -272,6 +286,30 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/spi.o: spi.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/spi.o.d 
+	@${RM} ${OBJECTDIR}/spi.o 
+	@${FIXDEPS} "${OBJECTDIR}/spi.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/spi.o.d" -o ${OBJECTDIR}/spi.o spi.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/_display/ili9341/disp9341.o: _display/ili9341/disp9341.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_display/ili9341" 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp9341.o.d 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp9341.o 
+	@${FIXDEPS} "${OBJECTDIR}/_display/ili9341/disp9341.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/_display/ili9341/disp9341.o.d" -o ${OBJECTDIR}/_display/ili9341/disp9341.o _display/ili9341/disp9341.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/portWriter.o: portWriter.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/portWriter.o.d 
+	@${RM} ${OBJECTDIR}/portWriter.o 
+	@${FIXDEPS} "${OBJECTDIR}/portWriter.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/portWriter.o.d" -o ${OBJECTDIR}/portWriter.o portWriter.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/_display/graphics.o: _display/graphics.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_display" 
+	@${RM} ${OBJECTDIR}/_display/graphics.o.d 
+	@${RM} ${OBJECTDIR}/_display/graphics.o 
+	@${FIXDEPS} "${OBJECTDIR}/_display/graphics.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/_display/graphics.o.d" -o ${OBJECTDIR}/_display/graphics.o _display/graphics.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/clock_cfgBits_mm.o: clock_cfgBits_mm.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -326,6 +364,30 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o.d 
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/spi.o: spi.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/spi.o.d 
+	@${RM} ${OBJECTDIR}/spi.o 
+	@${FIXDEPS} "${OBJECTDIR}/spi.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/spi.o.d" -o ${OBJECTDIR}/spi.o spi.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/_display/ili9341/disp9341.o: _display/ili9341/disp9341.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_display/ili9341" 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp9341.o.d 
+	@${RM} ${OBJECTDIR}/_display/ili9341/disp9341.o 
+	@${FIXDEPS} "${OBJECTDIR}/_display/ili9341/disp9341.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/_display/ili9341/disp9341.o.d" -o ${OBJECTDIR}/_display/ili9341/disp9341.o _display/ili9341/disp9341.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/portWriter.o: portWriter.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/portWriter.o.d 
+	@${RM} ${OBJECTDIR}/portWriter.o 
+	@${FIXDEPS} "${OBJECTDIR}/portWriter.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/portWriter.o.d" -o ${OBJECTDIR}/portWriter.o portWriter.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/_display/graphics.o: _display/graphics.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/_display" 
+	@${RM} ${OBJECTDIR}/_display/graphics.o.d 
+	@${RM} ${OBJECTDIR}/_display/graphics.o 
+	@${FIXDEPS} "${OBJECTDIR}/_display/graphics.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/_display/graphics.o.d" -o ${OBJECTDIR}/_display/graphics.o _display/graphics.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

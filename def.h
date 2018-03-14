@@ -127,14 +127,14 @@
 //ili9341
 //#define             USE_SYSTEMFONT_ARIAL            //pouzije system font arial18 - std font
 //#define             SYSDISPLAY_9341SPI              //definuje typ systemoveho displeje (ili9341)
-//#define             USE_DISP9341                    //pouzije driver displeje
+#define             USE_DISP9341                    //pouzije driver displeje
 //ssd1306
-#define             USE_SYSTEMFONT_FIXEDx           //pouzije system font fixed16 - nestandardni font (pro ssd1306)
-#define             SYSDISPLAY_1306SPI              //definuje typ systemoveho displeje (ssd1306)
-#define             USE_DISP1306                    //pouzije driver displeje
+//#define             USE_SYSTEMFONT_FIXEDx           //pouzije system font fixed16 - nestandardni font (pro ssd1306)
+//#define             SYSDISPLAY_1306SPI              //definuje typ systemoveho displeje (ssd1306)
+//#define             USE_DISP1306                    //pouzije driver displeje
 
-#define             USE_TOUCHPAD                    //aktivuje vyssi fce touchpadu (nezavisle na konkretnim typu)
-#define             TOUCHPAD_XPT2046_INIT           //aktivuje modul touchpadu, typ XPT2046
+//#define             USE_TOUCHPAD                    //aktivuje vyssi fce touchpadu (nezavisle na konkretnim typu)
+//#define             TOUCHPAD_XPT2046_INIT           //aktivuje modul touchpadu, typ XPT2046
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Periph driver (SPI, I2C, ...)">
@@ -467,8 +467,8 @@
 #define     UBTN_REPEAT     5
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="disp1306">
-#define     DISP1306
+// <editor-fold defaultstate="collapsed" desc="dispay">
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="PWM">

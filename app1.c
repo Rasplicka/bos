@@ -24,6 +24,7 @@ int delay=1;
 int delay=1;
 #endif
 
+extern GRAPHICS graphics;
 int testVar=100;
 
 static void longTime();
@@ -35,6 +36,8 @@ static void call1(int a, int b);
 static void call2(int a, int b);
 static void call3(int a, int b);
 static void cn(uint base, uint stat);
+static void dispText();
+
 static int restart=0;
 
 void m1_start()
@@ -61,6 +64,7 @@ void m1_start()
         doEvents();
     }
     */
+    dispText();
     
     //int st=CNSTATB;
     rtcRegTimeAlarm(&testRTC, 0, 1);
@@ -263,5 +267,44 @@ static void cn(uint base, uint stat)
     //setTestLed(1);
     //uint s=stat;
     //setCanSleep(0);
+    
+}
+
+static void dispText()
+{
+    //char txt2[] = {"áéíóúý ÁÉÍÓÚÝ"};
+    //char txt[] = {"Kratky text"};
+    char txt[] = {'J','i','\xFE','í',' ','R','a','\xE7','p','l','i','\x9F','k','a','ý','á','í','é','?','?',' '};
+    //char txt[] = {'\xA6','l','u','\x9C','o','u','\x9F','k','\xEC',' ','k','\xDE','\xE5',',',' ','\x9F','e','p','i','c','e'};
+
+    
+    short y=0, x=0;
+    
+    graphics.drawString(txt, NULL, x, y);
+    y+=20;
+    graphics.drawString(txt, NULL, x, y);
+    
+    /*
+    int a;
+    //FONT_SRC fo;
+    //setFontSrc(fontConsolas12x20, &fo);
+    //fo.foreColor=colWHITE;    //RGB16(31, 63, 31);
+    //fo.bgColor=colBLACK;    //RGB16(0, 0, 0);
+     
+    FONT_SRC foa;
+    setFontSrc(fontArial18, &foa);
+    foa.foreColor=colWHITE; //RGB16(31, 63, 31);
+    foa.bgColor=colBLACK;   //RGB16(0, 0, 0);    
+    
+    d->drawString(txt, &foa, 0, y);
+    y+=foa.height;
+    */
+    
+    
+    //short color=colWHITE;
+    //d->drawLine(0, 0, 319, 0, color);
+    //d->drawLine(319, 0, 319, 239, color);
+    //d->drawLine(319, 239, 0, 239, color);
+    //d->drawLine(0, 239, 0, 0, color);
     
 }

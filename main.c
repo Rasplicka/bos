@@ -184,6 +184,9 @@ void main()
     
     asm("EI");              //povoli interrupt
     
+#ifdef USE_GRAPHICS    
+    initGraphics();
+#endif    
     // </editor-fold>
 
     //5. run system modules ----------------------------------------------------

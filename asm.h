@@ -113,3 +113,9 @@ extern void cnStopPortB();
 extern void cnEnable(uint, uint);
 extern void cnDisble(uint, uint);
 extern void cnRegEvent(void*, uint);
+
+extern int strLen(char*);
+
+//ILI9341
+extern void setFontSrc(const void*, void*);
+extern short RGB16(int, int, int);
