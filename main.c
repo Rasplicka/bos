@@ -179,10 +179,12 @@ void main()
     
     //4. init system drivers ---------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="drivers">
-
     //drivers
-    
     asm("EI");              //povoli interrupt
+    
+#if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE || defined SPI4_USE || defined SPI5_USE || defined SPI6_USE)
+    spi_init();
+#endif    
     
 #ifdef USE_GRAPHICS    
     initGraphics();

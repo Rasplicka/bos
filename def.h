@@ -149,7 +149,7 @@
 
 //I2C -----------------------------------------------------
 //rada MM ma I2C pouze ve verzi PIC32MM0256 (0064 nikoliv)
-#define I2C1_INIT                                   //aktivuje I2C driver
+//#define I2C1_INIT                                   //aktivuje I2C driver
 //#define I2C2_INIT
 //#define I2C3_INIT
 // </editor-fold>
