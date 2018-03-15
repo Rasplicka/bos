@@ -140,10 +140,12 @@
 // <editor-fold defaultstate="collapsed" desc="Periph driver (SPI, I2C, ...)">
 //SPI ---------------------------------------------------
 //driver je pouzit, pokud pouziva alespon jeden SPI kanal
-//#define     SPI1_INIT                              //pouziva SPI1 (fce driveru pro SPI1)
-#define     SPI2_INIT                                //aktivuje SPI2 (fce driveru pro SPI2)
-//#define     SPI3_INIT                              //pouziva SPI3 (fce driveru pro SPI3)
-
+#define     SPI1_USE                               //pouziva SPI1 (fce driveru pro SPI1)
+#define     SPI2_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
+#define     SPI3_USE                               //pouziva SPI3 (fce driveru pro SPI3)
+//#define     SPI4_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
+//#define     SPI5_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
+//#define     SPI6_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
 
 //I2C -----------------------------------------------------
 //rada MM ma I2C pouze ve verzi PIC32MM0256 (0064 nikoliv)

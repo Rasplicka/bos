@@ -63,8 +63,8 @@ extern void iVector_timer1();
 extern void iVector_usb();
 extern void iVector_rtc();
 extern void iVector_adc();
-extern void iVector_spi1Tx();
-extern void iVector_spi2Tx();
+extern void iVector_spi1TxTx();
+extern void iVector_spi2TxTx();
 
 #ifdef PIC32MM0256
 extern void iVector_i2c1Slave();
