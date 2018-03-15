@@ -2,17 +2,17 @@
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="f1" displayName="docs" projectFiles="true">
-      <itemPath>global_fce.txt</itemPath>
-      <itemPath>errors.txt</itemPath>
-      <itemPath>events.txt</itemPath>
-      <itemPath>rtc.txt</itemPath>
-      <itemPath>oscilator.txt</itemPath>
-      <itemPath>sleep_idle.txt</itemPath>
-      <itemPath>stack.txt</itemPath>
-      <itemPath>ram.txt</itemPath>
-      <itemPath>interrupt.txt</itemPath>
       <itemPath>_doc/documentation.txt</itemPath>
       <itemPath>_doc/systemTimer.txt</itemPath>
+      <itemPath>_doc/errors.txt</itemPath>
+      <itemPath>_doc/events.txt</itemPath>
+      <itemPath>_doc/global_fce.txt</itemPath>
+      <itemPath>_doc/interrupt.txt</itemPath>
+      <itemPath>_doc/oscilator.txt</itemPath>
+      <itemPath>_doc/ram.txt</itemPath>
+      <itemPath>_doc/rtc.txt</itemPath>
+      <itemPath>_doc/sleep_idle.txt</itemPath>
+      <itemPath>_doc/stack.txt</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
