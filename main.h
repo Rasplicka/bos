@@ -37,6 +37,21 @@ extern void __attribute__((interrupt(), vector(38))) iVector_spi1Tx();        //
 #ifdef PIC32MM0256
 
 extern void __attribute__((interrupt(), vector(0)))  iVector0();                //CPU timer
+
+#ifdef PORT_CNA
+extern void __attribute__((interrupt(), vector(8))) iVector_cnPortA();          //change notif. port A
+#endif
+#ifdef PORT_CNB
+extern void __attribute__((interrupt(), vector(9))) iVector_cnPortB();          //change notif. port B
+#endif
+#ifdef PORT_CNC
+extern void __attribute__((interrupt(), vector(10))) iVector_cnPortC();          //change notif. port C
+#endif
+#ifdef PORT_CND
+extern void __attribute__((interrupt(), vector(11))) iVector_cnPortD();          //change notif. port D
+#endif
+
+
 extern void __attribute__((interrupt(), vector(17))) iVector_timer1();          //Timer1
 //extern void __attribute__((interrupt(), vector(29))) iVector_usb();           //USB
 extern void __attribute__((interrupt(), vector(32))) iVector_rtc();             //RTC alarm

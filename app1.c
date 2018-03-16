@@ -42,29 +42,36 @@ static int restart=0;
 
 void m1_start()
 {
+    
+    //setCanIdle(1);
+    //setCanSleep(1);
+    
     //if(restart==0)
     //{
-    //    setCanIdle(1);
+    
     //}
     //rtcRegTimeAlarm(&testRTC, 0, 1);
     //setClock(CLOCK_CFG.CLK_ALT3);
+    //setLowPowerOsc();
+    //setHighPowerOsc();
     
     //testSystemTimer();
-    //systemTimerRegInterval(&testSystemTimer, 1000);
+    systemTimerRegInterval(&testSystemTimer, 10000);
     
-    /*
-    setCanSleep(1);
-    cnStartPortB(0);                                //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
-    cnEnable(PORTB_BASE, BIT12 | BIT13 | BIT14);                    //povoli PORTA.0, PORTA.1
+    cnStartPortA();
+    cnEnable(PORTA_BASE, BIT3 | BIT8, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
+    cnRegEvent(&cn, PORTA_BASE);
     
-    cnRegEvent(&cn, PORTB_BASE);
+    cnStartPortC();                                                     //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
+    cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
+    cnRegEvent(&cn, PORTC_BASE);
     
     while(1)
     {
         doEvents();
     }
-    */
-    dispText();
+
+    //dispText();
     
     //int st=CNSTATB;
     rtcRegTimeAlarm(&testRTC, 0, 1);
@@ -157,8 +164,10 @@ static void testSystemTimer(int i)
     //int d=a+b;
     //_LED_INV_REG = _LED_INV_VAL;
     //doEvents();
+    //setLowPowerOsc();
     setCanSleep(1);
-    unregEvent(&testSystemTimer);
+    invTestLed(1);
+    //unregEvent(&testSystemTimer);
     
     /*
     char x;
@@ -258,12 +267,19 @@ static void call3(int a, int b)
 
 static void cn(uint base, uint stat)
 {
-    if((stat & BIT12) != 0)
-    {
-        invTestLed(1);
-        setCanSleep(0);
-        systemTimerRegInterval(&testSystemTimer, 5000);
-    }
+    //RCONbits.SLEEP==0;
+    //setHighPowerOsc();
+    invTestLed(4);
+    setCanSleep(0);
+    LATCbits.LATC9=0;
+    //softReset();
+    //setCanIdle(0);
+    //if((stat & BIT12) != 0)
+    //{
+        
+        //setCanSleep(0);
+        //systemTimerRegInterval(&testSystemTimer, 5000);
+    //}
     //setTestLed(1);
     //uint s=stat;
     //setCanSleep(0);

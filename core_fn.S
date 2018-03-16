@@ -10,8 +10,7 @@
  * 
  */
     
-//!!! 2/2018 vyrazeny instrukce NOP v delay slotu, po skocich b16, beq, bne, bltz, bgtz, ...
-//.set reorder je vklada automaticky  
+//.set reorder vklada nop automaticky  
     
 //<editor-fold defaultstate="collapsed" desc="MACRO">
     
@@ -2105,7 +2104,7 @@ gotoSleepMZ:
 .ent gotoSleep
 gotoSleep:
 
-    
+    _PUSH   ra
     
 #ifdef WATCHDOG_TIMER 
     li	    t9, 0x8000
@@ -2113,38 +2112,23 @@ gotoSleep:
 #endif         
     
 #ifdef PIC32MM
-    //test, zda uplynulo alespon 5s po startup
+    //test, zda uplynulo alespon 3s po startup
     //nesmi prejit do sleep driv, jinak nelze re-programovat chip!
     lw	    t8, (time_ms)
-    _B_FLTC t8, 5000, 1f		    //meni t9
+    _B_FLTC t8, 3000, 1f		    //meni t9
     
     //MM timer1 - OFF, je napajen z LPRC
     li	    t9, (1<<15)
     sw	    t9, (T1CONCLR)		    //T1CON.b15 = OFF
 #endif    
     
-    //unlock
-    sw      zero, (SYSKEY)
-    li      v0, 0xaa996655
-    sw      v0, (SYSKEY)
-    li      v0, 0x556699aa
-    sw      v0, (SYSKEY)
+    la	    v0, startSleepMode		    //run sleep mode
+    _CALL_C v0, 0
     
-    //OSCCON.b4 = SLEEP(1)/IDLE(0)
-    li	    v1, 0x10
-    sw	    v1, (OSCCONSET)		    //set OSCCON.SLPEN
-    
-    //PWRCON MM - test sleep mode
-    li	    v1, 0x7
-    sw	    v1, (PWRCON)
-    
-    //lock
-    sw      zero, (SYSKEY)
-    
-    mtc0    zero, _CP0_VIEW_IPL		    //STATUS.IPL=0
-    ehb
-    //prechod do SLEEP
     wait
+    
+    la	    v0, endSleepMode		    //return from sleep
+    _CALL_C v0, 0    
     
 #ifdef PIC32MM
     //MM timer1 - ON, je napajen z LPRC
@@ -2153,7 +2137,6 @@ gotoSleep:
 #endif      
     
 1:    
-    
     //po probuzeni
 #ifdef WATCHDOG_TIMER    
     li	    t9, 0x8000
@@ -2164,6 +2147,7 @@ gotoSleep:
     mtc0    zero, _CP0_COUNT
 #endif  
     
+    _POP    ra
     jrc	    ra
     
 .end gotoSleep  
@@ -2335,7 +2319,7 @@ getCanSleepAll:
 //</editor-fold>        
     
 //defrag    
-    
+ 
 //<editor-fold defaultstate="collapsed" desc="defragTableW">
     
 .align 2
@@ -2475,8 +2459,7 @@ defragTableB:
     
 //</editor-fold>        
     
-    
-    
+ 
 //presunout
 //<editor-fold defaultstate="collapsed" desc="strLen">
 .align 2    

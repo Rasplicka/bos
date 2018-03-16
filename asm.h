@@ -14,6 +14,8 @@
 //extern void clearSystemData(uint, uint);
 //extern void setSrsValue();
 //extern void startEvents();
+extern char sleepStatus;
+
 extern void doEvents();
 extern void doEventsL(void* label);
 extern void doEventsError();
@@ -63,8 +65,8 @@ extern void iVector_timer1();
 extern void iVector_usb();
 extern void iVector_rtc();
 extern void iVector_adc();
-extern void iVector_spi1TxTx();
-extern void iVector_spi2TxTx();
+extern void iVector_spi1Tx();
+extern void iVector_spi2Tx();
 
 #ifdef PIC32MM0256
 extern void iVector_i2c1Slave();
@@ -105,15 +107,38 @@ extern char rtcGetHalfSecond();
 extern int  rtcRegTimeAlarm(void*, char, char);
 #endif
 
-extern void cnStartPortA(char);
-extern void cnStopPortA();
-extern void cnStartPortB(char);
-extern void cnStopPortB();
+#if defined PORT_CN 
+    #if defined PIC32MZ
+        extern void cnStartPortA(char);
+        extern void cnStopPortA();
+        extern void cnStartPortB(char);
+        extern void cnStopPortB();
+        
+        extern void cnEnable(uint, short);
+        extern void cnDisble(uint, short);
+#elif defined PIC32MM
+        extern void cnStartPortA();
+        extern void cnStopPortA();
+        extern void cnStartPortB();
+        extern void cnStopPortB();
+        extern void cnStartPortC();
+        extern void cnStopPortC();
+        extern void cnStartPortD();
+        extern void cnStopPortD();
 
-extern void cnEnable(uint, uint);
-extern void cnDisble(uint, uint);
+        extern void cnEnable(uint, short, char);
+        extern void cnDisble(uint, short, char);        
+        
+        extern void iVector_cnPortA();
+        extern void iVector_cnPortB();
+        extern void iVector_cnPortC();
+        extern void iVector_cnPortD();
+#endif
+
+
+
 extern void cnRegEvent(void*, uint);
-
+#endif
 extern int strLen(char*);
 
 //ILI9341

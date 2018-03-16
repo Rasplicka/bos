@@ -47,24 +47,17 @@ void fn2(uint base, uint stat)
 .set reorder			//vklada nop do branch delay slotu
 .section .asm_cn, code      
     
-#define		    CN_INTERRUPT_PRIORITY	2
-#define		    CN_INTERRUPT_SUBPRIORITY	3
-   
-#define		    CNA_IFS_BIT		8
-#define		    CNA_IFS_REG_CLR	IFS0CLR     
-#define		    CNA_IEC_REG_CLR	IEC0CLR 
+#define	    CN_INTERRUPT_PRIORITY	7
+#define	    CN_INTERRUPT_SUBPRIORITY	3
     
-#define		    CNB_IFS_BIT		9
-#define		    CNB_IFS_REG_CLR	IFS0CLR     
-#define		    CNB_IEC_REG_CLR	IEC0CLR 
+#define	    CN_IFS_REG_CLR		IFS0CLR		    //spolecny pro A,B,C,D
+#define	    CN_IEC_REG_CLR		IEC0CLR		    //spolecny pro A,B,C,D
+#define	    CN_IEC_REG_SET		IEC0SET		    //spolecny pro A,B,C,D
     
-#define		    CNC_IFS_BIT		10
-#define		    CNC_IFS_REG_CLR	IFS0CLR     
-#define		    CNC_IEC_REG_CLR	IEC0CLR     
-
-#define		    CND_IFS_BIT		11
-#define		    CND_IFS_REG_CLR	IFS0CLR     
-#define		    CND_IEC_REG_CLR	IEC0CLR      
+#define	    CNA_IFS_BIT			8
+#define	    CNB_IFS_BIT			9
+#define	    CNC_IFS_BIT			10
+#define	    CND_IFS_BIT			11
 
     
 #ifdef PORT_CNA    
@@ -98,8 +91,8 @@ cnStartPortA:
     
     //IFS, IEC
     li	    t9, (1<<CNA_IFS_BIT)
-    sw	    t9, (CNA_IFS_REG_CLR)
-    sw	    t9, (CNA_IEC_REG_CLR)    
+    sw	    t9, (CN_IFS_REG_CLR)
+    sw	    t9, (CN_IEC_REG_SET)    
     
     jrc	    ra
     
@@ -118,7 +111,7 @@ cnStopPortA:
     
     //IEC
     li	    t9, (1<<CNA_IFS_BIT)
-    sw	    t9, (CNA_IEC_REG_CLR)				//disable interrupt
+    sw	    t9, (CN_IEC_REG_CLR)				//disable interrupt
     
     jrc	    ra
     
@@ -127,6 +120,7 @@ cnStopPortA:
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="iVector_cnPortA">
 .align 2 
+.global iVector_cnPortA  
 .ent iVector_cnPortA
 iVector_cnPortA:
     
@@ -140,7 +134,7 @@ iVector_cnPortA:
     
     //clear flag
     li	    v0, (1 << CNA_IFS_BIT)
-    sw      v0, (CNA_IFS_REG_CLR)     
+    sw      v0, (CN_IFS_REG_CLR)     
     sync			
     
     eret    
@@ -156,9 +150,7 @@ iVector_cnPortA:
 .align 2    
 .ent cnStartPortB
 cnStartPortB:
-//a0 1=0>1, 2=1>0, 3=both    
-//a1=bits    
-    
+   
     //nastavi registr CNCONx, kde je ON (b15) a STYLE (b11)
     
     li	    t8, (PORTB_BASE + CNCON_OFFSET)
@@ -184,8 +176,8 @@ cnStartPortB:
     
     //IFS, IEC
     li	    t9, (1<<CNB_IFS_BIT)
-    sw	    t9, (CNB_IFS_REG_CLR)
-    sw	    t9, (CNB_IEC_REG_CLR)    
+    sw	    t9, (CN_IFS_REG_CLR)
+    sw	    t9, (CN_IEC_REG_SET)    
     
     jrc	    ra
     
@@ -204,7 +196,7 @@ cnStopPortB:
     
     //IEC
     li	    t9, (1<<CNB_IFS_BIT)
-    sw	    t9, (CNB_IEC_REG_CLR)				//disable interrupt
+    sw	    t9, (CN_IEC_REG_CLR)				//disable interrupt
     
     jrc	    ra
     
@@ -213,6 +205,7 @@ cnStopPortB:
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="iVector_cnPortB">
 .align 2 
+.global iVector_cnPortB   
 .ent iVector_cnPortB
 iVector_cnPortB:
     
@@ -226,7 +219,7 @@ iVector_cnPortB:
     
     //clear flag
     li	    v0, (1 << CNB_IFS_BIT)
-    sw      v0, (CNB_IFS_REG_CLR)     
+    sw      v0, (CN_IFS_REG_CLR)     
     sync			
     
     eret    
@@ -242,9 +235,7 @@ iVector_cnPortB:
 .align 2    
 .ent cnStartPortC
 cnStartPortC:
-//a0 1=0>1, 2=1>0, 3=both    
-//a1=bits    
-    
+  
     //nastavi registr CNCONx, kde je ON (b15) a STYLE (b11)
     
     li	    t8, (PORTC_BASE + CNCON_OFFSET)
@@ -270,8 +261,8 @@ cnStartPortC:
     
     //IFS, IEC
     li	    t9, (1<<CNC_IFS_BIT)
-    sw	    t9, (CNC_IFS_REG_CLR)
-    sw	    t9, (CNC_IEC_REG_CLR)    
+    sw	    t9, (CN_IFS_REG_CLR)
+    sw	    t9, (CN_IEC_REG_SET)    
     
     jrc	    ra
     
@@ -290,7 +281,7 @@ cnStopPortC:
     
     //IEC
     li	    t9, (1<<CNC_IFS_BIT)
-    sw	    t9, (CNC_IEC_REG_CLR)				//disable interrupt
+    sw	    t9, (CN_IEC_REG_CLR)				//disable interrupt
     
     jrc	    ra
     
@@ -299,6 +290,7 @@ cnStopPortC:
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="iVector_cnPortC">
 .align 2 
+.global iVector_cnPortC      
 .ent iVector_cnPortC
 iVector_cnPortC:
     
@@ -312,7 +304,7 @@ iVector_cnPortC:
     
     //clear flag
     li	    v0, (1 << CNC_IFS_BIT)
-    sw      v0, (CNC_IFS_REG_CLR)     
+    sw      v0, (CN_IFS_REG_CLR)     
     sync			
     
     eret    
@@ -328,8 +320,6 @@ iVector_cnPortC:
 .align 2    
 .ent cnStartPortD
 cnStartPortD:
-//a0 1=0>1, 2=1>0, 3=both    
-//a1=bits    
     
     //nastavi registr CNCONx, kde je ON (b15) a STYLE (b11)
     
@@ -356,8 +346,8 @@ cnStartPortD:
     
     //IFS, IEC
     li	    t9, (1<<CND_IFS_BIT)
-    sw	    t9, (CND_IFS_REG_CLR)
-    sw	    t9, (CND_IEC_REG_CLR)    
+    sw	    t9, (CN_IFS_REG_CLR)
+    sw	    t9, (CN_IEC_REG_SET)    
     
     jrc	    ra
     
@@ -376,7 +366,7 @@ cnStopPortD:
     
     //IEC
     li	    t9, (1<<CND_IFS_BIT)
-    sw	    t9, (CND_IEC_REG_CLR)				//disable interrupt
+    sw	    t9, (CN_IEC_REG_CLR)				//disable interrupt
     
     jrc	    ra
     
@@ -385,6 +375,7 @@ cnStopPortD:
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="iVector_cnPortD">
 .align 2 
+.global iVector_cnPortD      
 .ent iVector_cnPortD
 iVector_cnPortD:
     
@@ -398,7 +389,7 @@ iVector_cnPortD:
     
     //clear flag
     li	    v0, (1 << CND_IFS_BIT)
-    sw      v0, (CND_IFS_REG_CLR)     
+    sw      v0, (CN_IFS_REG_CLR)     
     sync			
     
     eret    
@@ -422,10 +413,10 @@ cnEnable:
     //cnEnable(PORTA_BASE, BIT0 | BIT1, CN_STYLE.LOW_TO_HIGH);	//povoli PORTA.0, PORTA.1, zmena 0>1
     //cnEnable(PORTB_BASE, BIT4 | BIT5, CN_STYLE.ANY_CHANGE);	//povoli PORTB.4, PORTB.5, kazda zmena stavu    
     
-    addiu   v1, a0, (CNEN_OFFSET + SET_OFFSET)    
     
     li	    v0, 0xFFFFFFFF 
     
+    addiu   v1, a0, (CNEN0_OFFSET + SET_OFFSET)    
     //nastav CNEN0 (0>1), dle mode.b0
     ext	    t8, a2, 0, 1
     movn    t9, v0, t8			    //t9=0xFFFFFFFF
@@ -433,6 +424,7 @@ cnEnable:
     and	    t9, a1			    //pouze vybrane bity
     sw	    t9, (v1)
     
+    addiu   v1, a0, (CNEN1_OFFSET + SET_OFFSET)
     //nastav CNEN1 (1>0), dle mode.b1
     ext	    t8, a2, 1, 1
     movn    t9, v0, t8			    //t9=0xFFFFFFFF

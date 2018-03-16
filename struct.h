@@ -15,7 +15,7 @@ struct
     unsigned SleepMode  : 1;
     unsigned IdleMode   : 1;
     unsigned Threading  : 1;            //startup=0, run=1
-    unsigned dummy      : 5;
+    unsigned CLOCK_CFG  : 5;            //aktualne nastavena frekvence
     unsigned Errors     : 8; 
     
 }SYSTEM_STATUS;

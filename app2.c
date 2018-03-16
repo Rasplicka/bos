@@ -34,11 +34,11 @@ void m2_start()
 {
     
     //setCanIdle(1);
-
+    setCanSleep(1);
+    
     //ubtnRegEvent(&testButton, 11, 20);
     //systemTimerRegInterval(&testSystemTimer, 2000);
-    setCanSleep(1);
- 
+
     /*
     cnRegEvent(&cn, PORTB_BASE);
     while(1)

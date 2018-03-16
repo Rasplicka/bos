@@ -131,10 +131,11 @@ extern void startEvents();
 //global fn
 void main() 
 {
+    int x=RCON;
+    
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
-    
     
 #ifdef WATCHDOG_TIMER    
     startWDT();                             //WDT on
@@ -187,7 +188,7 @@ void main()
 #endif    
     
 #ifdef USE_GRAPHICS    
-    initGraphics();
+    //initGraphics();
 #endif    
     // </editor-fold>
 
@@ -219,6 +220,7 @@ void main()
     SYSTEM_STATUS.SleepMode = 0;
     SYSTEM_STATUS.IdleMode =  0;
     SYSTEM_STATUS.Threading = 1;
+    SYSTEM_STATUS.CLOCK_CFG = CLOCK_CFG.CLK_NORMAL;
 
     
     startEvents(); 

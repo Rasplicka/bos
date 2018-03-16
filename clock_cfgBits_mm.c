@@ -46,7 +46,7 @@
 
 #ifdef CFG_SOSC_ENABLE
 #pragma config SOSCEN =  ON             // Secondary Oscillator Enable bit
-#pragma config SOSCSEL = ON             // Secondary Oscillator External Clock Enable bit
+#pragma config SOSCSEL = OFF            // Secondary Oscillator External Clock Enable bit (ON if external signal is used)
 #else
 #pragma config SOSCEN =  OFF             // Secondary Oscillator Enable bit
 #pragma config SOSCSEL = OFF             // Secondary Oscillator External Clock Enable bit
@@ -54,6 +54,7 @@
 
 #pragma config IESO = OFF               // Two Speed Startup Enable bit (Two speed startup is disabled)
 #pragma config OSCIOFNC = OFF           // System Clock on CLKO Pin Enable bit (OSCO pin operates as a normal I/O)
+//CSE musi zustat povoleno, aby se mohl prepinat LPRC pri sleep modu (ve sleep modu musi byt system napajen z LPRC)
 #pragma config FCKSM = CSECME           // Clock Switching and Fail-Safe Clock Monitor Enable bits (Clock switching is enabled; Fail-safe clock monitor is enabled)
 
 // FSEC
@@ -67,6 +68,9 @@ void setClock(char mode)
     //0=CLK_NORMAL, 1=CLK_ALT1, 2=CLK_ALT2, 3=CLK_ALT3
     //nastavuje jeden ze tri preddefinovanych modu CLK
     
+    SYSTEM_STATUS.CLOCK_CFG=mode;
+    
+    asm("di");
     //SYSKEY unlock
     SYSKEY = 0xAA996655; 
     SYSKEY = 0x556699AA;
@@ -95,8 +99,8 @@ void setClock(char mode)
     
     //SYSKEY force lock
     SYSKEY = 0x00000000;
+    asm("ei");
 }
-
 
 void initClock()
 {
@@ -111,17 +115,20 @@ void initClock()
     //FNOSC = PLL (SYSCLK a PBCLK from PLL)
     //PLLSRC = FRC (src PLL from FRC)
     
+    asm("di");
     //SYSKEY force lock
     SYSKEY = 0x00000000;
     //SYSKEY unlock
     SYSKEY = 0xAA996655; 
     SYSKEY = 0x556699AA;
     
+    //zvysovani F, nejprve PLLODIV
     SPLLCONbits.PLLODIV=0x2;            // / 4  (96/4=24 MHz) CPU
     SPLLCONbits.PLLMULT=0x6;            // x 12 (8x12=96 MHz) USB  
     
     //SYSKEY force lock
     SYSKEY = 0x00000000;         
+    asm("ei");
     
     //enable REFCLK
     //REFCLK, pouziva SPI, UART, nastavi 48MHz

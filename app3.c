@@ -30,16 +30,18 @@ static void listener(int p0, int p1, int p2);
 
 void m3_start()
 {
+    //setCanIdle(1);
+    setCanSleep(1);
     
     //systemTimerRegInterval(&testSystemTimer, 4000);
-    //setCanSleep(1);
+    
     //ubtnRegEvent(&testButton, 21, 30);
     //while(1)
     //{
     //    doEvents();
     //}    
     
-    //setCanIdle(1);
+    
     //regListener(&listener, 155);
     
     while(1)

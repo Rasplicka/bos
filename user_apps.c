@@ -136,17 +136,21 @@ void pinSetting()
     
     //TLACITKA -----------------------------------------------------------------
     
-    //RC1/pin28 B1
+    //RC1/pin28 Button1
     setPortDigIn(PORTC_BASE, BIT1);                                     //28
+    setPortPullDown(PORTC_BASE, BIT1, 1);
     
-    //RC2/pin29 B2
+    //RC2/pin29 Button2
     setPortDigIn(PORTC_BASE, BIT2);                                     //29
+    setPortPullDown(PORTC_BASE, BIT2, 1);
     
-    //RA3/pin33
+    //RA3/pin33 Button3
     setPortDigIn(PORTA_BASE, BIT3);                                     //33
+    setPortPullDown(PORTA_BASE, BIT3, 1);
     
-    //RA8/pin34
+    //RA8/pin34 Button4
     setPortDigIn(PORTA_BASE, BIT8);                                     //34
+    setPortPullDown(PORTA_BASE, BIT8, 1);
     
     //PIEZO --------------------------------------------------------------------
     //RC12/pin44
@@ -161,10 +165,7 @@ void pinSetting()
     
     //RC0/pin27
     setPortAnalogIn(PORTC_BASE, BIT0);                                  //27
-    
-    
-    
-    
+
 #endif    
 
 }
@@ -246,7 +247,8 @@ void userAppCheckStackSpace(int space, int is_event)
 
 void beforeSleep()
 {
-    
+    //display LED off
+    LATCbits.LATC9=1;
 }
 
 void beforeIdle()

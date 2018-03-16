@@ -54,7 +54,7 @@ timer1Init:
     #define	PR1_VALUE			(32000/(1000/TIMER1_INTERVAL))
 
     //sw    zero, (T1CON)	    //timer1 OFF (ON bit=0)
-    li	    t9, 0x0202		    //0x2202 pri SIDL=1
+    li	    t9, 0x2202		    //0x2202 pri SIDL=1 (stop in idle/sleep)
     sw	    t9, (T1CON)		    //setting (ON=0), src=LPRC (32kHz), div=1:1, idle-run, 
     
     //<editor-fold defaultstate="collapsed" desc="PIC32MM0064">

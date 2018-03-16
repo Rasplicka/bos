@@ -53,7 +53,7 @@
 #define     SRS_STACK_SIZE              512         //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
 #define     STACK_CHECK_VALUE           0xF010E020
 
-#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+//#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
 #define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF     //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 #define     ENABLE_CHECK_STACK_OVERFLOW           //povoluje kontrolovat stack overflow
 
@@ -140,9 +140,9 @@
 // <editor-fold defaultstate="collapsed" desc="Periph driver (SPI, I2C, ...)">
 //SPI ---------------------------------------------------
 //driver je pouzit, pokud pouziva alespon jeden SPI kanal
-#define     SPI1_USE                               //pouziva SPI1 (fce driveru pro SPI1)
+//#define     SPI1_USE                               //pouziva SPI1 (fce driveru pro SPI1)
 #define     SPI2_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
-#define     SPI3_USE                               //pouziva SPI3 (fce driveru pro SPI3)
+//#define     SPI3_USE                               //pouziva SPI3 (fce driveru pro SPI3)
 //#define     SPI4_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
 //#define     SPI5_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
 //#define     SPI6_USE                               //aktivuje SPI2 (fce driveru pro SPI2)
