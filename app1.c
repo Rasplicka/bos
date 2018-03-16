@@ -50,7 +50,7 @@ void m1_start()
     //{
     
     //}
-    //rtcRegTimeAlarm(&testRTC, 0, 1);
+    rtcRegTimeAlarm(&testRTC, 0, 1);
     //setClock(CLOCK_CFG.CLK_ALT3);
     //setLowPowerOsc();
     //setHighPowerOsc();
@@ -197,7 +197,7 @@ static void testSystemTimer(int i)
 
 static void testRTC(char hour, char min, uint date)
 {
-    invTestLed(1);
+    //invTestLed(1);
     //_LED_INV_REG = _LED_INV_VAL;
     setCanSleep(0);
     //setCanIdle(0);
