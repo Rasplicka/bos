@@ -36,6 +36,8 @@ struct
 }TEST_LED = {NULL, NULL, NULL, NULL};
 */
 
+
+
 //ROM STRUCT
 //definuje mod sbernice 8-bit, 16-bit, 32-bit
 const struct
@@ -44,6 +46,22 @@ const struct
     char    _16bit;
     char    _32bit;
 }BUS_MODE={0, 1, 2};
+
+//povoli/zakaze cekani (vetsinou doEvents), Enable=1, Disable=0
+const struct
+{
+    unsigned Disable    : 1;  
+    unsigned Enable     : 1; 
+    unsigned dummy      : 6;
+}WAIT={0, 1, 0};
+
+//mod zapisu dat (SPI...) Stream obsahuje ridici znaky, bufferOnly jsou pouze data
+const struct 
+{
+    unsigned BufferOnly : 1;  
+    unsigned Stream     : 1; 
+    unsigned dummy      : 6;    
+}WRITE_MODE={0, 1};
 
 const struct
 {
@@ -137,6 +155,11 @@ typedef struct
     char    periphType;
 }PORT_INFO;
 
+typedef struct
+{
+    uint    portBase;
+    short   pin;
+}PIN_INFO;
 
 //grafika ----------------------------------------------------------------------
 //preddefinovane barvy
@@ -266,8 +289,8 @@ typedef struct
 typedef struct
 {
     //privatni struktura, spojena s jednim konkretnim displejem
-    void (*selectPort)(PORT_INFO* pi, void* d);
-    void (*initDisplay)(PORT_INFO* pi);
+    void (*selectDriver)(void* d);
+    void (*initDisplay)();
     void (*drawString)(char* text, IMAGE_SRC* font, short x, short y);
     void (*fillBox)(short x1, short y1, short x2, short y2, short color);
     void (*drawLine)(short x1, short y1, short x2, short y2, short w, short color);
@@ -283,6 +306,7 @@ typedef struct
     char (*getOrientation)();
     short (*getWidth)();
     short (*getHeight)();
+    short (*getFontHeight)(IMAGE_SRC* font);
     
     //privatni promene struktury DISLAY, spojene s konkretnim displejem (kazdy dislej na svoji struct DISPLAY)
     short print_y;
@@ -305,6 +329,7 @@ typedef struct
     void (*print)(char* text);
     void (*clear)(short color);
     short (*textWidth)(char* text, IMAGE_SRC* font);
+    short (*getFontHeight)(IMAGE_SRC* font);
     
 }GRAPHICS;
 
@@ -326,6 +351,25 @@ const struct
     char    FINISHED;           //neprobiha odesilani/prijem dat
     char    SENDING;            //probiha odesilani/prijem dat
 }SPI_STATE={0, 1, 0, 1};
+
+const struct 
+{
+    char    No; 
+    char    Yes;
+}MODULE_USED={0, 1};
+
+const struct
+{
+    char    Finished;
+    char    Works;
+}MODULE_ACTIVITY={0, 1};
+
+const struct
+{
+    char    Off;
+    char    On;
+}MODULE_STATE={0, 1};
+
 
 //spi control
 typedef struct

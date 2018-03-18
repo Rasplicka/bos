@@ -42,6 +42,9 @@ extern uint raiseEventID(char eventID, int p0, int p1, int p2);
 
 extern void clearWDT();
 extern void startWDT();
+extern void pauseWDT();
+extern void pauseCT();
+extern void startCT();
 
 extern void setCanSleep(char);
 extern void setCanIdle(char);
@@ -65,7 +68,7 @@ extern void iVector_timer1();
 extern void iVector_usb();
 extern void iVector_rtc();
 extern void iVector_adc();
-extern void iVector_spi1Tx();
+//extern void iVector_spi1Tx();
 extern void iVector_spi2Tx();
 
 #ifdef PIC32MM0256
@@ -141,6 +144,22 @@ extern void cnRegEvent(void*, uint);
 #endif
 extern int strLen(char*);
 
+#ifdef USE_GRAPHICS
 //ILI9341
 extern void setFontSrc(const void*, void*);
-extern short RGB16(int, int, int);
+
+//Return short (16-bit) representation of RGB color
+//@param red 5-bit value, 0-31
+//@param green 6-bit value, 0-63
+//@param blue 5-bit value, 0-31
+extern short RGB16(int red, int green, int blue);
+
+extern int imageToBuffer(void*, char*, int, char);
+extern int imageToPort(void*, volatile int*, int, char);
+extern void drawPointQuick(void*, volatile int*, void*);
+extern void fillRectDirect(short, int, volatile int*);
+extern void setImageColorMap(void*, short*);
+extern void drawLineQuick(void*, void*, void*);
+
+extern int fontCharParam(void*, char);                      ///TODO: help is here
+#endif

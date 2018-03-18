@@ -2,35 +2,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../../globals.h"
-#include "disp9341.h"
+//#include "disp9341.h"
 //#include "disp16_asm.h"
 
 /*
- * autor JR
- * verze 1.0
- * driver displeje s ?adi?em ILI9341
- * pro v?echny ?ady MM/MK/MZ
+ * Author Jiri Rasplicka, 2017, (all rights reserved)
+ * Version 1.0       
+ * BOS driver for display ILI9341
+ * This file is shared to the PIC32MM, PIC32MZ
+ * 
  */
 
-
+//https://gist.github.com/postmodern/ed6e670999f456ad9f13
 
 #ifdef USE_DISP9341
 
-#include "../font/font_arial.h"
-IMAGE_SRC fontSys;
+//#include "../font/font_arial.h"
+#include "../font/font_ygm_20.h"
+IMAGE_SRC fontDefault;
+
+
+//IFACE
+#define     IFACE_INDEX     1                       //SPI2, index portu (0=SPI1, 1=SPI2, 2=SPI3, ...)
+//definuje IO piny
+PIN_INFO csPin = {PORTC_BASE, BIT8};                //CS signal
+PIN_INFO resetPin = {PORTA_BASE, BIT15};            //RESET signal
+PIN_INFO dcPin = {PORTB_BASE, BIT13};               //DC signal
+PIN_INFO blPin = {PORTC_BASE, BIT9};                //backLight
 
 #define     SW_RESET                                //je definovano, pokud je RESET signal pripojen k IO pinu. Neni-li definovano, ma HW RESET (RC obvod)
 #define     BUFFER_SIZE      1024                   //min. velikost by mela byt: Width x 2 + 20 (viz. fillBox, clear)  
 
-//https://gist.github.com/postmodern/ed6e670999f456ad9f13
-
-
-//local var
-//buffer, pouzity k odesilani dat na display (SPI)
-//char pixels[1024] __attribute__((aligned(4)));
-
 //globalni promene modulu disp9341 (tzn. pri pouziti vice displeju ili9341 jsou spolecne pro vsechny struct DISPLAY)
-//extern IMAGE_SRC fontSys;                       //pouziva fce print
 static char isInitialized=0;
 static char pixAB=0;
 static char pixelsEven[BUFFER_SIZE] __attribute__((aligned(4)));
@@ -39,17 +42,16 @@ static LINE_SRC lineSrc;
 static POINT point;
 
 //privatni struct pro dany displej, pri pouziti vice displeju se nastavi pri kazdem volani setGraphics
-static PORT_INFO* portInfo=NULL;            
 static DISPLAY* displayInfo=NULL;
 
 static short Width=240;                         //default na vysku, fce dinit nastavi displej na sirku a upravi W a H              
 static short Height=320;
 static char Orientation=0;
+static char directMode=0;                       //0=zapis do bufferu, 1=zapis do portu
 
-//IMAGE_SRC2 imgClear;
 
 //local void
-static void selectPort(PORT_INFO* pi, void* d);
+static void selectDriver(void* d);
 static void drawString(char* text, IMAGE_SRC* font, short x, short y);
 static void fillBox(short x1, short y1, short x2, short y2, short color);
 static void drawLine(short x1, short y1, short x2, short y2, short w, short color);
@@ -66,27 +68,30 @@ static char getInitialized();
 static void print(char* t);
 static short getWidth();
 static short getHeight();
-
+static short getFontHeight(IMAGE_SRC* font);
 static void dinit();
 static void writeChar(IMAGE_SRC* font, char code, short x, short y);
 static void eventDC(char x);
 static void setColorDef();
-
 static char* getBuffer();
-static void getPort();
-static void freePort();
-
 static void resetDisplay();
-void setDCPin(char value);
-static void setCSPin(char value);
-static void setResetPin(char value);
+static void setDCPin(char value);
 static void setBacklight(char value);
+
+//fce iface
+//bude-li dispay pripojen pres jiny iface, staci zmenit tyto fce
+static void iface_getPort(); 
+static void iface_freePort();
+static void iface_writeBufferMode(char* buffer, short len, char mode);
+static volatile int* iface_getHWBuffer();
+static void iface_setBusMode(char mode);
+static void iface_Process();
 
 
 //global
 void disp9341_driver(DISPLAY* d)
 {
-    d->selectPort=&selectPort;
+    d->selectDriver=&selectDriver;
     d->drawString=&drawString;
     d->fillBox=&fillBox;
     d->drawLine=&drawLine;
@@ -103,15 +108,13 @@ void disp9341_driver(DISPLAY* d)
     d->getOrientation=&getOrientation;
     d->getWidth=&getWidth;
     d->getHeight=&getHeight;
+    d->getFontHeight=&getFontHeight;
 }
 
 
 //local
-static void selectPort(PORT_INFO* pi, void* d)
+static void selectDriver(void* d)
 {
-    portInfo=pi;
-    portInfo->eventFn=&eventDC;
-    
     displayInfo=(DISPLAY*)d;
 }
 
@@ -120,9 +123,12 @@ static void drawString(char* text, IMAGE_SRC* font, short x, short y)
     int a;
     int l=strLen(text);
     
-    if(font==NULL) { font=&fontSys; }
+    if(font==NULL) { font=&fontDefault; }
     
-    getPort();
+    iface_getPort();
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif    
     
     for(a=0; a<l; a++)
     {
@@ -130,7 +136,11 @@ static void drawString(char* text, IMAGE_SRC* font, short x, short y)
         x+=font->width;
     }
     
-    freePort();
+#ifdef WATCHDOG_TIMER     
+    startWDT();
+#endif    
+    
+    iface_freePort();
 }
 
 static void fillBox(short x1, short y1, short x2, short y2, short color)
@@ -142,10 +152,10 @@ static void fillBox(short x1, short y1, short x2, short y2, short color)
     if(y1 > y2) { short y=y1; y1=y2, y2=y; }  
 
     
-    if(x1 >= Width) { return; }          //mimo, vlevo
-    if(x2 < 0) { return; }                  //mimo, vpravo
-    if(y1 >= Height) { return; }          //mimo nahore
-    if(y2 < 0) { return; }                 //mimo dole
+    if(x1 >= Width) { return; }                             //mimo, vlevo
+    if(x2 < 0) { return; }                                  //mimo, vpravo
+    if(y1 >= Height) { return; }                            //mimo nahore
+    if(y2 < 0) { return; }                                  //mimo dole
         
     if (x1 < 0) { x1 = 0; }
     if (x2 > Width - 1) { x2 = Width - 1; }
@@ -156,45 +166,53 @@ static void fillBox(short x1, short y1, short x2, short y2, short color)
     short w=x2-x1 + 1;
     short h=y2-y1 + 1;
     
-    getPort();
+    iface_getPort();
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif  
     
-    buffer[0]=0b00000001;                       //control byte
-    buffer[1]=0x2A;                             //command (ColSet)
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif     
     
-    buffer[2]=0b01000100;                       //control byte
+    buffer[0]=0b00000001;                                   //control byte
+    buffer[1]=0x2A;                                         //command (ColSet)
+    
+    buffer[2]=0b01000100;                                   //control byte
     buffer[3]=(char)(x1>>8);                                //data, start col H
-    buffer[4]=(char)x1;                                //data, start col L
-    buffer[5]=(char)(x2>>8);                //data, end col H
-    buffer[6]=(char)x2;                     //data, end col L
+    buffer[4]=(char)x1;                                     //data, start col L
+    buffer[5]=(char)(x2>>8);                                //data, end col H
+    buffer[6]=(char)x2;                                     //data, end col L
     
-    buffer[7]=0b00000001;                       //control byte
-    buffer[8]=0x2B;                             //command (RowSet)
+    buffer[7]=0b00000001;                                   //control byte
+    buffer[8]=0x2B;                                         //command (RowSet)
     
-    buffer[9]=0b01000100;                       //control byte
+    buffer[9]=0b01000100;                                   //control byte
     buffer[10]=(char)(y1>>8);                               //data, start row H
-    buffer[11]=(char)y1;                                //data, start row L
-    buffer[12]=(char)(y2>>8);               //data, end row H
-    buffer[13]=(char)y2;                    //data, end row L
+    buffer[11]=(char)y1;                                    //data, start row L
+    buffer[12]=(char)(y2>>8);                               //data, end row H
+    buffer[13]=(char)y2;                                    //data, end row L
 
+    buffer[14]=0b00000001;                                  //control byte
+    buffer[15]=0x2C;                                        //write data    
+    buffer[16]=0b11000000;                                  //control byte nastav DC=1
+
+    iface_writeBufferMode(buffer, 17, WRITE_MODE.Stream);
     
-    buffer[14]=0b00000001;                      //control byte
-    buffer[15]=0x2C;                            //write data    
-    buffer[16]=0b11000000;                      //control byte nastav DC=1
-    portInfo->writeBufferMode(portInfo, buffer, 17, 1);
-    
-    if(portInfo->directMode)
+    if(directMode==1)
     {
-        spi_Process(portInfo->portIndex, 1);         //ceka na dokonceni          
+        //directMode    
+        iface_Process();                                    //ceka na dokonceni
     
-        SPI2CONbits.MODE16=1;
-        fillRectDirect(color, (w*h), portInfo->directModeHwBuffer);
-        SPI2CONbits.MODE16=0;
+        iface_setBusMode(BUS_MODE._16bit);
+        fillRectDirect(color, (w*h), iface_getHWBuffer());
+        iface_setBusMode(BUS_MODE._8bit);
     }
     else
     {
         int a;
-        //druhy buffer
-        buffer=getBuffer();
+        
+        buffer=getBuffer();                                 //druhy buffer
         short* pix16=(short*)buffer;
     
         //napln buffer linkou clr barvy
@@ -206,12 +224,19 @@ static void fillBox(short x1, short y1, short x2, short y2, short color)
         //odeslat buffer Height krat
         for(a=0; a<h; a++)
         {
-            //spi_ExchangeModeEvent(portInfo->portIndex, buffer, NULL, w*2, 0);
-            portInfo->writeBufferMode(portInfo, buffer, w*2, 0);
+            iface_writeBufferMode(buffer, w*2, WRITE_MODE.BufferOnly);
         }
     }
     
-    freePort();
+#ifdef WATCHDOG_TIMER    
+    startWDT();
+#endif
+    
+#ifdef SAFE_PROCESS
+    startCT();
+#endif     
+    
+    iface_freePort();
 }
 
 static void drawLine(short x1, short y1, short x2, short y2, short w, short color)
@@ -255,10 +280,17 @@ static void drawLine(short x1, short y1, short x2, short y2, short w, short colo
     else
     {
         //neni vodorovna, ani svisla
-        getPort();
+        iface_getPort();
         
+#ifdef WATCHDOG_TIMER        
+        pauseWDT();
+#endif
+        
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif         
         //directMode
-        if(portInfo->directMode==1)
+        if(directMode==1)
         {
             //directMode
             lineSrc.displayWidth=Width;
@@ -269,10 +301,9 @@ static void drawLine(short x1, short y1, short x2, short y2, short w, short colo
             lineSrc.y2=y2;
             lineSrc.color=color;
     
-            portInfo->setBusMode(portInfo, BUS_MODE._16bit);
-            //drawLineQuick(&lineSrc, NULL, color, &setDCPin);
-            drawLineQuick(&lineSrc, portInfo->directModeHwBuffer, &setDCPin);
-            portInfo->setBusMode(portInfo, BUS_MODE._8bit);
+            iface_setBusMode(BUS_MODE._16bit);
+            drawLineQuick(&lineSrc, iface_getHWBuffer, &setDCPin);
+            iface_setBusMode(BUS_MODE._8bit);
         }   
         else
         {
@@ -327,17 +358,25 @@ static void drawLine(short x1, short y1, short x2, short y2, short w, short colo
             }            
         }
         
-        freePort();
+#ifdef WATCHDOG_TIMER        
+        startWDT();
+#endif    
+        
+#ifdef SAFE_PROCESS
+    startCT();
+#endif         
+        
+        iface_freePort();
     }
 }
 
 static void drawImage(IMAGE_SRC* da, short x, short y)
 {
     
-    if(x + da->width <= 0) { return; }          //mimo, vlevo
-    if(x >= Width) { return; }                  //mimo, vpravo
-    if(y + da->height <= 0) { return; }          //mimo nahore
-    if(y >= Height) { return; }                 //mimo dole
+    if(x + da->width <= 0) { return; }                      //mimo, vlevo
+    if(x >= Width) { return; }                              //mimo, vpravo
+    if(y + da->height <= 0) { return; }                     //mimo nahore
+    if(y >= Height) { return; }                             //mimo dole
     
     short dx1, dx2, dy1, dy2;
     char is_out=0;
@@ -364,43 +403,47 @@ static void drawImage(IMAGE_SRC* da, short x, short y)
     if(is_out==0) { da->start_x = -1; }
     
     char* buffer=getBuffer(); 
-    getPort();
+    iface_getPort();
     
-    buffer[0]=0b00000001;                       //control byte
-    buffer[1]=0x2A;                             //command (ColSet)
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif 
     
-    buffer[2]=0b01000100;                       //control byte
-    buffer[3]=(char)(dx1>>8);                     //data, start col H
-    buffer[4]=(char)(dx1);                        //data, start col L
-    buffer[5]=(char)((dx2)>>8);   //data, end col H
-    buffer[6]=(char)(dx2);        //data, end col L
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif     
     
-    buffer[7]=0b00000001;                       //control byte
-    buffer[8]=0x2B;                             //command (RowSet)
+    buffer[0]=0b00000001;                                   //control byte
+    buffer[1]=0x2A;                                         //command (ColSet)
     
-    buffer[9]=0b01000100;                       //control byte
-    buffer[10]=(char)(dy1>>8);                    //data, start row H
-    buffer[11]=(char)(dy1);                       //data, start row L
-    buffer[12]=(char)((dy2)>>8); //data, end row H
-    buffer[13]=(char)(dy2);      //data, end row L
+    buffer[2]=0b01000100;                                   //control byte
+    buffer[3]=(char)(dx1>>8);                               //data, start col H
+    buffer[4]=(char)(dx1);                                  //data, start col L
+    buffer[5]=(char)((dx2)>>8);                             //data, end col H
+    buffer[6]=(char)(dx2);                                  //data, end col L
+    
+    buffer[7]=0b00000001;                                   //control byte
+    buffer[8]=0x2B;                                         //command (RowSet)
+    
+    buffer[9]=0b01000100;                                   //control byte
+    buffer[10]=(char)(dy1>>8);                              //data, start row H
+    buffer[11]=(char)(dy1);                                 //data, start row L
+    buffer[12]=(char)((dy2)>>8);                            //data, end row H
+    buffer[13]=(char)(dy2);                                 //data, end row L
 
-    buffer[14]=0b00000001;                      //control byte
-    //buffer[15]=0x0;                             //dummy
-    buffer[15]=0x2C;                            //write data
-    buffer[16]=0b11000000;                      //control byte (ukonci SPI mode 1, odesila zbytek bufferu)
-    portInfo->writeBufferMode(portInfo, buffer, 17, 1);
+    buffer[14]=0b00000001;                                  //control byte
+    buffer[15]=0x2C;                                        //write data
+    buffer[16]=0b11000000;                                  //control byte (ukonci SPI mode 1, odesila zbytek bufferu)
+    iface_writeBufferMode(buffer, 17, WRITE_MODE.Stream);
     
-    
-    if(portInfo->directMode==1)
+    if(directMode==1)
     {
         //direct write data >> SPIBUF
-        spi_Process(portInfo->portIndex, 1);         //ceka na dokonceni          
+        iface_Process();                                    //ceka na dokonceni 
     
-        SPI2CONbits.MODE16=1;
-        
-        portInfo->setBusMode(portInfo, BUS_MODE._16bit);
-        imageToBuffer(da, (void*)portInfo->directModeHwBuffer, 0, 2);
-        portInfo->setBusMode(portInfo, BUS_MODE._8bit);
+        iface_setBusMode(BUS_MODE._16bit);
+        imageToPort(da, iface_getHWBuffer(), 0, 2);
+        iface_setBusMode(BUS_MODE._8bit);
     }
     else
     {
@@ -408,85 +451,124 @@ static void drawImage(IMAGE_SRC* da, short x, short y)
         do
         {
             buffer=getBuffer();
-            len=imageToBuffer(da, buffer, BUFFER_SIZE, portInfo->busMode);
-            portInfo->writeBufferMode(portInfo, buffer, len, 0);
+            len=imageToBuffer(da, buffer, BUFFER_SIZE, BUS_MODE._8bit); 
+            iface_writeBufferMode(buffer, len, WRITE_MODE.BufferOnly);
         } while(da->eof == 0);
     }
-        
     
-//#else  
+#ifdef WATCHDOG_TIMER    
+    startWDT();
+#endif
     
+#ifdef SAFE_PROCESS
+    startCT();
+#endif     
+    
+    iface_freePort();
+}
 
-
-//#endif    
+static void drawPointBuffer(short x, short y, short color)
+{
+    //tato fce je volana z jinych, ktere provedou pauseWDT()
+    //buffer mode
+    if(x < 0 || x >= Width)  { return; }
+    if(y < 0 || y >= Height) { return; }
     
-    freePort();
+    char* buffer=getBuffer(); 
+    
+    buffer[0]=0b00000001;                                   //control byte
+    buffer[1]=0x2A;                                         //command (ColSet)
+    
+    buffer[2]=0b01000100;                                   //control byte
+    buffer[3]=(char)(x>>8);                                 //data, start col H
+    buffer[4]=(char)x;                                      //data, start col L
+    buffer[5]=(char)(x>>8);                                 //data, end col H
+    buffer[6]=(char)x;                                      //data, end col L
+    
+    buffer[7]=0b00000001;                                   //control byte
+    buffer[8]=0x2B;                                         //command (RowSet)
+    
+    buffer[9]=0b01000100;                                   //control byte
+    buffer[10]=(char)(y>>8);                                //data, start row H
+    buffer[11]=(char)y;                                     //data, start row L
+    buffer[12]=(char)(y>>8);                                //data, end row H
+    buffer[13]=(char)y;                                     //data, end row L
+
+    buffer[14]=0b00000001;                                  //control byte
+    buffer[15]=0x2C;                                        //write data    
+    buffer[16]=0b11000000;                                  //control byte nastav DC=1
+    
+    buffer[17]=(char)(color>>8);
+    buffer[18]=(char)color;
+
+    iface_writeBufferMode(buffer, 19, WRITE_MODE.Stream);    
 }
 
 static void drawPoint(short x, short y, short color)
 {
-    getPort();
+    iface_getPort();
     
-    if(portInfo->directMode)
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif 
+    
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif     
+    
+    if(directMode==1)
     {
         //directMode
-        portInfo->setBusMode(portInfo, BUS_MODE._16bit);
-        //drawPointQuick(x, y, color, &setDCPin);
-        
         point.x=x;
         point.y=y;
         point.color=color;
-        drawPointQuick(&point, portInfo->directModeHwBuffer, &setDCPin);
         
-        portInfo->setBusMode(portInfo, BUS_MODE._8bit);
+        iface_setBusMode(BUS_MODE._16bit);
+        drawPointQuick(&point, iface_getHWBuffer(), &setDCPin);
+        iface_setBusMode(BUS_MODE._8bit);
     }
     else
     {
-        //buffer mode
-        if(x < 0 || x >= Width)  { return; }
-        if(y < 0 || y >= Height) { return; }
-    
-        char* buffer=getBuffer(); 
-    
-        buffer[0]=0b00000001;                       //control byte
-        buffer[1]=0x2A;                             //command (ColSet)
-    
-        buffer[2]=0b01000100;                       //control byte
-        buffer[3]=(char)(x>>8);                                //data, start col H
-        buffer[4]=(char)x;                                //data, start col L
-        buffer[5]=(char)(x>>8);                //data, end col H
-        buffer[6]=(char)x;                     //data, end col L
-    
-        buffer[7]=0b00000001;                       //control byte
-        buffer[8]=0x2B;                             //command (RowSet)
-    
-        buffer[9]=0b01000100;                       //control byte
-        buffer[10]=(char)(y>>8);                               //data, start row H
-        buffer[11]=(char)y;                                //data, start row L
-        buffer[12]=(char)(y>>8);               //data, end row H
-        buffer[13]=(char)y;                    //data, end row L
-
-        buffer[14]=0b00000001;                      //control byte
-        buffer[15]=0x2C;                            //write data    
-        buffer[16]=0b11000000;                      //control byte nastav DC=1
-    
-        buffer[17]=(char)(color>>8);
-        buffer[18]=(char)color;
-        portInfo->writeBufferMode(portInfo, buffer, 19, 1);
+        drawPointBuffer(x, y, color);
     }
 
-    freePort();
+#ifdef WATCHDOG_TIMER    
+    startWDT();
+#endif  
+    
+#ifdef SAFE_PROCESS
+    startCT();
+#endif     
+    
+    iface_freePort();
 }
 
 static short textWidth(char* text, IMAGE_SRC* font)
 {
     int a, w=0;
     int l=strLen(text);
+    
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif    
+    
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif 
+    
     for(a=0; a<l; a++)
     {
         fontCharParam(font, text[a]);
         w+=font->width;
     }     
+    
+#ifdef WATCHDOG_TIMER    
+    startWDT();
+#endif    
+
+#ifdef SAFE_PROCESS
+    startCT();
+#endif 
     
     return w;
 }
@@ -494,46 +576,54 @@ static short textWidth(char* text, IMAGE_SRC* font)
 static void clear(short color)
 {
     char* buffer=getBuffer();    
-    getPort();
+    iface_getPort();
     
-    buffer[0]=0b00000001;                       //control byte
-    buffer[1]=0x2A;                             //command (ColSet)
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif 
     
-    buffer[2]=0b01000100;                       //control byte
-    buffer[3]=0;                                //data, start col H
-    buffer[4]=0;                                //data, start col L
-    buffer[5]=(char)((Width-1)>>8);                //data, end col H
-    buffer[6]=(char)(Width-1);                     //data, end col L
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif     
     
-    buffer[7]=0b00000001;                       //control byte
-    buffer[8]=0x2B;                             //command (RowSet)
+    buffer[0]=0b00000001;                                   //control byte
+    buffer[1]=0x2A;                                         //command (ColSet)
     
-    buffer[9]=0b01000100;                       //control byte
-    buffer[10]=0;                               //data, start row H
-    buffer[11]=0;                                //data, start row L
-    buffer[12]=(char)((Height-1)>>8);               //data, end row H
-    buffer[13]=(char)(Height-1);                    //data, end row L
+    buffer[2]=0b01000100;                                   //control byte
+    buffer[3]=0;                                            //data, start col H
+    buffer[4]=0;                                            //data, start col L
+    buffer[5]=(char)((Width-1)>>8);                         //data, end col H
+    buffer[6]=(char)(Width-1);                              //data, end col L
+    
+    buffer[7]=0b00000001;                                   //control byte
+    buffer[8]=0x2B;                                         //command (RowSet)
+    
+    buffer[9]=0b01000100;                                   //control byte
+    buffer[10]=0;                                           //data, start row H
+    buffer[11]=0;                                           //data, start row L
+    buffer[12]=(char)((Height-1)>>8);                       //data, end row H
+    buffer[13]=(char)(Height-1);                            //data, end row L
 
     
-    buffer[14]=0b00000001;                      //control byte
-    //buffer[15]=0x0;                           //dummy
-    buffer[15]=0x2C;                            //write data  
-    buffer[16]=0b11000000;                      //nastav DC=1
-    portInfo->writeBufferMode(portInfo, buffer, 17, 1);
+    buffer[14]=0b00000001;                                  //control byte
+    buffer[15]=0x2C;                                        //write data  
+    buffer[16]=0b11000000;                                  //nastav DC=1
+
+    iface_writeBufferMode(buffer, 17, WRITE_MODE.Stream);
     
-    if(portInfo->directMode)
+    if(directMode==1) //portInfo->directMode)
     {
-        spi_Process(portInfo->portIndex, 1);         //ceka na dokonceni          
-    
-        SPI2CONbits.MODE16=1;
-        fillRectDirect(color, (Width*Height), portInfo->directModeHwBuffer);
-        SPI2CONbits.MODE16=0;
+        //directMode
+        iface_Process();                                    //ceka na dokonceni  
+        
+        iface_setBusMode(BUS_MODE._16bit);
+        fillRectDirect(color, (Width*Height), iface_getHWBuffer());
+        iface_setBusMode(BUS_MODE._8bit);
     }
     else
     {
         int a;
-        //druhy buffer
-        buffer=getBuffer();
+        buffer=getBuffer();                                 //druhy buffer
         short* pix16=(short*)buffer;
     
         //napln buffer linkou clr barvy
@@ -545,33 +635,28 @@ static void clear(short color)
         //odeslat buffer Height krat
         for(a=0; a<Height; a++)
         {
-            portInfo->writeBufferMode(portInfo, buffer, Width*2, 0);
+            iface_writeBufferMode(buffer, Width*2, WRITE_MODE.BufferOnly);
         }
     }
     
-    freePort();
+#ifdef WATCHDOG_TIMER    
+    startWDT();
+#endif    
+    
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif 
+    
+    iface_freePort();
 }
 
-static void initDisplay(PORT_INFO* pi)
+static void initDisplay()
 {
-    portInfo=pi;
-    portInfo->eventFn=&eventDC;
-    
     isInitialized=0;
     
 #ifndef SIMULATOR    
     dinit();
 #endif    
-    
-    //font pouzity pro fci print
-    //setFontSrc(&font_dlg18, &font);
-    //if(font.format==0x1)
-    //{
-        //font format 1-bit, nastavi fore a bg color
-        //format 0x4 pouziva std colorMap
-        //font.foreColor=COLOR.White;
-        //font.bgColor=COLOR.Black;
-    //}
     
     isInitialized=1;
 }
@@ -579,7 +664,7 @@ static void initDisplay(PORT_INFO* pi)
 static void setOrientation(char x)
 {
     //0=na vysku, 1=na sirku, 2=na vysku obracene, 3=na sirku obracene
-    getPort();
+    iface_getPort();
     char* buffer=getBuffer();  
     
     if(x==0)
@@ -589,8 +674,7 @@ static void setOrientation(char x)
         buffer[1]=0x36;                             //0x36 = orientation
         buffer[2]=0b01000001;                       //control byte
         buffer[3]=0x48;                             //param
-        //sendAsync(pixels, 4, 1);     
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 4, 1);
+        iface_writeBufferMode(buffer, 4, WRITE_MODE.Stream);
         
         Width=240;
         Height=320;
@@ -602,8 +686,7 @@ static void setOrientation(char x)
         buffer[1]=0x36;                             //0x36 = orientation
         buffer[2]=0b01000001;                       //control byte
         buffer[3]=0x28;                             //param
-        //sendAsync(pixels, 4, 1);  
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 4, 1);
+        iface_writeBufferMode(buffer, 4, WRITE_MODE.Stream);
         
         Width=320;
         Height=240;
@@ -615,8 +698,7 @@ static void setOrientation(char x)
         buffer[1]=0x36;                             //0x36 = orientation
         buffer[2]=0b01000001;                       //control byte
         buffer[3]=0x88;                             //param
-        //sendAsync(pixels, 4, 1);  
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 4, 1);
+        iface_writeBufferMode(buffer, 4, WRITE_MODE.Stream);
         
         Width=240;
         Height=320;        
@@ -628,15 +710,14 @@ static void setOrientation(char x)
         buffer[1]=0x36;                             //0x36 = orientation
         buffer[2]=0b01000001;                       //control byte
         buffer[3]=0xE8;                             //param
-        //sendAsync(pixels, 4, 1);  
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 4, 1);
+        iface_writeBufferMode(buffer, 4, WRITE_MODE.Stream);
         
         Width=320;
         Height=240;        
     }
     
     Orientation=x;
-    freePort();
+    iface_freePort();
 }
 
 static char getOrientation()
@@ -646,7 +727,7 @@ static char getOrientation()
 
 static void setBrightness(char val)
 {
-    getPort();
+    iface_getPort();
     char* buffer=getBuffer();  
 
     buffer[0]=0b00000001;                       //control byte
@@ -654,16 +735,15 @@ static void setBrightness(char val)
     buffer[2]=0b01000001;                       //control byte
     buffer[3]=val;                              //param 0 ... 0xFF
     
-    spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 4, 1);          
-
-    freePort();
+    iface_writeBufferMode(buffer, 4, WRITE_MODE.Stream);
+    iface_freePort();
 }
 
 static void controlDisplay(char on, char sleep, char bl, char inv)
 {
     //hodnota -1 = bez zmeny, 0=OFF, 1=ON
     
-    getPort();
+    iface_getPort();
     char* buffer;
     
     if(on != 0xFF)
@@ -684,7 +764,8 @@ static void controlDisplay(char on, char sleep, char bl, char inv)
             buffer[1]=0x29;                             //0x28 = off
             setBacklight(1);
         }
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 2, 1); 
+
+        iface_writeBufferMode(buffer, 2, WRITE_MODE.Stream);
     }
     
     if(sleep != 0xFF)
@@ -702,7 +783,8 @@ static void controlDisplay(char on, char sleep, char bl, char inv)
             buffer[0]=0b00000001;                       //control byte
             buffer[1]=0x10;                             //0x10 = sleep in
         }
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 2, 1); 
+
+        iface_writeBufferMode(buffer, 2, WRITE_MODE.Stream);
     }
     
     if(bl != 0xFF)
@@ -724,7 +806,8 @@ static void controlDisplay(char on, char sleep, char bl, char inv)
             buffer[2]=0b01000001;                       //control byte
             buffer[3]=0x2C;                             //param BL = b2
         }
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 4, 1); 
+
+        iface_writeBufferMode(buffer, 2, WRITE_MODE.Stream);
     }
     
     if(inv != 0xFF)
@@ -742,10 +825,11 @@ static void controlDisplay(char on, char sleep, char bl, char inv)
             buffer[0]=0b00000001;                       //control byte
             buffer[1]=0x21;                             //0x21 = inversion ON
         }
-        spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 2, 1); 
+
+        iface_writeBufferMode(buffer, 2, WRITE_MODE.Stream);
     }
     
-    freePort();
+    iface_freePort();
 }
 
 static char getInitialized()
@@ -755,18 +839,17 @@ static char getInitialized()
 
 static void print(char* t)
 {
-    //DISPLAY* disp=(DISPLAY*)d;
-    
-    //short h=fontSys.height;
-    if((displayInfo->print_y + fontSys.height) > Height)
+    //provede vypis na aktualni radek a posune kurzor na dalsi
+    //je-li plna obrazovka, vynaze ji
+    if((displayInfo->print_y + fontDefault.height) > Height)
     {
         //plna obrazovka
         clear(COLOR.Black);
         displayInfo->print_y = 0;
     }
     
-    drawString(t, &fontSys, 0, displayInfo->print_y);
-    displayInfo->print_y += fontSys.height;
+    drawString(t, &fontDefault, 0, displayInfo->print_y);
+    displayInfo->print_y += fontDefault.height;
 }
 
 static short getWidth()
@@ -779,32 +862,52 @@ static short getHeight()
     return Height;
 }
 
+static short getFontHeight(IMAGE_SRC* font)
+{
+    if(font != NULL)
+    {
+        return font->height;
+    }
+    else
+    {
+        return fontDefault.height;
+    }
+}
+
 
 static void dinit()
 {
-    setFontSrc(&font_arial18, &fontSys);
-    fontSys.foreColor=RGB16(0, 63, 0);
+    setFontSrc(&font_ygm20, &fontDefault);
+    //setFontSrc(&font_arial18, &fontDefault);
+
+    if(fontDefault.format==0x4){ setImageColorMap(&fontDefault, (short*)stdColorMap); }
+    else if(fontDefault.format==0x1){ fontDefault.foreColor=RGB16(0, 63, 0); }
     
-    setBacklight(1);
+#ifdef WATCHDOG_TIMER    
+    pauseWDT();
+#endif  
+    
+#ifdef SAFE_PROCESS
+    pauseCT();
+#endif     
+    
+    setBacklight(1);                            //backlight ON
     
     char* buffer;
 	resetDisplay();
 
-    getPort();
+    iface_getPort();
     buffer=getBuffer();
     
     //soft RESET
     buffer[0]=0b00000001;                       //control byte
     buffer[1]=0x01;                             //0x01 = soft reset
-    //spi_ExchangeModeEvent(display->portIndex, buffer, NULL, 2, 1);
-    //writeBufferMode(buffer, 2, 1);
-    portInfo->writeBufferMode(portInfo, buffer, 2, 1);
-    
-    freePort();
+    iface_writeBufferMode(buffer, 2, WRITE_MODE.Stream);
+    iface_freePort();
 
     pauseEvents(200);                            //po resetu pauza 200ms
     
-    getPort();
+    iface_getPort();
     buffer=getBuffer();
     
     //power control 1    
@@ -902,31 +1005,29 @@ static void dinit()
     //sleep out
     buffer[26]=0b00000001;                       //control byte
     buffer[27]=0x11;                             //0x11 = sleep out
-    //spi_ExchangeModeEvent(display->portIndex, buffer, NULL, 28, 1);
-    //writeBuffer(buffer, 28, 1);
-    portInfo->writeBufferMode(portInfo, buffer, 28, 1);
-    
-    freePort();
+    iface_writeBufferMode(buffer, 28, WRITE_MODE.Stream);
+    iface_freePort();
     
     pauseEvents(120);                            //po sleep out pauza 120 ms
-
-    getPort();
+    iface_getPort();
     
     //on
     buffer=getBuffer();
     buffer[0]=0b00000001;                       //control byte
     buffer[1]=0x29;                             ///0x29 = display ON    
-    //spi_ExchangeModeEvent(display->portIndex, buffer, NULL, 2, 1);
-    //writeBuffer(buffer, 2, 1);
-    portInfo->writeBufferMode(portInfo, buffer, 2, 1);
+    iface_writeBufferMode(buffer, 2, WRITE_MODE.Stream);
     
-    freePort();
-    
-    //pwm_on(3, 1);
-    //pwm_setPower(3, 2048);
-    
+    iface_freePort();
     pauseEvents(200);                            //po display ON pauza 200 ms
-
+    
+#ifdef WATCHDOG_TIMER    
+    startWDT();
+#endif  
+    
+#ifdef SAFE_PROCESS
+    startCT();
+#endif 
+    
 }
 
 static void writeChar(IMAGE_SRC* fi, char code, short x, short y)
@@ -968,41 +1069,40 @@ static void writeChar(IMAGE_SRC* fi, char code, short x, short y)
     if(is_out==0) { fi->start_x = -1; }    
     
     
-    //spi_Process(display->portIndex, 1);         //ceka na dokonceni predchozi operace
     char* buffer=getBuffer();
     
-    buffer[0]=0b00000001;                       //control byte
-    buffer[1]=0x2A;                             //command (ColSet)
+    buffer[0]=0b00000001;                                   //control byte
+    buffer[1]=0x2A;                                         //command (ColSet)
     
-    buffer[2]=0b01000100;                       //control byte
-    buffer[3]=(char)(dx1>>8);                     //data, start col H
-    buffer[4]=(char)(dx1);                        //data, start col L
-    buffer[5]=(char)(dx2>>8);                //data, end col H
-    buffer[6]=(char)(dx2);                     //data, end col L
+    buffer[2]=0b01000100;                                   //control byte
+    buffer[3]=(char)(dx1>>8);                               //data, start col H
+    buffer[4]=(char)(dx1);                                  //data, start col L
+    buffer[5]=(char)(dx2>>8);                               //data, end col H
+    buffer[6]=(char)(dx2);                                  //data, end col L
     
-    buffer[7]=0b00000001;                       //control byte
-    buffer[8]=0x2B;                             //command (RowSet)
+    buffer[7]=0b00000001;                                   //control byte
+    buffer[8]=0x2B;                                         //command (RowSet)
     
-    buffer[9]=0b01000100;                       //control byte
-    buffer[10]=(char)(dy1>>8);                    //data, start row H
-    buffer[11]=(char)(dy1);                       //data, start row L
-    buffer[12]=(char)(dy2>>8);               //data, end row H
-    buffer[13]=(char)(dy2);                    //data, end row L
+    buffer[9]=0b01000100;                                   //control byte
+    buffer[10]=(char)(dy1>>8);                              //data, start row H
+    buffer[11]=(char)(dy1);                                 //data, start row L
+    buffer[12]=(char)(dy2>>8);                              //data, end row H
+    buffer[13]=(char)(dy2);                                 //data, end row L
 
-    buffer[14]=0b00000001;                      //control byte
-    //buffer[15]=0x0;                             //dummy
-    buffer[15]=0x2C;                            //write data
-    buffer[16]=0b11000000;                      //control byte (ukonci SPI mode 1, odesila zbytek bufferu)
-    portInfo->writeBufferMode(portInfo, buffer, 17, 1);
+    buffer[14]=0b00000001;                                  //control byte
+    buffer[15]=0x2C;                                        //write data
+    buffer[16]=0b11000000;                                  //control byte (ukonci SPI mode 1, odesila zbytek bufferu)
+
+    iface_writeBufferMode(buffer, 17, WRITE_MODE.Stream);
     
-    if(portInfo->directMode==1)
+    if(directMode==1)
     {
         //direct write data >> SPIBUF
-        spi_Process(portInfo->portIndex, 1);         //ceka na dokonceni          
+        iface_Process();                                    //ceka na dokonceni  
     
-        SPI2CONbits.MODE16=1;
-        imageToBuffer(fi, (void*)portInfo->directModeHwBuffer, 0, 2);
-        SPI2CONbits.MODE16=0;
+        iface_setBusMode(BUS_MODE._16bit);
+        imageToPort(fi, iface_getHWBuffer(), 0, 2);
+        iface_setBusMode(BUS_MODE._8bit);
     }
     else
     {
@@ -1010,8 +1110,8 @@ static void writeChar(IMAGE_SRC* fi, char code, short x, short y)
         do
         {
             buffer=getBuffer();
-            len=imageToBuffer(fi, buffer, BUFFER_SIZE, portInfo->busMode);
-            portInfo->writeBufferMode(portInfo, buffer, len, 0);
+            len=imageToBuffer(fi, buffer, BUFFER_SIZE, BUS_MODE._8bit);
+            iface_writeBufferMode(buffer, len, WRITE_MODE.BufferOnly);
         } while(fi->eof == 0);
     }
     
@@ -1034,9 +1134,8 @@ static void setColorDef()
     //BLUE
     for(a=0; a<32; a++){buffer[a+96+3]=a;}
     
-    spi_ExchangeModeDE(portInfo->portIndex, buffer, NULL, 131, 1);  
+    iface_writeBufferMode(buffer, 131, WRITE_MODE.Stream);
 }
-
 
 static char* getBuffer()
 {
@@ -1052,34 +1151,25 @@ static char* getBuffer()
     }
 }
 
-static void getPort()
-{
-    //spi_Use(display->portIndex, 1, NULL, &eventDC);
-    portInfo->getPort(portInfo);
-    
-    setCSPin(0);
-}
-
-static void freePort()
-{
-    //spi_Free(display->portIndex, 0);
-    portInfo->freePort(portInfo);               //pri cekani na odvysilani muze volat doEvents()
-    
-    setCSPin(1);
-}
-
 static void eventDC(char x)
 {
+    //fci vola SPI interrupt, pokud pri odesilani streamu najde odpovidajici command
     //plati pouze pro SPI
     //b6=0/1 obsahuje hodnotu, ktera bude nastavena na DC pin 
     //b7=0 - command v b0-b5 obsahuje pocet bytes dat, ktere nasleduji (nez bude dalsi command)
-    //b7=1 - command ukonci MODE 1, port pokracuje v MODE 0 (vse dalsi jsou data)
+    //b7=1 - command ukonci STREAM MODE, port pokracuje v BUFFER MODE  (vse dalsi jsou data)
     x=x & 0b01000000; // x>>6;    
-    if(x==0){setDCPin(0);}
-    else{setDCPin(1);}
+    if(x==0)
+    {
+        //setDCPin(0);
+        clearPin(&dcPin);
+    }
+    else
+    {
+        //setDCPin(1);
+        setPin(&dcPin);
+    }
 }
-
-
 
 static void resetDisplay()
 {
@@ -1089,13 +1179,15 @@ static void resetDisplay()
 #ifdef SW_RESET
     //SW reset
     //UP
-    setResetPin(1);
+    setPin(&resetPin);
     pauseEvents(50);                     //50ms
+
     //DOWN - probiha reset displeje
-    setResetPin(0);
+    clearPin(&resetPin);
     pauseEvents(100);                    //100ms
+
     //UP
-    setResetPin(1);
+    setPin(&resetPin);
     pauseEvents(50);                     //50ms
 #else    
     //HW RESET
@@ -1104,63 +1196,93 @@ static void resetDisplay()
     
 }
 
-void setDCPin(char value)
+static void setDCPin(char value)
 {
     //nastav DC pin na value
-    int* p;
     if(value==0)
     {
-        p=(int*)(portInfo->dc_portBase + LAT_OFFSET + CLR_OFFSET);
+        clearPin(&dcPin);
     }
     else
     {
-        p=(int*)(portInfo->dc_portBase + LAT_OFFSET + SET_OFFSET);
+        setPin(&dcPin);
     }
-    
-    *p = portInfo->dc_pin;  
-}
-
-static void setCSPin(char value)
-{
-    //nastav CS pin na value
-    int* p;
-    if(value==0)
-    {
-        p=(int*)(portInfo->cs_portBase + LAT_OFFSET + CLR_OFFSET);
-    }
-    else
-    {
-        p=(int*)(portInfo->cs_portBase + LAT_OFFSET + SET_OFFSET);
-    }
-    
-    *p = portInfo->cs_pin;  
-}
-
-static void setResetPin(char value)
-{
-    int* p;
-    if(value==0)
-    {
-        p=(int*)(portInfo->reset_portBase + LAT_OFFSET + CLR_OFFSET);
-    }
-    else
-    {
-        p=(int*)(portInfo->reset_portBase + LAT_OFFSET + SET_OFFSET);
-    }
-    
-    *p = portInfo->reset_pin;  
 }
 
 static void setBacklight(char value)
 {
-    //value 1=ON, 2=OFF
+    //value 1=ON, 0=OFF
     if(value==1)
     {
-        LATCbits.LATC9=0;
+        //LATCbits.LATC9=0;
+        clearPin(&blPin);
     }
     else
     {
-        LATCbits.LATC9=1;
+        //LATCbits.LATC9=1;
+        setPin(&blPin);
+    }
+}
+
+
+//Use the SPI module if it is not occupied, otherwise, wait to release
+static void iface_getPort()
+{
+    //obsadi SPI port, pokud neni volny, ceka na uvolneni (doEvents)
+    spi_Use(IFACE_INDEX, WAIT.Enable, NULL, &eventDC);
+
+    //aktivuje CS signal displeje
+    clearPin(&csPin);
+}
+
+//Wait to complete the transmission, then release SPI module
+static void iface_freePort()
+{
+    //uvolni SPI port, predtim ceka na dokonceni vysilani (doEvents)
+    spi_Free(IFACE_INDEX);
+    
+    //deaktivuje CS signal displeje
+    setPin(&csPin);
+}
+
+//start the transmission
+//@param buffer array of bytes
+//@param len    number of bytes in buffer
+//@param mode   WRITE_MODE.BufferOnly (buffer contains data only), or WRITE_MODE.Stream (buffer contains control bytes and data)
+static void iface_writeBufferMode(char* buffer, short len, char mode)
+{
+    //odesila data na SPI
+    while(spi_Process(IFACE_INDEX) == MODULE_ACTIVITY.Works)
+    {
+        //ceka na odeslani dat
+    }
+    
+    spi_ExchangeMode(IFACE_INDEX, buffer, NULL, len, mode);
+    //spi_ExchangeModeDE(IFACE_INDEX, buffer, NULL, len, mode);
+}
+
+//return address of SPIBUF register
+static volatile int* iface_getHWBuffer()
+{
+    //vraci adresu HW bufferu v SPI modulu (directWrite)
+    (int*)spi_getHwBuffer(IFACE_INDEX);
+}
+
+//set 8/16/32 bit bus mode
+//@param mode  BUS_MODE._8bit/_16bit/_32bit
+static void iface_setBusMode(char mode) 
+{
+    //nastavi mod SPI (8-bit, 16-bit)
+    spi_setBusMode(IFACE_INDEX, mode);
+}
+
+//Wait to complete the transmission
+static void iface_Process()
+{
+    //ceka na dokonceni predchoziho vysilani
+    while(spi_Process(IFACE_INDEX) == MODULE_ACTIVITY.Works)
+    {
+        //ceka na dokonceni   
     }
 }
 

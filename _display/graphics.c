@@ -9,7 +9,7 @@
 #ifdef USE_GRAPHICS
 
 static DISPLAY* disp;
-static PORT_INFO* pinfo;
+//static PORT_INFO* pinfo;
 
 static void drawCircle(short x, short y, short r, short color);
 static void drawBox(short x1, short y1, short x2, short y2, short w, short color);
@@ -21,13 +21,12 @@ static void drawBox(short x1, short y1, short x2, short y2, short w, short color
     //g->display.selectPort(pi);
     //g->initDisplay=g->display.initDisplay;
 
-void setGraphics(GRAPHICS* g,  DISPLAY* d, PORT_INFO* pi)
+void setGraphics(GRAPHICS* g,  DISPLAY* d)
 {
     
     disp=d;
-    pinfo=pi;
     
-    d->selectPort(pinfo, disp);
+    d->selectDriver(disp);
     
     //fce graphics
     g->drawCircle=&drawCircle;
@@ -44,6 +43,7 @@ void setGraphics(GRAPHICS* g,  DISPLAY* d, PORT_INFO* pi)
     
     g->clear=d->clear;
     g->textWidth=d->textWidth;
+    g->getFontHeight=d->getFontHeight;
 }
 
 static void drawCircle(short x, short y, short r, short color)

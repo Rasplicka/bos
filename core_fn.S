@@ -1376,8 +1376,8 @@ clearWDT:
 .ent startWDT
 startWDT:
     
-    li	    v0, 0x5743
-    sh	    v0, (WDTCON+2)
+    //li	    v0, 0x5743
+    //sh	    v0, (WDTCON+2)		    //clear
     
     li	    t9, 0x8000
     sh	    t9, (WDTCONSET)		    //WDT on    
@@ -1385,6 +1385,51 @@ startWDT:
     jrc	    ra
     
 .end startWDT  
+    
+.align 2
+.global pauseWDT
+.ent pauseWDT
+pauseWDT:
+    
+    li	    t9, 0x8000
+    sh	    t9, (WDTCONCLR)		    //WDT on    
+    
+    jrc	    ra    
+.end pauseWDT    
+    
+.align 2
+.global pauseCT
+.ent pauseCT
+pauseCT:    
+    
+    mfc0    t9, _CP0_COUNT
+    sw	    t9, (pauseCTCount)
+    
+    mfc0    t9, _CP0_COMPARE
+    sw	    t9, (pauseCTCompare)
+    
+    mtc0    zero, _CP0_COUNT
+    
+    li	    t9, 0xFFFFFFFF
+    mtc0    t9, _CP0_COMPARE
+    
+    jrc	    ra
+    
+.end pauseCT     
+    
+.align 2
+.global startCT
+.ent startCT
+startCT:    
+    lw	    t9, (pauseCTCount)
+    mtc0    t9, _CP0_COUNT
+    
+    lw	    t9, (pauseCTCompare)
+    mtc0    t9, _CP0_COMPARE
+    
+    jrc	    ra
+    
+.end startCT     
     
 //</editor-fold>     
    
@@ -2485,5 +2530,69 @@ strLen:
     jrc	    ra
     
 .end strLen 
+    
+//</editor-fold>  
+    
+//<editor-fold defaultstate="collapsed" desc="SPI1-6 Tx interrupt">
+.align 2    
+.ent spi_interrupt_vector 
+spi_interrupt_vector:
+
+#ifdef SPI1_USE    
+.global iVector_spi1Tx    
+iVector_spi1Tx:   
+    //SPI1 Tx
+    move    a0, zero			//spi index 0-5 (spi1-6)
+    b16	    9f
+#endif      
+    
+#ifdef SPI2_USE    
+.global iVector_spi2Tx    
+iVector_spi2Tx:   
+    //SPI2 Tx
+    li16    a0, 1			//spi index 0-5 (spi1-6)
+    b16	    9f
+#endif    
+  
+#ifdef SPI3_USE    
+.global iVector_spi3Tx    
+iVector_spi3Tx:   
+    //SPI3 Tx
+    li16    a0, 2			//spi index 0-5 (spi1-6)
+    b16	    9f
+#endif      
+  
+#ifdef SPI4_USE    
+.global iVector_spi4Tx    
+iVector_spi4Tx:   
+    //SPI4 Tx
+    li16    a0, 3			//spi index 0-5 (spi1-6)
+    b16	    9f
+#endif     
+
+#ifdef SPI5_USE    
+.global iVector_spi5Tx    
+iVector_spi5Tx:   
+    //SPI5 Tx
+    li16    a0, 4			//spi index 0-5 (spi1-6)
+    b16	    9f
+#endif     
+    
+#ifdef SPI6_USE    
+.global iVector_spi6Tx    
+iVector_spi6Tx:   
+    //SPI6 Tx
+    li16    a0, 5			//spi index 0-5 (spi1-6)
+    b16	    9f
+#endif     
+    
+9:
+    la	    v0, spiTxInterrupt
+    _CALL_C v0, 1
+    
+    eret
+    //nop
+    
+.end spi_interrupt_vector  
     
 //</editor-fold>    

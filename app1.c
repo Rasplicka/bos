@@ -36,13 +36,35 @@ static void call1(int a, int b);
 static void call2(int a, int b);
 static void call3(int a, int b);
 static void cn(uint base, uint stat);
-static void dispText();
+static void dispText1();
+static void dispText2();
 
 static int restart=0;
 
 void m1_start()
 {
     
+#ifdef USE_GRAPHICS    
+    initGraphics();
+#endif
+    //RGB16(5, 5, 5);
+    cnStartPortA();
+    cnEnable(PORTA_BASE, BIT3 | BIT8, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
+    cnRegEvent(&cn, PORTA_BASE);
+    
+    cnStartPortC();                                                     //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
+    cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
+    cnRegEvent(&cn, PORTC_BASE);
+    
+    dispText1();
+    while(1)
+    {
+        doEvents();
+    }
+    
+    
+    
+    /*
     //setCanIdle(1);
     //setCanSleep(1);
     
@@ -58,20 +80,11 @@ void m1_start()
     //testSystemTimer();
     systemTimerRegInterval(&testSystemTimer, 10000);
     
-    cnStartPortA();
-    cnEnable(PORTA_BASE, BIT3 | BIT8, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
-    cnRegEvent(&cn, PORTA_BASE);
-    
-    cnStartPortC();                                                     //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
-    cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
-    cnRegEvent(&cn, PORTC_BASE);
-    
-    while(1)
-    {
-        doEvents();
-    }
 
-    //dispText();
+    */
+
+
+    
     
     //int st=CNSTATB;
     rtcRegTimeAlarm(&testRTC, 0, 1);
@@ -267,11 +280,20 @@ static void call3(int a, int b)
 
 static void cn(uint base, uint stat)
 {
+    if(base==PORTA_BASE)
+    {
+        dispText1();
+    }
+    else
+    {
+        dispText2();
+    }
+    
     //RCONbits.SLEEP==0;
     //setHighPowerOsc();
-    invTestLed(4);
-    setCanSleep(0);
-    LATCbits.LATC9=0;
+    //invTestLed(4);
+    //setCanSleep(0);
+    //LATCbits.LATC9=0;
     //softReset();
     //setCanIdle(0);
     //if((stat & BIT12) != 0)
@@ -286,20 +308,50 @@ static void cn(uint base, uint stat)
     
 }
 
-static void dispText()
+static void dispText1()
 {
     //char txt2[] = {"áéíóúý ÁÉÍÓÚÝ"};
     //char txt[] = {"Kratky text"};
-    char txt[] = {'J','i','\xFE','í',' ','R','a','\xE7','p','l','i','\x9F','k','a','ý','á','í','é','?','?',' '};
-    //char txt[] = {'\xA6','l','u','\x9C','o','u','\x9F','k','\xEC',' ','k','\xDE','\xE5',',',' ','\x9F','e','p','i','c','e'};
+    char txt[] = {'J','i','\xFE','í',' ','R','a','\xE7','p','l','i','\x9F','k','a'}; //,'ý','á','í','é','?','?',' '};
+    //char txt[]="Nejaky text";
+    
+    graphics.clear(COLOR.Black);
+    short y=0, x=0;
+    graphics.drawString("PIC32MM0256", NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    graphics.drawString("CPU 24MHz", NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    graphics.drawString("SPI 48MHz", NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    graphics.drawString("SSD1306 display", NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    graphics.drawString(txt, NULL, x, y);
+}   
 
+static void dispText2()
+{
+    //char txt2[] = {"áéíóúý ÁÉÍÓÚÝ"};
+    //char txt[] = {"Kratky text"};
+    //char txt[] = {};
+    graphics.clear(COLOR.Black);
+    graphics.clear(COLOR.Black);
+    graphics.clear(COLOR.Black);
+    graphics.clear(COLOR.Black);    
     
     short y=0, x=0;
-    
-    graphics.drawString(txt, NULL, x, y);
-    y+=20;
-    graphics.drawString(txt, NULL, x, y);
-    
+    graphics.drawString("Nejaky text, ktery", NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    graphics.drawString("je zadany primo.", NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    //graphics.drawString("Tzn. ze neni deklarovany", NULL, x, y);
+    //y+=20;
+    //graphics.drawString("jako pole, ale je zadany", NULL, x, y);
+    //y+=20;
+    //graphics.drawString("primo v kodu v uvozovkach", NULL, x, y);
+}  
+
+
+
     /*
     int a;
     //FONT_SRC fo;
@@ -322,5 +374,3 @@ static void dispText()
     //d->drawLine(319, 0, 319, 239, color);
     //d->drawLine(319, 239, 0, 239, color);
     //d->drawLine(0, 239, 0, 0, color);
-    
-}

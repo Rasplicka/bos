@@ -178,7 +178,7 @@ void userAppsStart()
     p1.TimeLimitExceedBehavior = ON_ERROR.REMOVE_PROCESS;
     p1.GeneralExceptionBehavior = ON_ERROR.REMOVE_PROCESS;
     p1.TrapBehavior = ON_ERROR.REMOVE_PROCESS;
-    p1.TimeLimitValue = 0xFFFFF;
+    p1.TimeLimitValue = 0xFFFFFF;
     
     
     if(regProcess(&m1_start, 1024, &p1, 0x1) < 0)

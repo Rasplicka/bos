@@ -3,11 +3,13 @@
 #include "../../asm_macro.S"
    
 
-//.set mips32    
 #define MICROMIPS  
 .set micromips     
 .section .asm_fn, code    
 
+//pouze pri pouziti displeje ILI9341    
+#ifdef USE_GRAPHICS  
+    
 //pausa pri directWrite do SPI hw bufferu (zavisi na rychlosti CPU, zapis bytes musi byt pomalejsi, nez vysilani SPI)
 #define SPI_DIRECT_WAIT_STATE	2	    //plati pro PIC32MM, 24MHz, rychlejsi CPU by mely mit delsi pauzu
     
@@ -326,6 +328,10 @@ fillRectDirect:
 .global	imageToBuffer
 .ent imageToBuffer
 imageToBuffer:
+    
+.global imageToPort
+imageToPort:    
+    
 //a0=IMAGE_SRC struct
 //a1=buffer
 //a2=buffer len
@@ -1611,3 +1617,5 @@ drawPointQuick:
 .end drawPointQuick 
     
 //</editor-fold>    
+    
+#endif	    //USE_GRAPHICS  

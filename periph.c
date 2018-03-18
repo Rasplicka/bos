@@ -152,6 +152,23 @@ void signalizeError(int num, int code)
     }
 }
 
+void setPin(PIN_INFO* pi)
+{
+    volatile int* p=(int*)(pi->portBase + LAT_OFFSET + SET_OFFSET);
+    *p=pi->pin;
+}
+
+void clearPin(PIN_INFO* pi)
+{
+    volatile int* p=(int*)(pi->portBase + LAT_OFFSET + CLR_OFFSET);
+    *p=pi->pin;
+}
+
+void invPin(PIN_INFO* pi)
+{
+    volatile int* p=(int*)(pi->portBase + LAT_OFFSET + INV_OFFSET);
+    *p=pi->pin;
+}
 
 
 void periphInitX()

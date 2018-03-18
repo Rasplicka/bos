@@ -30,8 +30,8 @@ static void listener(int p0, int p1, int p2);
 
 void m3_start()
 {
-    //setCanIdle(1);
-    setCanSleep(1);
+    setCanIdle(0);
+    setCanSleep(0);
     
     //systemTimerRegInterval(&testSystemTimer, 4000);
     

@@ -54,7 +54,11 @@ extern void __attribute__((interrupt(), vector(11))) iVector_cnPortD();         
 
 extern void __attribute__((interrupt(), vector(17))) iVector_timer1();          //Timer1
 //extern void __attribute__((interrupt(), vector(29))) iVector_usb();           //USB
+
+#ifdef RTC
 extern void __attribute__((interrupt(), vector(32))) iVector_rtc();             //RTC alarm
+#endif
+
 //extern void __attribute__((interrupt(), vector(33))) iVector_adc();           //adc complete
 
 #ifdef SPI1_USE

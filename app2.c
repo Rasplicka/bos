@@ -33,8 +33,8 @@ static void cn(uint base, uint stat);
 void m2_start()
 {
     
-    //setCanIdle(1);
-    setCanSleep(1);
+    setCanIdle(0);
+    setCanSleep(0);
     
     //ubtnRegEvent(&testButton, 11, 20);
     //systemTimerRegInterval(&testSystemTimer, 2000);

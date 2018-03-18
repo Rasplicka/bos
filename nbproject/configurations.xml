@@ -20,11 +20,13 @@
       <logicalFolder name="f3" displayName="driver" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
-        <itemPath>fontConsolas.h</itemPath>
-        <itemPath>font_twcen.h</itemPath>
-        <itemPath>font_ygm.h</itemPath>
-        <itemPath>font_fixed1306.h</itemPath>
-        <itemPath>font_arial.h</itemPath>
+        <itemPath>_display/font/fontConsolas.h</itemPath>
+        <itemPath>_display/font/font_arial.h</itemPath>
+        <itemPath>_display/font/font_fixed1306.h</itemPath>
+        <itemPath>_display/font/font_twcen.h</itemPath>
+        <itemPath>_display/font/font_ygm.h</itemPath>
+        <itemPath>_display/font/font_ygm_16.h</itemPath>
+        <itemPath>_display/font/font_ygm_20.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="modules" projectFiles="true">
       </logicalFolder>
@@ -35,7 +37,6 @@
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
           <logicalFolder name="f1" displayName="ili9341" projectFiles="true">
-            <itemPath>_display/ili9341/disp9341.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f3" displayName="oscilator" projectFiles="true">
@@ -69,6 +70,9 @@
           <logicalFolder name="f1" displayName="ili9341" projectFiles="true">
             <itemPath>_display/ili9341/disp9341.c</itemPath>
             <itemPath>_display/ili9341/disp16_asm.S</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f2" displayName="ssd1306" projectFiles="true">
+            <itemPath>_display/ssd1306/disp1306.c</itemPath>
           </logicalFolder>
           <itemPath>_display/graphics.c</itemPath>
         </logicalFolder>
@@ -113,7 +117,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>2.05</languageToolchainVersion>
+        <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -305,6 +309,7 @@
         <property key="UART2" value="true"/>
         <property key="UART3" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

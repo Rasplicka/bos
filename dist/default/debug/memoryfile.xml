@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/debug/BOS2.X.debug.elf">                 
+  <executable name="dist/default/debug/bos.debug.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>263312</length>                 
-      <used>33364</used>                     
-      <free>229948</free>                     
+      <used>40584</used>                     
+      <free>222728</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 

@@ -86,13 +86,17 @@ uint time_ms                __section(".os") = 0;                               
 //uint day_ms               __section(".os");                                   //timer1
 //int checkStackSpaceValue    __section(".os") =0;
 
+uint pauseCTCount           __section(".os") = 0;
+uint pauseCTCompare         __section(".os") = 0;
+
 char sleepStatus            __section(".os") = 0;
 char idleStatus             __section(".os") = 0;
 
 
+
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-char ballast[44]        __section(".os");
+char ballast[36]        __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
@@ -137,7 +141,8 @@ void main()
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
     
-#ifdef WATCHDOG_TIMER    
+#ifdef WATCHDOG_TIMER
+    clearWDT();                             //clear counter
     startWDT();                             //WDT on
 #endif    
     
@@ -186,10 +191,7 @@ void main()
 #if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE || defined SPI4_USE || defined SPI5_USE || defined SPI6_USE)
     spi_init();
 #endif    
-    
-#ifdef USE_GRAPHICS    
-    //initGraphics();
-#endif    
+
     // </editor-fold>
 
     //5. run system modules ----------------------------------------------------
