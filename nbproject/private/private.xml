@@ -3,25 +3,21 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/bos2/bos/portWriter.c</file>
-            <file>file:/E:/bos2/bos/core_fn.S</file>
-            <file>file:/E:/bos2/bos/globals.h</file>
-            <file>file:/E:/bos2/bos/_display/ili9341/disp9341.c</file>
-            <file>file:/E:/bos2/bos/main.c</file>
-            <file>file:/E:/bos2/bos/_display/font/font_fixed1306.h</file>
-            <file>file:/E:/bos2/bos/globals.c</file>
-            <file>file:/E:/bos2/bos/struct.h</file>
-            <file>file:/E:/bos2/bos/periph.c</file>
-            <file>file:/E:/bos2/bos/_display/graphics.c</file>
-            <file>file:/E:/bos2/bos/def.h</file>
-            <file>file:/E:/bos2/bos/user_apps.c</file>
-            <file>file:/E:/bos2/bos/app1.c</file>
-            <file>file:/E:/bos2/bos/app2.c</file>
-            <file>file:/E:/bos2/bos/spi.c</file>
-            <file>file:/E:/bos2/bos/asm.h</file>
-            <file>file:/E:/bos2/bos/app3.c</file>
-            <file>file:/E:/bos2/bos/_display/ili9341/disp16_asm.S</file>
-            <file>file:/E:/bos2/bos/_display/ssd1306/disp1306.c</file>
+            <file>file:/D:/bos2/BOS2.X/def.h</file>
+            <file>file:/D:/bos2/BOS2.X/_display/ili9341/disp16_asm.S</file>
+            <file>file:/D:/bos2/BOS2.X/_display/font/font_consolas_36.h</file>
+            <file>file:/D:/bos2/BOS2.X/_display/graphics.c</file>
+            <file>file:/D:/bos2/BOS2.X/main.h</file>
+            <file>file:/D:/bos2/BOS2.X/_display/ili9341/disp9341.c</file>
+            <file>file:/D:/bos2/BOS2.X/main.c</file>
+            <file>file:/D:/bos2/BOS2.X/globals.c</file>
+            <file>file:/D:/bos2/BOS2.X/asm.h</file>
+            <file>file:/D:/bos2/BOS2.X/core_fn.S</file>
+            <file>file:/D:/bos2/BOS2.X/_display/ssd1306/disp1306.c</file>
+            <file>file:/D:/bos2/BOS2.X/app1.c</file>
+            <file>file:/D:/bos2/BOS2.X/struct.h</file>
+            <file>file:/D:/bos2/BOS2.X/app2.c</file>
+            <file>file:/D:/bos2/BOS2.X/globals.h</file>
         </group>
     </open-files>
 </project-private>

@@ -4,39 +4,13 @@
 #include "globals.h"
 
 /*
- * Author Jiri Rasplicka, 2017, (all rights reserved)
- * Version 1.0       
+ * Author Jiri Rasplicka 
+ * Copyright (c) 2017, All rights reserved.      
  * BOS core
- * This file is shared to the PIC32MM, PIC32MZ
- * 
- */
-
-
-#ifdef USE_GRAPHICS
-
-GRAPHICS graphics;                              //universalni graficke fce
-DISPLAY display;                                //display driver
-
-void initGraphics()
-{
-    //Inicializuje systemovy display
-    
-#ifdef USE_DISP9341    
-    //ili9341/SPI, v display nastavi fce driveru disp9341 
-    disp9341_driver(&display);                    
-#endif
-    
-#ifdef USE_DISP1306
-    //SSD1306/SPIv v display nastavi fce driveru disp1306
-    disp1306_driver(&display);                    
-#endif    
-    
-    //pro vsechny typy displeju
-    display.initDisplay();                      //driver inicializuje display         
-    setGraphics(&graphics, &display);           //nastavi fce graphics na display driver, vystup graphics jde na zvoleny display
-    graphics.clear(COLOR.Black);                //cls   
-}
-#endif
+ * This file is shared for the PIC32MM, PIC32MZ
+ * Last update 19/3/2018
+ * Ver. 1.0 
+*/
 
 void trap()
 {

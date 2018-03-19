@@ -20,13 +20,26 @@
       <logicalFolder name="f3" displayName="driver" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
-        <itemPath>_display/font/fontConsolas.h</itemPath>
-        <itemPath>_display/font/font_arial.h</itemPath>
         <itemPath>_display/font/font_fixed1306.h</itemPath>
-        <itemPath>_display/font/font_twcen.h</itemPath>
         <itemPath>_display/font/font_ygm.h</itemPath>
         <itemPath>_display/font/font_ygm_16.h</itemPath>
         <itemPath>_display/font/font_ygm_20.h</itemPath>
+        <itemPath>_display/font/font_ygm_36.h</itemPath>
+        <itemPath>_display/font/font_ygm_28.h</itemPath>
+        <itemPath>_display/font/font_ygm_46.h</itemPath>
+        <itemPath>_display/font/font_ygm_78.h</itemPath>
+        <itemPath>_display/font/font_twcen_18.h</itemPath>
+        <itemPath>_display/font/font_twcen_22.h</itemPath>
+        <itemPath>_display/font/font_twcen_28.h</itemPath>
+        <itemPath>_display/font/font_twcen_36.h</itemPath>
+        <itemPath>_display/font/font_twcen_46.h</itemPath>
+        <itemPath>_display/font/font_twcen_80.h</itemPath>
+        <itemPath>_display/font/font_arial_18.h</itemPath>
+        <itemPath>_display/font/font_consolas_16.h</itemPath>
+        <itemPath>_display/font/font_consolas_20.h</itemPath>
+        <itemPath>_display/font/font_consolas_28.h</itemPath>
+        <itemPath>_display/font/font_consolas_36.h</itemPath>
+        <itemPath>_display/font/font_dlg_18.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="modules" projectFiles="true">
       </logicalFolder>
@@ -37,6 +50,7 @@
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
           <logicalFolder name="f1" displayName="ili9341" projectFiles="true">
+            <itemPath>_display/ili9341/disp9341.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f3" displayName="oscilator" projectFiles="true">
@@ -81,7 +95,6 @@
           <itemPath>change_notif_mz.S</itemPath>
           <itemPath>change_notif_mm.S</itemPath>
           <itemPath>spi.c</itemPath>
-          <itemPath>portWriter.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="modules" projectFiles="true">
           <itemPath>ubtn2.S</itemPath>

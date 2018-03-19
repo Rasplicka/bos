@@ -7,6 +7,8 @@
  * Copyright (c) 2017, All rights reserved.      
  * timer1, used by BOS core (system timer)
  * This file is shared for the PIC32MM, PIC32MZ
+ * Last update 1/2/2018    
+ * Ver. 1.0    
      
 time_ms (uint) cita pocet ms od zapnuti, po preteceni se nuluje (perioda cca 49 dnu)
 day_ms (uint) pocita pocet ms od zacatku dne, bezi pouze pokud je definovano RTC, ktery jej kazdou minutu synchronizuje  

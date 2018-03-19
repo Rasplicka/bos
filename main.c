@@ -189,7 +189,7 @@ void main()
     asm("EI");              //povoli interrupt
     
 #if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE || defined SPI4_USE || defined SPI5_USE || defined SPI6_USE)
-    spi_init();
+    spiInit();
 #endif    
 
     // </editor-fold>

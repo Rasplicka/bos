@@ -4,7 +4,7 @@
  * struct - struktura ulozena v RAM
  * const struct - struktura ulozena ve flash
  * typedef struct - nevytvari zadnou struct, jde pouze o definici
- * promena typu typedef struct - vytvori se v RAM jako kazda jina promena
+ * promena typu typedef struct se vytvori se v RAM jako promena
  */
 
 //system -----------------------------------------------------------------------
@@ -19,23 +19,6 @@ struct
     unsigned Errors     : 8; 
     
 }SYSTEM_STATUS;
-
-//TEST LED
-/*
-struct
-{
-    void* LED1_BASE;
-    void* LED2_BASE;
-    void* LED3_BASE;
-    void* LED4_BASE;
-    short unsigned int LED1_BIT;
-    short unsigned int LED2_BIT;
-    short unsigned int LED3_BIT;
-    short unsigned int LED4_BIT;
-    
-}TEST_LED = {NULL, NULL, NULL, NULL};
-*/
-
 
 
 //ROM STRUCT
@@ -55,10 +38,10 @@ const struct
     unsigned dummy      : 6;
 }WAIT={0, 1, 0};
 
-//mod zapisu dat (SPI...) Stream obsahuje ridici znaky, bufferOnly jsou pouze data
+//mod zapisu dat (SPI...) Stream obsahuje ridici znaky, DataOnly jsou pouze data
 const struct 
 {
-    unsigned BufferOnly : 1;  
+    unsigned DataOnly : 1;  
     unsigned Stream     : 1; 
     unsigned dummy      : 6;    
 }WRITE_MODE={0, 1};
@@ -161,6 +144,8 @@ typedef struct
     short   pin;
 }PIN_INFO;
 
+
+#ifdef USE_GRAPHICS
 //grafika ----------------------------------------------------------------------
 //preddefinovane barvy
 const struct
@@ -184,11 +169,15 @@ const struct
     short   LightGrey;
     short   DarkGrey;
     
-}COLOR = { 0xFFFF, 0x0000, 0xF800, 0x001F, 0x07E0, 0xFD20, 0xFFE0, 0xF81F, 0x07FF, 0xAFE5, 0xF81F, 0x780F, 0x7800, 0x03E0, 0x7BE0, 0x79EF, 0xC318, 0x38E7 };
+}COLOR = { 0xFFFF, 0x0000, 0xF800, 0x001F, 0x07E0, 0xFD20, 
+                         0xFFE0, 0xF81F, 0x07FF, 0xAFE5, 0xF81F, 0x780F, 
+                         0x7800, 0x03E0, 0x7BE0, 0x79EF, 0xC318, 0x38E7 };
 
 //std mapa pro 4-bitovou grafiku (4-bit barva definuje index v tabulce)
-const short stdColorMap[]={0x0000, 0x1082, 0x2104, 0x3186, 0x4208, 0x528A, 0x630C, 0x738E,
-                           0x8410, 0x9492, 0xA514, 0xB596, 0xC618, 0xD69A, 0xE71C, 0xF79E};
+const short stdColorMap[] = { 0x0000, 0x1082, 0x2104, 0x3186, 
+                              0x4208, 0x528A, 0x630C, 0x738E,
+                              0x8410, 0x9492, 0xA514, 0xB596, 
+                              0xC618, 0xD69A, 0xE71C, 0xF79E };
 
 typedef struct
 {
@@ -291,6 +280,7 @@ typedef struct
     //privatni struktura, spojena s jednim konkretnim displejem
     void (*selectDriver)(void* d);
     void (*initDisplay)();
+    void (*setDefaultFont)(IMAGE_SRC* font);
     void (*drawString)(char* text, IMAGE_SRC* font, short x, short y);
     void (*fillBox)(short x1, short y1, short x2, short y2, short color);
     void (*drawLine)(short x1, short y1, short x2, short y2, short w, short color);
@@ -312,7 +302,6 @@ typedef struct
     short print_y;
 }DISPLAY;
 
-//
 typedef struct
 {
     //globalni struktura pro graficky vystup. Jedna v celem projektu. 
@@ -333,6 +322,7 @@ typedef struct
     
 }GRAPHICS;
 
+#endif  //USE_GRAPHICS
 
 //periferie --------------------------------------------------------------------
 //typ periferie
@@ -342,15 +332,6 @@ const struct
     char    pmp;
     char    i2c;
 }PERIPH_TYPE={0, 1, 2};
-
-//stav periferie
-const struct
-{
-    char    EMPTY;              //SPI je volne k pouziti
-    char    USED;               //nejaka fce pouziva SPI, nikdo jiny nemuze
-    char    FINISHED;           //neprobiha odesilani/prijem dat
-    char    SENDING;            //probiha odesilani/prijem dat
-}SPI_STATE={0, 1, 0, 1};
 
 const struct 
 {
@@ -371,7 +352,6 @@ const struct
 }MODULE_STATE={0, 1};
 
 
-//spi control
 typedef struct
 {
     char*           tx_buffer;
@@ -386,9 +366,10 @@ typedef struct
     char            mode_count;     //citac dat v mode1
     char            mode;           //b0 0=pouze data, 1=control byte,dat
     char            used;           //indikuje, ze nektera fce pouziva SPI, kanal neni volny
-    char            process;        //0=buffer volny, 1=buffer ceka na osedlani, 2=buffer je odesilan
+    char            activity;       //0=buffer volny, 1=buffer ceka na osedlani, 2=buffer je odesilan
+    char            state;          //OFF/ON
     
-}SPIControl;
+}SPIControl;                        //Control structure of the spi module
 
 //i2c control
 typedef struct 
@@ -405,5 +386,4 @@ typedef struct
     char    internalState;          //state ridi start/data/end signal
    
 }I2CControl;
-
 

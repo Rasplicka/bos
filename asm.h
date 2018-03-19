@@ -158,7 +158,7 @@ extern int imageToBuffer(void*, char*, int, char);
 extern int imageToPort(void*, volatile int*, int, char);
 extern void drawPointQuick(void*, volatile int*, void*);
 extern void fillRectDirect(short, int, volatile int*);
-extern void setImageColorMap(void*, short*);
+extern void setImageColorMap(void*, const short*);
 extern void drawLineQuick(void*, void*, void*);
 
 extern int fontCharParam(void*, char);                      ///TODO: help is here

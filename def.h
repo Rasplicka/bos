@@ -135,6 +135,31 @@
 
 //#define             USE_TOUCHPAD                    //aktivuje vyssi fce touchpadu (nezavisle na konkretnim typu)
 //#define             TOUCHPAD_XPT2046_INIT           //aktivuje modul touchpadu, typ XPT2046
+
+//FONT
+#define             FONT_ARIAL_18
+
+#define             FONT_DLG_18
+
+#define             FONT_CONSOLAS_16
+#define             FONT_CONSOLAS_20
+#define             FONT_CONSOLAS_28
+#define             FONT_CONSOLAS_36
+
+#define             FONT_YGM_16
+#define             FONT_YGM_20
+#define             FONT_YGM_28
+#define             FONT_YGM_36
+#define             FONT_YGM_46
+//#define             FONT_YGM_78
+
+//#define             FONT_TWCEN_18
+#define             FONT_TWCEN_22
+#define             FONT_TWCEN_28
+#define             FONT_TWCEN_36
+#define             FONT_TWCEN_46
+#define             FONT_TWCEN_80
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Periph driver (SPI, I2C, ...)">

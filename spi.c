@@ -8,25 +8,24 @@
  * Copyright (c) 2017, All rights reserved.      
  * spi driver, used by BOS
  * This file is shared for the PIC32MM, PIC32MZ
- * 
+ * Last update 19/3/2018
+ * Ver. 1.0 
 */
 
 #if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE || defined SPI4_USE || defined SPI5_USE || defined SPI6_USE)
 
-//spi driver PIC32MM0064/0256, (PIC32MZ - neni dodelano)
-//9/8/2017
-
+//spi driver (stary popis)
 //SPI - Master mode
 //SPI muze vyuzivat vice modulu, je-li na jednom SPI kanalu vice zarizeni, musi pouzivat CS signal
-//fce spi_Exchange provede zapis dat SPI (nebo zapis i cteni, je-li zadany Rx buffer)
+//fce spiExchange provede zapis dat SPI (nebo zapis i cteni, je-li zadany Rx buffer)
 //data jsou v tx_bufferu, delka len
 //volajici musi pockat na used=0
 //napr:
-//while(spi_getUsed(0)==1){ doEvents(); }
+//while(spiGetUsed(0)==1){ doEvents(); }
 //spi_setUsed(0, 1)
 //setCSpin(active)
 //setDCPin(DATA)
-//spi_Exchange(0, ... , &sendFinish)
+//spiExchange(0, ... , &sendFinish)
 //return
 
 //void sendFinish() {
@@ -85,52 +84,52 @@
 void (*_finish)(int);
 
 #ifdef PIC32MM0064
-SPIControl s1={ NULL, NULL, NULL, NULL, &SPI1BUF, 0, 0, 0, 0, 0, 0 };
-SPIControl s2={ NULL, NULL, NULL, NULL, &SPI2BUF, 0, 0, 0, 0, 0, 0 };   
+SPIControl s1={ NULL, NULL, NULL, NULL, &SPI1BUF, 0, 0, 0, 0, 0, 0, 0 };
+SPIControl s2={ NULL, NULL, NULL, NULL, &SPI2BUF, 0, 0, 0, 0, 0, 0, 0 };   
 SPIControl* controlStruct[]={&s1, &s2};
 #endif
 
 #ifdef PIC32MM0256
-SPIControl s1={ NULL, NULL, NULL, NULL, &SPI1BUF, 0, 0, 0, 0, 0, 0 };
-SPIControl s2={ NULL, NULL, NULL, NULL, &SPI2BUF, 0, 0, 0, 0, 0, 0 };   
-SPIControl s3={ NULL, NULL, NULL, NULL, &SPI3BUF, 0, 0, 0, 0, 0, 0 }; 
+SPIControl s1={ NULL, NULL, NULL, NULL, &SPI1BUF, 0, 0, 0, 0, 0, 0, 0 };
+SPIControl s2={ NULL, NULL, NULL, NULL, &SPI2BUF, 0, 0, 0, 0, 0, 0, 0 };   
+SPIControl s3={ NULL, NULL, NULL, NULL, &SPI3BUF, 0, 0, 0, 0, 0, 0, 0 }; 
 SPIControl* controlStruct[]={&s1, &s2, &s3};
 #endif
 
 #ifdef PIC32MZ
-SPIControl s1={ NULL, NULL, NULL, NULL, &SPI1BUF, 0, 0, 0, 0, 0, 0 };
-SPIControl s2={ NULL, NULL, NULL, NULL, &SPI2BUF, 0, 0, 0, 0, 0, 0 };   
-SPIControl s3={ NULL, NULL, NULL, NULL, &SPI3BUF, 0, 0, 0, 0, 0, 0 };
-SPIControl s4={ NULL, NULL, NULL, NULL, &SPI4BUF, 0, 0, 0, 0, 0, 0 };
-SPIControl s5={ NULL, NULL, NULL, NULL, &SPI5BUF, 0, 0, 0, 0, 0, 0 };
-SPIControl s6={ NULL, NULL, NULL, NULL, &SPI6BUF, 0, 0, 0, 0, 0, 0 };
+SPIControl s1={ NULL, NULL, NULL, NULL, &SPI1BUF, 0, 0, 0, 0, 0, 0, 0 };
+SPIControl s2={ NULL, NULL, NULL, NULL, &SPI2BUF, 0, 0, 0, 0, 0, 0, 0 };   
+SPIControl s3={ NULL, NULL, NULL, NULL, &SPI3BUF, 0, 0, 0, 0, 0, 0, 0 };
+SPIControl s4={ NULL, NULL, NULL, NULL, &SPI4BUF, 0, 0, 0, 0, 0, 0, 0 };
+SPIControl s5={ NULL, NULL, NULL, NULL, &SPI5BUF, 0, 0, 0, 0, 0, 0, 0 };
+SPIControl s6={ NULL, NULL, NULL, NULL, &SPI6BUF, 0, 0, 0, 0, 0, 0, 0 };
 SPIControl* controlStruct[]={&s1, &s2, &s3, &s4, &s5, &s6};
 #endif
 
 //global void
-void spi_init();
-char spi_getUsed(int index);
-char spi_Use(char index, char wait, void* finish, void* event);
-void spi_Free(int index);
-char spi_Process(char index);
+void spiInit();
+char spiGetUsed(int index);
+void spiUse(char index, void* finish, void* event);
+void spiFree(int index);
+char spiGetActivity(char index);
 void spiWaitToFinish(char index);
 
-void spi_ExchangeDE(int index, char* txbuff, char* rxbuff, int l);
-void spi_Exchange(int index, char* txbuff, char* rxbuff, int l);
-void spi_ExchangeModeDE(int index, char* txbuff, char* rxbuff, int l, char mode);
-void spi_ExchangeMode(int index, char* txbuff, char* rxbuff, int l, char mode);
-volatile int* spi_getHwBuffer(char index);
-void spi_setBusMode(char index, char mode);
-void spi_setSpeed(int index, int speed);
+void spiExchangeDE(int index, char* txbuff, char* rxbuff, int l);
+void spiExchange(int index, char* txbuff, char* rxbuff, int l);
+void spiExchangeModeDE(int index, char* txbuff, char* rxbuff, int l, char mode);
+void spiExchangeMode(int index, char* txbuff, char* rxbuff, int l, char mode);
+volatile int* spiGetHwBuffer(char index);
+void spiSetBusMode(char index, char mode);
+void spiSetSpeed(int index, int speed);
 void spiTxInterrupt(char index);
 
 //local void
 static void clearRxFifo(int index);
-
 static void disableInterrupt(char index);
 static void enableInterrupt(char index);
 
-void spi_init()
+//Initialize module
+void spiInit()
 {
     
 #ifdef SPI1_USE
@@ -190,7 +189,8 @@ void spi_init()
     SPI1STAT = 0x0;
     SPI1BRG = 0x0;          //48MHz
     SPI1CON2 = 0x0;
-    SPI1CON = SPI1_CONFIG      
+    SPI1CON = SPI1_CONFIG;  
+    controlStruct[0]->state=MODULE_STATE.On;    
     
 #endif
     
@@ -252,7 +252,8 @@ void spi_init()
     SPI2STAT = 0x0;
     SPI2BRG = 0x0;          //48MHz
     SPI2CON2 = 0x0;
-    SPI2CON = SPI2_CONFIG      
+    SPI2CON = SPI2_CONFIG;
+    controlStruct[1]->state=MODULE_STATE.On;
     
 #endif    
     
@@ -299,7 +300,8 @@ void spi_init()
     SPI3STAT = 0x0;
     SPI3BRG = 0x0;          //48MHz
     SPI3CON2 = 0x0;
-    SPI3CON = SPI3_CONFIG      
+    SPI3CON = SPI3_CONFIG;
+    controlStruct[2]->state=MODULE_STATE.On;    
     
 #endif        
   
@@ -330,7 +332,8 @@ void spi_init()
     SPI4STAT = 0x0;
     SPI4BRG = 0x0;          //48MHz
     SPI4CON2 = 0x0;
-    SPI4CON = SPI4_CONFIG       
+    SPI4CON = SPI4_CONFIG;
+    controlStruct[3]->state=MODULE_STATE.On;    
     
 #endif 
    
@@ -361,7 +364,8 @@ void spi_init()
     SPI5STAT = 0x0;
     SPI5BRG = 0x0;          //48MHz
     SPI5CON2 = 0x0;
-    SPI5CON = SPI5_CONFIG         
+    SPI5CON = SPI5_CONFIG;
+    controlStruct[4]->state=MODULE_STATE.On;    
     
 #endif 
    
@@ -392,14 +396,15 @@ void spi_init()
     SPI6STAT = 0x0;
     SPI6BRG = 0x0;          //48MHz
     SPI6CON2 = 0x0;
-    SPI6CON = SPI6_CONFIG         
+    SPI6CON = SPI6_CONFIG;
+    controlStruct[5]->state=MODULE_STATE.On;    
     
 #endif     
     
 }
 
 //Returns if the module is used. Returned value is MODULE_USED.No/Yes
-char spi_getUsed(int index)
+char spiGetUsed(int index)
 {
     //used nastavuje volajici proces, muze nastavit jakoukoliv hodnotu > -1(SPI_EMPTY)
     //tato hodnota bude pouzita po skonceni prenosu pri volani _finish, volajici proces
@@ -407,12 +412,12 @@ char spi_getUsed(int index)
     return controlStruct[index]->used;
 }
 
-//If module is not used, return true and set as used, otherwise returns false
+//If the module is used, wait for release. While waiting, calls doEvents()
+//Set the module as used.
 //@param index Module index
-//@param wait Waiting for the module to be released. While waiting, calls doEvents() 
 //@param finish Address of finish function
 //@param event Address of event function
-char spi_Use(char index, char wait, void* finish, void* event)
+void spiUse(char index, void* finish, void* event)
 {
     //je-li spi volne, nastavi MODULE_USED.Yes a vraci 1 (true)
     //neni-li volne 
@@ -426,25 +431,22 @@ char spi_Use(char index, char wait, void* finish, void* event)
             controlStruct[index]->used=MODULE_USED.Yes;
             controlStruct[index]->finishFn=finish;
             controlStruct[index]->eventFn=event;
-            return 1;
+            return;
         }
-        else
-        {
-            if(wait == WAIT.Disable) { return 0; }
-        }
+
         doEvents();
     }
 }
 
 //waiting for the last operation to finish, then release module
 //@param index Module index
-void spi_Free(int index)
+void spiFree(int index)
 {
     //pokud jeste probiha vysilani dat
-    //ceka na dokonceni, protoze po spi_free se vetsinou vola setCS>1
+    //ceka na dokonceni, protoze po spiFree se vetsinou vola setCS>1
     //takze by data nebyla prijata 
     
-    while(controlStruct[index]->process == MODULE_ACTIVITY.Works)
+    while(controlStruct[index]->activity == MODULE_ACTIVITY.Works)
     {
         //jeste probiha vysilani
         doEvents();
@@ -452,35 +454,46 @@ void spi_Free(int index)
     controlStruct[index]->used=MODULE_USED.No;
 }
 
-//
-char spi_Process(char index)
+//Returns if the last operation is still in progress
+////@param index Module index
+char spiGetActivity(char index)
 {
-    return controlStruct[index]->process; 
+    return controlStruct[index]->activity; 
 }
 
 //Wait for the operation to finish. While waiting, calls doEvents()
-//@param index Port index 
+//@param index Module index 
 void spiWaitToFinish(char index)
 {
-    while(controlStruct[index]->process == MODULE_ACTIVITY.Works)
+    while(controlStruct[index]->activity == MODULE_ACTIVITY.Works)
     {
         //vysilani neni dokonceno
         doEvents();
     }
 }
 
-void spi_ExchangeDE(int index, char* txbuff, char* rxbuff, int len)
+//Starts the data transmission. Before starting the operation is waiting for the previous one to finish (call doEvents)
+//@param index Module index
+//@param txbuffer Tx buffer
+//@param rxbuffer Rx buffer or NULL
+//@param len Tx buffer size
+void spiExchangeDE(int index, char* txbuff, char* rxbuff, int len)
 {
     //pokud probiha vysilani, vola doEvents, ceka na dokonceni
-    while(controlStruct[index]->process != MODULE_ACTIVITY.Finished)
+    while(controlStruct[index]->activity == MODULE_ACTIVITY.Works)
     {
         doEvents();
     }
     
-    spi_Exchange(index, txbuff, rxbuff, len);    
+    spiExchange(index, txbuff, rxbuff, len);    
 }
 
-void spi_Exchange(int index, char* txbuff, char* rxbuff, int len)
+//Starts the data transmission now
+//@param index Module index
+//@param txbuffer Tx buffer
+//@param rxbuffer Rx buffer or NULL
+//@param len Tx buffer size
+void spiExchange(int index, char* txbuff, char* rxbuff, int len)
 {
     //je-li rxbuff=NULL, probiha pouze vysilani, jinak vysilani i prijem
     //void f se vola po ukonceni trasnakce
@@ -489,7 +502,7 @@ void spi_Exchange(int index, char* txbuff, char* rxbuff, int len)
     controlStruct[index]->rx_buffer=rxbuff;
     controlStruct[index]->len=len;
     controlStruct[index]->tx_count=0;
-    controlStruct[index]->process=MODULE_ACTIVITY.Works;
+    controlStruct[index]->activity=MODULE_ACTIVITY.Works;
     
     if(controlStruct[index]->rx_buffer != NULL)
     {
@@ -497,70 +510,42 @@ void spi_Exchange(int index, char* txbuff, char* rxbuff, int len)
         clearRxFifo(index);
     }
     
-    //txInterrupt(index);
-
-    if(index==0)
-    { 
-#ifdef SPI1_USE        
-        iVector_spi1Tx(); 
-#endif        
-    }
-    else if(index==1)
-    { 
-#ifdef SPI2_USE             
-        iVector_spi2Tx(); 
-#endif        
-    }
-    else if (index==2)
-    {
-#ifdef SPI3_USE             
-        iVector_spi3Tx();
-#endif        
-    }
-    else if (index==3)
-    {
-#ifdef SPI4_USE             
-        iVector_spi4Tx();
-#endif        
-    }    
-    else if (index==4)
-    {
-#ifdef SPI5_USE             
-        iVector_spi5Tx();
-#endif        
-    }    
-    else
-    {
-#ifdef SPI6_USE             
-        iVector_spi6Tx();
-#endif        
-    }    
-
+    spiTxInterrupt(index);
 }
 
-void spi_ExchangeModeDE(int index, char* txbuff, char* rxbuff, int len, char mode)
+//Starts the data or stream transmission. Before starting the operation is waiting for the previous one to finish (call doEvents)
+//@param index Module index
+//@param txbuffer Tx buffer
+//@param rxbuffer Rx buffer or NULL
+//@param len Tx buffer size
+//@param mode WRITE_MODE.Stream or WRITE_MODE.DataOnly
+void spiExchangeModeDE(int index, char* txbuff, char* rxbuff, int len, char mode)
 {
     //pokud probiha vysilani, vola doEvents, ceka na dokonceni
-    while(controlStruct[index]->process != MODULE_ACTIVITY.Finished)
+    while(controlStruct[index]->activity == MODULE_ACTIVITY.Works)
     {
         doEvents();
     }
     
-    spi_ExchangeMode(index, txbuff, rxbuff, len, mode);
+    spiExchangeMode(index, txbuff, rxbuff, len, mode);
 }
 
-void spi_ExchangeMode(int index, char* txbuff, char* rxbuff, int len, char mode)
+//Starts the data or stream transmission now
+//@param index Module index
+//@param txbuffer Tx buffer
+//@param rxbuffer Rx buffer or NULL
+//@param len Tx buffer size
+//@param mode WRITE_MODE.Stream or WRITE_MODE.DataOnly
+void spiExchangeMode(int index, char* txbuff, char* rxbuff, int len, char mode)
 {
     //je-li rxbuff=NULL, probiha pouze vysilani, jinak vysilani i prijem
-    
-    
     controlStruct[index]->tx_buffer=txbuff;
     controlStruct[index]->rx_buffer=rxbuff;
     controlStruct[index]->len=len;
     controlStruct[index]->tx_count=0;
     controlStruct[index]->mode_count=0;
     controlStruct[index]->mode=mode;
-    controlStruct[index]->process=MODULE_ACTIVITY.Works;
+    controlStruct[index]->activity=MODULE_ACTIVITY.Works;
     
     if(controlStruct[index]->rx_buffer != NULL)
     {
@@ -571,13 +556,17 @@ void spi_ExchangeMode(int index, char* txbuff, char* rxbuff, int len, char mode)
     spiTxInterrupt(index);
 }
 
-
-volatile int* spi_getHwBuffer(char index)
+//Returns address of SPIxBUF register (access to FIFO)
+//@param index Module index
+volatile int* spiGetHwBuffer(char index)
 {
     return controlStruct[index]->hw_buffer;
 }
 
-void spi_setBusMode(char index, char mode)
+//BUS mode. Changes SPIxCONbits.MODE16 and SPIxCONbits.MODE32
+//@param index Module index
+//@param mode BUS_MODE._8bit, BUS_MODE._16bit, BUS_MODE._32bit
+void spiSetBusMode(char index, char mode)
 {
     if(index==0)
     {
@@ -633,16 +622,18 @@ void spi_setBusMode(char index, char mode)
     
 }
 
-void spi_setSpeed(int index, int speed)
+//Change SPIxBRG divider. Divides the base frequency 48MHz
+//@param index Module index
+//@param option 0=48MHz, 1=24MHz, 2=12MHz, ...
+void spiSetSpeed(int index, int option)
 {
-    
     int x;
     if(index==0)
     {
 #ifdef SPI1_USE        
         x=SPI1CON;                      //zaloha SPIxCON
         SPI1CON=0x0;                    //SPIxCON=0, SPI OFF
-        SPI1BRG=speed;                  //nastav BRG (divider)
+        SPI1BRG=option;                 //nastav BRG (divider)
         SPI1CON=x;                      //SPIxCON puvodni hodnota        
 #endif        
     }
@@ -651,7 +642,7 @@ void spi_setSpeed(int index, int speed)
 #ifdef SPI2_USE         
         x=SPI2CON;                      //zaloha SPIxCON
         SPI2CON=0x0;                    //SPIxCON=0, SPI OFF
-        SPI2BRG=speed;                  //nastav BRG (divider)
+        SPI2BRG=option;                 //nastav BRG (divider)
         SPI2CON=x;                      //SPIxCON puvodni hodnota
 #endif        
     }
@@ -660,7 +651,7 @@ void spi_setSpeed(int index, int speed)
 #ifdef SPI3_USE         
         x=SPI3CON;                      //zaloha SPIxCON
         SPI3CON=0x0;                    //SPIxCON=0, SPI OFF
-        SPI3BRG=speed;                  //nastav BRG (divider)
+        SPI3BRG=option;                 //nastav BRG (divider)
         SPI3CON=x;                      //SPIxCON puvodni hodnota        
 #endif        
     }
@@ -669,7 +660,7 @@ void spi_setSpeed(int index, int speed)
 #ifdef SPI4_USE         
         x=SPI4CON;                      //zaloha SPIxCON
         SPI4CON=0x0;                    //SPIxCON=0, SPI OFF
-        SPI4BRG=speed;                  //nastav BRG (divider)
+        SPI4BRG=option;                 //nastav BRG (divider)
         SPI4CON=x;                      //SPIxCON puvodni hodnota        
 #endif      
     }
@@ -678,7 +669,7 @@ void spi_setSpeed(int index, int speed)
 #ifdef SPI5_USE         
         x=SPI5CON;                      //zaloha SPIxCON
         SPI5CON=0x0;                    //SPIxCON=0, SPI OFF
-        SPI5BRG=speed;                  //nastav BRG (divider)
+        SPI5BRG=option;                 //nastav BRG (divider)
         SPI5CON=x;                      //SPIxCON puvodni hodnota        
 #endif     
     }
@@ -687,14 +678,14 @@ void spi_setSpeed(int index, int speed)
 #ifdef SPI6_USE         
         x=SPI6CON;                      //zaloha SPIxCON
         SPI6CON=0x0;                    //SPIxCON=0, SPI OFF
-        SPI6BRG=speed;                  //nastav BRG (divider)
+        SPI6BRG=option;                 //nastav BRG (divider)
         SPI6CON=x;                      //SPIxCON puvodni hodnota        
 #endif            
     }
 }
 
 
-//interrupt handler
+//shared SPI Tx interrupt handler
 void spiTxInterrupt(char index)
 {
     //vola se z spiExchange a z SPI interruptu
@@ -735,7 +726,7 @@ void spiTxInterrupt(char index)
             _finish(ctl->used);
         }
         
-        ctl->process=MODULE_ACTIVITY.Finished;
+        ctl->activity=MODULE_ACTIVITY.Finished;
     }
     else
     {
@@ -794,7 +785,8 @@ void spiTxInterrupt(char index)
         
 }
 
-
+//Clears the Rx FIFO
+//@param index Module index 
 static void clearRxFifo(int index)
 {
 #ifdef SIMULATOR
@@ -814,7 +806,7 @@ static void clearRxFifo(int index)
         SPI1STATbits.SPIROV=0;
 #endif         
     }
-    else 
+    else if (index==1) 
     {
 #ifdef SPI2_USE          
         while(SPI2STATbits.SPIRBE==0)
@@ -825,6 +817,50 @@ static void clearRxFifo(int index)
         SPI2STATbits.SPIROV=0;
 #endif          
     }
+    else if (index==2) 
+    {
+#ifdef SPI3_USE          
+        while(SPI3STATbits.SPIRBE==0)
+        {
+            x=SPI3BUF;
+        }
+        //nuluje overflow flag (pokud je nastaven, neprijima data)
+        SPI3STATbits.SPIROV=0;
+#endif          
+    }    
+    else if (index==3) 
+    {
+#ifdef SPI4_USE          
+        while(SPI4STATbits.SPIRBE==0)
+        {
+            x=SPI4BUF;
+        }
+        //nuluje overflow flag (pokud je nastaven, neprijima data)
+        SPI4STATbits.SPIROV=0;
+#endif          
+    }    
+    else if (index==4) 
+    {
+#ifdef SPI5_USE          
+        while(SPI5STATbits.SPIRBE==0)
+        {
+            x=SPI5BUF;
+        }
+        //nuluje overflow flag (pokud je nastaven, neprijima data)
+        SPI5STATbits.SPIROV=0;
+#endif          
+    }    
+    else if (index==5) 
+    {
+#ifdef SPI6_USE          
+        while(SPI6STATbits.SPIRBE==0)
+        {
+            x=SPI6BUF;
+        }
+        //nuluje overflow flag (pokud je nastaven, neprijima data)
+        SPI6STATbits.SPIROV=0;
+#endif          
+    }    
 }
 
 static void disableInterrupt(char index)

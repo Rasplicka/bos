@@ -16,8 +16,8 @@
 #ifdef USE_DISP1306
 
 //globalni promene modulu (tzn. pri pouziti vice displeju ssd1306 jsou spolecne pro vsechny struct DISPLAY)
-#include "../font/font_fixed1306.h"
-IMAGE_SRC fontDefault;
+//#include "../font/font_fixed1306.h"
+IMAGE_SRC* defaultFont;
 
 //IFACE
 #define     IFACE_INDEX     1                       //SPI2, index portu (0=SPI1, 1=SPI2, 2=SPI3, ...)
@@ -45,6 +45,7 @@ static char directMode=1;                       //0=zapis do bufferu, 1=zapis do
 
 //local void
 static void selectDriver(void* d);
+static void setDefaultFont(IMAGE_SRC* font);
 static void drawString(char* text, IMAGE_SRC* font, short x, short y);
 static void fillBox(short x1, short y1, short x2, short y2, short color);
 static void drawLine(short x1, short y1, short x2, short y2, short w, short color);
@@ -100,11 +101,15 @@ void disp1306_driver(DISPLAY* d)
     d->getFontHeight=&getFontHeight;
 }
 
-
 //local
 static void selectDriver(void* d)
 {
     displayInfo=(DISPLAY*)d;
+}
+
+static void setDefaultFont(IMAGE_SRC* font)
+{
+    defaultFont=font;    
 }
 
 static void drawString(char* text, IMAGE_SRC* font, short x, short y)
@@ -112,7 +117,7 @@ static void drawString(char* text, IMAGE_SRC* font, short x, short y)
     int a;
     int l=strLen(text);
     
-    if(font==NULL) { font=&fontDefault; }
+    if(font==NULL) { font=defaultFont; }
     
     iface_getPort();
     
@@ -203,7 +208,7 @@ static void fillBox(short x1, short y1, short x2, short y2, short color)
                 count--;
                 if(count==0) { break; }
             }
-            iface_writeBufferMode(buffer, len, WRITE_MODE.BufferOnly);
+            iface_writeBufferMode(buffer, len, WRITE_MODE.DataOnly);
         }
     }
     
@@ -303,7 +308,7 @@ static void drawImage(IMAGE_SRC* da, short x, short y)
                 }
             }
             
-            iface_writeBufferMode(buffer, len, WRITE_MODE.BufferOnly);
+            iface_writeBufferMode(buffer, len, WRITE_MODE.DataOnly);
             
         } while (da->eof == 0);
     }
@@ -474,15 +479,15 @@ static char getInitialized()
 
 static void print(char* t)
 {
-    if((displayInfo->print_y + fontDefault.height) > Height)
+    if((displayInfo->print_y + defaultFont->height) > Height)
     {
         //plna obrazovka
         clear(COLOR.Black);
         displayInfo->print_y = 0;
     }
     
-    drawString(t, &fontDefault, 0, displayInfo->print_y);
-    displayInfo->print_y += fontDefault.height;
+    drawString(t, defaultFont, 0, displayInfo->print_y);
+    displayInfo->print_y += defaultFont->height;
 }
 
 static short getWidth()
@@ -503,13 +508,13 @@ static short getFontHeight(IMAGE_SRC* font)
     }
     else
     {
-        return fontDefault.height;
+        return defaultFont->height;
     }
 }
 
 static void dinit()
 {
-    setFontSrc(&font_fixed16x, &fontDefault);
+    //setFontSrc(&font_fixed16x, &fontDefault);
     
 #ifdef WATCHDOG_TIMER    
     pauseWDT();
@@ -551,7 +556,7 @@ static void dinit()
     buffer[24]=0xAF; 
         
     clearPin(&dcPin);   //0=command
-    iface_writeBufferMode(buffer, 25, WRITE_MODE.BufferOnly);
+    iface_writeBufferMode(buffer, 25, WRITE_MODE.DataOnly);
 
 #ifdef WATCHDOG_TIMER    
     startWDT();
@@ -643,7 +648,7 @@ static void writeChar(IMAGE_SRC* fi, char code, short x, short y)
                     break;
                 }
             }
-            iface_writeBufferMode(buffer, len, WRITE_MODE.BufferOnly);
+            iface_writeBufferMode(buffer, len, WRITE_MODE.DataOnly);
             
         } while (fi->eof == 0);
     }
@@ -708,7 +713,7 @@ static void resetDisplay()
 static void iface_getPort()
 {
     //obsadi SPI port, pokud neni volny, ceka na uvolneni (doEvents)
-    spi_Use(IFACE_INDEX, WAIT.Enable, NULL, &eventDC);
+    spiUse(IFACE_INDEX, NULL, &eventDC);
 
     //aktivuje CS signal displeje
     clearPin(&csPin);
@@ -718,7 +723,7 @@ static void iface_getPort()
 static void iface_freePort()
 {
     //uvolni SPI port, predtim ceka na dokonceni vysilani (doEvents)
-    spi_Free(IFACE_INDEX);
+    spiFree(IFACE_INDEX);
     
     //deaktivuje CS signal displeje
     setPin(&csPin);
@@ -727,24 +732,24 @@ static void iface_freePort()
 //start the transmission
 //@param buffer array of bytes
 //@param len    number of bytes in buffer
-//@param mode   WRITE_MODE.BufferOnly (buffer contains data only), or WRITE_MODE.Stream (buffer contains control bytes and data)
+//@param mode   WRITE_MODE.DataOnly (buffer contains data only), or WRITE_MODE.Stream (buffer contains control bytes and data)
 static void iface_writeBufferMode(char* buffer, short len, char mode)
 {
     //odesila data na SPI
-    while(spi_Process(IFACE_INDEX) == MODULE_ACTIVITY.Works)
+    while(spiGetActivity(IFACE_INDEX) == MODULE_ACTIVITY.Works)
     {
         //ceka na odeslani dat
     }
     
-    spi_ExchangeMode(IFACE_INDEX, buffer, NULL, len, mode);
-    //spi_ExchangeModeDE(IFACE_INDEX, buffer, NULL, len, mode);
+    spiExchangeMode(IFACE_INDEX, buffer, NULL, len, mode);
+    //spiExchangeModeDE(IFACE_INDEX, buffer, NULL, len, mode);
 }
 
 //return address of SPIBUF register
 static volatile int* iface_getHWBuffer()
 {
     //vraci adresu HW bufferu v SPI modulu (directWrite)
-    (int*)spi_getHwBuffer(IFACE_INDEX);
+    spiGetHwBuffer(IFACE_INDEX);
 }
 
 //set 8/16/32 bit bus mode
@@ -752,14 +757,14 @@ static volatile int* iface_getHWBuffer()
 static void iface_setBusMode(char mode) 
 {
     //nastavi mod SPI (8-bit, 16-bit)
-    spi_setBusMode(IFACE_INDEX, mode);
+    spiSetBusMode(IFACE_INDEX, mode);
 }
 
 //Wait to complete the transmission
 static void iface_Process()
 {
     //ceka na dokonceni predchoziho vysilani
-    while(spi_Process(IFACE_INDEX) == MODULE_ACTIVITY.Works)
+    while(spiGetActivity(IFACE_INDEX) == MODULE_ACTIVITY.Works)
     {
         //ceka na dokonceni   
     }             

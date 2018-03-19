@@ -6,27 +6,231 @@
 //#include "graphics.h"
 
 
+//
+
 #ifdef USE_GRAPHICS
 
-static DISPLAY* disp;
-//static PORT_INFO* pinfo;
+// <editor-fold defaultstate="collapsed" desc="include FONT files">
 
+#ifdef FONT_ARIAL_18
+#include "font/font_arial_18.h"
+IMAGE_SRC font_arial_18;
+#endif
+
+#ifdef FONT_DLG_18
+#include "font/font_dlg_18.h"
+IMAGE_SRC font_dlg_18;
+#endif
+
+#ifdef FONT_CONSOLAS_16
+#include "font/font_consolas_16.h"
+IMAGE_SRC font_consolas_16;
+#endif
+
+#ifdef FONT_CONSOLAS_20
+#include "font/font_consolas_20.h"
+IMAGE_SRC font_consolas_20;
+#endif
+
+#ifdef FONT_CONSOLAS_28
+#include "font/font_consolas_28.h"
+IMAGE_SRC font_consolas_28;
+#endif
+
+#ifdef FONT_CONSOLAS_36
+#include "font/font_consolas_36.h"
+IMAGE_SRC font_consolas_36;
+#endif
+
+#ifdef FONT_YGM_16
+#include "font/font_ygm_16.h"
+IMAGE_SRC font_ygm_16;
+#endif
+
+#ifdef FONT_YGM_20
+#include "font/font_ygm_20.h"
+IMAGE_SRC font_ygm_20;
+#endif    
+
+#ifdef FONT_YGM_28
+#include "font/font_ygm_28.h"
+IMAGE_SRC font_ygm_28;
+#endif
+
+#ifdef FONT_YGM_36
+#include "font/font_ygm_36.h"
+IMAGE_SRC font_ygm_36;
+#endif    
+
+#ifdef FONT_YGM_46
+#include "font/font_ygm_46.h"
+IMAGE_SRC font_ygm_46;
+#endif     
+
+#ifdef FONT_YGM_78
+#include "font/font_ygm_78.h"
+IMAGE_SRC font_ygm_78;
+#endif 
+
+#ifdef FONT_TWCEN_18
+#include "font/font_twcen_18.h"
+IMAGE_SRC font_twcen_18;
+#endif  
+
+#ifdef FONT_TWCEN_22
+#include "font/font_twcen_22.h"
+IMAGE_SRC font_twcen_22;
+#endif 
+
+#ifdef FONT_TWCEN_28
+#include "font/font_twcen_28.h"
+IMAGE_SRC font_twcen_28;
+#endif 
+
+#ifdef FONT_TWCEN_36
+#include "font/font_twcen_36.h"
+IMAGE_SRC font_twcen_36;
+#endif 
+
+#ifdef FONT_TWCEN_46
+#include "font/font_twcen_46.h"
+IMAGE_SRC font_twcen_46;
+#endif 
+
+#ifdef FONT_TWCEN_80
+#include "font/font_twcen_80.h"
+IMAGE_SRC font_twcen_80;
+#endif 
+
+// </editor-fold>
+
+//gobal vars
+GRAPHICS graphics;                              //universalni graficke fce
+DISPLAY sysDisplay;                             //display driver
+
+//local vars
+static DISPLAY* actualDisplay;
+
+void initGraphics();
+void initFont(const FONT_HEAD* fontSrc, IMAGE_SRC* font);
+void setGraphics(GRAPHICS* g,  DISPLAY* d);
+
+//local fn
 static void drawCircle(short x, short y, short r, short color);
 static void drawBox(short x1, short y1, short x2, short y2, short w, short color);
-//static void print(char* text);
 
-//void (*_drv)(DISPLAY*);
-    //_drv=drv;
-    //_drv(&g->display);
-    //g->display.selectPort(pi);
-    //g->initDisplay=g->display.initDisplay;
+
+//global fn
+void initGraphics()
+{
+    //Inicializuje systemovy display
+
+    // <editor-fold defaultstate="collapsed" desc="init Fonts">
+#ifdef FONT_ARIAL_18
+    initFont(&font_arial18, &font_arial_18);
+#endif     
+   
+#ifdef FONT_DLG_18
+    initFont(&font_dlg18, &font_dlg_18);
+#endif     
+    
+#ifdef FONT_CONSOLAS_16
+    initFont(&font_consolas16, &font_consolas_16);
+#endif     
+    
+#ifdef FONT_CONSOLAS_20
+    initFont(&font_consolas20, &font_consolas_20);
+#endif      
+    
+#ifdef FONT_CONSOLAS_28
+    initFont(&font_consolas28, &font_consolas_28);
+#endif      
+    
+#ifdef FONT_CONSOLAS_36
+    initFont(&font_consolas36, &font_consolas_36);
+#endif      
+    
+#ifdef FONT_YGM_16
+    initFont(&font_ygm16, &font_ygm_16);
+#endif 
+
+#ifdef FONT_YGM_20
+    initFont(&font_ygm20, &font_ygm_20);
+#endif   
+
+#ifdef FONT_YGM_28
+    initFont(&font_ygm28, &font_ygm_28);
+#endif  
+
+#ifdef FONT_YGM_36
+    initFont(&font_ygm36, &font_ygm_36);
+#endif     
+
+#ifdef FONT_YGM_46
+    initFont(&font_ygm46, &font_ygm_46);
+#endif     
+
+#ifdef FONT_YGM_78
+    initFont(&font_ygm78, &font_ygm_78);
+#endif 
+    
+#ifdef FONT_TWCEN_18
+    initFont(&font_twcen18, &font_twcen_18);
+#endif 
+
+#ifdef FONT_TWCEN_22
+    initFont(&font_twcen22, &font_twcen_22);
+#endif     
+    
+#ifdef FONT_TWCEN_28
+    initFont(&font_twcen28, &font_twcen_28);
+#endif 
+    
+#ifdef FONT_TWCEN_36
+    initFont(&font_twcen36, &font_twcen_36);
+#endif     
+    
+#ifdef FONT_TWCEN_46
+    initFont(&font_twcen46, &font_twcen_46);
+#endif     
+    
+#ifdef FONT_TWCEN_80
+    initFont(&font_twcen80, &font_twcen_80);
+#endif     
+    
+    // </editor-fold>
+    
+    
+#ifdef USE_DISP9341    
+    //ili9341/SPI, v display nastavi fce driveru disp9341 
+    disp9341_driver(&sysDisplay);                    
+#endif
+    
+#ifdef USE_DISP1306
+    //SSD1306/SPIv v display nastavi fce driveru disp1306
+    disp1306_driver(&sysDisplay);                    
+#endif    
+    
+    //pro vsechny typy displeju
+    sysDisplay.initDisplay();                   //driver inicializuje display         
+    setGraphics(&graphics, &sysDisplay);        //nastavi fce graphics na display driver, vystup graphics jde na zvoleny display
+    graphics.clear(COLOR.Black);                //cls   
+}
+
+void initFont(const FONT_HEAD* fontSrc, IMAGE_SRC* font)
+{
+    setFontSrc(fontSrc, font);
+    if(font->format==0x4){ setImageColorMap(font, stdColorMap); }
+    else if(font->format==0x1){ font->foreColor=RGB16(31, 63, 31); }
+}
+
+
 
 void setGraphics(GRAPHICS* g,  DISPLAY* d)
 {
+    actualDisplay=d;
     
-    disp=d;
-    
-    d->selectDriver(disp);
+    d->selectDriver(actualDisplay);
     
     //fce graphics
     g->drawCircle=&drawCircle;
@@ -46,6 +250,7 @@ void setGraphics(GRAPHICS* g,  DISPLAY* d)
     g->getFontHeight=d->getFontHeight;
 }
 
+
 static void drawCircle(short x, short y, short r, short color)
 {
     //disp->draw...
@@ -58,12 +263,14 @@ static void drawCircle(short x, short y, short r, short color)
 
 static void drawBox(short x1, short y1, short x2, short y2, short w, short color)
 {
-    disp->drawLine(x1, y1, x2, y1, w, color);
-    disp->drawLine(x2, y1, x2, y2, w, color);
-    disp->drawLine(x2, y2, x1, y2, w, color);
-    disp->drawLine(x1, y2, x1, y1, w, color);    
+    actualDisplay->drawLine(x1, y1, x2, y1, w, color);
+    actualDisplay->drawLine(x2, y1, x2, y2, w, color);
+    actualDisplay->drawLine(x2, y2, x1, y2, w, color);
+    actualDisplay->drawLine(x1, y2, x1, y1, w, color);    
     
 }
+
+
 
 #endif
 

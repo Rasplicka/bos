@@ -9,7 +9,7 @@ static void spiWriteBuffer(void* info, char* buffer, short len);
 static void spiWriteBufferMode(void* info, char* buffer, short len, char mode);
 static void spiGetPort(void* info);
 static void spiFreePort(void* info);
-static void spiSetBusMode(void* info, char mode);
+//static void spiSetBusMode(void* info, char mode);
 
 static void i2cWriteBuffer(void* info, char* buffer, short len);
 static void i2cGetPort(void* info);
@@ -27,9 +27,9 @@ void portWriter_init(PORT_INFO* info, char periph_type, char index)
         
         info->getPort=&spiGetPort;
         info->freePort=&spiFreePort;
-        info->setBusMode=&spiSetBusMode;
+        //info->setBusMode=&spiSetBusMode;
 
-        info->directModeHwBuffer=(int*)spi_getHwBuffer(index);
+        info->directModeHwBuffer=(int*)spiGetHwBuffer(index);
     }
     else if(periph_type==PERIPH_TYPE.i2c)
     {
@@ -48,32 +48,34 @@ void portWriter_init(PORT_INFO* info, char periph_type, char index)
 static void spiWriteBuffer(void* info, char* buffer, short len) 
 {
     PORT_INFO* i = (PORT_INFO*) info;
-    spi_ExchangeDE(i->portIndex, buffer, NULL, len);
+    spiExchangeDE(i->portIndex, buffer, NULL, len);
 }
 
 static void spiWriteBufferMode(void* info, char* buffer, short len, char mode) 
 {
     PORT_INFO* i = (PORT_INFO*) info;
-    spi_ExchangeModeDE(i->portIndex, buffer, NULL, len, mode);
+    spiExchangeModeDE(i->portIndex, buffer, NULL, len, mode);
 }
 
 static void spiGetPort(void* info) 
 {
     PORT_INFO* i = (PORT_INFO*) info;
-    spi_Use(i->portIndex, 1, i->finishFn, i->eventFn);
+    spiUse(i->portIndex, i->finishFn, i->eventFn);
 }
 
 static void spiFreePort(void* info) 
 {
     PORT_INFO* i = (PORT_INFO*) info;
-    spi_Free(i->portIndex);
+    spiFree(i->portIndex);
 }
 
+/*
 static void spiSetBusMode(void* info, char mode) 
 {
     PORT_INFO* i = (PORT_INFO*) info;
-    spi_setBusMode(i->portIndex, mode);
+    spiSetBusMode(i->portIndex, mode);
 }
+*/
 
 // </editor-fold>
 

@@ -24,7 +24,7 @@ int delay=1;
 int delay=1;
 #endif
 
-extern GRAPHICS graphics;
+
 int testVar=100;
 
 static void longTime();
@@ -38,14 +38,18 @@ static void call3(int a, int b);
 static void cn(uint base, uint stat);
 static void dispText1();
 static void dispText2();
+static void setRedFont(IMAGE_SRC* font);
+static void drawColorText04();
+static void drawColorText01();
 
 static int restart=0;
 
 void m1_start()
 {
     
-#ifdef USE_GRAPHICS    
+#ifdef USE_GRAPHICS 
     initGraphics();
+    sysDisplay.setDefaultFont(&font_ygm_20);
 #endif
     //RGB16(5, 5, 5);
     cnStartPortA();
@@ -286,7 +290,9 @@ static void cn(uint base, uint stat)
     }
     else
     {
-        dispText2();
+        //dispText2();
+        //drawColorText04();
+        drawColorText01();
     }
     
     //RCONbits.SLEEP==0;
@@ -334,22 +340,116 @@ static void dispText2()
     //char txt[] = {"Kratky text"};
     //char txt[] = {};
     graphics.clear(COLOR.Black);
-    graphics.clear(COLOR.Black);
-    graphics.clear(COLOR.Black);
-    graphics.clear(COLOR.Black);    
+    //graphics.clear(COLOR.Black);
+    //graphics.clear(COLOR.Black);
+    //graphics.clear(COLOR.Black);    
+    
+    IMAGE_SRC* font16 = &font_ygm_16;
+    IMAGE_SRC* font20 = &font_ygm_20;
+    IMAGE_SRC* font28 = &font_ygm_28;
+    IMAGE_SRC* font36 = &font_twcen_80;
     
     short y=0, x=0;
-    graphics.drawString("Nejaky text, ktery", NULL, x, y);
-    y+=graphics.getFontHeight(NULL);
+    graphics.drawString("Nejaky text, ktery", font16, x, y);
+    y+=graphics.getFontHeight(font16);
     graphics.drawString("je zadany primo.", NULL, x, y);
     y+=graphics.getFontHeight(NULL);
-    //graphics.drawString("Tzn. ze neni deklarovany", NULL, x, y);
-    //y+=20;
-    //graphics.drawString("jako pole, ale je zadany", NULL, x, y);
-    //y+=20;
+    graphics.drawString("Tzn. ze neni deklarovany", font28, x, y);
+    y+=graphics.getFontHeight(font28);
+    graphics.drawString("12:55:32", font36, 10, y+10);
+    y+=graphics.getFontHeight(font36);
     //graphics.drawString("primo v kodu v uvozovkach", NULL, x, y);
-}  
+} 
 
+static void setRedFont(IMAGE_SRC* font)
+{
+    if(font->format==0x1)
+    {
+        //1-bit format barvy
+        font->foreColor=RGB16(31, 0, 0);
+    }    
+    else if (font->format==0x4)
+    {
+        //4-bit format barvy
+        int a;
+        short cmap_red[16];
+        for(a=0; a<16; a++)
+        {
+            cmap_red[a]=RGB16(a*2, 0, 0);
+        }
+        setImageColorMap(font, cmap_red);        
+    }
+}
+
+static void drawColorText04()
+{
+    short x, y, a;
+    //cls
+    graphics.clear(COLOR.Black);
+    IMAGE_SRC* font28 = &font_ygm_28;
+    
+    if(font28->format==0x1)
+    {
+        //1-bit format barvy
+        font28->foreColor=RGB16(31, 0, 0);
+        font28->bgColor=RGB16(0, 0, 31);
+    }
+        
+    //zelena barva textu, cerna barva pozadi
+    short cmap_green[16];
+    for(a=0; a<16; a++)
+    {
+        cmap_green[a]=RGB16(0, a*4, 0);
+    }
+    setImageColorMap(font28, cmap_green);
+    y=0; x=0;
+    graphics.drawString("Zeleny text", font28, x, y);
+
+    
+    //carvena barva textu, modra barva pozadi
+    short cmap_red[16];
+    for(a=0; a<16; a++)
+    {
+        cmap_red[a]=RGB16(a*2, 0, 30-2*a);
+    }
+    setImageColorMap(font28, cmap_red);
+    y=50; x=0;
+    graphics.drawString("Cerveny text", font28, x, y);
+    
+
+    //puvodni barevna mapa, bily text, cerne pozadi
+    setImageColorMap(font28, stdColorMap);
+    y=100; x=0;
+    graphics.drawString("Bily text", font28, x, y); 
+    
+}
+    
+static void drawColorText01()
+{
+    short x, y;
+    //cls
+    graphics.clear(COLOR.Black);    
+    IMAGE_SRC* fontA = &font_arial_18;
+    IMAGE_SRC* fontC = &font_consolas_28;
+    
+    fontA->foreColor=RGB16(31, 0, 0);
+    fontA->bgColor=RGB16(0, 0, 31);
+    y=0; x=0;
+    graphics.drawString("Cerveny text", fontA, x, y);    
+    
+    fontA->foreColor=COLOR.Yellow;
+    fontA->bgColor=COLOR.Black;
+    y=50; x=0;
+    graphics.drawString("Zluty text", fontA, x, y);  
+    
+    fontC->foreColor=COLOR.Pink;
+    fontC->bgColor=COLOR.DarkGrey;
+    y=100; x=0;
+    graphics.drawString("Ruzovy text", fontC, x, y);  
+    
+    fontA->foreColor=COLOR.White;
+    fontA->bgColor=COLOR.Black;
+}
 
 
     /*
