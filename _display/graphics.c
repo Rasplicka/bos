@@ -224,8 +224,6 @@ void initFont(const FONT_HEAD* fontSrc, IMAGE_SRC* font)
     else if(font->format==0x1){ font->foreColor=RGB16(31, 63, 31); }
 }
 
-
-
 void setGraphics(GRAPHICS* g,  DISPLAY* d)
 {
     actualDisplay=d;
@@ -235,7 +233,6 @@ void setGraphics(GRAPHICS* g,  DISPLAY* d)
     //fce graphics
     g->drawCircle=&drawCircle;
     g->drawBox=&drawBox;
-    //g->print=&print;
     
     //fce driveru
     g->drawString=d->drawString;
@@ -251,6 +248,7 @@ void setGraphics(GRAPHICS* g,  DISPLAY* d)
 }
 
 
+//local fn
 static void drawCircle(short x, short y, short r, short color)
 {
     //disp->draw...

@@ -6,10 +6,6 @@
 #include "def.h"
 #include "struct.h"
 
-#ifdef GRAPH
-#include graphics_struct.h
-#endif
-
 
 //default app start param, hodnoty nastavuje fce main()
 APP_START_PARAM defaultAppStartParam;                   
@@ -29,8 +25,7 @@ int checkStackSpaceValue=0x7FFFFFFF;
 
 #ifdef USE_GRAPHICS
 
-//extern GRAPHICS;
-
+//defined in graphics.c
 extern GRAPHICS graphics;
 extern DISPLAY sysDisplay;
 
@@ -92,6 +87,5 @@ extern DISPLAY sysDisplay;
 #endif      
     
 // </editor-fold>
-
     
 #endif    
