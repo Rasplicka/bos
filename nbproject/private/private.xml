@@ -12,12 +12,10 @@
             <file>file:/D:/bos2/BOS2.X/main.c</file>
             <file>file:/D:/bos2/BOS2.X/globals.c</file>
             <file>file:/D:/bos2/BOS2.X/asm.h</file>
-            <file>file:/D:/bos2/BOS2.X/core_fn.S</file>
-            <file>file:/D:/bos2/BOS2.X/_display/ssd1306/disp1306.c</file>
             <file>file:/D:/bos2/BOS2.X/app1.c</file>
-            <file>file:/D:/bos2/BOS2.X/struct.h</file>
             <file>file:/D:/bos2/BOS2.X/app2.c</file>
             <file>file:/D:/bos2/BOS2.X/globals.h</file>
+            <file>file:/D:/bos2/BOS2.X/app3.c</file>
         </group>
     </open-files>
 </project-private>

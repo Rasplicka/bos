@@ -1,4 +1,4 @@
-build/default/production/_display/graphics.o:  \
+build/default/debug/_display/graphics.o:  \
 _display/graphics.c  \
  _display/../globals.h  \
 _display/../asm.h  \

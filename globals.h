@@ -33,8 +33,8 @@ extern DISPLAY sysDisplay;
 #ifdef FONT_ARIAL_18
     extern IMAGE_SRC font_arial_18;
 #endif
-#ifdef FONT_DLG_18
-    extern IMAGE_SRC font_dlg_18;
+#ifdef FONT_DLG_22
+    extern IMAGE_SRC font_dlg_22;
 #endif    
 #ifdef FONT_CONSOLAS_16
     extern IMAGE_SRC font_consolas_16;

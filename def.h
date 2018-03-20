@@ -137,28 +137,28 @@
 //#define             TOUCHPAD_XPT2046_INIT           //aktivuje modul touchpadu, typ XPT2046
 
 //FONT
-#define             FONT_ARIAL_18
+#define             FONT_ARIAL_18           //color format 1bit, variable width, height 18px, ascii 0x20 - 0x7E
 
-#define             FONT_DLG_18
+#define             FONT_DLG_22             //color format 4bit, variable width, height 22px, ascii 0x20 - 0x7E + ceska diakritika (Velikost cca 14kB)
 
-#define             FONT_CONSOLAS_16
-#define             FONT_CONSOLAS_20
-#define             FONT_CONSOLAS_28
-#define             FONT_CONSOLAS_36
+#define             FONT_CONSOLAS_16        //color format 1bit, width 8px, height 16px, ascii 0x20 - 0x7E + ceska diakritika
+#define             FONT_CONSOLAS_20        //color format 1bit, width 12px, height 20px, ascii 0x20 - 0x7E + ceska diakritika  (velikost cca 4kB)
+#define             FONT_CONSOLAS_28        //color format 1bit, width 13px, height 28px, ascii 0x20 - 0x7E + ceska diakritika
+#define             FONT_CONSOLAS_36        //color format 1bit, width 20px, height 36px, ascii 0x20 - 0x7E + ceska diakritika  (velikost cca 12kB)
 
-#define             FONT_YGM_16
-#define             FONT_YGM_20
-#define             FONT_YGM_28
-#define             FONT_YGM_36
-#define             FONT_YGM_46
-//#define             FONT_YGM_78
+#define             FONT_YGM_16             //color format 4bit, variable width, height 16px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 6kB)
+#define             FONT_YGM_20             //color format 4bit, variable width, height 20px, ascii 0x20 - 0x7E + ceska diakritika
+#define             FONT_YGM_28             //color format 4bit, variable width, height 28px, ascii 0x20 - 0x7E + ceska diakritika
+#define             FONT_YGM_36             //color format 4bit, variable width, height 36px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 20kB)
+#define             FONT_YGM_46             //color format 4bit, variable width, height 46px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 30kB)
+//#define             FONT_YGM_78             //color format 4bit, variable width, height 78px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (velikost cca 10kB)
 
-//#define             FONT_TWCEN_18
-#define             FONT_TWCEN_22
-#define             FONT_TWCEN_28
-#define             FONT_TWCEN_36
-#define             FONT_TWCEN_46
-#define             FONT_TWCEN_80
+//#define             FONT_TWCEN_18           //color format 4bit, variable width, height 18px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 5kB)
+//#define             FONT_TWCEN_22           //color format 4bit, variable width, height 22px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 7kB)
+//#define             FONT_TWCEN_28           //color format 4bit, variable width, height 28px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 11kB)
+//#define             FONT_TWCEN_36           //color format 4bit, variable width, height 36px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 16kB)
+//#define             FONT_TWCEN_46           //color format 4bit, variable width, height 46px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 25kB)
+//#define             FONT_TWCEN_80           //color format 4bit, variable width, height 16px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (velikost cca 7kB)
 
 // </editor-fold>
 

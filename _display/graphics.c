@@ -17,9 +17,9 @@
 IMAGE_SRC font_arial_18;
 #endif
 
-#ifdef FONT_DLG_18
-#include "font/font_dlg_18.h"
-IMAGE_SRC font_dlg_18;
+#ifdef FONT_DLG_22
+#include "font/font_dlg_22.h"
+IMAGE_SRC font_dlg_22;
 #endif
 
 #ifdef FONT_CONSOLAS_16
@@ -130,8 +130,8 @@ void initGraphics()
     initFont(&font_arial18, &font_arial_18);
 #endif     
    
-#ifdef FONT_DLG_18
-    initFont(&font_dlg18, &font_dlg_18);
+#ifdef FONT_DLG_22
+    initFont(&font_dlg22, &font_dlg_22);
 #endif     
     
 #ifdef FONT_CONSOLAS_16

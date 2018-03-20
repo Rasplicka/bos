@@ -176,8 +176,8 @@ const struct
 //std mapa pro 4-bitovou grafiku (4-bit barva definuje index v tabulce)
 const short stdColorMap[] = { 0x0000, 0x1082, 0x2104, 0x3186, 
                               0x4208, 0x528A, 0x630C, 0x738E,
-                              0x8410, 0x9492, 0xA514, 0xB596, 
-                              0xC618, 0xD69A, 0xE71C, 0xF79E };
+                              0xC718, 0xCF39, 0xD75A, 0xBF7B, 
+                              0xE79C, 0xEFBD, 0xF7DE, 0xFFFF };
 
 typedef struct
 {

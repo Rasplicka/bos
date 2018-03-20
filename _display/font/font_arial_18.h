@@ -1,8 +1,8 @@
 
+//font arial 18, color format 1-bit, width variable, height 18
 
-//systemovy font, Arial 18, 0x20-0x7F
 const FONT_HEAD font_arial18 __section(".rodata") __attribute__((aligned(4))) = {
-    0x2,                //fileID
+    0x2,                //fileID (variable font)
     0x1,                //format
     8,                  //blockSize
     0,                  //compresion
@@ -15,7 +15,7 @@ const FONT_HEAD font_arial18 __section(".rodata") __attribute__((aligned(4))) = 
     12,                 //lineOffset
     32,                 //dataOffset
     0,                  //dummy int
-    "arial18",       //name
+    "arial18",          //name
 };
 const char font_arial18_data[] __section(".rodata") = {
     

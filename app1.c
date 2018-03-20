@@ -38,9 +38,11 @@ static void call3(int a, int b);
 static void cn(uint base, uint stat);
 static void dispText1();
 static void dispText2();
+static void exPrint();
 static void setRedFont(IMAGE_SRC* font);
 static void drawColorText04();
 static void drawColorText01();
+static void fontExample();
 
 static int restart=0;
 
@@ -60,7 +62,8 @@ void m1_start()
     cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
     cnRegEvent(&cn, PORTC_BASE);
     
-    dispText1();
+    //dispText1();
+    fontExample();
     while(1)
     {
         doEvents();
@@ -319,7 +322,8 @@ static void dispText1()
     //char txt2[] = {"áéíóúý ÁÉÍÓÚÝ"};
     //char txt[] = {"Kratky text"};
     char txt[] = {'J','i','\xFE','í',' ','R','a','\xE7','p','l','i','\x9F','k','a'}; //,'ý','á','í','é','?','?',' '};
-    //char txt[]="Nejaky text";
+    char txt2[] = "Ji\xFEí Ra\xE7pli\x9Fka";
+    char txt3[] = "\xA6lu\x9Cou\x9Fký k\xDE\xE5, \xE6árka";
     
     graphics.clear(COLOR.Black);
     short y=0, x=0;
@@ -332,7 +336,22 @@ static void dispText1()
     graphics.drawString("SSD1306 display", NULL, x, y);
     y+=graphics.getFontHeight(NULL);
     graphics.drawString(txt, NULL, x, y);
+    y+=graphics.getFontHeight(NULL);
+    graphics.drawString(txt3, &font_ygm_36, x, y);    
+    
+    short h = sysDisplay.getHeight();       //240
+    short w = sysDisplay.getWidth();        //320
+    char o = sysDisplay.getOrientation();   //0=na vysku, 1=na sirku, 2=na vysku obracene, 3=na sirku obracene
 }   
+
+static void exPrint()
+{
+    graphics.clear(COLOR.Black);
+    graphics.print("toto je \xFEádek 1");
+    graphics.print("toto je \xFEádek 2");
+    graphics.print("toto je \xFEádek 3");
+    graphics.print("toto je \xFEádek 4");
+}
 
 static void dispText2()
 {
@@ -340,29 +359,46 @@ static void dispText2()
     //char txt[] = {"Kratky text"};
     //char txt[] = {};
     graphics.clear(COLOR.Black);
+    
+    font_ygm_20.foreColor=COLOR.Blue;
+    
+    short width = graphics.textWidth("Muj text", &font_ygm_20);
+    short height = graphics.getFontHeight(&font_ygm_20);
+    
+    //nebo
+    IMAGE_SRC* fontSmall = &font_ygm_20;
+    IMAGE_SRC* fontBig = &font_ygm_36;
+    short wsmall = graphics.textWidth("Muj text", fontSmall);
+    short wbig = graphics.textWidth("Muj text", fontBig);
+    
+    
     //graphics.clear(COLOR.Black);
     //graphics.clear(COLOR.Black);
     //graphics.clear(COLOR.Black);    
-    
+    /*
     IMAGE_SRC* font16 = &font_ygm_16;
     IMAGE_SRC* font20 = &font_ygm_20;
     IMAGE_SRC* font28 = &font_ygm_28;
     IMAGE_SRC* font36 = &font_twcen_80;
     
     short y=0, x=0;
-    graphics.drawString("Nejaky text, ktery", font16, x, y);
-    y+=graphics.getFontHeight(font16);
-    graphics.drawString("je zadany primo.", NULL, x, y);
-    y+=graphics.getFontHeight(NULL);
+    graphics.drawString("Nejaky text, radek 1",&font_ygm_28, x, y);
+    y+=graphics.getFontHeight(&font_ygm_28);
+    graphics.drawString("jiny text, radek 2", &font_ygm_28, x, y);
+    y+=graphics.getFontHeight(&font_ygm_28);
+      
     graphics.drawString("Tzn. ze neni deklarovany", font28, x, y);
     y+=graphics.getFontHeight(font28);
     graphics.drawString("12:55:32", font36, 10, y+10);
     y+=graphics.getFontHeight(font36);
+    */
     //graphics.drawString("primo v kodu v uvozovkach", NULL, x, y);
 } 
 
 static void setRedFont(IMAGE_SRC* font)
 {
+    char x[]="?lu?ou?ký k?n";
+    
     if(font->format==0x1)
     {
         //1-bit format barvy
@@ -372,7 +408,7 @@ static void setRedFont(IMAGE_SRC* font)
     {
         //4-bit format barvy
         int a;
-        short cmap_red[16];
+        short cmap_red[16];                 //musi byt deklarovano mimo fci, aby nebyla na zasobniku
         for(a=0; a<16; a++)
         {
             cmap_red[a]=RGB16(a*2, 0, 0);
@@ -427,8 +463,8 @@ static void drawColorText04()
 static void drawColorText01()
 {
     short x, y;
-    //cls
-    graphics.clear(COLOR.Black);    
+    
+    graphics.clear(COLOR.Black);                            //cls   
     IMAGE_SRC* fontA = &font_arial_18;
     IMAGE_SRC* fontC = &font_consolas_28;
     
@@ -451,6 +487,11 @@ static void drawColorText01()
     fontA->bgColor=COLOR.Black;
 }
 
+static void fontExample()
+{
+    graphics.drawString("YGM36 4-bit font", &font_ygm_36, 10, 30);    
+    graphics.drawString("CONSOLAS 1-bit font", &font_consolas_36, 10, 130);
+}
 
     /*
     int a;
