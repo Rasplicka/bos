@@ -304,7 +304,7 @@ static void drawLine(short x1, short y1, short x2, short y2, short w, short colo
             lineSrc.color=color;
     
             iface_setBusMode(BUS_MODE._16bit);
-            drawLineQuick(&lineSrc, iface_getHWBuffer, &setDCPin);
+            drawLineQuick(&lineSrc, iface_getHWBuffer(), &setDCPin);
             iface_setBusMode(BUS_MODE._8bit);
         }   
         else

@@ -41,6 +41,11 @@
         <itemPath>_display/font/font_consolas_36.h</itemPath>
         <itemPath>_display/font/font_dlg_22.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f5" displayName="image" projectFiles="true">
+        <itemPath>_display/image/img_woman_col565.h</itemPath>
+        <itemPath>_display/image/img_woman_col4.h</itemPath>
+        <itemPath>_display/image/pokus.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="modules" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f2" displayName="system" projectFiles="true">

@@ -307,17 +307,38 @@ typedef struct
     //globalni struktura pro graficky vystup. Jedna v celem projektu. 
     //Pri vice displejich, musi kazdy pred pouzitim graphics volat setGraphics
     //Tvori interface pro grafiku
+    
+    //drawCircle(short x, short y, short radius, short color)
     void (*drawCircle)(short x, short y, short r, short color);
+    
+    //drawBox(short x1, short y1, short x2, short y2, short width, short color)
     void (*drawBox)(short x1, short y1, short x2, short y2, short w, short color);
     
+    //drawString(char* text, IMAGE_SRC* font, short x, short y)
     void (*drawString)(char* text, IMAGE_SRC* font, short x, short y);
+    
+    //fillBox(short x1, short y1, short x2, short y2, short color)
     void (*fillBox)(short x1, short y1, short x2, short y2, short color);
+    
+    //drawLine(short x1, short y1, short x2, short y2, short width, short color)
     void (*drawLine)(short x1, short y1, short x2, short y2, short w, short color);
+    
+    //drawImage(IMAGE_SRC* image, short x, short y)
     void (*drawImage)(IMAGE_SRC* da, short x, short y);
+
+    //drawPoint(short x, short y, short color)
     void (*drawPoint)(short x, short y, short color);
+    
+    //print(char* text)
     void (*print)(char* text);
+    
+    //clear(short color)
     void (*clear)(short color);
+    
+    //textWidth(char* text, IMAGE_SRC* font)
     short (*textWidth)(char* text, IMAGE_SRC* font);
+    
+    //getFontHeight(IMAGE_SRC* font)
     short (*getFontHeight)(IMAGE_SRC* font);
     
 }GRAPHICS;

@@ -24,6 +24,8 @@ int delay=1;
 int delay=1;
 #endif
 
+//#include "_display/image/img_woman_col4.h"
+#include "_display/image/pokus.h"
 
 int testVar=100;
 
@@ -43,6 +45,11 @@ static void setRedFont(IMAGE_SRC* font);
 static void drawColorText04();
 static void drawColorText01();
 static void fontExample();
+static void drawLines();
+static void drawPoints();
+static void drawBox();
+static void drawImg();
+
 
 static int restart=0;
 
@@ -63,7 +70,11 @@ void m1_start()
     cnRegEvent(&cn, PORTC_BASE);
     
     //dispText1();
-    fontExample();
+    //fontExample();
+    //drawLines();
+    //drawPoints();
+    //drawBox();
+    drawImg();
     while(1)
     {
         doEvents();
@@ -491,6 +502,56 @@ static void fontExample()
 {
     graphics.drawString("YGM36 4-bit font", &font_ygm_36, 10, 30);    
     graphics.drawString("CONSOLAS 1-bit font", &font_consolas_36, 10, 130);
+}
+
+static void drawLines()
+{
+    //Zluty ramecek kolem displeje
+    short w=sysDisplay.getWidth();
+    short h=sysDisplay.getHeight();
+    graphics.drawLine(0, 0, w-1, 0, 1, COLOR.Yellow);
+    graphics.drawLine(w-1, 0, w-1, h-1, 1, COLOR.Yellow);    
+    graphics.drawLine(w-1, h-1, 0, h-1, 1, COLOR.Yellow);    
+    graphics.drawLine(0, h-1, 0, 0, 1, COLOR.Yellow);    
+    
+    graphics.drawLine(0, 0, w-1, h-1, 1, COLOR.Grey);
+    graphics.drawLine(0, h-1, w-1, 0, 1, COLOR.Grey);
+    
+    graphics.drawLine(10, 20, 300, 20, 5, COLOR.GreenYellow);
+    
+    graphics.drawLine(10, 20, 300, 220, 10, COLOR.Green);
+    
+}
+
+static void drawPoints()
+{
+    int a;
+    for(a=10; a<320; a+=5)
+    {
+        graphics.drawPoint(a, 20, COLOR.White);
+    }
+    
+}
+
+static void drawBox()
+{
+    graphics.drawBox(10, 10, 300, 220, 5, COLOR.Orange);
+    
+    int a;
+    for(a=40; a<280; a+=20) 
+    {
+        graphics.fillBox(a, 30, a+15, 130, COLOR.Blue);
+        graphics.drawBox(a, 30, a+15, 130, 2, COLOR.Yellow);
+    }
+    
+}
+
+static void drawImg()
+{
+    //#include "_display/image/img_woman_col4.h"
+    IMAGE_SRC img;
+    setImageSrc(&pokus565, &img);
+    graphics.drawImage(&img, 0, 0);
 }
 
     /*

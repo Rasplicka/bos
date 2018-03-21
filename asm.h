@@ -1,4 +1,5 @@
 #include "def.h"
+//#include "globals.h"
 /*
  * Author Jiri Rasplicka, 2017
  */
@@ -130,7 +131,15 @@ extern int strLen(char*);
 
 #if defined USE_GRAPHICS && defined USE_DISP9341
     //ILI9341
-    extern void setFontSrc(const void*, void*);
+    //Sets information about the font
+    //@param head FONT_HEAD*, address of font head
+    //@param src IMAGE_SRC*, address of structure, that represents the font data
+    extern void setFontSrc(const void* head, void* src);
+    
+    //Sets information about the image
+    //@param head IMAGE_HEAD*, address of image head
+    //@param src IMAGE_SRC*, address of structure, that represents the image data
+    extern void setImageSrc(const void* head, void* src);
 
     //Return short (16-bit) representation of RGB color
     //@param red 5-bit value, 0-31
@@ -138,12 +147,19 @@ extern int strLen(char*);
     //@param blue 5-bit value, 0-31
     extern short RGB16(int red, int green, int blue);
 
+    //Writes image/font data to buffer
+    //@param src Address of IMAGE_SRC structure, that represents image/font data 
+    //@param buffer Output buffer
+    //@param len Buffer length
+    //@param c
     extern int imageToBuffer(void*, char*, int, char);
+    
     extern int imageToPort(void*, volatile int*, int, char);
+    
     extern void drawPointQuick(void*, volatile int*, void*);
     extern void fillRectDirect(short, int, volatile int*);
     extern void setImageColorMap(void*, const short*);
-    extern void drawLineQuick(void*, void*, void*);
+    extern void drawLineQuick(void*, volatile int*, void*);
 
     extern int fontCharParam(void*, char);                      
 #endif

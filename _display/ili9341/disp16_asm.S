@@ -1553,8 +1553,9 @@ calcx2:
 //hw = hw buffer    
 	
     //DC=0
-    li16    a0, 0x0			    
-    jal	    \dc_fn
+    li16    a0, 0x0	
+    _CALL_C \dc_fn, 1
+    //jal	    \dc_fn
     nop
 	
     //odeslat hword command >> hw buffer
@@ -1567,7 +1568,8 @@ calcx2:
 	
     //DC=1
     li16    a0, 0x1			    
-    jal	    \dc_fn
+    _CALL_C \dc_fn, 1
+    //jal	    \dc_fn
     nop	
 .endm  
 //</editor-fold>    
