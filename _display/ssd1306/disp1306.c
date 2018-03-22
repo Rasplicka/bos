@@ -15,10 +15,8 @@
 
 #ifdef USE_DISP1306
 
-//globalni promene modulu (tzn. pri pouziti vice displeju ssd1306 jsou spolecne pro vsechny struct DISPLAY)
-//#include "../font/font_fixed1306.h"
-IMAGE_SRC* defaultFont;
-
+//reset
+#define     SW_RESET                                //je definovano, pokud je RESET signal pripojen k IO pinu. Neni-li definovano, ma HW RESET (RC obvod)
 //IFACE
 #define     IFACE_INDEX     1                       //SPI2, index portu (0=SPI1, 1=SPI2, 2=SPI3, ...)
 //definuje IO piny
@@ -26,9 +24,8 @@ PIN_INFO csPin = {PORTA_BASE, BIT10};                //CS signal
 PIN_INFO resetPin = {PORTA_BASE, BIT15};            //RESET signal
 PIN_INFO dcPin = {PORTB_BASE, BIT13};               //DC signal
 
-#define     SW_RESET                                //je definovano, pokud je RESET signal pripojen k IO pinu. Neni-li definovano, ma HW RESET (RC obvod)
 #define     BUFFER_SIZE      256                    //min. velikost by mela byt: Width x 2 + 20 (viz. fillBox, clear)           
-
+IMAGE_SRC* defaultFont;
 static char pixelsEven[BUFFER_SIZE] __attribute__((aligned(4)));
 static char pixelsOdd [BUFFER_SIZE] __attribute__((aligned(4)));
 static char pixAB=0;
@@ -41,7 +38,6 @@ static short Width=128;                         //default na vysku, fce dinit na
 static short Height=64;
 static char isInitialized=0;
 static char directMode=1;                       //0=zapis do bufferu, 1=zapis do portu
-
 
 //local void
 static void selectDriver(void* d);
@@ -82,6 +78,7 @@ static void iface_Process();
 void disp1306_driver(DISPLAY* d)
 {
     d->selectDriver=&selectDriver;
+    d->setDefaultFont=&setDefaultFont;
     d->drawString=&drawString;
     d->fillBox=&fillBox;
     d->drawLine=&drawLine;

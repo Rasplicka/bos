@@ -25,7 +25,8 @@ int delay=1;
 #endif
 
 //#include "_display/image/img_woman_col4.h"
-#include "_display/image/pokus.h"
+//#include "_display/image/pokus.h"
+#include "_display/image/pokus_1306.h"
 
 int testVar=100;
 
@@ -38,6 +39,10 @@ static void call1(int a, int b);
 static void call2(int a, int b);
 static void call3(int a, int b);
 static void cn(uint base, uint stat);
+
+static void dispText1306();
+static void drawImage1306();
+
 static void dispText1();
 static void dispText2();
 static void exPrint();
@@ -58,7 +63,7 @@ void m1_start()
     
 #ifdef USE_GRAPHICS 
     initGraphics();
-    sysDisplay.setDefaultFont(&font_ygm_20);
+    sysDisplay.setDefaultFont(&spfont_fixed_16);
 #endif
     //RGB16(5, 5, 5);
     cnStartPortA();
@@ -74,7 +79,10 @@ void m1_start()
     //drawLines();
     //drawPoints();
     //drawBox();
-    drawImg();
+    //drawImg();
+    
+    //dispText1306();
+    drawImage1306();
     while(1)
     {
         doEvents();
@@ -300,13 +308,13 @@ static void cn(uint base, uint stat)
 {
     if(base==PORTA_BASE)
     {
-        dispText1();
+        //dispText1();
     }
     else
     {
         //dispText2();
         //drawColorText04();
-        drawColorText01();
+        //drawColorText01();
     }
     
     //RCONbits.SLEEP==0;
@@ -327,6 +335,28 @@ static void cn(uint base, uint stat)
     //setCanSleep(0);
     
 }
+
+static void dispText1306()
+{
+    char txt[] = "\xA6lu\x9Cou\x9Fký k\xDE\xE5";
+    graphics.clear(COLOR.Black);
+    
+    short y=0, x=0;
+    graphics.drawString(txt, &spfont_fixed_16, x, y);
+    
+    y=16; x=0;    
+    graphics.drawString("15:33", &spfont_rock_48, x, y);
+}
+
+static void drawImage1306()
+{
+    IMAGE_SRC img;
+    setImageSrc(&pokus_1306, &img);
+    graphics.drawImage(&img, 0, 0);    
+}
+
+
+#ifdef USE_DISP9341
 
 static void dispText1()
 {
@@ -554,25 +584,4 @@ static void drawImg()
     graphics.drawImage(&img, 0, 0);
 }
 
-    /*
-    int a;
-    //FONT_SRC fo;
-    //setFontSrc(fontConsolas12x20, &fo);
-    //fo.foreColor=colWHITE;    //RGB16(31, 63, 31);
-    //fo.bgColor=colBLACK;    //RGB16(0, 0, 0);
-     
-    FONT_SRC foa;
-    setFontSrc(fontArial18, &foa);
-    foa.foreColor=colWHITE; //RGB16(31, 63, 31);
-    foa.bgColor=colBLACK;   //RGB16(0, 0, 0);    
-    
-    d->drawString(txt, &foa, 0, y);
-    y+=foa.height;
-    */
-    
-    
-    //short color=colWHITE;
-    //d->drawLine(0, 0, 319, 0, color);
-    //d->drawLine(319, 0, 319, 239, color);
-    //d->drawLine(319, 239, 0, 239, color);
-    //d->drawLine(0, 239, 0, 0, color);
+#endif

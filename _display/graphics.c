@@ -102,6 +102,37 @@ IMAGE_SRC font_twcen_46;
 IMAGE_SRC font_twcen_80;
 #endif 
 
+#ifdef SPFONT_FIXED_8
+#include "font/ssd1306/spfont_fixed_8.h"
+IMAGE_SRC spfont_fixed_8;
+#endif
+
+#ifdef SPFONT_FIXED_16
+#include "font/ssd1306/spfont_fixed_16.h"
+IMAGE_SRC spfont_fixed_16;
+#endif
+
+#ifdef SPFONT_FIXED_32
+#include "font/ssd1306/spfont_fixed_32.h"
+IMAGE_SRC spfont_fixed_32;
+#endif
+
+#ifdef SPFONT_FIXED_48
+#include "font/ssd1306/spfont_fixed_48.h"
+IMAGE_SRC spfont_fixed_48;
+#endif
+
+#ifdef SPFONT_ROCK_32
+#include "font/ssd1306/spfont_rock_32.h"
+IMAGE_SRC spfont_rock_32;
+#endif
+
+#ifdef SPFONT_ROCK_48
+#include "font/ssd1306/spfont_rock_48.h"
+IMAGE_SRC spfont_rock_48;
+#endif
+
+
 // </editor-fold>
 
 //gobal vars
@@ -198,6 +229,29 @@ void initGraphics()
     initFont(&font_twcen80, &font_twcen_80);
 #endif     
     
+#ifdef SPFONT_FIXED_8
+    initFont(&spfont_fixed8, &spfont_fixed_8);
+#endif    
+   
+#ifdef SPFONT_FIXED_16
+    initFont(&spfont_fixed16, &spfont_fixed_16);
+#endif    
+    
+#ifdef SPFONT_FIXED_32
+    initFont(&spfont_fixed32, &spfont_fixed_32);
+#endif    
+    
+#ifdef SPFONT_FIXED_48
+    initFont(&spfont_fixed48, &spfont_fixed_48);
+#endif    
+    
+#ifdef SPFONT_ROCK_32
+    initFont(&spfont_rock32, &spfont_rock_32);
+#endif
+    
+#ifdef SPFONT_ROCK_48
+    initFont(&spfont_rock48, &spfont_rock_48);
+#endif    
     // </editor-fold>
     
     

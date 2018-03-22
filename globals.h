@@ -86,6 +86,30 @@ extern DISPLAY sysDisplay;
     extern IMAGE_SRC font_twcen_80;
 #endif      
     
+#ifdef SPFONT_FIXED_8
+    extern IMAGE_SRC spfont_fixed_8;
+#endif    
+
+#ifdef SPFONT_FIXED_16
+    extern IMAGE_SRC spfont_fixed_16;
+#endif       
+
+#ifdef SPFONT_FIXED_32
+    extern IMAGE_SRC spfont_fixed_32;
+#endif       
+    
+#ifdef SPFONT_FIXED_48
+    extern IMAGE_SRC spfont_fixed_48;
+#endif       
+    
+#ifdef SPFONT_ROCK_32
+    extern IMAGE_SRC spfont_rock_32;
+#endif       
+    
+#ifdef SPFONT_ROCK_48
+    extern IMAGE_SRC spfont_rock_48;
+#endif
+    
 // </editor-fold>
     
 #endif    

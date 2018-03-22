@@ -1,5 +1,7 @@
 
+
 //woman 0x4, s definovanou colorMap v souboru
+
 const IMAGE_HEAD woman4 __section(".rodata") __attribute__((aligned(4))) = {
     0x9,                    //file type
     0x4,                    //format

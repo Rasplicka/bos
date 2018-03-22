@@ -20,6 +20,14 @@
       <logicalFolder name="f3" displayName="driver" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="f4" displayName="font" projectFiles="true">
+        <logicalFolder name="f1" displayName="ssd1306" projectFiles="true">
+          <itemPath>_display/font/ssd1306/spfont_fixed_16.h</itemPath>
+          <itemPath>_display/font/ssd1306/spfont_fixed_32.h</itemPath>
+          <itemPath>_display/font/ssd1306/spfont_fixed_48.h</itemPath>
+          <itemPath>_display/font/ssd1306/spfont_fixed_8.h</itemPath>
+          <itemPath>_display/font/ssd1306/spfont_rock_32.h</itemPath>
+          <itemPath>_display/font/ssd1306/spfont_rock_48.h</itemPath>
+        </logicalFolder>
         <itemPath>_display/font/font_fixed1306.h</itemPath>
         <itemPath>_display/font/font_ygm.h</itemPath>
         <itemPath>_display/font/font_ygm_16.h</itemPath>
@@ -45,6 +53,7 @@
         <itemPath>_display/image/img_woman_col565.h</itemPath>
         <itemPath>_display/image/img_woman_col4.h</itemPath>
         <itemPath>_display/image/pokus.h</itemPath>
+        <itemPath>_display/image/img_1306.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="modules" projectFiles="true">
       </logicalFolder>
