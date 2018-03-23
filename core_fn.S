@@ -746,7 +746,7 @@ pauseEvents:
 1:
     //test, zda je jiz Threading (muze volat doEvents)
     lbu	    t9, (SYSTEM_STATUS)	    //SYSTEM_STATUS.b0=Threading
-    ext	    t9, t9, 0, 1	    //ext b0
+    ext	    t9, t9, 2, 1	    //ext b0
     beqz    t9, 2f
     //nop
     
@@ -2532,6 +2532,157 @@ strLen:
 .end strLen 
     
 //</editor-fold>  
+    
+//<editor-fold defaultstate="collapsed" desc="macro _WRITE_CIPHER">
+    
+.macro _WRITE_CIPHER num, cip, rad, result
+//num = zapisovane cislo 0-9
+//cip = pozadovany pocet cifer (min.)    
+//rad = aktualni rad (10=mld, 2=desitky, 1=jednotky)    
+//result = vysledne pole 
+//meni t9    
+    
+    beqz    \num, 1002f
+    nop
+    
+    //num neni 0
+    addiu   \cip, zero, 10	//nastavi cip=10, tzn. ze od ted bude zapisovat kazde cislo, i 0
+    
+1001:    
+    addiu   \num, 0x30		//mun - ascii
+    sb	    \num, (\result)
+    addiu   \result, 1		//result++
+    
+    nop
+    b16	    1003f
+    nop
+    
+1002:
+    //num je nula
+    subu    t9, \rad, \cip
+    blez    t9, 1001b		//skok, tuto "0" bude zapisovat (rad <= cip)
+    nop
+    
+    //num je nula na zacatku, zatim nepronadi zapis
+    
+1003:    
+    
+.endm 
+    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="intToChar">
+    
+.align 2
+.global intToChar
+.ent intToChar
+intToChar:
+//a0=int
+//a1=char* result (min. char[12] -xxxxxxxxxx\0)
+//a2=pocet cifer (min. pocet cifer, je-li cislo mensi, bude zleva doplneno 0) 1-10    
+//meni t4-t9, a0-a2    
+    
+    bgez    a0, uintToChar	    //skok, int je kladne
+    nop
+    
+    //int je zaporne, zapise "-" a prevede na kladne
+    //result[.]="-"
+    addiu   t9, zero, _CHAR_MINUS
+    sb	    t9, (a1)
+    addiu   a1, 1		    //result++
+    
+    //int prevod na kladne cislo (NEG(int) + 1)
+    not	    a0
+    addiu   a0, 1
+    
+.global uintToChar   
+uintToChar:    
+    
+    addiu   t4, zero, 10	    //rad, aktualni rad cisla (10=mld, 1=jednotky)
+    li	    t5, 1000000000
+    addiu   t7, zero, 10	    //konst    
+    
+    
+1:
+    //int je kladne cislo
+    divu    t6, a0, t5
+    mflo    t6			    //t6=num
+    mfhi    a0			    //zbytek
+    
+    //num, cip, rad, result
+    _WRITE_CIPHER t6, a2, t4, a1    //meni t9
+    //result++, pokud provedl zapis
+    
+    addiu   t4, -1		    //rad--
+    divu    t5, t7		    //c/10
+    mflo    t5
+    
+    li16    v0, 1
+    bne	    t5, v0, 1b		    //skok, dalsi kolo
+    nop
+    
+    //konec a0=jednotky
+    addiu   a0, 0x30		    //prevod na ascii znak
+    sb	    a0, (a1)		    //result[]=jednotky
+    sb	    zero, 1(a1)		    //result[]=\0
+    
+    jrc	    ra
+    
+.end intToChar
+    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="byteToChar">
+    
+.align 2
+.global byteToChar
+.ent byteToChar
+byteToChar:  
+//a0=byte
+//a1=char* result (min char[4], xxx\0  )
+//a2=pocet cifer (min. pocet cifer, je-li cislo mensi, bude zleva doplneno 0) 1-3
+//meni t4-t9, a0-a2
+    
+//prevod byte bez znamenka
+    
+    addiu   t4, zero, 3		    //rad, aktualni rad cisla (3=stovky, 1=jednotky)
+    li	    t5, 100		    //c
+    addiu   t7, zero, 10	    //konst  
+    
+    andi    a0, 0xFF		    //nuluje b8-b31
+    
+    
+1:
+    //int je kladne cislo
+    divu    t6, a0, t5
+    mflo    t6			    //t6=num
+    mfhi    a0			    //zbytek
+    
+    //num, cip, rad, result
+    _WRITE_CIPHER t6, a2, t4, a1    //meni t9
+    //result++, pokud provedl zapis
+    
+    addiu   t4, -1		    //rad--
+    divu    t5, t7		    //c/10
+    mflo    t5
+    
+    li16    v0, 1
+    bne	    t5, v0, 1b		    //skok, dalsi kolo
+    nop
+    
+    //konec a0=jednotky
+    addiu   a0, 0x30		    //prevod na ascii znak
+    sb	    a0, (a1)		    //result[]=jednotky
+    sb	    zero, 1(a1)		    //result[]=\0
+    
+    jrc	    ra
+    
+.end byteToChar
+    
+//</editor-fold>
+        
+    
+    
     
 //<editor-fold defaultstate="collapsed" desc="SPI1-6 Tx interrupt">
 .align 2    

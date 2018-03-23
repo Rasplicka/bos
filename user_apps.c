@@ -83,6 +83,7 @@ void pinSetting()
     
     //RB7/pin47 - TOUCHPAD IRQ
     setPortDigIn(PORTB_BASE, BIT7);                                     //47
+    setPortPullDown(PORTB_BASE, BIT7, 1);
     
     //RP23/pin2 - SPI2-IN (TOUCHPAD SDO)
     SDI2_IO=RP23_IN;                                                    //2

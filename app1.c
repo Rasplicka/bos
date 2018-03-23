@@ -29,6 +29,9 @@ int delay=1;
 #include "_display/image/pokus_1306.h"
 
 int testVar=100;
+static int aktX=-1;
+static int aktY=-1;
+static char str[12];
 
 static void longTime();
 static void testSystemTimer(int i);
@@ -39,6 +42,7 @@ static void call1(int a, int b);
 static void call2(int a, int b);
 static void call3(int a, int b);
 static void cn(uint base, uint stat);
+static void onTouch(int p0, int p1, int p2);
 
 static void dispText1306();
 static void drawImage1306();
@@ -63,7 +67,8 @@ void m1_start()
     
 #ifdef USE_GRAPHICS 
     initGraphics();
-    sysDisplay.setDefaultFont(&spfont_fixed_16);
+    //sysDisplay.setDefaultFont(&spfont_fixed_16);
+    sysDisplay.setDefaultFont(&font_twcen_22);
 #endif
     //RGB16(5, 5, 5);
     cnStartPortA();
@@ -74,6 +79,8 @@ void m1_start()
     cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
     cnRegEvent(&cn, PORTC_BASE);
     
+    touchXpt2046_regEvent(&onTouch);
+    
     //dispText1();
     //fontExample();
     //drawLines();
@@ -82,9 +89,18 @@ void m1_start()
     //drawImg();
     
     //dispText1306();
-    drawImage1306();
+    //drawImage1306();
     while(1)
     {
+        if(aktX != -1 || aktY != -1)
+        {
+            //intToChar(aktX, str, 4);
+            //graphics.drawString(str, NULL, 0, 0);
+            //intToChar(aktY, str, 4);
+            //graphics.drawString(str, NULL, 0, 30);
+            
+            aktX=-1; aktY=-1;
+        }
         doEvents();
     }
     
@@ -336,6 +352,14 @@ static void cn(uint base, uint stat)
     
 }
 
+static void onTouch(int p0, int p1, int p2)
+{
+    aktX=p0;
+    aktY=p1;
+    //int c=x+y;
+    //return;
+}
+
 static void dispText1306()
 {
     char txt[] = "\xA6lu\x9Cou\x9Fký k\xDE\xE5";
@@ -358,6 +382,7 @@ static void drawImage1306()
 
 #ifdef USE_DISP9341
 
+/*
 static void dispText1()
 {
     //char txt2[] = {"áéíóúý ÁÉÍÓÚÝ"};
@@ -416,23 +441,23 @@ static void dispText2()
     //graphics.clear(COLOR.Black);
     //graphics.clear(COLOR.Black);
     //graphics.clear(COLOR.Black);    
-    /*
-    IMAGE_SRC* font16 = &font_ygm_16;
-    IMAGE_SRC* font20 = &font_ygm_20;
-    IMAGE_SRC* font28 = &font_ygm_28;
-    IMAGE_SRC* font36 = &font_twcen_80;
     
-    short y=0, x=0;
-    graphics.drawString("Nejaky text, radek 1",&font_ygm_28, x, y);
-    y+=graphics.getFontHeight(&font_ygm_28);
-    graphics.drawString("jiny text, radek 2", &font_ygm_28, x, y);
-    y+=graphics.getFontHeight(&font_ygm_28);
+    //IMAGE_SRC* font16 = &font_ygm_16;
+    //IMAGE_SRC* font20 = &font_ygm_20;
+    //IMAGE_SRC* font28 = &font_ygm_28;
+    //IMAGE_SRC* font36 = &font_twcen_80;
+    
+    //short y=0, x=0;
+    //graphics.drawString("Nejaky text, radek 1",&font_ygm_28, x, y);
+    //y+=graphics.getFontHeight(&font_ygm_28);
+    //graphics.drawString("jiny text, radek 2", &font_ygm_28, x, y);
+    //y+=graphics.getFontHeight(&font_ygm_28);
       
-    graphics.drawString("Tzn. ze neni deklarovany", font28, x, y);
-    y+=graphics.getFontHeight(font28);
-    graphics.drawString("12:55:32", font36, 10, y+10);
-    y+=graphics.getFontHeight(font36);
-    */
+    //graphics.drawString("Tzn. ze neni deklarovany", font28, x, y);
+    //y+=graphics.getFontHeight(font28);
+    //graphics.drawString("12:55:32", font36, 10, y+10);
+    //y+=graphics.getFontHeight(font36);
+    
     //graphics.drawString("primo v kodu v uvozovkach", NULL, x, y);
 } 
 
@@ -583,5 +608,7 @@ static void drawImg()
     setImageSrc(&pokus565, &img);
     graphics.drawImage(&img, 0, 0);
 }
+
+*/
 
 #endif

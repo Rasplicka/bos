@@ -25,6 +25,9 @@ extern void restartProcessID(char id);
 
 extern uint regListener(void* fn, char eventID);
 extern uint raiseEventID(char eventID, int p0, int p1, int p2);
+extern uint* getRegEvent(uint* last_item, char event_id);
+extern void raiseEvent(uint* item, int param0, int param1, int param2);
+//extern void regListener(void* fn, char event_id);
 
 extern void clearWDT();
 extern void startWDT();
@@ -36,6 +39,7 @@ extern void setCanSleep(char);
 extern void setCanIdle(char);
 extern void unregEvent(void*);
 
+extern void intToChar(int munber, char* ret, char minLen);
 
 //periph_fn.S ------------------------------------------------------------------
 extern void setPortDigOut(uint, uint);
@@ -75,6 +79,11 @@ int systemTimerRegInterval(void*, uint);
     extern void ubtnStart();
     extern int  ubtnRegEvent(void*, char min_value, char max_value);
 #endif
+    
+#ifdef USE_TOUCHPAD_XPT2046 
+    extern void touchXpt2046_start();
+    //extern void touchXpt2046_setDisplay(void* d);
+#endif    
 
 #ifdef RTC
     extern void rtcInit();

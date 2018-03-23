@@ -4,7 +4,8 @@ _display/graphics.c  \
 _display/../asm.h  \
 _display/../def.h  \
  _display/../struct.h  \
-_display/font/ssd1306/spfont_fixed_8.h  \
+_display/font/font_twcen_22.h  \
+ _display/font/ssd1306/spfont_fixed_8.h  \
  _display/font/ssd1306/spfont_fixed_16.h  \
  _display/font/ssd1306/spfont_fixed_32.h  \
  _display/font/ssd1306/spfont_fixed_48.h  \

@@ -79,6 +79,14 @@ void invPin(PIN_INFO* pi)
     *p=pi->pin;
 }
 
+short getPin(PIN_INFO* pi)
+{
+    //uint a=pi->portBase + 0x0;
+    volatile short* p=(short*)(pi->portBase + PORT_OFFSET);
+    short ret = *p;
+    return ret & pi->pin;
+}
+
 
 //test LED
 

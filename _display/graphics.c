@@ -265,10 +265,16 @@ void initGraphics()
     disp1306_driver(&sysDisplay);                    
 #endif    
     
+#ifdef USE_TOUCHPAD_XPT2046
+    touchXpt2046_setDisplay(&sysDisplay);
+#endif    
+    
     //pro vsechny typy displeju
     sysDisplay.initDisplay();                   //driver inicializuje display         
     setGraphics(&graphics, &sysDisplay);        //nastavi fce graphics na display driver, vystup graphics jde na zvoleny display
     graphics.clear(COLOR.Black);                //cls   
+    
+    
 }
 
 void initFont(const FONT_HEAD* fontSrc, IMAGE_SRC* font)

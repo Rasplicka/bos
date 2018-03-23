@@ -4,4 +4,4 @@ globals.h  \
 asm.h  \
 def.h  \
 struct.h  \
- _display/image/img_1306.h 
+ _display/image/pokus_1306.h 

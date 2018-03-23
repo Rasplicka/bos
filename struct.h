@@ -12,6 +12,7 @@
 //OS status
 struct 
 {
+    //jednotlive bity nemenit!!!, pouziva je ASM
     unsigned SleepMode  : 1;
     unsigned IdleMode   : 1;
     unsigned Threading  : 1;            //startup=0, run=1

@@ -204,6 +204,10 @@ void main()
 #ifdef UBTN
     regProcess(&ubtnStart, 512, &defaultAppStartParam, 0xF0);
 #endif    
+    
+#ifdef USE_TOUCHPAD_XPT2046
+    regProcess(&touchXpt2046_start, 512, &defaultAppStartParam, 0xF1);
+#endif    
           
     
 #ifdef WATCHDOG_TIMER
