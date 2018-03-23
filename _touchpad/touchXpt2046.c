@@ -3,10 +3,7 @@
 #include <stdlib.h>
 #include "../globals.h"
 
-//#include "graphics.h"
-
-//privatni struct pro dany displej, pri pouziti vice displeju se nastavi pri kazdem volani setGraphics
-//static PORT_INFO portInfo; 
+#ifdef USE_TOUCHPAD_XPT2046
 
 #define     IFACE_INDEX     1               //(SPI2)
 
@@ -21,12 +18,6 @@
 static PIN_INFO irqPin={PORTB_BASE, BIT7};
 static PIN_INFO csPin={PORTB_BASE, BIT6};
 
-//#define     PENIRQ_PIN      BIT4
-//#define     PENIRQ_PORT     PORTA           //peniqr=RA4
-
-//#define     EVENT_CAPA      8
-//static int events[EVENT_CAPA];
-
 //b7=1 start, b6,5,4 = 001Y, 101X, b3 1=8bit, 0=12bit, b2=0 interni ref, b1,0 = 00
 #ifdef MODE8BIT
 static char mx_out=0b11011000; 
@@ -40,47 +31,33 @@ static void onEvent();
 static void setResult(short x, short y);
 static void iface_getPort();
 static void iface_freePort();
-static void setCSPin(char value);
-static char getPenIrq();
 
 static short x_data, y_data, prew_x_data=-1, prew_y_data=-1;
-//static PORT_INFO* portInfo=NULL;
-//static PORT_INFO portInfo;
-
+static short screenX=0, screenY=0;                                              //result X, Y
+static DISPLAY* display=NULL;                                                   //must set application (_setDisplay)
 static char buffer[2];
-//void (*_event)(short, short);
-static short screenX=0, screenY=0;
-
-static DISPLAY* display=NULL;
-//extern PORT_INFO pInfo_touchSys;
-
-static char res[32];
-static char val[16];
-//extern GRAPHICS graphics;
-//extern IMAGE_SRC f_dlg18;
-//static char Orientation=3;
 
 void touchXpt2046_start()
 {
-    //CS=RA3, pin 8
-    //portInfo.cs_portBase = PORTA_BASE;                 //CS
-    //portInfo.cs_pin = BIT3;
-    //portInfo.busMode = BUS_MODE._8bit;
-    //portWriter_init(&portInfo, PERIPH_TYPE.spi, 1);        //pinfo obsahuje fce pro vysilani dat na pozadovany port SPI, PMP, ...
+    //pauseEvents(2000);               //ceka na init displeje
     
-    pauseEvents(2000);               //ceka na init displeje
+    while(display==NULL || display->getInitialized()==0)
+    {
+        //wait while display not initialized
+        doEvents();
+    }
     
-    
+    int speed;
     //char x1=1;
     while(1)
     {
         //x1=PORTAbits.RA4;
         //vstup PENIRQ je aktivni v 0
-        if(getPenIrq()==0) 
+        if(getPin(&irqPin)==0) 
         {
             //nastal dotek (penirq=0)
             iface_getPort();
-            spiSetSpeed(IFACE_INDEX, 0x8);
+            speed=spiSetSpeed(IFACE_INDEX, 0x8);                                //backup and change speed
         
             //write command: read x
             buffer[0]=mx_out;
@@ -123,7 +100,7 @@ void touchXpt2046_start()
 #endif               
        
             iface_freePort();
-            spiSetSpeed(IFACE_INDEX, 0x0);
+            spiSetSpeed(IFACE_INDEX, speed);                                    //restore speed
         
             if( (x_data >= prew_x_data-5) && (x_data <= prew_x_data+5) )
             {
@@ -135,10 +112,6 @@ void touchXpt2046_start()
             }
             prew_x_data=x_data;
             prew_y_data=y_data;
-            
-            
-            //setResult(x_data, y_data);
-            //pauseEvent(200);
         }
         else
         {
@@ -157,36 +130,8 @@ void touchXpt2046_setDisplay(DISPLAY* d)
 int touchXpt2046_regEvent(void* fn)
 {
     regListener(fn, TOUCHPAD_EVENT_ID);
-    /*
-    int a;
-    for(a=0; a<EVENT_CAPA; a++)
-    {
-        if(events[a]==0x0)
-        {
-            events[a]=(int)fn;
-            return 1;
-        }
-    }
-    
-    return 0;
-    */
 }
-void touchXpt2046_unregEvent(void* fn)
-{
-    /*
-    int a;
-    for(a=0; a<EVENT_CAPA; a++)
-    {
-        if(events[a]==(int)fn)
-        {
-            events[a]=0x0;
-            //a0=adresa tabulky, a1=velikost polozky, a2=max. pocet polozek
-            defragTableW(events, 4, EVENT_CAPA);
-            return;
-        }
-    }
-    */
-}
+
 static void onEvent()
 {
     uint* item=getRegEvent(NULL, TOUCHPAD_EVENT_ID);
@@ -309,50 +254,4 @@ static void iface_freePort()
     setPin(&csPin);
 }
 
-static char getPenIrq()
-{
-    //int v=PENIRQ_PORT & PENIRQ_PIN;
-    
-    short v = getPin(&irqPin);
-    if(v==0){ return 0; }
-    else { return 1; }
-}
-
-
-/*
-static void getPort()
-{
-    //spi_Use(display->portIndex, 1, NULL, &eventDC);
-    pInfo_touchSys.getPort(&pInfo_touchSys);
-    
-    setCSPin(0);
-}
-*/
-
-/*
-static void freePort()
-{
-    //spi_Free(display->portIndex, 0);
-    pInfo_touchSys.freePort(&pInfo_touchSys);               //pri cekani na odvysilani muze volat doEvents()
-    
-    setCSPin(1);
-}
-*/
-/*
-static void setCSPin(char value)
-{
-    //nastav CS pin na value
-    int* p;
-    if(value==0)
-    {
-        p=(int*)(pInfo_touchSys.cs_portBase + LAT_OFFSET + CLR_OFFSET);
-    }
-    else
-    {
-        p=(int*)(pInfo_touchSys.cs_portBase + LAT_OFFSET + SET_OFFSET);
-    }
-    
-    *p = pInfo_touchSys.cs_pin;  
-}
-*/
-
+#endif  //USE_TOUCHPAD_XPT2046

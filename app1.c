@@ -94,10 +94,12 @@ void m1_start()
     {
         if(aktX != -1 || aktY != -1)
         {
-            //intToChar(aktX, str, 4);
-            //graphics.drawString(str, NULL, 0, 0);
-            //intToChar(aktY, str, 4);
-            //graphics.drawString(str, NULL, 0, 30);
+            intToChar(aktX, str, 4);
+            graphics.drawString(str, NULL, 0, 0);
+            intToChar(aktY, str, 4);
+            graphics.drawString(str, NULL, 0, 30);
+            
+            graphics.fillBox(aktX-2, aktY-2, aktX+2, aktY+2, COLOR.Yellow);
             
             aktX=-1; aktY=-1;
         }
@@ -360,6 +362,7 @@ static void onTouch(int p0, int p1, int p2)
     //return;
 }
 
+/*
 static void dispText1306()
 {
     char txt[] = "\xA6lu\x9Cou\x9Fký k\xDE\xE5";
@@ -371,6 +374,7 @@ static void dispText1306()
     y=16; x=0;    
     graphics.drawString("15:33", &spfont_rock_48, x, y);
 }
+*/
 
 static void drawImage1306()
 {

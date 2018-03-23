@@ -120,7 +120,8 @@ void spiExchangeModeDE(int index, char* txbuff, char* rxbuff, int l, char mode);
 void spiExchangeMode(int index, char* txbuff, char* rxbuff, int l, char mode);
 volatile int* spiGetHwBuffer(char index);
 void spiSetBusMode(char index, char mode);
-void spiSetSpeed(int index, int speed);
+int spiSetSpeed(int index, int speed);
+int spiGetSpeed(int index);
 void spiTxInterrupt(char index);
 
 //local void
@@ -625,13 +626,14 @@ void spiSetBusMode(char index, char mode)
 //Change SPIxBRG divider. Divides the base frequency 48MHz
 //@param index Module index
 //@param option 0=48MHz, 1=24MHz, 2=12MHz, ...
-void spiSetSpeed(int index, int option)
+int spiSetSpeed(int index, int option)
 {
-    int x;
+    int x, val=0;
     if(index==0)
     {
 #ifdef SPI1_USE        
         x=SPI1CON;                      //zaloha SPIxCON
+        val=SPI1BRG;
         SPI1CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI1BRG=option;                 //nastav BRG (divider)
         SPI1CON=x;                      //SPIxCON puvodni hodnota        
@@ -641,6 +643,7 @@ void spiSetSpeed(int index, int option)
     {
 #ifdef SPI2_USE         
         x=SPI2CON;                      //zaloha SPIxCON
+        val=SPI2BRG;
         SPI2CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI2BRG=option;                 //nastav BRG (divider)
         SPI2CON=x;                      //SPIxCON puvodni hodnota
@@ -650,6 +653,7 @@ void spiSetSpeed(int index, int option)
     {
 #ifdef SPI3_USE         
         x=SPI3CON;                      //zaloha SPIxCON
+        val=SPI3BRG;
         SPI3CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI3BRG=option;                 //nastav BRG (divider)
         SPI3CON=x;                      //SPIxCON puvodni hodnota        
@@ -659,6 +663,7 @@ void spiSetSpeed(int index, int option)
     {
 #ifdef SPI4_USE         
         x=SPI4CON;                      //zaloha SPIxCON
+        val=SPI4BRG;
         SPI4CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI4BRG=option;                 //nastav BRG (divider)
         SPI4CON=x;                      //SPIxCON puvodni hodnota        
@@ -668,6 +673,7 @@ void spiSetSpeed(int index, int option)
     {
 #ifdef SPI5_USE         
         x=SPI5CON;                      //zaloha SPIxCON
+        val=SPI5BRG;
         SPI5CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI5BRG=option;                 //nastav BRG (divider)
         SPI5CON=x;                      //SPIxCON puvodni hodnota        
@@ -677,13 +683,57 @@ void spiSetSpeed(int index, int option)
     {
 #ifdef SPI6_USE         
         x=SPI6CON;                      //zaloha SPIxCON
+        val=SPI6BRG;
         SPI6CON=0x0;                    //SPIxCON=0, SPI OFF
         SPI6BRG=option;                 //nastav BRG (divider)
         SPI6CON=x;                      //SPIxCON puvodni hodnota        
 #endif            
     }
+    
+    return val;
 }
 
+int spiGetSpeed(int index)
+{
+    if(index==0) 
+    { 
+#ifdef SPI1_USE          
+        return SPI1BRG;
+#endif        
+    }
+    else if(index==1) 
+    { 
+#ifdef SPI2_USE         
+        return SPI2BRG;
+#endif        
+    }
+    else if(index==2) 
+    { 
+#ifdef SPI3_USE         
+        return SPI3BRG;
+#endif        
+    }    
+    else if(index==3) 
+    { 
+#ifdef SPI4_USE         
+        return SPI4BRG;
+#endif        
+    }    
+    else if(index==4) 
+    { 
+#ifdef SPI5_USE         
+        return SPI5BRG;
+#endif        
+    }    
+    else if(index==5) 
+    { 
+#ifdef SPI6_USE         
+        return SPI6BRG;
+#endif        
+    }    
+    
+    return 0;
+}
 
 //shared SPI Tx interrupt handler
 void spiTxInterrupt(char index)

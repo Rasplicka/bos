@@ -158,12 +158,12 @@
 //#define             FONT_TWCEN_80           //color format 4bit, variable width, height 16px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (velikost cca 7kB)
 
 //FONT (SSD1306)
-#define             SPFONT_FIXED_8          //1-bit, width 8px, height 8px, ascii 0x20 - 0x7E (1.2kB)
-#define             SPFONT_FIXED_16         //1-bit, width 8px, height 16px, ascii 0x20 - 0x7E + ceska diakritika (3kB)
-#define             SPFONT_FIXED_32         //1-bit, width 16px, height 32px, ascii 0x20 - 0x7E (7kB)
-#define             SPFONT_FIXED_48         //1-bit, width 22px, height 48px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (3kB)
-#define             SPFONT_ROCK_32          //1-bit, width 16px, height 32px, ascii 0x20 - 0x7E (7kB)
-#define             SPFONT_ROCK_48          //1-bit, width 22px, height 48px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (3kB)
+//#define             SPFONT_FIXED_8          //1-bit, width 8px, height 8px, ascii 0x20 - 0x7E (1.2kB)
+//#define             SPFONT_FIXED_16         //1-bit, width 8px, height 16px, ascii 0x20 - 0x7E + ceska diakritika (3kB)
+//#define             SPFONT_FIXED_32         //1-bit, width 16px, height 32px, ascii 0x20 - 0x7E (7kB)
+//#define             SPFONT_FIXED_48         //1-bit, width 22px, height 48px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (3kB)
+//#define             SPFONT_ROCK_32          //1-bit, width 16px, height 32px, ascii 0x20 - 0x7E (7kB)
+//#define             SPFONT_ROCK_48          //1-bit, width 22px, height 48px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (3kB)
 
 // </editor-fold>
 

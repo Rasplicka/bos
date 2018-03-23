@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "main.h"
 
-
 /*
  * Author Jiri Rasplicka, 2017, (all rights reserved)
  * Version 1.0       
@@ -11,7 +10,6 @@
  * This file is shared to the PIC32MM, PIC32MZ
  * 
  */
-
 
 // <editor-fold defaultstate="collapsed" desc="extern, add user app start function here">
 //define extern functions
@@ -135,8 +133,6 @@ extern void startEvents();
 //global fn
 void main() 
 {
-    int x=RCON;
-    
     //startup
     //1. set basic (clock...) --------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="clock">
@@ -206,7 +202,7 @@ void main()
 #endif    
     
 #ifdef USE_TOUCHPAD_XPT2046
-    regProcess(&touchXpt2046_start, 512, &defaultAppStartParam, 0xF1);
+    regProcess(&touchXpt2046_start, 128, &defaultAppStartParam, 0xF1);
 #endif    
           
     

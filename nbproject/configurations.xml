@@ -64,7 +64,7 @@
         </logicalFolder>
         <logicalFolder name="f1" displayName="display" projectFiles="true">
           <logicalFolder name="f1" displayName="ili9341" projectFiles="true">
-
+            <itemPath>_display/ili9341/disp9341.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="f3" displayName="oscilator" projectFiles="true">
