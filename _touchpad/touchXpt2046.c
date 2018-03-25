@@ -99,9 +99,27 @@ void touchXpt2046_start()
             y_data |= (((short)buffer[1]) >> 4);
 #endif               
        
+            spiSetSpeed(IFACE_INDEX, speed);                    //restore speed
             iface_freePort();
-            spiSetSpeed(IFACE_INDEX, speed);                                    //restore speed
-        
+                                            
+       
+            //if(x_data<MINX){x_data=MINX;}
+            //if(x_data>MAXX){x_data=MAXX;}
+            //if(y_data<MINY){y_data=MINY;}
+            //if(y_data>MAXY){y_data=MAXY;}
+            //screenX=x_data;
+            //screenY=y_data;
+            //onEvent();
+            
+            if(x_data>=MINX && x_data<=MAXX && y_data>=MINY && y_data<=MAXY)
+            {
+            //screenX=x_data;
+            //screenY=y_data;
+            setResult(x_data, y_data);
+            onEvent();
+            }
+            
+            /*
             if( (x_data >= prew_x_data-5) && (x_data <= prew_x_data+5) )
             {
                 if( (y_data >= prew_y_data-5) && (y_data <= prew_y_data+5) )
@@ -112,6 +130,7 @@ void touchXpt2046_start()
             }
             prew_x_data=x_data;
             prew_y_data=y_data;
+            */
         }
         else
         {

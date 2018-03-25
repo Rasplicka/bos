@@ -89,6 +89,9 @@
             <itemPath>clock_cfgBits_mm.c</itemPath>
             <itemPath>clock_cfgBits_mz.c</itemPath>
           </logicalFolder>
+          <logicalFolder name="f2" displayName="netcom" projectFiles="true">
+            <itemPath>netcom.c</itemPath>
+          </logicalFolder>
           <itemPath>main.c</itemPath>
           <itemPath>globals.c</itemPath>
           <itemPath>timer1.S</itemPath>

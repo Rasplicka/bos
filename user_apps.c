@@ -117,23 +117,23 @@ void pinSetting()
     
     //RA9/pin37 LED1
     setPortDigOut(PORTA_BASE, BIT9);                                    //37
-    LED1_BASE=(void*)PORTA_BASE;
-    LED1_BIT=BIT9;
+    LED1.portBase=PORTA_BASE;
+    LED1.pin=BIT9;
     
     //RD0/pin38 LED2
     setPortDigOut(PORTD_BASE, BIT0);                                    //38
-    LED2_BASE=(void*)PORTD_BASE;
-    LED2_BIT=BIT0;
+    LED2.portBase=PORTD_BASE;
+    LED2.pin=BIT0;    
     
     //RC3/pin39 LED3
     setPortDigOut(PORTC_BASE, BIT3);                                    //39
-    LED3_BASE=(void*)PORTC_BASE;
-    LED3_BIT=BIT3;
+    LED3.portBase=PORTC_BASE;
+    LED3.pin=BIT3;    
     
     //RC4/pin40 LED4
     setPortDigOut(PORTC_BASE, BIT4);                                    //40
-    LED4_BASE=(void*)PORTC_BASE;
-    LED4_BIT=BIT4;
+    LED4.portBase=PORTC_BASE;
+    LED4.pin=BIT4;    
     
     //TLACITKA -----------------------------------------------------------------
     

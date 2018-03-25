@@ -48,7 +48,8 @@ void m3_start()
     {
         //do LATxINV zapise 1 na prislusnou pozici
         //_LED_INV_REG = _LED_INV_VAL;
-        invTestLed(3);
+        //invTestLed(3);
+        invPin(&LED3);
         
         int a, b=0;
         for(a=0; a<(200000 * delay); a++)
@@ -93,12 +94,12 @@ static void testSystemTimer2()
     while(1)
     {
         //_LED_INV_REG = _LED_INV_VAL;
-        clearTestLed(3);
+        //clearTestLed(3);
         pauseEvents(500);
         
         
         //_LED_INV_REG = _LED_INV_VAL;
-        setTestLed(3);
+        //setTestLed(3);
         pauseEvents(50);
         
     }

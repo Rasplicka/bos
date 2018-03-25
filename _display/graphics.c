@@ -280,7 +280,7 @@ void initGraphics()
 void initFont(const FONT_HEAD* fontSrc, IMAGE_SRC* font)
 {
     setFontSrc(fontSrc, font);
-    if(font->format==0x4){ setImageColorMap(font, stdColorMap); }
+    if(font->format==0x4){ setColorMap(font, stdColorMap); }
     else if(font->format==0x1){ font->foreColor=RGB16(31, 63, 31); }
 }
 
@@ -305,6 +305,11 @@ void setGraphics(GRAPHICS* g,  DISPLAY* d)
     g->clear=d->clear;
     g->textWidth=d->textWidth;
     g->getFontHeight=d->getFontHeight;
+    g->getDisplayWidth=d->getWidth;
+    g->getDisplayHeight=d->getHeight;
+    g->getDisplayOrientation=d->getOrientation;
+    g->setDisplayOrientation=d->setOrientation;
+    g->setDefaultFont=d->setDefaultFont;
 }
 
 

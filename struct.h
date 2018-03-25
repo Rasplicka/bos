@@ -342,9 +342,71 @@ typedef struct
     //getFontHeight(IMAGE_SRC* font)
     short (*getFontHeight)(IMAGE_SRC* font);
     
+    //Returns display width in pixels
+    short (*getDisplayWidth)();
+    
+    //Returns display height in pixels
+    short (*getDisplayHeight)();
+    
+    //Returns display orientation
+    char (*getDisplayOrientation)();
+    
+    //Sets display orientation
+    void (*setDisplayOrientation)(char orientation);
+    
+    void (*setDefaultFont)(IMAGE_SRC* font);
+    
 }GRAPHICS;
 
 #endif  //USE_GRAPHICS
+
+#ifdef USE_UARTNETCOM
+
+typedef struct
+{
+    char    Status;
+    char    OppID;
+    char    Error;
+    char    DataBufferLen;
+    char*   DataBuffer;
+    void*   ReceiveFn;
+    unsigned short Checksum;
+    char    dataLen;
+    //char    dataPosition;
+    
+}NETCOM_DATAIN;
+
+typedef struct
+{
+    char    Status;
+    char    AppID;
+    char    OppID;
+    char    Pipe;
+    char    Head[5];
+    char*   DataBuffer;
+    char    DataBufferLen;
+    char    Error;
+    
+}NETCOM_DATAOUT;
+
+const struct
+{
+    char    Ready;                      //data jsou pripravena k odeslani
+    char    ReplyOk;                    //data jsou odeslana, opp data prijal
+    char    ReplyBusy;                  //opp neprijima data (BUSY)
+    char    ReplyNone;                  //opp neexistuje (neodpovida)
+    char    ReplyErrorPipe;             //opp nema zadanou pipe
+    char    ReplyErrorSize;             //data jsou prilis velka
+}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5};
+
+const struct
+{
+    char    Ready;                      //pipe buffer je pripraven k prijimani
+    char    Full;                       //pipe buffer obsahuje prijata data
+}NETCOM_IN_STATUS={0, 1};
+
+
+#endif
 
 //periferie --------------------------------------------------------------------
 //typ periferie

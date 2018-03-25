@@ -48,12 +48,20 @@
 //#define     TEST_DRIVER_INIT
 //#define     TEST_DRIVER_VERSION     2
 
-#define     REG_EVENT_T_SIZE    (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)    
-#define     EVENT_C_SIZE        (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
-#define     PROC_T_SIZE         (PROC_T_ISIZE * PROC_T_CAPA)
+#define     REG_EVENT_T_SIZE            (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)    
+#define     EVENT_C_SIZE                (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
+#define     PROC_T_SIZE                 (PROC_T_ISIZE * PROC_T_CAPA)
+
+#ifdef USE_UARTNETCOM
+    #define     NETCOM_DATAOUT_SIZE     (NETCOM_DATAOUT_CAPA * NETCOM_DATAOUT_ISIZE)               //velikost dataOut [bytes]
+    #define     NETCOM_DATAIN_SIZE      (NETCOM_DATAIN_CAPA * NETCOM_DATAIN_ISIZE)
+#else
+    #define     NETCOM_DATAOUT_SIZE     0
+    #define     NETCOM_DATAIN_SIZE      0
+#endif    
                                 //proccee_table + regEventTable + eventCache + vars (vars + ballast = 64B)
-#define     OS_DATA_SIZE        (PROC_T_SIZE +  REG_EVENT_T_SIZE + EVENT_C_SIZE + 64)      //velikost .os
-#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                      //adresa .os
+#define     OS_DATA_SIZE        (PROC_T_SIZE +  REG_EVENT_T_SIZE + EVENT_C_SIZE + NETCOM_DATAOUT_SIZE + NETCOM_DATAIN_SIZE + 64)     //velikost .os
+#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                                                              //adresa .os
 
 //#ifdef PIC32MZ
 //#pragma region name=".sdata" origin=0x80000000 size=0x2000    
@@ -67,9 +75,14 @@
 //#endif 
     
 //process table (prvni polozka v sekci .os, proto definuje jeji adresu)   
-uint proc_t[(PROC_T_SIZE / 4)]              __section(".os") __at(OS_DATA_BASE);      
-char regEventTable[REG_EVENT_T_SIZE]        __section(".os"); //__at(OS_DATA_BASE);
-char eventCache[EVENT_C_SIZE]               __section(".os"); //__at(OS_DATA_BASE);
+uint proc_t[(PROC_T_SIZE / 4)]                          __section(".os") __at(OS_DATA_BASE);      
+char regEventTable[REG_EVENT_T_SIZE]                    __section(".os"); //__at(OS_DATA_BASE);
+char eventCache[EVENT_C_SIZE]                           __section(".os"); //__at(OS_DATA_BASE);
+
+#ifdef USE_UARTNETCOM
+    NETCOM_DATAOUT* netcomDataOut[NETCOM_DATAOUT_SIZE / 4]  __section(".os");
+    NETCOM_DATAIN* netcomDataIn[4]    __section(".os")={0,0,0,0};
+#endif  
 
 //.os vars 
 //__region(".os")
@@ -81,6 +94,7 @@ char errEventCachePrID      __section(".os") = 0;                               
 char errorProcID            __section(".os") = 0;
 
 uint time_ms                __section(".os") = 0;                                   //timer1
+uint netcom_ms              __section(".os") = 0;
 //uint day_ms               __section(".os");                                   //timer1
 //int checkStackSpaceValue    __section(".os") =0;
 
@@ -89,12 +103,15 @@ uint pauseCTCompare         __section(".os") = 0;
 
 char sleepStatus            __section(".os") = 0;
 char idleStatus             __section(".os") = 0;
+short netcomStratup_ms      __section(".os") = 0;
+
+  
 
 
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-char ballast[36]        __section(".os");
+char ballast[32]        __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE
@@ -160,12 +177,11 @@ void main()
 
     //3. init system -----------------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="system init">
-    
-    //nuluje celou oblast pro OS data
-    clearSystemData(OS_DATA_BASE, OS_DATA_SIZE); 
-    systemInit();   //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
-    pinSetting();   //provede vychozi nastaveni periferii, prideluje IO piny
-    timer1Init();   //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
+    clearSystemData(OS_DATA_BASE, OS_DATA_SIZE);    //nuluje celou oblast pro OS data
+    netcomStratup_ms=100;                           //pokud 100ms neprobuha com. bude zahajena (pri NETCOM_DEVID=1)
+    systemInit();                                   //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
+    pinSetting();                                   //provede vychozi nastaveni periferii, prideluje IO piny
+    timer1Init();                                   //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
     
 #ifdef RTC    
     //povoli RTC modul, nastavi 1/1/2001, nastav day_ms, podle aktualniho casu

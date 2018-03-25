@@ -795,6 +795,33 @@ getDayMs:
     
 //</editor-fold>
     
+//
+//<editor-fold defaultstate="collapsed" desc="checksum16">
+.align 2
+.global	checksum16
+.ent checksum16
+checksum16:
+//a0=adresa dat
+//a1=len
+    
+    move    v0, zero
+    b16	    2f
+    
+1:    
+    lbu	    t9, (a0)
+    addu    v0, t9
+    addiu   a1, -1
+    addiu   a0, 1
+2:    
+    bnez    a1, 1b
+    
+    jrc	    ra
+    
+.end checksum16 
+    
+//</editor-fold>
+   
+    
     
 //errors
    
@@ -966,52 +993,7 @@ general_exception_shared_point:
     bal	    removeProcess		//meni t6-t9, v0, v1, a0-a2
 
     //po RESET PROCESS, nebo EXIT PROCESS
-    
-    
-    //move    s4, v0			//s4 = zaloha behavior
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="remove events procesu">
-    //provede v pripade RESET_PROCESS i REMOVE_PROCESS
-    /*
-    move    a0, s0			//a0=procID
-    bal	    removeRegEventProcID	//remove reg events    
-    move    a0, s0			//a0=procID
-    bal	    removeEventCacheProcID	//remove raised events
-    nop
-    
-    li16    v0, ON_ERROR_RESET_PROCESS
-    bne	    v0, s4, 3f			//skok, neni RESET PROCESS
-    */
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="RESET PROCESS">
-    //RESET PROCESS
-    /*
-    lw32    v0, TH_T_START_SP*4(s3)	
-    sw32    v0, TH_T_SP*4(s3)		//SP=default
-    lw32    v0, TH_T_START_ADDR*4(s3)	
-    sw32    v0, TH_T_RA*4(s3)		//RA=default
-    
-    lbu	    v0, (TH_T_ID*4 + 2)(s3)	//status byte
-    andi    v0, 0b11111100		//nuluje canSleep, canIdle
-    sb	    v0, (TH_T_ID*4 + 2)(s3)	//upraveny status byte
 
-    b16	    4f
-    */
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="REMOVE PROCESS">
-    /*
-3:
-    //REMOVE PROCESS
-    sw32    zero, TH_T_ID*4(s3)		//nuluje procID
-    
-    //zajisti novy test zda muze prejit do SLEEP, IDLE
-    li16    v1, 1
-    sb	    v1, (sleepStatus)
-    sb	    v1, (idleStatus)
-    */
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="ERET, normalni beh, nebo system process">
@@ -1269,20 +1251,10 @@ removeProcess:
 //ukonci aktualni process
     
     //meni t6-t7, v0, v1, a0-a2 
-    
-    /*
-    move    t7, ra			//zaloha ra
-    bal	    getProcID			//meni v0, v1
-    move    a0, v0
-    move    ra,	t7			//obnov ra
-    
-removeProcessID:    
-    */
-    //skok sem, pokud je v a0 procID
+
     _PUSH   ra
     
     move    t6, a0			//zaloha procID do t6
-    //move    a0, s0			//a0=procID
     bal	    removeRegEventProcID	//meni t7-t9, v0, v1, a0-a2, remove reg events    
     move    a0, t6			//a0=procID
     bal	    removeEventCacheProcID	//meni t8, t9, v0, v1, remove raised events
@@ -2002,86 +1974,74 @@ systemProcess:
     ei
     
     //<editor-fold defaultstate="collapsed" desc="SLEEP">
-    
-    //test sleep
+    //sleepStatus 0=neni sleep mode, 1=muze byt sleepMode - musi testovat procesy
     lbu	    v0, (sleepStatus)
     beqz    v0, 10f			    //skok, sleepStatus=0, tzn. neni sleep ani nenastala zadna zmena
     
-    //musi testovat sleep
+    //testuje vsechny procesy, zda povoli sleepMode
     bal	    getCanSleepAll		    //meni v0, v1, t9
     ext	    v1, v0, 0, 1		    //b0=sleep status
-    beqz    v1, 9f
+    beqz    v1, 9f			    //skok, nemuze prejit do sleepMode
     
     //ret = return val (0,1)
-    _GET_SLEEP_MODE v0			    //meni t9
+    _GET_SLEEP_MODE v0			    //meni t9 (vraci zda je ve sleepMode podle SYSTEM_STATUS.SleepMode)
     bnez    v0, 8f			    //skok, je v SLEEP modu
 
     //neni ve sleep modu, prechod do sleep modu
     //addr_reg, arg_cnt
-    la	    v0, (beforeSleep)
-    _CALL_C v0, 0
+    la	    v0, (beforeSleep)		    
+    _CALL_C v0, 0			    //C/C++ fce v user_apps, vola se pred prechodem do sleep
     
-    //nastav SYSTEM_STATUS.SLEEP=1
-    _SET_SLEEP_MODE			    //meni t9
+    //nastav SYSTEM_STATUS.SleepMode=1
+    _SET_SLEEP_MODE			    //meni t9, nastavi SYSTEM_STATUS.SleepMode=1
 
 8:    
-    //can sleep
-//#ifdef PIC32MZ    
-//    bal	    gotoSleepMZ
-//#endif
-//#ifdef PIC32MM    
+    //start sleep
     bal	    gotoSleep
-//#endif
     
-    //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do SLEEP)
+    //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do SLEEP, je-li to stale povoleno)
     b16	    1b
 
 9:
     sb	    zero, (sleepStatus)		    //neni sleep (pokud nastane nejaka zmena - volani setSleep, nastavi se i sleepStatus)
     //neni sleep mode
-    _CLR_SLEEP_MODE			    //meni t9
+    _CLR_SLEEP_MODE			    //meni t9, nastav SYSTEM_STATUS.SleepMode=0
     
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="IDLE">
-   
+    //idleStatus 0=neni idle mode, 1=muze byt idleMode - musi testovat procesy
 10:
     //test idle 
     lbu	    v0, (idleStatus)
-    beqz    v0, 15f			    //skok, sleepStatus=0, tzn. neni sleep ani nenastala zadna zmena
+    beqz    v0, 15f			    //skok, idleStatus=0, tzn. neni idle ani nenastala zadna zmena
     
     //musi testovat idle
     bal	    getCanSleepAll		    //meni v0, v1, t9
     ext	    v1, v0, 1, 1		    //b1=idle status
-    beqz    v1, 14f
+    beqz    v1, 14f			    //skok, nemuze prejit do idleMode
     
     //ret = return val (0,1)
-    _GET_IDLE_MODE v0			    //meni t9
+    _GET_IDLE_MODE v0			    //meni t9 (vraci zda je ve idleMode podle SYSTEM_STATUS.IdleMode)
     bnez    v0, 11f			    //skok, je v IDLE modu
 
     //neni ve sleep modu, prechod do sleep modu
     la	    v0, (beforeIdle)
-    _CALL_C v0, 0 
+    _CALL_C v0, 0			    //C/C++ fce v user_apps, vola se pred prechodem do idle
     
-    //nastav SYSTEM_STATUS.SLEEP=1
+    //nastav SYSTEM_STATUS.IdleMode=1
     _SET_IDLE_MODE			    //meni t9    
     
 11:    
-    //can idle
-//#ifdef PIC32MZ    
-//    bal	    gotoIdleMZ
-//#endif
-//#ifdef PIC32MM    
     bal	    gotoIdle
-//#endif
-    
+
     //po probuzeni, znovu systemProces (provede obsluhu udalosti a znove prejde do IDLE)
     b16	    1b
     
 14:    
     sb	    zero, (idleStatus)		    //neni idle (pokud nastane nejaka zmena - volani setIdle, nastavi se i idleStatus)
     //neni v IDLE mode
-    _CLR_SLEEP_MODE			    //meni t9
+    _CLR_SLEEP_MODE			    //meni t9, nastav SYSTEM_STATUS.IdleMode=0
     
     //</editor-fold>
 

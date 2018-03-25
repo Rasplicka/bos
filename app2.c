@@ -54,7 +54,8 @@ void m2_start()
     {
         //do LATxINV zapise 1 na prislusnou pozici
         //_LED_INV_REG = _LED_INV_VAL;
-        invTestLed(2);
+        //invTestLed(2);
+        invPin(&LED2);
         
         int a, b=0;
         for(a=0; a<(150000*delay); a++)
@@ -146,7 +147,7 @@ static void cn(uint base, uint stat)
 {
     if((stat & BIT13) != 0)
     {
-        invTestLed(2);
+        //invTestLed(2);
         setCanSleep(0);
         systemTimerRegInterval(&testSystemTimer, 20000);
     }

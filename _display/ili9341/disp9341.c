@@ -46,6 +46,25 @@ static char Orientation=0;
 static char directMode=1;                       //0=zapis do bufferu, 1=zapis do portu
 
 
+//externi fce pouzite timto modulem
+//Writes image/font data to buffer
+//@param src Address of IMAGE_SRC structure, that represents image/font data 
+//@param buffer Output buffer
+//@param len Buffer length
+//@param bm BUS_MODE 8/16/32 bit
+extern int imageToBuffer(void* src, char* buffer, int len, char bm);
+    
+//Writes image/font data directly to hardwate module
+//@param src Address of IMAGE_SRC structure, that represents image/font data 
+//@param hw Hardware output register
+extern int imageToPort(void* src, volatile int* hw);
+    
+extern void drawPointQuick(void*, volatile int*, void*);
+extern void fillRectDirect(short, int, volatile int*);
+extern void drawLineQuick(void*, volatile int*, void*);
+extern int fontCharParam(void*, char); 
+    
+    
 //local void
 static void selectDriver(void* d);
 static void setDefaultFont(IMAGE_SRC* font);
@@ -444,7 +463,7 @@ static void drawImage(IMAGE_SRC* da, short x, short y)
         iface_Process();                                    //ceka na dokonceni 
     
         iface_setBusMode(BUS_MODE._16bit);
-        imageToPort(da, iface_getHWBuffer(), 0, 2);
+        imageToPort(da, iface_getHWBuffer());
         iface_setBusMode(BUS_MODE._8bit);
     }
     else
@@ -885,7 +904,7 @@ static void dinit()
     //setFontSrc(&font_ygm20, &fontDefault);
     //setFontSrc(&font_arial18, &fontDefault);
 
-    //if(fontDefault.format==0x4){ setImageColorMap(&fontDefault, (short*)stdColorMap); }
+    //if(fontDefault.format==0x4){ setColorMap(&fontDefault, (short*)stdColorMap); }
     //else if(fontDefault.format==0x1){ fontDefault.foreColor=RGB16(0, 63, 0); }
     
 #ifdef WATCHDOG_TIMER    
@@ -1106,7 +1125,7 @@ static void writeChar(IMAGE_SRC* fi, char code, short x, short y)
         iface_Process();                                    //ceka na dokonceni  
     
         iface_setBusMode(BUS_MODE._16bit);
-        imageToPort(fi, iface_getHWBuffer(), 0, 2);
+        imageToPort(fi, iface_getHWBuffer());
         iface_setBusMode(BUS_MODE._8bit);
     }
     else

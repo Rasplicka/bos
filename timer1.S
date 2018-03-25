@@ -239,16 +239,38 @@ iVector_timer1:
     
     
     lw	    v0, (time_ms)	    
-    addiu   v0, TIMER1_INTERVAL		//time_ms += TIMER1_INTERVAL (10ms)
+    addiu   v0, TIMER1_INTERVAL		//time_ms += TIMER1_INTERVAL (1/10ms)
     sw	    v0, (time_ms)
     
-//#ifdef RTC
-    //lw	    v0, (day_ms)
-    //addiu   v0, TIMER1_INTERVAL
-    //sw	    v0, (day_ms)
-//#endif    
+//<editor-fold defaultstate="collapsed" desc="NETCOM">
+#if defined USE_UARTNETCOM 
+    lw	    v0, (netcom_ms)
+    addiu   v0, TIMER1_INTERVAL
+    sw	    v0, (netcom_ms)
+    
+    
+    #if defined NETCOM_DEVID==1    
+	lhu	    v0, (netcomStratup_ms)
+	bnez    v0, 1f
+    
+	//netcomStratup_ms = 0, startUp com
+	//.. vola start fci
+  
+	li	    v0, 100			//nastav novy cas (pokud 100ms neprobiha com, bude zahajena)
+	b16	    2f
+    
+    1:    
+	addiu   v0, -TIMER1_INTERVAL
+    2:     
+	sh	    v0, (netcomStratup_ms)
+    
+    #endif  //NETCOM_DEVID==1 
+	
+#endif  //USE_UARTNETCOM  
+    
+//</editor-fold>
    
-    //<editor-fold defaultstate="collapsed" desc="events">
+//<editor-fold defaultstate="collapsed" desc="events">
     
     la	    t0, regEventTable
     addiu   t1, t0, (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)
@@ -286,9 +308,9 @@ iVector_timer1:
 
     b16	    1b				//next
     
-    //</editor-fold>
+//</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="clr FLAG, eret">
+//<editor-fold defaultstate="collapsed" desc="clr FLAG, eret">
     //konec, nuluj flag IFS0.4
 5:    
     
@@ -301,7 +323,7 @@ iVector_timer1:
 #endif    
     
     eret
-    //</editor-fold>
+//</editor-fold>
 
   
 .end iVector_timer1

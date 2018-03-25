@@ -89,7 +89,7 @@ short getPin(PIN_INFO* pi)
 
 
 //test LED
-
+/*
 void setTestLed(int num)             //test led
 {
     //num test led, nastavi pin=H
@@ -116,7 +116,9 @@ void setTestLed(int num)             //test led
         *p=LED4_BIT;
     }    
 }
+*/
 
+/*
 void clearTestLed(int num)             //test led
 {
     //num test led, nastavi pin=L
@@ -143,7 +145,9 @@ void clearTestLed(int num)             //test led
         *p=LED4_BIT;
     }    
 }
+*/
 
+/*
 void invTestLed(int num)             //test led
 {
     //num test led, invertuje pin
@@ -170,8 +174,9 @@ void invTestLed(int num)             //test led
         *p=LED4_BIT;
     }    
 }
+*/
 
-void signalizeError(int num, int code)
+void signalizeError(PIN_INFO* pi, int code)
 {
     //num je test LED 1-4
     //code je kod, ktery se zobrazuje (definuje pocet bliknuti)
@@ -182,10 +187,12 @@ void signalizeError(int num, int code)
         
         while(x > 0)
         {
-            setTestLed(num);
+            setPin(pi);
+            //setTestLed(num);
             pauseEvents(60);
         
-            clearTestLed(num);
+            clearPin(pi);
+            //clearTestLed(num);
             pauseEvents(400);
             
             x--;

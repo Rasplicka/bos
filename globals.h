@@ -7,27 +7,56 @@
 #include "struct.h"
 
 
-//default app start param, hodnoty nastavuje fce main()
+//@default_app start param, hodnoty nastavuje fce main()
 APP_START_PARAM defaultAppStartParam;                   
 
-//test LED
-volatile void* LED1_BASE=NULL;
-uint LED1_BIT=0;
-volatile void* LED2_BASE=NULL;
-uint LED2_BIT=0;
-volatile void* LED3_BASE=NULL;
-uint LED3_BIT=0;
-volatile void* LED4_BASE=NULL;
-uint LED4_BIT=0;
+//@test_LED
+PIN_INFO LED1;
+PIN_INFO LED2;
+PIN_INFO LED3;
+PIN_INFO LED4;
 
 //debug stacku
-int checkStackSpaceValue=0x7FFFFFFF;
+int checkStackSpaceValue=0x7FFFFFFF;                    //max. int
+
+#ifdef USE_UARTNETCOM
+    extern NETCOM_DATAOUT* netcomDataOut[];
+    extern NETCOM_DATAIN* netcomDataIn[];
+    extern void netcomSendBuffer(NETCOM_DATAOUT* data);
+#endif 
 
 #ifdef USE_GRAPHICS
+    //@all_displays
 
-//defined in graphics.c
-extern GRAPHICS graphics;
-extern DISPLAY sysDisplay;
+    //defined in graphics.c
+    extern GRAPHICS graphics;
+    extern DISPLAY sysDisplay;
+
+    //Sets information about the font
+    //@param head FONT_HEAD*, address of font head
+    //@param src IMAGE_SRC*, address of structure, that represents the font data
+    extern void setFontSrc(const void* head, void* src);
+    
+    //Sets information about the image
+    //@param head IMAGE_HEAD*, address of image head
+    //@param src IMAGE_SRC*, address of structure, that represents the image data
+    extern void setImageSrc(const void* head, void* src);
+
+    #if defined USE_DISP9341
+        //pouze barevne (ILI9341)
+
+        //Return short (16-bit) representation of RGB color
+        //@param red 5-bit value, 0-31
+        //@param green 6-bit value, 0-63
+        //@param blue 5-bit value, 0-31
+        extern short RGB16(int red, int green, int blue);
+    
+        //Sets color map
+        //@param src Address of IMAGE_SRC structure, that represents image/font data
+        //@param map Color map
+        extern void setColorMap(void* src, const short* map);
+                      
+    #endif  //USE_DISP9341
 
 // <editor-fold defaultstate="collapsed" desc="Fonts">
 #ifdef FONT_ARIAL_18

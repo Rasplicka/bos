@@ -83,11 +83,11 @@ tableOfgetNextData:
     .word   get_next_data_16rle
     .word   get_next_data_32rle  
     
-//<editor-fold defaultstate="collapsed" desc="setImageColorMap">
+//<editor-fold defaultstate="collapsed" desc="setColorMap">
 .align 2
-.global setImageColorMap
-.ent setImageColorMap
-setImageColorMap:
+.global setColorMap
+.ent setColorMap
+setColorMap:
 //a0=IMAGE_SRC
 //a1=colorMap
     
@@ -97,7 +97,7 @@ setImageColorMap:
     sw32    a1, _FORECOLOR_OFF(a0)	//foreColor + bgColor tvori adresu colorMap
     jrc	    ra
     
-.end setImageColorMap  
+.end setColorMap  
     
 //</editor-fold>
     
@@ -327,11 +327,13 @@ fillRectDirect:
 .align 2
 .global	imageToBuffer
 .ent imageToBuffer
-imageToBuffer:
     
 .global imageToPort
-imageToPort:    
+imageToPort:
+    move    a2, zero
+    li16    a3, 2
     
+imageToBuffer:
 //a0=IMAGE_SRC struct
 //a1=buffer
 //a2=buffer len
@@ -941,7 +943,7 @@ fontCharParam:
     //1. u fixed size fontu, je-li v povinne oblasti, vypocita adresu
     //2. u var size fontu, nebo je-li za povinnou oblasti, prochazi tabulku a hleda znak
     //nastavi FONT_SRC->width
-    //volani fontToBuffer pouzije tuto pozici
+    //volani imageToBuffer pouzije tuto pozici
 
     //test, zda je nastaven font - IMAGE_SRC v a0
     lbu32   v0, _FILEID_OFF(a0)

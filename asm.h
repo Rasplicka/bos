@@ -1,17 +1,15 @@
 #include "def.h"
-//#include "globals.h"
 /*
  * Author Jiri Rasplicka, 2017
  */
 
 //core_fn.S --------------------------------------------------------------------
-extern char sleepStatus;
-
 extern void doEvents();
 extern void doEventsL(void* label);
 extern void doEventsError();
 extern uint compareTimeMs(uint);
 extern void pauseEvents(uint);                       //time ms
+extern short checksum16(char*, uint len);
 extern uint getTimeMs();
 
 extern void checkStackSpace();
@@ -138,8 +136,10 @@ int systemTimerRegInterval(void*, uint);
 
 extern int strLen(char*);
 
-#if defined USE_GRAPHICS && defined USE_DISP9341
-    //ILI9341
+/*
+#if defined USE_GRAPHICS
+    //vsechny displeje
+
     //Sets information about the font
     //@param head FONT_HEAD*, address of font head
     //@param src IMAGE_SRC*, address of structure, that represents the font data
@@ -149,26 +149,24 @@ extern int strLen(char*);
     //@param head IMAGE_HEAD*, address of image head
     //@param src IMAGE_SRC*, address of structure, that represents the image data
     extern void setImageSrc(const void* head, void* src);
-
-    //Return short (16-bit) representation of RGB color
-    //@param red 5-bit value, 0-31
-    //@param green 6-bit value, 0-63
-    //@param blue 5-bit value, 0-31
-    extern short RGB16(int red, int green, int blue);
-
-    //Writes image/font data to buffer
-    //@param src Address of IMAGE_SRC structure, that represents image/font data 
-    //@param buffer Output buffer
-    //@param len Buffer length
-    //@param c
-    extern int imageToBuffer(void*, char*, int, char);
     
-    extern int imageToPort(void*, volatile int*, int, char);
     
-    extern void drawPointQuick(void*, volatile int*, void*);
-    extern void fillRectDirect(short, int, volatile int*);
-    extern void setImageColorMap(void*, const short*);
-    extern void drawLineQuick(void*, volatile int*, void*);
+    #if defined USE_DISP9341
+        //pouze barevne (ILI9341)
 
-    extern int fontCharParam(void*, char);                      
-#endif
+        //Return short (16-bit) representation of RGB color
+        //@param red 5-bit value, 0-31
+        //@param green 6-bit value, 0-63
+        //@param blue 5-bit value, 0-31
+        extern short RGB16(int red, int green, int blue);
+    
+        //Sets color map
+        //@param src Address of IMAGE_SRC structure, that represents image/font data
+        //@param map Color map
+        extern void setColorMap(void* src, const short* map);
+                      
+    #endif  //USE_DISP9341
+
+    
+#endif  //USE_GRAPHICS
+*/

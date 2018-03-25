@@ -24,9 +24,9 @@ int delay=1;
 int delay=1;
 #endif
 
-//#include "_display/image/img_woman_col4.h"
-//#include "_display/image/pokus.h"
-#include "_display/image/pokus_1306.h"
+//#include "_display/image/img_woman_col565.h"
+#include "_display/image/pokus.h"
+//#include "_display/image/pokus_1306.h"
 
 int testVar=100;
 static int aktX=-1;
@@ -68,7 +68,7 @@ void m1_start()
 #ifdef USE_GRAPHICS 
     initGraphics();
     //sysDisplay.setDefaultFont(&spfont_fixed_16);
-    sysDisplay.setDefaultFont(&font_twcen_22);
+    graphics.setDefaultFont(&font_twcen_22);
 #endif
     //RGB16(5, 5, 5);
     cnStartPortA();
@@ -157,7 +157,8 @@ void m1_start()
     while(x<10000)
     {
         //do LATxINV zapise 1 na prislusnou pozici
-        _LED_INV_REG = _LED_INV_VAL;
+        //_LED_INV_REG = _LED_INV_VAL;
+        invPin(&LED1);
         
         int a, b=0;
         for(a=0; a<(100000 * delay); a++)
@@ -185,7 +186,8 @@ void m1_start()
     while(1)
     {
         //do LATxINV zapise 1 na prislusnou pozici
-        _LED_INV_REG = _LED_INV_VAL;
+        //_LED_INV_REG = _LED_INV_VAL;
+        invPin(&LED1);
         
         int a, b=0;
         for(a=0; a<250000; a++)
@@ -223,7 +225,7 @@ static void testSystemTimer(int i)
     //doEvents();
     //setLowPowerOsc();
     setCanSleep(1);
-    invTestLed(1);
+    //invTestLed(1);
     //unregEvent(&testSystemTimer);
     
     /*
@@ -326,10 +328,14 @@ static void cn(uint base, uint stat)
 {
     if(base==PORTA_BASE)
     {
+        drawImg();
         //dispText1();
+        //dispText1306();
     }
     else
     {
+        graphics.clear(COLOR.Black);
+        //drawImage1306();
         //dispText2();
         //drawColorText04();
         //drawColorText01();
@@ -362,7 +368,8 @@ static void onTouch(int p0, int p1, int p2)
     //return;
 }
 
-/*
+#ifdef USE_DISP1306
+
 static void dispText1306()
 {
     char txt[] = "\xA6lu\x9Cou\x9Fký k\xDE\xE5";
@@ -374,7 +381,6 @@ static void dispText1306()
     y=16; x=0;    
     graphics.drawString("15:33", &spfont_rock_48, x, y);
 }
-*/
 
 static void drawImage1306()
 {
@@ -383,6 +389,7 @@ static void drawImage1306()
     graphics.drawImage(&img, 0, 0);    
 }
 
+#endif
 
 #ifdef USE_DISP9341
 
@@ -409,9 +416,9 @@ static void dispText1()
     y+=graphics.getFontHeight(NULL);
     graphics.drawString(txt3, &font_ygm_36, x, y);    
     
-    short h = sysDisplay.getHeight();       //240
-    short w = sysDisplay.getWidth();        //320
-    char o = sysDisplay.getOrientation();   //0=na vysku, 1=na sirku, 2=na vysku obracene, 3=na sirku obracene
+    //short h = sysDisplay.getHeight();       //240
+    //short w = sysDisplay.getWidth();        //320
+    //char o = sysDisplay.getOrientation();   //0=na vysku, 1=na sirku, 2=na vysku obracene, 3=na sirku obracene
 }   
 
 static void exPrint()
@@ -483,7 +490,7 @@ static void setRedFont(IMAGE_SRC* font)
         {
             cmap_red[a]=RGB16(a*2, 0, 0);
         }
-        setImageColorMap(font, cmap_red);        
+        setColorMap(font, cmap_red);        
     }
 }
 
@@ -507,7 +514,7 @@ static void drawColorText04()
     {
         cmap_green[a]=RGB16(0, a*4, 0);
     }
-    setImageColorMap(font28, cmap_green);
+    setColorMap(font28, cmap_green);
     y=0; x=0;
     graphics.drawString("Zeleny text", font28, x, y);
 
@@ -518,13 +525,13 @@ static void drawColorText04()
     {
         cmap_red[a]=RGB16(a*2, 0, 30-2*a);
     }
-    setImageColorMap(font28, cmap_red);
+    setColorMap(font28, cmap_red);
     y=50; x=0;
     graphics.drawString("Cerveny text", font28, x, y);
     
 
     //puvodni barevna mapa, bily text, cerne pozadi
-    setImageColorMap(font28, stdColorMap);
+    setColorMap(font28, stdColorMap);
     y=100; x=0;
     graphics.drawString("Bily text", font28, x, y); 
     
@@ -560,14 +567,14 @@ static void drawColorText01()
 static void fontExample()
 {
     graphics.drawString("YGM36 4-bit font", &font_ygm_36, 10, 30);    
-    graphics.drawString("CONSOLAS 1-bit font", &font_consolas_36, 10, 130);
+    //graphics.drawString("CONSOLAS 1-bit font", &font_consolas_36, 10, 130);
 }
 
 static void drawLines()
 {
     //Zluty ramecek kolem displeje
-    short w=sysDisplay.getWidth();
-    short h=sysDisplay.getHeight();
+    short w=graphics.getDisplayWidth();
+    short h=graphics.getDisplayHeight();
     graphics.drawLine(0, 0, w-1, 0, 1, COLOR.Yellow);
     graphics.drawLine(w-1, 0, w-1, h-1, 1, COLOR.Yellow);    
     graphics.drawLine(w-1, h-1, 0, h-1, 1, COLOR.Yellow);    
@@ -605,6 +612,7 @@ static void drawBox()
     
 }
 
+*/
 static void drawImg()
 {
     //#include "_display/image/img_woman_col4.h"
@@ -613,6 +621,52 @@ static void drawImg()
     graphics.drawImage(&img, 0, 0);
 }
 
-*/
+
+
+#endif
+
+#ifdef USE_UARTNETCOM
+
+NETCOM_DATAOUT dataStruct;
+
+static void sendNet(char oid, char opipe)
+{
+    char data[]={1,2,3,4};
+    dataStruct.AppID=getProcID();
+    dataStruct.OppID=oid;
+    dataStruct.Pipe=opipe;
+    dataStruct.DataBuffer=data;
+    dataStruct.DataBufferLen=4;
+    
+    netcomSendBuffer(&dataStruct);
+    
+    while(dataStruct.Status==NETCOM_OUT_STATUS.Ready)
+    {
+        doEvents();
+    }
+    
+    if(dataStruct.Status==NETCOM_OUT_STATUS.ReplyOk)
+    {
+        //ok
+    }
+    else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyBusy)
+    {
+        //busy
+    }
+    else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyErrorPipe)
+    {
+        //pipe in opp not exist
+    }
+    else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyErrorSize)
+    {
+        //data size too big
+    }
+    else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyNone)
+    {
+        //opp not exist
+    }
+    
+}
+
 
 #endif
