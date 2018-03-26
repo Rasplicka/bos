@@ -821,8 +821,6 @@ checksum16:
     
 //</editor-fold>
    
-    
-    
 //errors
    
 //<editor-fold defaultstate="collapsed" desc="iVector0 CPU Timer">

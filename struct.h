@@ -383,8 +383,11 @@ typedef struct
     char    OppID;
     char    Pipe;
     char    Head[5];
-    char*   DataBuffer;
-    char    DataBufferLen;
+    char    HeadLen;
+    char    HeadIndex;
+    char*   Data;
+    char    DataLen;
+    char    DataIndex;
     char    Error;
     
 }NETCOM_DATAOUT;

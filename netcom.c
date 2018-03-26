@@ -48,6 +48,12 @@ ushort receivingChecksumOriginal=0;                             //prijaty checks
 char receivingDataPosition=0;                                   //aktualni pozice v pipe bufferu
 char receivingDataCounter=0;                                    //cita velikost prijatych dat
 
+char nextID=0;
+NETCOM_DATAOUT* sendingItem;
+NETCOM_DATAOUT endItem;
+
+//char endPaket[]={0, 2, 2};
+
 void (*_finish)();
 
 void netcomInit()
@@ -80,7 +86,18 @@ void netcomInit()
         netcomDataIn[a]->Status=NETCOM_IN_STATUS.Ready;
     }
     
+
+    nextID=NETCOM_DEVID + 1;
+    
 }
+
+//static void initEndItem()
+//{
+    //nextID=NETCOM_DEVID + 1;
+    //endItem.DataBuffer[0]=0;                                                    //end paket
+    //endItem.DataBuffer[1]=nextID;                                               //next DevID
+    //endItem.DataBuffer[2]=endItem.DataBuffer[0] + endItem.DataBuffer[1];        //checksum
+//}
 
 void netcomSetReceiveFn(char pipe, void* addr)
 {
@@ -287,6 +304,90 @@ static void dataReceived()
 
 static void sendReply(char r)
 {
+    
+}
+
+
+
+void netcomSend()
+{
+    //vola se, pokud ma zacit odesilat data
+    
+    nextID=NETCOM_DEVID + 1;
+    
+    if(netcomDataOut[0]!=NULL && netcomDataOut[0]->Status==NETCOM_OUT_STATUS.Ready)
+    {
+        //Odesila data
+        sendingItem=netcomDataOut[0];
+        tx_interrupt();
+    }
+    else
+    {
+        //nema data, odesila endPaket
+        netcomSendEndPaket();
+    }
+}
+
+void netcomNextDeviceNotRespond()
+{
+    //DevID, ktere melo zacit com., nekomunikuje
+    
+    if(nextID==NETCOM_DEVID)
+    {
+        //odeslat data tohoto modulu
+        netcomSend();
+    }
+    else
+    {
+        //odeslat endPaked dalsiho DevID
+        netcomSendEndPaket();
+    }
+        
+}
+
+void netcomSendEndPaket()
+{
+    endItem.Head[0]=0;                                                    //end paket
+    endItem.Head[1]=nextID;                                               //next DevID
+    endItem.Head[2]=endItem.DataBuffer[0] + endItem.DataBuffer[1];        //checksum    
+    endItem.HeadLen=3;
+    endItem.HeadIndex=0;
+    endItem.DataLen=0;
+    sendingItem=&endItem;
+    
+    nextID++;
+    if(nextID==NETCOM_MAXID)
+    {
+        nextID=1; 
+    }
+    
+    tx_interrupt();
+}
+
+void sendFinish()
+{
+    //po odvisilani head+data, nebo endPaketu
+    if(sendingItem == &endItem)
+    {
+        //byl odvysilan endPaket
+        netcom_ms=1;                                //ceka 50ms, zda nastane komunikace
+    }
+    else
+    {
+        //byl odvysilan head+data, ceka na odpoved
+        
+    }
+}
+
+void tx_interrupt()
+{
+    netcomStratup_ms=0;
+}
+
+void rx_interrupt()
+{
+    netcom_ms=0;                                    //ok, nastala komunikace
+    netcomStratup_ms=0;
     
 }
 
