@@ -94,7 +94,7 @@ char errEventCachePrID      __section(".os") = 0;                               
 char errorProcID            __section(".os") = 0;
 
 uint time_ms                __section(".os") = 0;                                   //timer1
-uint netcom_ms              __section(".os") = 0;
+
 //uint day_ms               __section(".os");                                   //timer1
 //int checkStackSpaceValue    __section(".os") =0;
 
@@ -103,8 +103,8 @@ uint pauseCTCompare         __section(".os") = 0;
 
 char sleepStatus            __section(".os") = 0;
 char idleStatus             __section(".os") = 0;
-short netcomStratup_ms      __section(".os") = 0;
-
+ushort netcomStratup_ms     __section(".os") = 0;
+ushort netcom_ms            __section(".os") = 0;
   
 
 

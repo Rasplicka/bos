@@ -382,25 +382,42 @@ typedef struct
     char    AppID;
     char    OppID;
     char    Pipe;
-    char    Head[5];
+    char    Head[10];
     char    HeadLen;
     char    HeadIndex;
     char*   Data;
     char    DataLen;
     char    DataIndex;
     char    Error;
+    char    Direction;                  //set 0, get 1
     
 }NETCOM_DATAOUT;
 
 const struct
 {
-    char    Ready;                      //data jsou pripravena k odeslani
+    char    WaitToTx;                   //data jsou pripravena k odeslani
     char    ReplyOk;                    //data jsou odeslana, opp data prijal
     char    ReplyBusy;                  //opp neprijima data (BUSY)
-    char    ReplyNone;                  //opp neexistuje (neodpovida)
+    char    ReplyNotExist;              //opp neexistuje (neodpovida)
     char    ReplyErrorPipe;             //opp nema zadanou pipe
     char    ReplyErrorSize;             //data jsou prilis velka
 }NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5};
+
+const struct 
+{
+    char    Data;
+    char    NextMaster;
+    
+}NOT_RESPONSE_ACTION={0, 1};
+
+const struct
+{
+    char    AcceptMaster;
+    char    SetMaster2;
+    char    Reply;
+    char    ReturnData;
+    char    None;
+}NETCOM_EXCEPT={0,1,2,3,4};
 
 const struct
 {

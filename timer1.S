@@ -249,30 +249,29 @@ iVector_timer1:
     
     addiu   v0, TIMER1_INTERVAL
     sw	    v0, (netcom_ms)
-    li	    v1, ()
+    li	    v1, 50
     bne	    v0, v1, 1f
     
     //nastala udalost
-    la	    v0, netcomNextDeviceNotRespond
-    _CALL_C v0, 1
+    la	    v0, netcomNotRespond
+    _CALL_C v0, 0
     1:
     
     
-    #if defined NETCOM_DEVID==1    
-	lhu	    v0, (netcomStratup_ms)
-	bnez    v0, 1f
-    
+    #if defined NETCOM_DEVID==1 
+	//pouze DevID=1, init bus
+	lhu	v0, (netcomStratup_ms)
+	addiu   v0, TIMER1_INTERVAL
+	sh	v0, (netcomStratup_ms)
+        
+	li	v1, 100
+	bne	v0, v1, 1f
 	//netcomStratup_ms = 0, startUp com
 	//.. vola start fci
   
-	li	    v0, 100			//nastav novy cas (pokud 100ms neprobiha com, bude zahajena)
-	b16	    2f
-    
-    1:    
-	addiu   v0, -TIMER1_INTERVAL
-    2:     
-	sh	    v0, (netcomStratup_ms)
-    
+	sh	zero, (netcomStratup_ms)	//nastav novy cas
+        1:    
+   
     #endif  //NETCOM_DEVID==1 
 	
 #endif  //USE_UARTNETCOM  

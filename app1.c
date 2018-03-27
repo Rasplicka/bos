@@ -631,6 +631,7 @@ NETCOM_DATAOUT dataStruct;
 
 static void sendNet(char oid, char opipe)
 {
+    /*
     char data[]={1,2,3,4};
     dataStruct.AppID=getProcID();
     dataStruct.OppID=oid;
@@ -665,6 +666,7 @@ static void sendNet(char oid, char opipe)
     {
         //opp not exist
     }
+    */
     
 }
 
