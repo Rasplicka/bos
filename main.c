@@ -53,15 +53,16 @@
 #define     PROC_T_SIZE                 (PROC_T_ISIZE * PROC_T_CAPA)
 
 #ifdef USE_UARTNETCOM
-    #define     NETCOM_DATAOUT_SIZE     (NETCOM_DATAOUT_CAPA * NETCOM_DATAOUT_ISIZE)               //velikost dataOut [bytes]
-    #define     NETCOM_DATAIN_SIZE      (NETCOM_DATAIN_CAPA * NETCOM_DATAIN_ISIZE)
+    #define     NETCOM_DATAOUT_SIZE     (NETCOM_DATAOUT_CAPA * 4)               //velikost dataOut [bytes]
+    #define     NETCOM_DATASET_SIZE     (NETCOM_DATASET_CAPA * 4)
+    #define     NETCOM_DATAGET_SIZE     (NETCOM_DATAGET_CAPA * 4)
+    #define     NETCOM_DATA_SIZE        NETCOM_DATAOUT_SIZE + NETCOM_DATASET_SIZE + NETCOM_DATAGET_SIZE
 #else
-    #define     NETCOM_DATAOUT_SIZE     0
-    #define     NETCOM_DATAIN_SIZE      0
+    #define     NETCOM_DATA_SIZE        0
 #endif    
                                 //proccee_table + regEventTable + eventCache + vars (vars + ballast = 64B)
-#define     OS_DATA_SIZE        (PROC_T_SIZE +  REG_EVENT_T_SIZE + EVENT_C_SIZE + NETCOM_DATAOUT_SIZE + NETCOM_DATAIN_SIZE + 64)     //velikost .os
-#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                                                              //adresa .os
+#define     OS_DATA_SIZE        (PROC_T_SIZE +  REG_EVENT_T_SIZE + EVENT_C_SIZE + NETCOM_DATA_SIZE + 64)     //velikost .os
+#define     OS_DATA_BASE        ((RAM_BASE + RAM_SIZE) - OS_DATA_SIZE)                                       //adresa .os
 
 //#ifdef PIC32MZ
 //#pragma region name=".sdata" origin=0x80000000 size=0x2000    
@@ -76,12 +77,13 @@
     
 //process table (prvni polozka v sekci .os, proto definuje jeji adresu)   
 uint proc_t[(PROC_T_SIZE / 4)]                          __section(".os") __at(OS_DATA_BASE);      
-char regEventTable[REG_EVENT_T_SIZE]                    __section(".os"); //__at(OS_DATA_BASE);
-char eventCache[EVENT_C_SIZE]                           __section(".os"); //__at(OS_DATA_BASE);
+char regEventTable[REG_EVENT_T_SIZE]                    __section(".os");
+char eventCache[EVENT_C_SIZE]                           __section(".os");
 
 #ifdef USE_UARTNETCOM
-    NETCOM_DATAOUT* netcomDataOut[NETCOM_DATAOUT_SIZE / 4]  __section(".os");
-    NETCOM_DATAIN* netcomDataIn[4]    __section(".os")={0,0,0,0};
+    NETCOM_DATAOUT* netcomDataOut[NETCOM_DATAOUT_CAPA]  __section(".os");
+    NETCOM_DATAIN*  netcomDataSet[NETCOM_DATASET_CAPA]  __section(".os");
+    NETCOM_DATAIN*  netcomDataGet[NETCOM_DATAGET_CAPA]  __section(".os");
 #endif  
 
 //.os vars 
@@ -95,16 +97,14 @@ char errorProcID            __section(".os") = 0;
 
 uint time_ms                __section(".os") = 0;                                   //timer1
 
-//uint day_ms               __section(".os");                                   //timer1
-//int checkStackSpaceValue    __section(".os") =0;
-
-uint pauseCTCount           __section(".os") = 0;
-uint pauseCTCompare         __section(".os") = 0;
+uint pauseCTCount           __section(".os") = 0;                               //pauza CPU timer
+uint pauseCTCompare         __section(".os") = 0;                               //pauze CPU timer
 
 char sleepStatus            __section(".os") = 0;
 char idleStatus             __section(".os") = 0;
 ushort netcomStratup_ms     __section(".os") = 0;
-ushort netcom_ms            __section(".os") = 0;
+ushort netcomTx_ms          __section(".os") = 0;
+ushort netcomRx_ms          __section(".os") = 0;
   
 
 

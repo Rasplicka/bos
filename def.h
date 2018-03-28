@@ -131,10 +131,8 @@
 #define             NETCOM_MAXID            8   //max. ID na sbernici
 
 #define             NETCOM_DATAOUT_CAPA     8   //8 polozek dataOut
-#define             NETCOM_DATAOUT_ISIZE    4
-
-#define             NETCOM_DATAIN_CAPA      4   //8 polozek dataIn, pipe 1-8
-#define             NETCOM_DATAIN_ISIZE     4
+#define             NETCOM_DATASET_CAPA     4   //8 polozek dataIn, pipe 1-8
+#define             NETCOM_DATAGET_CAPA     4
 
 #define             NETCOM_BUFFER_PIPE_LEN  32  //velikost pipe bufferu 
 

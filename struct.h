@@ -365,15 +365,14 @@ typedef struct
 typedef struct
 {
     char    Status;
-    char    OppID;
-    char    Error;
-    char    DataBufferLen;
-    char*   DataBuffer;
+    //char    OppID;
+    //char    Error;
+    char    DataIndex;
+    char    Locked;
+    char    DataLen;
+    char*   Data;
     void*   ReceiveFn;
     unsigned short Checksum;
-    char    dataLen;
-    //char    dataPosition;
-    
 }NETCOM_DATAIN;
 
 typedef struct
@@ -382,15 +381,13 @@ typedef struct
     char    AppID;
     char    OppID;
     char    Pipe;
-    char    Head[10];
-    char    HeadLen;
+    char    Head[5];
+    char*   Data;    
     char    HeadIndex;
-    char*   Data;
     char    DataLen;
     char    DataIndex;
     char    Error;
     char    Direction;                  //set 0, get 1
-    
 }NETCOM_DATAOUT;
 
 const struct
@@ -412,18 +409,38 @@ const struct
 
 const struct
 {
-    char    AcceptMaster;
-    char    SetMaster2;
+    char    SetData;
+    char    GetData;
     char    Reply;
     char    ReturnData;
+    char    dummy1;
+    char    dummy2;
+    char    SetMaster;
+    char    AcceptMaster;
     char    None;
-}NETCOM_EXCEPT={0,1,2,3,4};
+    //char    AcceptMaster;
+    //char    SetMaster2;
+    //char    Reply;
+    //char    ReturnData;
+    //char    None;
+}NETCOM_COMMAND={0,1,2,3,4,5,6,7,8};
+
 
 const struct
 {
     char    Ready;                      //pipe buffer je pripraven k prijimani
     char    Full;                       //pipe buffer obsahuje prijata data
-}NETCOM_IN_STATUS={0, 1};
+    char    Empty;
+}NETCOM_IN_STATUS={0, 1, 2};
+
+const struct
+{
+    char    None;
+    char    NextMaster2;
+    char    NotRespondAct;
+    char    StartMaster;
+    char    ReturnData;
+}NETCOM_TXFINISH_FN={0, 1, 2, 3, 4};
 
 
 #endif

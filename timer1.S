@@ -244,11 +244,11 @@ iVector_timer1:
     
 //<editor-fold defaultstate="collapsed" desc="NETCOM">
 #if defined USE_UARTNETCOM 
-    lw	    v0, (netcom_ms)
+    lw	    v0, (netcomTx_ms)
     beqz    v0, 1f				//skok, nenastavuje time
     
     addiu   v0, TIMER1_INTERVAL
-    sw	    v0, (netcom_ms)
+    sw	    v0, (netcomTx_ms)
     li	    v1, 50
     bne	    v0, v1, 1f
     
@@ -256,6 +256,19 @@ iVector_timer1:
     la	    v0, netcomNotRespond
     _CALL_C v0, 0
     1:
+    
+    lw	    v0, (netcomRx_ms)
+    beqz    v0, 1f				//skok, nenastavuje time
+    
+    addiu   v0, TIMER1_INTERVAL
+    sw	    v0, (netcomRx_ms)
+    li	    v1, 20
+    bne	    v0, v1, 1f
+    
+    //nastala udalost
+    la	    v0, netcomRxTimeout
+    _CALL_C v0, 0
+    1:	
     
     
     #if defined NETCOM_DEVID==1 
