@@ -134,7 +134,7 @@
 #define             NETCOM_DATASET_CAPA     4   //8 polozek dataIn, pipe 1-8
 #define             NETCOM_DATAGET_CAPA     4
 
-#define             NETCOM_BUFFER_PIPE_LEN  32  //velikost pipe bufferu 
+#define             NETCOM_SETPIPE_SIZE     32  //velikost set pipe bufferu 
 
 
 
@@ -144,12 +144,12 @@
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 
 /*@graphics*/
-#define             USE_GRAPHICS                    //pouzije graphics
+//#define             USE_GRAPHICS                    //pouzije graphics
 
 /*@display_ili9341*/
-#define             USE_DISP9341                    //pouzije driver displeje
+//#define             USE_DISP9341                    //pouzije driver displeje
 /*@touchpad_xpt2046*/
-#define             USE_TOUCHPAD_XPT2046           //aktivuje modul touchpadu, typ XPT2046
+//#define             USE_TOUCHPAD_XPT2046           //aktivuje modul touchpadu, typ XPT2046
 
 /*@display_ssd1306*/
 //#define             USE_DISP1306                    //pouzije driver displeje

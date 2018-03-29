@@ -24,9 +24,11 @@ int delay=1;
 int delay=1;
 #endif
 
+#ifdef USE_GRAPHICS
 //#include "_display/image/img_woman_col565.h"
 #include "_display/image/pokus.h"
 //#include "_display/image/pokus_1306.h"
+#endif
 
 int testVar=100;
 static int aktX=-1;
@@ -50,7 +52,9 @@ static void drawImage1306();
 static void dispText1();
 static void dispText2();
 static void exPrint();
+#ifdef USE_GRAPHICS
 static void setRedFont(IMAGE_SRC* font);
+#endif
 static void drawColorText04();
 static void drawColorText01();
 static void fontExample();
@@ -79,7 +83,9 @@ void m1_start()
     cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
     cnRegEvent(&cn, PORTC_BASE);
     
+#ifdef USE_TOUCHPAD_XPT2046    
     touchXpt2046_regEvent(&onTouch);
+#endif    
     
     //dispText1();
     //fontExample();
@@ -94,13 +100,14 @@ void m1_start()
     {
         if(aktX != -1 || aktY != -1)
         {
+#ifdef USE_GRAPHICS            
             intToChar(aktX, str, 4);
             graphics.drawString(str, NULL, 0, 0);
             intToChar(aktY, str, 4);
             graphics.drawString(str, NULL, 0, 30);
             
             graphics.fillBox(aktX-2, aktY-2, aktX+2, aktY+2, COLOR.Yellow);
-            
+#endif            
             aktX=-1; aktY=-1;
         }
         doEvents();
@@ -328,13 +335,13 @@ static void cn(uint base, uint stat)
 {
     if(base==PORTA_BASE)
     {
-        drawImg();
+        //drawImg();
         //dispText1();
         //dispText1306();
     }
     else
     {
-        graphics.clear(COLOR.Black);
+        //graphics.clear(COLOR.Black);
         //drawImage1306();
         //dispText2();
         //drawColorText04();
@@ -629,19 +636,104 @@ static void drawImg()
 
 NETCOM_DATAOUT dataStruct;
 
-static void sendNet(char oid, char opipe)
+NETCOM_DATAIN setPipe0;
+NETCOM_DATAIN setPipe1;
+NETCOM_DATAIN getPipe0;
+NETCOM_DATAIN getPipe1;
+char setPipe0data[NETCOM_SETPIPE_SIZE];
+char setPipe1data[NETCOM_SETPIPE_SIZE];
+
+char getPipe0data[4]={0,1,2,3};
+char getPipe1data[8]={0,1,2,3,10,11,12,13};
+
+static void netInitPipe()
 {
-    /*
+    //pripravi buffer pro set, pipe0
+    setPipe0.Data=setPipe0data;
+    setPipe0.Status=NETCOM_IN_STATUS.WaitToRx;
+    netcomDataSet[0]=&setPipe0;
+    
+    //pripravi buffer pro set, pipe1
+    setPipe1.Data=setPipe1data;
+    setPipe1.Status=NETCOM_IN_STATUS.WaitToRx;
+    netcomDataSet[1]=&setPipe1;
+    
+    getPipe0.Data=getPipe0data;
+    getPipe0.DataLen=4;
+    //getPipe0.ReceiveFn=&onGetData;
+    getPipe0.Status=NETCOM_IN_STATUS.Valid;
+    getPipe0.Locked=0;
+    netcomDataGet[0]=&getPipe0;
+    
+    getPipe1.Data=getPipe1data;
+    getPipe1.DataLen=8;
+    //getPipe1.ReceiveFn=&onGetData;
+    getPipe0.Status=NETCOM_IN_STATUS.Valid;
+    getPipe1.Locked=0;
+    netcomDataGet[1]=&getPipe1;
+}
+
+static void changeGetData()
+{
+    while(lockSafe(&getPipe0.Locked)==0)
+    {
+        //probiha vysilani obsahu, nelze menit
+        doEvents();
+    }
+
+    //getPipe0.Locked je nyni nastaven, fce muze menit data
+    getPipe0.Data[0]=100;
+    getPipe0.Data[1]=101;
+    getPipe0.Data[2]=102;
+    getPipe0.Data[3]=103;
+    
+    //unlock
+    getPipe0.Locked=0;
+}
+
+static void netGetData(char oid, char opipe)
+{
+    char ret_data[32];
+    dataStruct.AppID=getProcID();
+    dataStruct.OppID=oid;
+    dataStruct.Pipe=opipe;
+    dataStruct.Data=ret_data;
+    dataStruct.DataLen=32;
+    dataStruct.Direction=1;         //set    
+    
+    netcomSendBuffer(&dataStruct);
+    
+    while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
+    {
+        doEvents();
+    }
+    
+    if(dataStruct.Status==NETCOM_OUT_STATUS.ReplyOk)
+    {
+        //ok
+        //dataStruct.Data (ret_data) obsahuje prijata data
+        //dataStruct.DataLen obsahuje velikost dat
+    }    
+    else
+    {
+        //dataStruct.Status obsahuje kod chyby
+    }
+    
+}
+
+static void netSetData(char oid, char opipe)
+{
     char data[]={1,2,3,4};
     dataStruct.AppID=getProcID();
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
-    dataStruct.DataBuffer=data;
-    dataStruct.DataBufferLen=4;
+    dataStruct.Data=data;
+    dataStruct.DataLen=4;
+    dataStruct.Direction=0;         //set
     
     netcomSendBuffer(&dataStruct);
     
-    while(dataStruct.Status==NETCOM_OUT_STATUS.Ready)
+    while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
     {
         doEvents();
     }
@@ -662,13 +754,30 @@ static void sendNet(char oid, char opipe)
     {
         //data size too big
     }
-    else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyNone)
+    else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyNotExist)
     {
         //opp not exist
     }
-    */
+    
     
 }
 
+static void netWaitForData(char pipe)
+{
+    //velikost setPipe je NETCOM_SETPIPE_SIZE
+    //setPipe.DataLen obsahuje velikost prijatych dat
+    
+    //ceka na prijem dat do pipe
+    while(netcomDataSet[pipe]->Status == NETCOM_IN_STATUS.WaitToRx)
+    {
+        doEvents();
+    }
+    
+    //netcomDataSet[pipe].Data obsahuje prijata data
+    //netcomDataSet[pipe].DataLen obsahuje velikost dat
+    
+    //po zpracovani povoli novy prijem dat
+    netcomDataSet[pipe]->Status = NETCOM_IN_STATUS.WaitToRx;
+}
 
 #endif

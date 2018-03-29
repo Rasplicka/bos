@@ -204,6 +204,10 @@ void main()
     spiInit();
 #endif    
 
+#ifdef USE_UARTNETCOM    
+    netcomInit();
+#endif
+    
     // </editor-fold>
 
     //5. run system modules ----------------------------------------------------

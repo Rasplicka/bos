@@ -37,6 +37,11 @@ extern void setCanSleep(char);
 extern void setCanIdle(char);
 extern void unregEvent(void*);
 
+//When the byte is unlocked, lock it and returns 1.
+//When the byte is locked, returns 0.
+//@param addr Address of the byte
+extern char lockSafe(char* addr);
+
 extern void intToChar(int munber, char* ret, char minLen);
 
 //periph_fn.S ------------------------------------------------------------------

@@ -428,10 +428,11 @@ const struct
 
 const struct
 {
-    char    Ready;                      //pipe buffer je pripraven k prijimani
-    char    Full;                       //pipe buffer obsahuje prijata data
-    char    Empty;
-}NETCOM_IN_STATUS={0, 1, 2};
+    char    WaitToRx;                   //set pipe buffer je pripraven k prijimani
+    char    Full;                       //set pipe buffer obsahuje prijata data
+    char    Invalid;                    //get pipe neobsahuje platna data
+    char    Valid;                      //get pipe obsahuje platna data
+}NETCOM_IN_STATUS={0, 1, 0, 1};
 
 const struct
 {

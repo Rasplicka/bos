@@ -79,6 +79,10 @@ void pinSetting()
     
 #ifdef TEST_BOARD_BOS1    
     
+    //UART ---------------------------------------------------------------------
+    RP8_OUT=U2TX_IO;                //tx RP8/B2/pin25, UARTcon 4 (1=GND)
+    U2RX_IO=RP9_IN;                 //rx PR9/B3/pin26, UARTcon 3
+    
     //DISPLEJE -----------------------------------------------------------------
     
     //RB7/pin47 - TOUCHPAD IRQ
@@ -159,13 +163,13 @@ void pinSetting()
     
     //ANALOG INPUT -------------------------------------------------------------
     //RB2/pin25
-    setPortAnalogIn(PORTB_BASE, BIT2);                                  //25
+    //setPortAnalogIn(PORTB_BASE, BIT2);                                  //25
     
     //RB3/pin26
-    setPortAnalogIn(PORTB_BASE, BIT3);                                  //26
+    //setPortAnalogIn(PORTB_BASE, BIT3);                                  //26
     
     //RC0/pin27
-    setPortAnalogIn(PORTC_BASE, BIT0);                                  //27
+    //setPortAnalogIn(PORTC_BASE, BIT0);                                  //27
 
 #endif    
 

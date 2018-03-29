@@ -2462,6 +2462,29 @@ defragTableB:
     
 //</editor-fold>        
     
+.align 2
+.global lockSafe
+.ent lockSafe    
+lockSafe:
+//a0=adresa byte
+    
+    //pokud je 0, nastavi na 1 a vraci 1 (true)
+    //pokud je 1, vraci 0 (false)
+    move    v0, zero
+    
+    di
+    lbu	    t9, (a0)
+    bnez    t9, 1f		//skok, je locked, vraci false (0)
+    
+    //je unlock, muze provest lock, vraci true (1)
+    li16    v0, 1
+    sb	    v0, (a0)
+    
+1:
+    ei
+    jrc	    ra
+    
+.end lockSafe    
  
 //presunout
 //<editor-fold defaultstate="collapsed" desc="strLen">
@@ -2639,8 +2662,7 @@ byteToChar:
     
 //</editor-fold>
         
-    
-    
+ 
     
 //<editor-fold defaultstate="collapsed" desc="SPI1-6 Tx interrupt">
 .align 2    
@@ -2705,3 +2727,36 @@ iVector_spi6Tx:
 .end spi_interrupt_vector  
     
 //</editor-fold>    
+
+//<editor-fold defaultstate="collapsed" desc="UART1-6 Tx interrupt">
+.align 2    
+.ent uart_interrupt_vector 
+uart_interrupt_vector:
+    
+#ifdef UART2_USE    
+.global iVector_UART2Tx    
+iVector_UART2Tx:   
+    //Tx
+    la	    v0, UART2Tx_interrupt
+    _CALL_C v0, 0
+    eret
+    
+.global iVector_UART2Rx    
+iVector_UART2Rx:   
+    //Tx
+    la	    v0, UART2Rx_interrupt
+    _CALL_C v0, 0
+    eret
+    
+.global iVector_UART2Er    
+iVector_UART2Er:   
+    //Tx
+    la	    v0, UART2Er_interrupt
+    _CALL_C v0, 0
+    eret
+    
+#endif     
+
+.end uart_interrupt_vector  
+    
+//</editor-fold>        

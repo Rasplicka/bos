@@ -71,6 +71,12 @@ extern void __attribute__((interrupt(), vector(45))) iVector_spi2Tx();        //
 extern void __attribute__((interrupt(), vector(48))) iVector_spi3Tx();        //SPI3 Tx
 #endif
 
+#ifdef UART2_USE
+extern void __attribute__((interrupt(), vector(56))) iVector_UART2Rx();        //UART2 Rx
+extern void __attribute__((interrupt(), vector(57))) iVector_UART2Tx();        //UART2 Tx
+extern void __attribute__((interrupt(), vector(58))) iVector_UART2Er();        //UART2 Error
+#endif
+
 //extern void __attribute__((interrupt(), vector(65))) iVector_i2c1Slave();     //I2C1 Master Mode
 //extern void __attribute__((interrupt(), vector(66))) iVector_i2c1Master();    //I2C1 Master Mode
 //extern void __attribute__((interrupt(), vector(67))) iVector_i2c1Bus();       //I2C1 Master Mode
