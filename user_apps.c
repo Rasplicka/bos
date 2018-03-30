@@ -77,11 +77,37 @@ void pinSetting()
     PORTB=0xFFFF;
 #endif    
     
-#ifdef TEST_BOARD_BOS1    
+#ifdef TEST_BOARD_BOS0
+    
+    //RC3/ LED1
+    setPortDigOut(PORTC_BASE, BIT3);                                    //14
+    LED1.portBase=PORTC_BASE;
+    LED1.pin=BIT3;
+    
+    //RP11/RB5/ LED2
+    setPortDigOut(PORTB_BASE, BIT5);                                    //15
+    LED2.portBase=PORTB_BASE;
+    LED2.pin=BIT5;    
+    
+    //RP12/RB7/ LED2
+    setPortDigOut(PORTB_BASE, BIT7);                                    //17
+    LED3.portBase=PORTB_BASE;
+    LED3.pin=BIT7;     
     
     //UART ---------------------------------------------------------------------
-    RP8_OUT=U2TX_IO;                //tx RP8/B2/pin25, UARTcon 4 (1=GND)
-    U2RX_IO=RP9_IN;                 //rx PR9/B3/pin26, UARTcon 3
+    //Tx pin1
+    setPortDigOut(PORTB_BASE, BIT2);
+    setPortPin(PORTB_BASE, BIT2);
+    RP8_OUT=U2TX_IO;                //tx RP8/B2/pin1
+    
+    //Rx pin2
+    setPortDigIn(PORTB_BASE, BIT3);
+    U2RX_IO=RP9_IN;                 //rx PR9/B3/pin2
+    
+#endif    
+    
+#ifdef TEST_BOARD_BOS1    
+    
     
     //DISPLEJE -----------------------------------------------------------------
     
@@ -171,6 +197,23 @@ void pinSetting()
     //RC0/pin27
     //setPortAnalogIn(PORTC_BASE, BIT0);                                  //27
 
+    //UART ---------------------------------------------------------------------
+    //setPortDigOut(PORTB_BASE, BIT2);
+    //RP8_OUT=U2TX_IO;                //tx RP8/B2/pin25, UARTcon 4 (1=GND)
+    
+    //setPortDigIn(PORTB_BASE, BIT3);
+    //U2RX_IO=RP9_IN;                 //rx PR9/B3/pin26, UARTcon 3
+    
+    //RP14/B9, pin1
+    setPortDigOut(PORTB_BASE, BIT9); 
+    setPortPin(PORTB_BASE, BIT9);
+    //setPortPullUp(PORTB_BASE, BIT9, 1);
+    RP14_OUT=U2TX_IO;
+    
+    //RP13/B8, pin48
+    setPortDigIn(PORTB_BASE, BIT8); 
+    //setPortPullUp(PORTB_BASE, BIT8, 1);
+    U2RX_IO=RP13_IN;
 #endif    
 
 }

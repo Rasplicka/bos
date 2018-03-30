@@ -244,16 +244,16 @@ iVector_timer1:
     
 //<editor-fold defaultstate="collapsed" desc="NETCOM">
 #if defined USE_UARTNETCOM 
-    #define	_TX_MS		    50
-    #define	_RX_MS		    30
-    #define	_STARTUP_MS	    100
+    #define	_TX_MS		    100
+    #define	_RX_MS		    50
+    #define	_STARTUP_MS	    1000
     
     //Tx timeout
-    lw	    v0, (netcomTx_ms)
+    lhu	    v0, (netcomTx_ms)
     beqz    v0, 1f				//skok, nenastavuje time
     
     addiu   v0, TIMER1_INTERVAL
-    sw	    v0, (netcomTx_ms)
+    sh	    v0, (netcomTx_ms)
     
     _B_FLTC v0, _TX_MS, 1f			//meni t9, skok, nenastal timeout
     //nastala udalost
@@ -262,11 +262,11 @@ iVector_timer1:
     1:
     
     //Rx timeout
-    lw	    v0, (netcomRx_ms)
+    lhu	    v0, (netcomRx_ms)
     beqz    v0, 1f				//skok, nenastavuje time
     
     addiu   v0, TIMER1_INTERVAL
-    sw	    v0, (netcomRx_ms)
+    sh	    v0, (netcomRx_ms)
     
     _B_FLTC v0, _RX_MS, 1f			//meni t9, skok, nenastal timeout
     //nastala udalost
@@ -275,7 +275,7 @@ iVector_timer1:
     1:	
     
     
-    #if defined NETCOM_DEVID==1 
+    #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
 	//pouze DevID=1, init bus
 	lhu	v0, (netcomStratup_ms)
 	addiu   v0, TIMER1_INTERVAL

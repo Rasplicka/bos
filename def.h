@@ -3,6 +3,9 @@
 //#define PIC32MM0256
 //#define PIC32MM
 
+//#define TEST_BOARD_BOS0
+#define TEST_BOARD_BOS1
+
 // <editor-fold defaultstate="collapsed" desc="CPU">
 
     // <editor-fold defaultstate="collapsed" desc="CPU MZ">
@@ -26,7 +29,7 @@
 #ifdef PIC32MM
 
 #define PIC32MM0256
-#define TEST_BOARD_BOS1
+
 
 //externi XTAL 8MHz
 //#define     CFG_POSC_XTAL               8
@@ -53,12 +56,12 @@
 #define     SRS_STACK_SIZE              512         //velikost oblasti zasobniku pro interrupt level 1(MM), 1-7(MZ)
 #define     STACK_CHECK_VALUE           0xF010E020
 
-#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
+//#define     SAFE_PROCESS                          //povoluje ochranu prepinani procesu, kdy CPU timer spusti interrupt, bezi-li proces prilis dlouho
 #define     SAFE_MODE_TIME_LIMIT_VALUE  0xFFFFF     //hodnota do CP0_COMPARE, pri prekroceni nastave chyba (interrupt CPU_TIMER)
 #define     ENABLE_CHECK_STACK_OVERFLOW           //povoluje kontrolovat stack overflow
 
 //watch dog timer
-#define     WATCHDOG_TIMER
+//#define     WATCHDOG_TIMER
 
 #ifdef PIC32MM0256
 //------------------------------------------------------------------------------
@@ -125,9 +128,19 @@
 // <editor-fold defaultstate="collapsed" desc="UART">
 //@UARTNETCOM
 #define             USE_UARTNETCOM
+#define             UART2_USE
 
 //@NETCOM_param
-#define             NETCOM_DEVID            1   //ID modulu           
+#ifdef TEST_BOARD_BOS1
+    #define             NETCOM_DEVID            5   //ID modulu           
+#else
+    #define             NETCOM_DEVID            2   //ID modulu
+#endif
+
+//#if defined NETCOM_DEVID  && NETCOM_DEVID <= 1
+    //#define             NETCOM_MASTER
+//#endif
+
 #define             NETCOM_MAXID            8   //max. ID na sbernici
 
 #define             NETCOM_DATAOUT_CAPA     8   //8 polozek dataOut

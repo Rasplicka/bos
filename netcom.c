@@ -13,10 +13,13 @@ extern ushort netcomRx_ms;
 #define     RX_FIFO                     U2RXREG
 #define     TX_FIFO_SIZE                8
 
+#define     TEST_MASTER
+
 //#define     _ENABLE_TX_INTERRUPT
 //#define     _DISABLE_TX_INTERRUPT
 
 // <editor-fold defaultstate="collapsed" desc="DATA IN buffers">
+/*
 #if NETCOM_DATAIN_CAPA >= 1
 NETCOM_DATAIN dataIn1;
 char bufferPipe1[NETCOM_BUFFER_PIPE_LEN];
@@ -36,6 +39,8 @@ char bufferPipe3[NETCOM_BUFFER_PIPE_LEN];
 NETCOM_DATAIN dataIn4;
 char bufferPipe4[NETCOM_BUFFER_PIPE_LEN];
 #endif
+
+*/
 // </editor-fold>
 
 //global fn
@@ -262,8 +267,9 @@ void netcomInitBus()
 // local fn --------------------------------------------------------------------
 static char initModule()
 {
-#define     U2_PRIORITY     1
-#define     U2_SUBPRIORITY  0
+ 
+#define     U2_PRIORITY     5
+#define     U2_SUBPRIORITY  2
 
     IPC14bits.U2RXIP=U2_PRIORITY;
     IPC14bits.U2RXIS=U2_SUBPRIORITY;
@@ -277,13 +283,17 @@ static char initModule()
     IFS1bits.U2EIF=0;
     
     IEC1bits.U2RXIE=1;
-    IFS1bits.U2TXIF=1;
-    IFS1bits.U2EIF=1;
+    IEC1bits.U2TXIE=1;
+    IEC1bits.U2EIE=1;
+
+    U2MODE=0;
+    U2STA=0;
     
     //UART2
+    U2MODEbits.ACTIVE=0;
     U2MODEbits.SLPEN=0;     
     U2MODEbits.CLKSEL=3;    //REFO
-    
+    U2MODEbits.OVFDIS=1;    //Rx pri overflow
     U2MODEbits.SIDL=0;      //continue in IDLE
     U2MODEbits.IREN=0;      //IR disable
     U2MODEbits.UEN=0;       //pouze Rx a Tx
@@ -296,10 +306,9 @@ static char initModule()
     U2MODEbits.STSEL=0;     //1x stop bit
     
     //povoli prijem dat, zakaze vysilani
-    
-    U2STAbits.MASK=0xFF;    //
+    U2STAbits.MASK=0xFF;     //0xFF
     U2STAbits.ADDR=NETCOM_DEVID; //DevID
-    U2STAbits.UTXSEL=1;     //Tx interrupt, po odvysilani
+    U2STAbits.UTXISEL=1;    //Tx interrupt, po odvysilani
     U2STAbits.UTXINV=0;     //
     U2STAbits.URXEN=1;      //Rx enable
     U2STAbits.UTXBRK=0;     //send break disable
@@ -307,7 +316,7 @@ static char initModule()
     U2STAbits.URXISEL=1;    //Rx interrupt 4 bytes ve FIFO
     U2STAbits.ADDEN=1;      //addres detect enable
     
-    U2BRG=29;               //100k baud BRG=Clk/(16xbaud) -1
+    U2BRG=29;               //29=100k baud BRG=Clk/(16xbaud) -1
     
     //start
     U2MODEbits.ON=1;
@@ -322,15 +331,22 @@ static void clearRxFifo()
 }
 static void enableTx()
 {
+    //U2MODEbits.LPBACK=0;
     //nastavi modul na vysilani
+    //!!!normalne
     U2STAbits.URXEN=0;      //Rx disable
     U2STAbits.UTXEN=1;      //Tx enable
+    
+    //!!!TEST
+    //U2STAbits.UTXEN=1;
+    //U2STAbits.URXEN=1;
+    //U2MODEbits.LPBACK=1;
 }
 static void enableRx()
 {
     //nastavi modul na prijem
-    U2STAbits.UTXEN=0;      //Tx enable
-    U2STAbits.URXEN=1;      //Rx disable
+    U2STAbits.UTXEN=0;      //Tx disable
+    U2STAbits.URXEN=1;      //Rx enable
 }
 static char getSizeBits(char size)
 {
@@ -371,6 +387,12 @@ static int dataOutAdd(NETCOM_DATAOUT* data)
 }
 static void dataOutRemove()
 {
+    
+#ifdef TEST_MASTER
+    sendingItem=NULL;
+    return;
+#endif
+    
     //remove
     int a;
     for(a=1; a < NETCOM_DATAOUT_CAPA; a++)
@@ -388,7 +410,10 @@ static void dataOutRemove()
 // Tx --------------------------------------------------------------------------
 void UART2Tx_interrupt()
 {
+    IFS1bits.U2TXIF=0;
     txWriteFifo();
+    
+    
 }
 static void startMaster()
 {
@@ -421,7 +446,17 @@ static void nextMaster1()
 {
     nextID++;
     if(nextID==NETCOM_MAXID) { nextID=1; }
+    
+    if(nextID==NETCOM_DEVID)
+    {
+        //nextID=thisID, ukonci komunikaci (po 100ms nastane initBus)
+        netcomTx_ms=0;
+        return;
+    }
 
+    //!!!TEST
+    //nextID=1;
+    
     //addr
     master1Item.Head[0]=nextID;                                                    
     //head data
@@ -480,12 +515,12 @@ static void txWriteFifo()
         //head
         //_ENABLE_TX_INTERRUPT;
         enableTx();                                                 //ukonci Rx, nastavi Tx
-        
+       
         //adresa, b8=1
         x=(ushort)sendingItem->Head[0];
         x |= 0x100;
         TX_FIFO=x;
-        sendingItem->HeadIndex++;
+        ///sendingItem->HeadIndex++;
         
         //data b8=0
         x=(ushort)sendingItem->Head[1];
@@ -513,6 +548,13 @@ static void txWriteFifo()
     }
     else
     {
+        //ceka na dokonceni vysilani (interrupt nastane driv)
+        int a=0;
+        while(U2STAbits.TRMT==0) 
+        {
+            a++;
+        }
+        
         enableRx();                                                 //ukonci Tx, nastavi Rx
         //odeslano vsechno
         if(txf==NETCOM_TXFINISH_FN.None)
@@ -577,7 +619,12 @@ static void notRespondAct()
 // Rx --------------------------------------------------------------------------
 void UART2Rx_interrupt()
 {
-    char h1, h2, h3, h4;
+    #ifdef TEST_BOARD_BOS0  
+        setPin(&LED2);    
+    #endif
+
+    IFS1bits.U2RXIF=0;
+    ushort h1, h2, h3, h4;
     h1=RX_FIFO;
     h2=RX_FIFO;
     h3=RX_FIFO;
@@ -708,6 +755,10 @@ void UART2Rx_interrupt()
 }
 static void onChecksum()
 {
+#ifdef TEST_BOARD_BOS0    
+    invPin(&LED3);
+#endif
+    
     netcomRx_ms=0;                      //ukonci citani
     ra=0;                               //nasleduje head
     
@@ -726,7 +777,11 @@ static void onChecksum()
                 //neni devID=1, posila master8
                 txf=NETCOM_TXFINISH_FN.NextMaster2;
                 master8();
-            #endif                
+            #endif
+                
+            #ifdef TEST_BOARD_BOS0  
+                //clearPin(&LED2);    
+            #endif
         }
         
         else if(rxExcept == NETCOM_COMMAND.Reply && headCommand == NETCOM_COMMAND.Reply)
@@ -784,6 +839,10 @@ static void onChecksum()
                 if(rxExcept == NETCOM_COMMAND.SetMaster)
                 {
                     //ocekaval setMaster2 (prevezme master)
+                    #ifdef TEST_BOARD_BOS0  
+                        //setPin(&LED2);
+                    #endif
+
                     startMaster();
                 }
             }
@@ -922,6 +981,24 @@ static void sendReply(char repdata)
 void UART2Er_interrupt()
 {
     //error
+    U2STAbits.URXEN=0;      //Rx disable
+    U2STAbits.UTXEN=0;      //Tx enable    
+    clearRxFifo();
+    ra=0;
+    netcomRx_ms=0;
+    
+    U2STAbits.OERR=0;
+    
+    U2STAbits.URXEN=1;
+    
+    IFS1bits.U2RXIF=0;
+    IFS1bits.U2TXIF=0;
+    IFS1bits.U2EIF=0;
+    
+#ifdef TEST_BOARD_BOS0    
+    setPin(&LED1);
+#endif 
+    
 }
 
 #endif  //USE_UARTNETCOM

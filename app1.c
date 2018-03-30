@@ -63,11 +63,38 @@ static void drawPoints();
 static void drawBox();
 static void drawImg();
 
+static void netInitPipe();
+static void changeGetData();
+static void netGetData(char oid, char opipe);
+static void netSetData(char oid, char opipe);
+static void netWaitForData(char pipe);
+
 
 static int restart=0;
 
 void m1_start()
 {
+    netInitPipe();
+    systemTimerRegInterval(&testSystemTimer, 3000);
+    
+    netSetData(2, 0);
+    
+    while(1)
+    {
+        if(netcomDataSet[0]->Status==NETCOM_IN_STATUS.Full)
+        {
+            netcomDataSet[0]->Status==NETCOM_IN_STATUS.WaitToRx;
+            setPin(&LED1);
+        }
+        if(netcomDataSet[1]->Status==NETCOM_IN_STATUS.Full)
+        {
+            netcomDataSet[1]->Status==NETCOM_IN_STATUS.WaitToRx;
+            setPin(&LED1);
+        }        
+        
+        doEvents();
+    }
+        
     
 #ifdef USE_GRAPHICS 
     initGraphics();
@@ -75,6 +102,7 @@ void m1_start()
     graphics.setDefaultFont(&font_twcen_22);
 #endif
     //RGB16(5, 5, 5);
+    /*
     cnStartPortA();
     cnEnable(PORTA_BASE, BIT3 | BIT8, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
     cnRegEvent(&cn, PORTA_BASE);
@@ -82,6 +110,7 @@ void m1_start()
     cnStartPortC();                                                     //zaktivuje fci CN (SIDL=0, pracuje v IDLE/SLEEP)
     cnEnable(PORTC_BASE, BIT1 | BIT2, CN_STYLE.LOW_TO_HIGH);             //povoli PORTA.0, PORTA.1
     cnRegEvent(&cn, PORTC_BASE);
+    */
     
 #ifdef USE_TOUCHPAD_XPT2046    
     touchXpt2046_regEvent(&onTouch);
@@ -132,7 +161,7 @@ void m1_start()
     systemTimerRegInterval(&testSystemTimer, 10000);
     
 
-    */
+   
 
 
     
@@ -154,7 +183,7 @@ void m1_start()
         c++;
         //xxx=PORTB;
     }
-
+    */
     
     
     //ubtnRegEvent(&testButton, 1, 10);
@@ -226,12 +255,14 @@ static void longTime()
 
 static void testSystemTimer(int i)
 {
-
+    clearPin(&LED1);
+    clearPin(&LED2);
+    clearPin(&LED3);
     //int d=a+b;
     //_LED_INV_REG = _LED_INV_VAL;
     //doEvents();
     //setLowPowerOsc();
-    setCanSleep(1);
+    //setCanSleep(1);
     //invTestLed(1);
     //unregEvent(&testSystemTimer);
     
