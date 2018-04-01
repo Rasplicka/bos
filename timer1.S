@@ -244,8 +244,8 @@ iVector_timer1:
     
 //<editor-fold defaultstate="collapsed" desc="NETCOM">
 #if defined USE_UARTNETCOM 
-    #define	_TX_MS		    100
-    #define	_RX_MS		    50
+    #define	_TX_MS		    10
+    #define	_RX_MS		    5
     #define	_STARTUP_MS	    1000
     
     //Tx timeout
@@ -259,6 +259,7 @@ iVector_timer1:
     //nastala udalost
     la	    v0, netcomNotRespond
     _CALL_C v0, 0
+    //sh	    zero, (netcomTx_ms)
     1:
     
     //Rx timeout
@@ -272,6 +273,7 @@ iVector_timer1:
     //nastala udalost
     la	    v0, netcomRxTimeout
     _CALL_C v0, 0
+    //sh	    zero, (netcomRx_ms)
     1:	
     
     

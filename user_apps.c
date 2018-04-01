@@ -95,12 +95,12 @@ void pinSetting()
     LED3.pin=BIT7;     
     
     //UART ---------------------------------------------------------------------
-    //Tx pin1
+    //Tx bus pin1
     setPortDigOut(PORTB_BASE, BIT2);
     setPortPin(PORTB_BASE, BIT2);
     RP8_OUT=U2TX_IO;                //tx RP8/B2/pin1
     
-    //Rx pin2
+    //Rx bus pin2
     setPortDigIn(PORTB_BASE, BIT3);
     U2RX_IO=RP9_IN;                 //rx PR9/B3/pin2
     
@@ -204,13 +204,13 @@ void pinSetting()
     //setPortDigIn(PORTB_BASE, BIT3);
     //U2RX_IO=RP9_IN;                 //rx PR9/B3/pin26, UARTcon 3
     
-    //RP14/B9, pin1
+    //RP14/B9, pin1, TX, bus pin 6
     setPortDigOut(PORTB_BASE, BIT9); 
     setPortPin(PORTB_BASE, BIT9);
     //setPortPullUp(PORTB_BASE, BIT9, 1);
     RP14_OUT=U2TX_IO;
     
-    //RP13/B8, pin48
+    //RP13/B8, pin48, RX, bus pin 7
     setPortDigIn(PORTB_BASE, BIT8); 
     //setPortPullUp(PORTB_BASE, BIT8, 1);
     U2RX_IO=RP13_IN;

@@ -398,7 +398,9 @@ const struct
     char    ReplyNotExist;              //opp neexistuje (neodpovida)
     char    ReplyErrorPipe;             //opp nema zadanou pipe
     char    ReplyErrorSize;             //data jsou prilis velka
-}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5};
+    char    GetBufferNotExist;          //pri get, master nanastavil data buffer (prijimaci)
+    char    GetBufferSize;              //pri get, master buffer je moc maly
+}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5, 6, 7};
 
 const struct 
 {

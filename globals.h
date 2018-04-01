@@ -23,7 +23,8 @@ int checkStackSpaceValue=0x7FFFFFFF;                    //max. int
     extern NETCOM_DATAOUT* netcomDataOut[];
     extern NETCOM_DATAIN* netcomDataSet[];
     extern NETCOM_DATAIN* netcomDataGet[];
-    extern void netcomSendBuffer(NETCOM_DATAOUT* data);
+    extern void netcomSetData(NETCOM_DATAOUT* data);
+    extern void netcomGetData(NETCOM_DATAOUT* data);
 #endif 
 
 #ifdef USE_GRAPHICS

@@ -63,6 +63,8 @@ static void drawPoints();
 static void drawBox();
 static void drawImg();
 
+
+NETCOM_DATAOUT dataStruct;
 static void netInitPipe();
 static void changeGetData();
 static void netGetData(char oid, char opipe);
@@ -75,26 +77,34 @@ static int restart=0;
 void m1_start()
 {
     netInitPipe();
-    systemTimerRegInterval(&testSystemTimer, 3000);
+    //systemTimerRegInterval(&testSystemTimer, 3000);
     
-    netSetData(2, 0);
-    
+   
     while(1)
     {
+        
+#if (defined NETCOM_DEVID && NETCOM_DEVID >= 2)
+        //ID 2
         if(netcomDataSet[0]->Status==NETCOM_IN_STATUS.Full)
         {
-            netcomDataSet[0]->Status==NETCOM_IN_STATUS.WaitToRx;
-            setPin(&LED1);
+            netcomDataSet[0]->Status=NETCOM_IN_STATUS.WaitToRx;
+            invPin(&LED1);
         }
         if(netcomDataSet[1]->Status==NETCOM_IN_STATUS.Full)
         {
-            netcomDataSet[1]->Status==NETCOM_IN_STATUS.WaitToRx;
-            setPin(&LED1);
+            netcomDataSet[1]->Status=NETCOM_IN_STATUS.WaitToRx;
+            //setPin(&LED1);
         }        
+#else
+        //ID 1
+        //netSetData(4, 0);
+        netGetData(4, 0);
+#endif   
         
         doEvents();
     }
         
+    // <editor-fold defaultstate="collapsed" desc="vyrazeno">
     
 #ifdef USE_GRAPHICS 
     initGraphics();
@@ -141,9 +151,10 @@ void m1_start()
         }
         doEvents();
     }
-    
-    
-    
+
+
+
+
     /*
     //setCanIdle(1);
     //setCanSleep(1);
@@ -159,12 +170,7 @@ void m1_start()
     
     //testSystemTimer();
     systemTimerRegInterval(&testSystemTimer, 10000);
-    
 
-   
-
-
-    
     
     //int st=CNSTATB;
     rtcRegTimeAlarm(&testRTC, 0, 1);
@@ -183,61 +189,56 @@ void m1_start()
         c++;
         //xxx=PORTB;
     }
-    */
-    
-    
+     */
+
+
     //ubtnRegEvent(&testButton, 1, 10);
     //trap();
-    
-    int x=0;
-    while(x<10000)
-    {
+
+    int x = 0;
+    while (x < 10000) {
         //do LATxINV zapise 1 na prislusnou pozici
         //_LED_INV_REG = _LED_INV_VAL;
         invPin(&LED1);
-        
-        int a, b=0;
-        for(a=0; a<(100000 * delay); a++)
-        {
+
+        int a, b = 0;
+        for (a = 0; a < (100000 * delay); a++) {
             b++;
-            if(a>0 && a % 1000 == 0)
-            {
+            if (a > 0 && a % 1000 == 0) {
                 doEvents();
             }
         }
         //stack overflow
         //m1_start()
         x++;
-    }    
-    
+    }
+
     //raiseEventID(155, 0, 1, 2);
     //uint day=getDayMs();
     //uint second=(day/1000) % 60;
     //uint minute=(day/1000/60) % 60;
     //uint hour=(day/1000/60/60);
-    
+
     //int* ad=0;
     //int dat=*ad;
-    
-    while(1)
-    {
+
+    while (1) {
         //do LATxINV zapise 1 na prislusnou pozici
         //_LED_INV_REG = _LED_INV_VAL;
         invPin(&LED1);
-        
-        int a, b=0;
-        for(a=0; a<250000; a++)
-        {
+
+        int a, b = 0;
+        for (a = 0; a < 250000; a++) {
             b++;
-            if(a % 100 == 0)
-            {
+            if (a % 100 == 0) {
                 doEvents();
             }
         }
         x++;
     } 
     
-    
+    // </editor-fold>
+
 }
 
 static void longTime()
@@ -256,8 +257,8 @@ static void longTime()
 static void testSystemTimer(int i)
 {
     clearPin(&LED1);
-    clearPin(&LED2);
-    clearPin(&LED3);
+    //clearPin(&LED2);
+    //clearPin(&LED3);
     //int d=a+b;
     //_LED_INV_REG = _LED_INV_VAL;
     //doEvents();
@@ -665,7 +666,7 @@ static void drawImg()
 
 #ifdef USE_UARTNETCOM
 
-NETCOM_DATAOUT dataStruct;
+
 
 NETCOM_DATAIN setPipe0;
 NETCOM_DATAIN setPipe1;
@@ -676,7 +677,9 @@ char setPipe1data[NETCOM_SETPIPE_SIZE];
 
 char getPipe0data[4]={0,1,2,3};
 char getPipe1data[8]={0,1,2,3,10,11,12,13};
-
+char data[]={1,2,3,4,5,6,7,8,         9,10,11,12,13,14,15,16,
+             17,18,19,20,21,22,23,24, 25,26,27,28,29,30,31,32};
+    
 static void netInitPipe()
 {
     //pripravi buffer pro set, pipe0
@@ -699,7 +702,7 @@ static void netInitPipe()
     getPipe1.Data=getPipe1data;
     getPipe1.DataLen=8;
     //getPipe1.ReceiveFn=&onGetData;
-    getPipe0.Status=NETCOM_IN_STATUS.Valid;
+    getPipe1.Status=NETCOM_IN_STATUS.Valid;
     getPipe1.Locked=0;
     netcomDataGet[1]=&getPipe1;
 }
@@ -725,14 +728,15 @@ static void changeGetData()
 static void netGetData(char oid, char opipe)
 {
     char ret_data[32];
-    dataStruct.AppID=getProcID();
+    //dataStruct.AppID=getProcID();
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=ret_data;
     dataStruct.DataLen=32;
-    dataStruct.Direction=1;         //set    
+    //dataStruct.Direction=1;         //set    
     
-    netcomSendBuffer(&dataStruct);
+    netcomGetData(&dataStruct);
+    clearPin(&LED1);
     
     while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
     {
@@ -744,25 +748,35 @@ static void netGetData(char oid, char opipe)
         //ok
         //dataStruct.Data (ret_data) obsahuje prijata data
         //dataStruct.DataLen obsahuje velikost dat
+        
+        if(opipe==0 && ret_data[0]==0 && ret_data[1]==1 && ret_data[2]==2 && ret_data[3]==3)
+        {
+            setPin(&LED1);
+        }
+        if(opipe==1 && ret_data[0]==0 && ret_data[1]==1 && ret_data[2]==2 && ret_data[3]==3 && ret_data[4]==10 && ret_data[5]==11 && ret_data[6]==12 && ret_data[7]==13)
+        {
+            setPin(&LED1);  
+        }
     }    
     else
     {
         //dataStruct.Status obsahuje kod chyby
+        setPin(&LED4);
     }
     
 }
 
 static void netSetData(char oid, char opipe)
 {
-    char data[]={1,2,3,4};
-    dataStruct.AppID=getProcID();
+    //dataStruct.AppID=getProcID();
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=data;
-    dataStruct.DataLen=4;
-    dataStruct.Direction=0;         //set
+    dataStruct.DataLen=32;
+    //dataStruct.Direction=0;         //set
     
-    netcomSendBuffer(&dataStruct);
+    netcomSetData(&dataStruct);
+    clearPin(&LED1);
     
     while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
     {
@@ -772,22 +786,27 @@ static void netSetData(char oid, char opipe)
     if(dataStruct.Status==NETCOM_OUT_STATUS.ReplyOk)
     {
         //ok
+        setPin(&LED1);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyBusy)
     {
         //busy
+        setPin(&LED4);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyErrorPipe)
     {
         //pipe in opp not exist
+        setPin(&LED4);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyErrorSize)
     {
         //data size too big
+        setPin(&LED4);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyNotExist)
     {
         //opp not exist
+        setPin(&LED4);
     }
     
     

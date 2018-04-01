@@ -74,7 +74,7 @@
 #define		EVENT_CACHE_CAPA        20              //velikost cache udalosti        (polozka 20 bytes) 400 B
 #define     PROC_T_CAPA             8               //kapacita proc_t (polozka 96 Bytes) 768 B
 
-#define     TIMER1_INTERVAL         10              //interval ms
+#define     TIMER1_INTERVAL         1              //interval ms
 //------------------------------------------------------------------------------
 #endif
 
@@ -132,9 +132,9 @@
 
 //@NETCOM_param
 #ifdef TEST_BOARD_BOS1
-    #define             NETCOM_DEVID            5   //ID modulu           
+    #define             NETCOM_DEVID            1   //ID modulu           
 #else
-    #define             NETCOM_DEVID            2   //ID modulu
+    #define             NETCOM_DEVID            4   //ID modulu
 #endif
 
 //#if defined NETCOM_DEVID  && NETCOM_DEVID <= 1

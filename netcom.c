@@ -45,7 +45,7 @@ char bufferPipe4[NETCOM_BUFFER_PIPE_LEN];
 
 //global fn
 void netcomInit();
-void netcomSendBuffer(NETCOM_DATAOUT* data);
+void netcomSetData(NETCOM_DATAOUT* data);
 void netcomNotRespond();
 void netcomRxTimeout();
 void netcomInitBus();
@@ -150,7 +150,6 @@ void netcomInit()
     master8Item.Head[2]=(char)(d>>8);
     master8Item.DataLen=0;
     master8Item.DataIndex=0;
-
     
     master1Item.DataLen=0;              //nebude vysilat data
     master1Item.DataIndex=0;
@@ -163,7 +162,8 @@ void netcomInit()
     
     initModule();
 }
-void netcomSendBuffer(NETCOM_DATAOUT* data)
+
+void netcomSetData(NETCOM_DATAOUT* data)
 {
     //doplni polozky level1 do struktury data
     //vyplni tato fce (level 1)
@@ -172,55 +172,87 @@ void netcomSendBuffer(NETCOM_DATAOUT* data)
     //vyplni app
     //appID, oppID, Pipe, Data (buffer), DataLen
     
+    //Pro pripad ukonceni aplikace?
+    data->AppID=getProcID();
+    
     //head
     data->Head[0]=data->OppID;
-    
-    ushort x;
-    char size;
-    if(data->Direction==0)
-    {
-        //set, po odelsani bude nastaveno data.Status
-        size=getSizeBits(data->DataLen);
-        
-        x=size |  (data->Pipe << 3) | (NETCOM_DEVID << 7) | (0 << 13);
-        data->Head[3]=(char)x;
-        data->Head[4]=(char)(x >> 8);
-    }
-    else
-    {
-        //get (vraci data v data.Data, size v data.DataLen)
-        //data.Data musi byt nastaveno na buffer, kam budou get data zapsana
-        //data.DataLen musi obsahovat velikost bufferu
-        //vysledek podle data.Status (pri ReplyOK data.DataLen obsahuje velikost dat)
-        //jinak data.Status obsahuje kod chyby
-        size=0;
-        x=size |  (data->Pipe << 3) | (NETCOM_DEVID << 7) | (1 << 13);
-        data->Head[3]=(char)x;
-        data->Head[4]=(char)(x >> 8);        
-    }
-    
+
+    //set, po odelsani bude nastaveno data.Status
+    char size=getSizeBits(data->DataLen);
+    ushort x=size | (data->Pipe << 3) | (NETCOM_DEVID << 7) | (0 << 13);
+    data->Head[3]=(char)x;
+    data->Head[4]=(char)(x >> 8);
+     
     //checksum
-    x=checksum16(data->Data, data->DataLen);
-    x+=data->Head[3];
-    x+=data->Head[4];
+    x=checksum16(data->Data, data->DataLen) + data->Head[3] + data->Head[4];
     data->Head[1]=(char)x;
     data->Head[2]=(char)(x >> 8);
+    
+    //Set, direction=0
+    data->Direction=0;
     
     //error
     data->Error=0;
     
     //status
     data->Status=NETCOM_OUT_STATUS.WaitToTx;
-    
-    data->HeadIndex=0;                                  //bude vysilat head
-    data->DataIndex=0;                                  //bude vysilat data (pokud DataLen>0, nastavuje app)
-    
+
     //vlozi polozku do netcomDataOut, pokud je plne, ceka na uvolneni
     while(dataOutAdd(data)==0)
     {
         doEvents();
     }
 }
+
+void netcomGetData(NETCOM_DATAOUT* data)
+{
+    //doplni polozky level1 do struktury data
+    //vyplni tato fce (level 1)
+    //Head, Error, Status, HeadIndex=0, DataIndex=0
+    
+    //vyplni app
+    //appID, oppID, Pipe, Data (buffer), DataLen
+    
+    //get (vraci data v data.Data, size v data.DataLen)
+    //data.Data musi byt nastaveno na buffer, kam budou get data zapsana
+    //data.DataLen musi obsahovat velikost bufferu
+    //vysledek podle data.Status (pri ReplyOK data.DataLen obsahuje velikost dat)
+    //jinak data.Status obsahuje kod chyby
+    
+    //Pro pripad ukonceni aplikace?
+    data->AppID=getProcID();
+    
+    //head
+    data->Head[0]=data->OppID;
+
+    ushort x;
+    char size=0;
+    x=size | (data->Pipe << 3) | (NETCOM_DEVID << 7) | (1 << 13);
+    data->Head[3]=(char)x;
+    data->Head[4]=(char)(x >> 8); 
+        
+    //checksum
+    x=data->Head[3] + data->Head[4];
+    data->Head[1]=(char)x;
+    data->Head[2]=(char)(x >> 8);
+    
+    //Get, direction=1
+    data->Direction=1;
+    
+    //error
+    data->Error=0;
+    
+    //status
+    data->Status=NETCOM_OUT_STATUS.WaitToTx;
+
+    //vlozi polozku do netcomDataOut, pokud je plne, ceka na uvolneni
+    while(dataOutAdd(data)==0)
+    {
+        doEvents();
+    }
+}
+
 void netcomRxTimeout()
 {
     //zachytil svoji adresu, ale prijem dat nebyl dokoncen ve stanovene lhute
@@ -230,6 +262,7 @@ void netcomRxTimeout()
     clearRxFifo();
     ra=0;
     netcomRx_ms=0;
+    rxExcept = NETCOM_COMMAND.None;
     
     if(netcomTx_ms>0)
     {
@@ -239,7 +272,7 @@ void netcomRxTimeout()
 }
 void netcomNotRespond()
 {
-#if defined NETCOM_DEVID==1
+#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
     //devID=1, neposila master8
     netcomStratup_ms=0;
     notRespondAct();
@@ -250,7 +283,7 @@ void netcomNotRespond()
 #endif
     
 }
-#if defined NETCOM_DEVID==1
+#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
 void netcomInitBus()
 {
     //initBus, start comunication (after 100ms pause, DevID=1 only)
@@ -260,6 +293,11 @@ void netcomInitBus()
     clearRxFifo();
     U2STAbits.URXEN=1;      //Rx enable
     
+    //!!!TEST
+    //U2STAbits.UTXEN=1;
+    
+
+    setPin(&LED2);
     startMaster();
 }
 #endif
@@ -316,7 +354,10 @@ static char initModule()
     U2STAbits.URXISEL=1;    //Rx interrupt 4 bytes ve FIFO
     U2STAbits.ADDEN=1;      //addres detect enable
     
-    U2BRG=29;               //29=100k baud BRG=Clk/(16xbaud) -1
+    U2BRG=2;               //29=100k baud BRG=Clk/(16xbaud) -1
+    
+    
+    enableRx();
     
     //start
     U2MODEbits.ON=1;
@@ -335,6 +376,14 @@ static void enableTx()
     //nastavi modul na vysilani
     //!!!normalne
     U2STAbits.URXEN=0;      //Rx disable
+    
+    //Out, vysilani
+    #ifdef TEST_BOARD_BOS1  
+        setPortDigOut(PORTB_BASE, BIT9);     
+    #else    
+
+        setPortDigOut(PORTB_BASE, BIT2);
+    #endif    
     U2STAbits.UTXEN=1;      //Tx enable
     
     //!!!TEST
@@ -344,8 +393,17 @@ static void enableTx()
 }
 static void enableRx()
 {
+    //!!!TEST
     //nastavi modul na prijem
     U2STAbits.UTXEN=0;      //Tx disable
+    //In, nevysila
+    #ifdef TEST_BOARD_BOS1  
+        setPortDigIn(PORTB_BASE, BIT9);     
+    #else    
+
+        setPortDigIn(PORTB_BASE, BIT2);
+    #endif      
+    
     U2STAbits.URXEN=1;      //Rx enable
 }
 static char getSizeBits(char size)
@@ -389,8 +447,8 @@ static void dataOutRemove()
 {
     
 #ifdef TEST_MASTER
-    sendingItem=NULL;
-    return;
+    //sendingItem=NULL;
+    //return;
 #endif
     
     //remove
@@ -410,34 +468,47 @@ static void dataOutRemove()
 // Tx --------------------------------------------------------------------------
 void UART2Tx_interrupt()
 {
+    if(sendingItem != NULL)
+    {
+        txWriteFifo();
+    }
     IFS1bits.U2TXIF=0;
-    txWriteFifo();
-    
-    
 }
 static void startMaster()
 {
+   
     //vola se, pokud ma zacit odesilat data
-    if(netcomDataOut[0]!=NULL && netcomDataOut[0]->Status==NETCOM_OUT_STATUS.WaitToTx)
+    if(netcomDataOut[0] != NULL && netcomDataOut[0]->Status == NETCOM_OUT_STATUS.WaitToTx)
     {
         //Odesila data
         sendingItem=netcomDataOut[0];
+        
+        //sendingItem->HeadIndex=0;                                   //bude vysilat head
         nra=NOT_RESPONSE_ACTION.Data;                               //pri notResponse bude opakovat vysilani (max. 3x)
         txf=NETCOM_TXFINISH_FN.None;                                //po skonceni vysilani zadna akce (ceka na odpoved)
+        
         if(netcomDataOut[0]->Direction==0)
         {
             //set
+            sendingItem->DataIndex=0;                                //bude vysilat data (pokud DataLen>0, nastavuje app)
             startTx(1, NETCOM_COMMAND.Reply);                        //ocekava REPLY (OK, nebo s kodem chyby)
         }
         else
         {
             //get
+            sendingItem->DataIndex=sendingItem->DataLen;            //DataLen obsahuje velikost bufferu, DataIndex zabrani vysilani dat 
             startTx(1, NETCOM_COMMAND.ReturnData);                   //ocekava data, nebo REPLY s kodem chyby
         }
     }
     else
     {
         //nema data, odesila endPaket
+        
+#ifdef TEST_MASTER
+        //nepredava mastera
+        //return;
+#endif                
+        
         nextID=NETCOM_DEVID;                                        //nextMaster1 zvysi nextID++
         nextMaster1();
     }
@@ -453,9 +524,6 @@ static void nextMaster1()
         netcomTx_ms=0;
         return;
     }
-
-    //!!!TEST
-    //nextID=1;
     
     //addr
     master1Item.Head[0]=nextID;                                                    
@@ -468,7 +536,7 @@ static void nextMaster1()
     master1Item.Head[1]=(char)d;
     master1Item.Head[2]=(char)(d>>8);    
     
-    master1Item.HeadIndex=0;
+    //master1Item.HeadIndex=0;
     sendingItem=&master1Item;
     
     nra=NOT_RESPONSE_ACTION.NextMaster;
@@ -484,24 +552,33 @@ static void nextMaster2()
     master2Item.Head[3]=(char)d;
     master2Item.Head[4]=(char)(d>>8);
     //checksum
-    d=master2Item. Head[3] + master2Item.Head[4];
+    d=master2Item.Head[3] + master2Item.Head[4];
     master2Item.Head[1]=(char)d;
     master2Item.Head[2]=(char)(d>>8);  
 
-    master2Item.HeadIndex=0;
+    //master2Item.HeadIndex=0;
     sendingItem=&master2Item;
     
     txf=NETCOM_TXFINISH_FN.None;
-    startTx(0, NETCOM_COMMAND.None);    
+    startTx(0, NETCOM_COMMAND.None);   
+    
+    //odevzdal master
+    #ifdef TEST_BOARD_BOS0  
+        clearPin(&LED2);
+    #else
+        clearPin(&LED2);
+    #endif     
 }
 static void master8()
 {
-    master8Item.HeadIndex=0;
+    //master8Item.HeadIndex=0;
     sendingItem=&master8Item;
+    //txf=NETCOM_TXFINISH_FN.NextMaster2;
     startTx(0, NETCOM_COMMAND.None);    
 }
 static void startTx(char ms, char exc)
 {
+    sendingItem->HeadIndex=0;
     netcomTx_ms=ms;
     rxExcept=exc;
     clearRxFifo();
@@ -514,7 +591,7 @@ static void txWriteFifo()
     {
         //head
         //_ENABLE_TX_INTERRUPT;
-        enableTx();                                                 //ukonci Rx, nastavi Tx
+        //!!!TEST
        
         //adresa, b8=1
         x=(ushort)sendingItem->Head[0];
@@ -532,13 +609,14 @@ static void txWriteFifo()
         x=(ushort)sendingItem->Head[4];
         TX_FIFO=x;        
         
-        sendingItem->HeadIndex=5;            
+        sendingItem->HeadIndex=5;
+        enableTx();                                                 //ukonci Rx, nastavi Tx
     }
     else if(sendingItem->DataIndex < sendingItem->DataLen)
     {
         //data
         char c=0;
-        while(sendingItem->DataIndex < sendingItem->DataLen && c < TX_FIFO_SIZE)
+        while((sendingItem->DataIndex < sendingItem->DataLen) && (c < TX_FIFO_SIZE))
         {
             x=(ushort)sendingItem->Data[sendingItem->DataIndex];
             TX_FIFO=x;  
@@ -549,6 +627,7 @@ static void txWriteFifo()
     else
     {
         //ceka na dokonceni vysilani (interrupt nastane driv)
+        //!!!TEST
         int a=0;
         while(U2STAbits.TRMT==0) 
         {
@@ -572,6 +651,7 @@ static void txWriteFifo()
         else if (txf==NETCOM_TXFINISH_FN.ReturnData)
         {
             //SLAVE: po odeslani odpovedi (dat) na get
+            //replyItem.Data=NULL;                                    //nuluje adresu bufferu vysilanych dat
             NETCOM_DATAIN* p = netcomDataGet[headPipe];
             p->Locked=0;
             sendingItem=NULL;
@@ -599,12 +679,22 @@ static void notRespondAct()
         else
         {
             sendingItem->Error++;
-            sendingItem->HeadIndex=0;
-            sendingItem->DataIndex=0;
+            
+            //sendingItem->HeadIndex=0;
             //nra zustava NOT_RESPONSE_ACTION.Data
-            txf=NETCOM_TXFINISH_FN.None;                                                //po odvysilani zadna okce (ceka na odpoved)
-            if(netcomDataOut[0]->Direction==0) { startTx(1, NETCOM_COMMAND.Reply); }     //set
-            else { startTx(1, NETCOM_COMMAND.ReturnData); }                              //get
+            txf=NETCOM_TXFINISH_FN.None;                                        //po odvysilani zadna akce (ceka na odpoved)
+            if(netcomDataOut[0]->Direction==0) 
+            { 
+                //set
+                sendingItem->DataIndex=0;
+                startTx(1, NETCOM_COMMAND.Reply); 
+            }     
+            else 
+            { 
+                //get
+                sendingItem->DataIndex=sendingItem->DataLen;
+                startTx(1, NETCOM_COMMAND.ReturnData); 
+            }                              
         }
     }
     else
@@ -620,10 +710,10 @@ static void notRespondAct()
 void UART2Rx_interrupt()
 {
     #ifdef TEST_BOARD_BOS0  
-        setPin(&LED2);    
+        //setPin(&LED2);    
     #endif
 
-    IFS1bits.U2RXIF=0;
+    
     ushort h1, h2, h3, h4;
     h1=RX_FIFO;
     h2=RX_FIFO;
@@ -659,30 +749,26 @@ void UART2Rx_interrupt()
                 {
                     //ok, muze prijimat data
                     sendingItem->DataLen=headSize;
-                    rxStatus=NETCOM_OUT_STATUS.ReplyOk;
                     rxIndex=0;
                     getBuffer=sendingItem->Data;
-                    //rxStatus=NETCOM_OUT_STATUS.ReplyOk;
-                    ra=1;
-                    return;
+                    rxStatus=NETCOM_OUT_STATUS.ReplyOk;
                 }
                 else
                 {
                     //data jsou moc velka
                     getBuffer=NULL;
-                    rxStatus=NETCOM_OUT_STATUS.ReplyErrorSize;
-                    ra=1;
-                    return;
+                    rxStatus=NETCOM_OUT_STATUS.GetBufferSize;
                 }
             }
             else
             {
                 //buffer neexistuje (musi ho nastavit volajici fce, NETCOM_DATAOUT.Data)
                 getBuffer=NULL;
-                rxStatus=NETCOM_OUT_STATUS.ReplyErrorPipe;
-                ra=1;
-                return;                
+                rxStatus=NETCOM_OUT_STATUS.GetBufferNotExist;
             }
+            
+            //budou nasledovat data
+            ra=1;
         }
         else if(headCommand==0)
         {
@@ -725,6 +811,7 @@ void UART2Rx_interrupt()
                 }
             }
             
+            //budou nasledovat data
             ra=1;
         }
     }
@@ -752,24 +839,29 @@ void UART2Rx_interrupt()
             onChecksum();
         }
     }
+    
+    IFS1bits.U2RXIF=0;
 }
+
 static void onChecksum()
 {
-#ifdef TEST_BOARD_BOS0    
-    invPin(&LED3);
-#endif
+
     
     netcomRx_ms=0;                      //ukonci citani
     ra=0;                               //nasleduje head
     
     if(calcChecksum==headChecksum)
     {
+        #ifdef TEST_BOARD_BOS0    
+            //invPin(&LED1);
+        #endif   
+
         //checksum ok
         if(rxExcept == NETCOM_COMMAND.AcceptMaster && headCommand == NETCOM_COMMAND.AcceptMaster)
         {
             //Master: prijal AcceptMaster
             //odeslat master2
-            #if defined NETCOM_DEVID==1
+            #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                 //devID=1, neposila master8
                 netcomStratup_ms=0;
                 nextMaster2();
@@ -779,7 +871,7 @@ static void onChecksum()
                 master8();
             #endif
                 
-            #ifdef TEST_BOARD_BOS0  
+            #ifdef TEST_BOARD_BOS1  
                 //clearPin(&LED2);    
             #endif
         }
@@ -790,7 +882,7 @@ static void onChecksum()
             sendingItem->Status=headPipe;                   //Reply data
             dataOutRemove();                                //sendingItem=NULL
             
-            #if defined NETCOM_DEVID==1
+            #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                 //devID=1, neposila master8
                 netcomStratup_ms=0;
                 startMaster();
@@ -814,7 +906,7 @@ static void onChecksum()
             }
             dataOutRemove();                                //sendingItem=NULL             
             
-            #if defined NETCOM_DEVID==1
+            #if(defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                 //devID=1, neposila master8
                 netcomStratup_ms=0;
                 startMaster();
@@ -836,20 +928,22 @@ static void onChecksum()
             else if (headPipe == 2)
             {
                 //setMaster2
-                if(rxExcept == NETCOM_COMMAND.SetMaster)
-                {
+                //if(rxExcept == NETCOM_COMMAND.SetMaster)
+                //{
                     //ocekaval setMaster2 (prevezme master)
                     #ifdef TEST_BOARD_BOS0  
-                        //setPin(&LED2);
+                        setPin(&LED2);
+                    #else
+                        setPin(&LED2);
                     #endif
 
                     startMaster();
-                }
+                //}
             }
-            else
+            else 
             {
                 //master8
-                #if defined NETCOM_DEVID==1    
+                #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                     //pouze DevID=1
                     netcomStratup_ms=0;
                 #endif          
@@ -885,7 +979,7 @@ static void onChecksum()
 }
 static void sendAccept()
 {
-    rxExcept = NETCOM_COMMAND.SetMaster;
+    //rxExcept = NETCOM_COMMAND.SetMaster;
     
     replyItem.Head[0]=headOpp;
 
@@ -898,11 +992,12 @@ static void sendAccept()
     replyItem.Head[1]=(char)x;
     replyItem.Head[2]=(char)(x >> 8);        
     
+    replyItem.DataLen=0;                                        //zadna data
     replyItem.HeadIndex=0;
     sendingItem=&replyItem;
     
     txf=NETCOM_TXFINISH_FN.None;
-    startTx(0, NETCOM_COMMAND.None);  
+    startTx(0, NETCOM_COMMAND.SetMaster);                                       //ocekava setMaster2
 }
 static void sendPipe(char pipe)
 {
@@ -922,6 +1017,7 @@ static void sendPipe(char pipe)
     {
         //pipe je locked (aplikace upravuje data)
         sendReply(NETCOM_OUT_STATUS.ReplyBusy);
+        //p->Locked = 0;
         return;
     }
     else if(p->Status == NETCOM_IN_STATUS.Invalid)
@@ -938,16 +1034,19 @@ static void sendPipe(char pipe)
     replyItem.Head[0]=headOpp;
 
     char size=getSizeBits(p->DataLen);
-    ushort x=size |  (0 << 3) | (NETCOM_DEVID << 7) | (3 << 13);                //return data
+    ushort x=size | (0 << 3) | (NETCOM_DEVID << 7) | (3 << 13);                //return data
     replyItem.Head[3]=(char)x;
     replyItem.Head[4]=(char)(x >> 8); 
         
     //checksum
     x=checksum16(p->Data, p->DataLen);
     x+=replyItem.Head[3];
-    x+= replyItem.Head[4];
+    x+=replyItem.Head[4];
     replyItem.Head[1]=(char)x;
     replyItem.Head[2]=(char)(x >> 8);        
+    
+    replyItem.Data=p->Data;
+    replyItem.DataLen=p->DataLen;
     
     replyItem.HeadIndex=0;
     replyItem.DataIndex=0;
@@ -969,6 +1068,7 @@ static void sendReply(char repdata)
     replyItem.Head[1]=(char)x;
     replyItem.Head[2]=(char)(x >> 8);        
     
+    replyItem.DataLen=0;                            //zadna data
     replyItem.HeadIndex=0;
     sendingItem=&replyItem;
     
@@ -989,15 +1089,16 @@ void UART2Er_interrupt()
     
     U2STAbits.OERR=0;
     
-    U2STAbits.URXEN=1;
+    //U2STAbits.URXEN=1;
+    enableRx();
     
     IFS1bits.U2RXIF=0;
     IFS1bits.U2TXIF=0;
     IFS1bits.U2EIF=0;
     
-#ifdef TEST_BOARD_BOS0    
-    setPin(&LED1);
-#endif 
+//#ifdef TEST_BOARD_BOS0    
+    //setPin(&LED1);
+//#endif 
     
 }
 
