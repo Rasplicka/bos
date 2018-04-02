@@ -578,15 +578,46 @@ static void master8()
 }
 static void startTx(char ms, char exc)
 {
-    sendingItem->HeadIndex=0;
+    //sendingItem->HeadIndex=0;
     netcomTx_ms=ms;
     rxExcept=exc;
-    clearRxFifo();
-    txWriteFifo();
+    //clearRxFifo();
+    
+    //txWriteFifo();
+    ushort x;
+    //adresa, b8=1
+    x=(ushort)sendingItem->Head[0];
+    x |= 0x100;
+    TX_FIFO=x;
+    ///sendingItem->HeadIndex++;
+        
+    //data b8=0
+    x=(ushort)sendingItem->Head[1];
+    TX_FIFO=x;
+    x=(ushort)sendingItem->Head[2];
+    TX_FIFO=x;
+    x=(ushort)sendingItem->Head[3];
+    TX_FIFO=x;
+    x=(ushort)sendingItem->Head[4];
+    TX_FIFO=x;
+    
+    //enable Tx
+    U2STAbits.URXEN=0;      //Rx disable
+    
+    //Out, vysilani
+    #ifdef TEST_BOARD_BOS1  
+        setPortDigOut(PORTB_BASE, BIT9);     
+    #else    
+
+        setPortDigOut(PORTB_BASE, BIT2);
+    #endif    
+    U2STAbits.UTXEN=1;      //Tx enable
+    
 }
 static void txWriteFifo()
 {
-    ushort x;
+    
+    /*
     if(sendingItem->HeadIndex==0)
     {
         //head
@@ -612,9 +643,11 @@ static void txWriteFifo()
         sendingItem->HeadIndex=5;
         enableTx();                                                 //ukonci Rx, nastavi Tx
     }
-    else if(sendingItem->DataIndex < sendingItem->DataLen)
+    */
+    if(sendingItem->DataIndex < sendingItem->DataLen)
     {
-        //data
+        //odeslat dalsi data
+        ushort x;
         char c=0;
         while((sendingItem->DataIndex < sendingItem->DataLen) && (c < TX_FIFO_SIZE))
         {
@@ -626,6 +659,7 @@ static void txWriteFifo()
     }
     else
     {
+        //konec odesilani
         //ceka na dokonceni vysilani (interrupt nastane driv)
         //!!!TEST
         int a=0;
@@ -928,8 +962,8 @@ static void onChecksum()
             else if (headPipe == 2)
             {
                 //setMaster2
-                //if(rxExcept == NETCOM_COMMAND.SetMaster)
-                //{
+                if(rxExcept == NETCOM_COMMAND.SetMaster)
+                {
                     //ocekaval setMaster2 (prevezme master)
                     #ifdef TEST_BOARD_BOS0  
                         setPin(&LED2);
@@ -938,7 +972,7 @@ static void onChecksum()
                     #endif
 
                     startMaster();
-                //}
+                }
             }
             else 
             {
@@ -957,6 +991,7 @@ static void onChecksum()
             {
                 if(rxStatus==NETCOM_OUT_STATUS.ReplyOk)
                 {
+                    //data jsou OK (checksum)
                     netcomDataSet[headPipe]->DataLen=headSize;
                     netcomDataSet[headPipe]->DataIndex=0;
                     netcomDataSet[headPipe]->Status=NETCOM_IN_STATUS.Full;
