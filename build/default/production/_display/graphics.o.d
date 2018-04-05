@@ -3,4 +3,5 @@ _display/graphics.c  \
  _display/../globals.h  \
 _display/../asm.h  \
 _display/../def.h  \
- _display/../struct.h 
+ _display/../struct.h  \
+_display/font/font_twcen_22.h 

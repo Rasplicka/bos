@@ -1410,17 +1410,23 @@ startCT:
 .global	regListener    
 .ent regListener
 regListener:
+    
+.global	regListenerWithVar
+regListenerWithVar:
+    
 //a0=fn
 //a1=eventID
-//    
+//a2=var0
+//a3=var1
+    
     //vraci v0=adr polozky, 0x0=chyba
     _PUSH   ra
     
     bal	    getProcID		    //meni v0, v1
     sll	    v0, v0, 8		    
     or	    a1, v0		    //eventID, procID, 0x0, 0x0 (byte 0,1,2,3)
-    li	    a2, 0xFFFFFFFF	    // -max
-    li	    a3, 0x7FFFFFFF	    // +max
+    //li	    a2, 0xFFFFFFFF	    // -max
+    //li	    a3, 0x7FFFFFFF	    // +max
     
     //a0=fn, 
     //a1=eventID, procID, (var2=0, var3=0)

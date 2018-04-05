@@ -149,7 +149,18 @@ void touchXpt2046_setDisplay(DISPLAY* d)
 int touchXpt2046_regEvent(void* fn)
 {
     regListener(fn, TOUCHPAD_EVENT_ID);
+    //regListenerWithVar
 }
+int touchXpt2046_regEventRect(void* fn, Rect* r)
+{
+    //regListener(fn, TOUCHPAD_EVENT_ID);
+    
+    uint x=(((uint)(r->X2))<<16) | ((uint)r->X1);
+    uint y=(((uint)(r->Y2))<<16) | ((uint)r->Y1);
+    
+    regListenerWithVar(fn, TOUCHPAD_EVENT_ID, x, y);
+}
+
 
 static void onEvent()
 {
@@ -157,10 +168,55 @@ static void onEvent()
     
     while(item != NULL)
     {
+        
         raiseEvent(item, screenX, screenY, 0);
         
         item=getRegEvent(item, TOUCHPAD_EVENT_ID);
     } 
+    
+    
+    /*
+    short x1, x2, y1, y2;
+    short* item=(short*)getRegEvent(NULL, TOUCHPAD_EVENT_ID);
+    
+    while(item != NULL)
+    {
+        x1=item[2];
+        x2=item[3];
+        y1=item[4];
+        y2=item[5];
+      
+        //
+        //Rect* r=(Rect*)item+1; 
+        //x1=r->X1;
+        //x2=r->X2;
+        //y1=r->Y1;
+        //y2=r->Y2;
+
+        if(x1 != x2)
+        {
+            //test rect
+            if(screenX >= x1 && screenX <= x2)
+            {
+                if(screenY >= y1 && screenY <= y2)
+                {
+                    raiseEvent(item, screenX, screenY, 0);
+                }
+            }
+        }
+        else
+        {
+            //bez testu rect
+            raiseEvent(item, screenX, screenY, 0);
+        }
+        
+        
+        item=getRegEvent(item, TOUCHPAD_EVENT_ID);
+    }  
+    */
+    
+    
+    
     
     /*
     int a;

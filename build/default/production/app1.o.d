@@ -3,4 +3,5 @@ app1.c  \
 globals.h  \
 asm.h  \
 def.h  \
-struct.h 
+struct.h  \
+ _display/image/pokus.h 

@@ -22,6 +22,7 @@ extern void restartProcess();
 extern void restartProcessID(char id);
 
 extern uint regListener(void* fn, char eventID);
+extern uint regListenerWithVar(void* fn, char eventID, uint var0, uint var1);
 extern uint raiseEventID(char eventID, int p0, int p1, int p2);
 extern uint* getRegEvent(uint* last_item, char event_id);
 extern void raiseEvent(uint* item, int param0, int param1, int param2);

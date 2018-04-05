@@ -371,8 +371,8 @@ typedef struct
     char    Locked;
     char    DataLen;
     char*   Data;
-    void*   ReceiveFn;
-    unsigned short Checksum;
+    //void*   ReceiveFn;
+    //unsigned short Checksum;
 }NETCOM_DATAIN;
 
 typedef struct
@@ -511,3 +511,10 @@ typedef struct
    
 }I2CControl;
 
+typedef struct
+{
+    short   X1;
+    short   X2;
+    short   Y1;
+    short   Y2;
+}Rect;

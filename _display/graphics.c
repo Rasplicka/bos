@@ -333,9 +333,20 @@ static void drawBox(short x1, short y1, short x2, short y2, short w, short color
     
 }
 
-
-
 #endif
+
+void drawButton(IMAGE_SRC* font, char* text, Rect* r)
+{
+    graphics.fillBox(r->X1, r->Y1, r->X2, r->Y2, COLOR.LightGrey);
+    
+    short h=r->Y2-r->Y1;
+    short y=r->Y1 + h/2 - font->height/2;
+    
+    short w=r->X2-r->Y1;
+    short x=r->X1 + w/2 - graphics.textWidth(text, font);
+    
+    graphics.drawString(text, font, x, y);
+}
 
 
 /*
