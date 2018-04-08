@@ -367,9 +367,12 @@ typedef struct
     char    Status;
     //char    OppID;
     //char    Error;
-    char    DataIndex;
+    
     char    Locked;
-    char    DataLen;
+    ushort  DataIndex;
+    ushort  DataLen;    
+    ushort  DataCapacity;
+
     char*   Data;
     //void*   ReceiveFn;
     //unsigned short Checksum;
@@ -381,13 +384,15 @@ typedef struct
     char    AppID;
     char    OppID;
     char    Pipe;
-    char    Head[5];
-    char*   Data;    
+    char    Head[9];                    //addr + 8 bytes head
+    char*   Data; 
+    char    HeadLen;
     char    HeadIndex;
-    char    DataLen;
-    char    DataIndex;
+    ushort  DataLen;
+    ushort  DataIndex;
     char    Error;
     char    Direction;                  //set 0, get 1
+    short   HeadData;
 }NETCOM_DATAOUT;
 
 const struct
@@ -400,33 +405,48 @@ const struct
     char    ReplyErrorSize;             //data jsou prilis velka
     char    GetBufferNotExist;          //pri get, master nanastavil data buffer (prijimaci)
     char    GetBufferSize;              //pri get, master buffer je moc maly
-}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5, 6, 7};
+    
+    char    Master1;
+    char    Master2;    
+    char    Master8;    
+    char    AcceptMaster;
+}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 20};
 
 const struct 
 {
     char    Data;
     char    NextMaster;
+    char    StartMaster;
     
-}NOT_RESPONSE_ACTION={0, 1};
+}NOT_RESPONSE_ACTION={0, 1, 2};
 
 const struct
 {
     char    SetData;
     char    GetData;
-    char    Reply;
+    //char    Reply;
     char    ReturnData;
-    char    dummy1;
-    char    dummy2;
-    char    SetMaster;
-    char    AcceptMaster;
-    char    None;
+    char    Control;
+    //char    dummy2;
+    //char    SetMaster;
+    //char    AcceptMaster;
+    //char    None;
     //char    AcceptMaster;
     //char    SetMaster2;
     //char    Reply;
     //char    ReturnData;
     //char    None;
-}NETCOM_COMMAND={0,1,2,3,4,5,6,7,8};
+}NETCOM_HEADTYPE={0,1,2,3};
 
+const struct
+{
+    char    None;
+    char    AcceptMaster;
+    char    SetMaster2;
+    char    Reply;
+    char    ReturnData;
+    //char    None;
+}NETCOM_EXCEPTION={0,1,2,3,4};
 
 const struct
 {

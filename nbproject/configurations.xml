@@ -90,7 +90,7 @@
             <itemPath>clock_cfgBits_mz.c</itemPath>
           </logicalFolder>
           <logicalFolder name="f2" displayName="netcom" projectFiles="true">
-            <itemPath>netcom.c</itemPath>
+            <itemPath>netcom2.c</itemPath>
           </logicalFolder>
           <itemPath>main.c</itemPath>
           <itemPath>globals.c</itemPath>

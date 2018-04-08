@@ -97,11 +97,15 @@ void m1_start()
         }        
 #else
         //ID 1
-        //netSetData(4, 0);
-        netGetData(4, 0);
+        netSetData(4, 0);
+        //netGetData(4, 0);
 #endif   
         
-        doEvents();
+        int a;
+        for(a=0; a<100; a++)
+        {
+            doEvents();
+        }
     }
         
     // <editor-fold defaultstate="collapsed" desc="vyrazeno">
@@ -672,24 +676,28 @@ NETCOM_DATAIN setPipe0;
 NETCOM_DATAIN setPipe1;
 NETCOM_DATAIN getPipe0;
 NETCOM_DATAIN getPipe1;
-char setPipe0data[NETCOM_SETPIPE_SIZE];
-char setPipe1data[NETCOM_SETPIPE_SIZE];
+char setPipe0data[1024]; //NETCOM_SETPIPE_SIZE];
+char setPipe1data[32];
 
 char getPipe0data[4]={0,1,2,3};
 char getPipe1data[8]={0,1,2,3,10,11,12,13};
 char data[]={1,2,3,4,5,6,7,8,         9,10,11,12,13,14,15,16,
              17,18,19,20,21,22,23,24, 25,26,27,28,29,30,31,32};
+
+char data1024[1024];
     
 static void netInitPipe()
 {
     //pripravi buffer pro set, pipe0
     setPipe0.Data=setPipe0data;
     setPipe0.Status=NETCOM_IN_STATUS.WaitToRx;
+    setPipe0.DataCapacity=1024;
     netcomDataSet[0]=&setPipe0;
     
     //pripravi buffer pro set, pipe1
     setPipe1.Data=setPipe1data;
     setPipe1.Status=NETCOM_IN_STATUS.WaitToRx;
+    setPipe1.DataCapacity=32;
     netcomDataSet[1]=&setPipe1;
     
     getPipe0.Data=getPipe0data;
@@ -705,6 +713,15 @@ static void netInitPipe()
     getPipe1.Status=NETCOM_IN_STATUS.Valid;
     getPipe1.Locked=0;
     netcomDataGet[1]=&getPipe1;
+    
+    int a; 
+    char b=0;
+    for(a=0; a<1024; a++)
+    {
+        data1024[a]=b;
+        b++;
+        if(b==0xFF){b=0;}
+    }
 }
 
 static void changeGetData()
@@ -771,12 +788,12 @@ static void netSetData(char oid, char opipe)
     //dataStruct.AppID=getProcID();
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
-    dataStruct.Data=data;
-    dataStruct.DataLen=32;
+    dataStruct.Data=data1024;
+    dataStruct.DataLen=1024;
     //dataStruct.Direction=0;         //set
     
     netcomSetData(&dataStruct);
-    clearPin(&LED1);
+    setPin(&LED1);
     
     while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
     {
@@ -786,7 +803,7 @@ static void netSetData(char oid, char opipe)
     if(dataStruct.Status==NETCOM_OUT_STATUS.ReplyOk)
     {
         //ok
-        setPin(&LED1);
+        clearPin(&LED1);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyBusy)
     {

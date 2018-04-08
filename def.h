@@ -125,7 +125,7 @@
 
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="UART">
+// <editor-fold defaultstate="collapsed" desc="NETCOM">
 //@UARTNETCOM
 #define             USE_UARTNETCOM
 #define             UART2_USE
@@ -142,6 +142,7 @@
 //#endif
 
 #define             NETCOM_MAXID            8   //max. ID na sbernici
+#define             NETCOM_CAN_BE_MASTER
 
 #define             NETCOM_DATAOUT_CAPA     8   //8 polozek dataOut
 #define             NETCOM_DATASET_CAPA     4   //8 polozek dataIn, pipe 1-8
@@ -149,7 +150,9 @@
 
 #define             NETCOM_SETPIPE_SIZE     32  //velikost set pipe bufferu 
 
-
+#define             _TX_MS		    50
+#define             _RX_MS		    20
+#define             _STARTUP_MS	    1000
 
 //</editor-fold>
 

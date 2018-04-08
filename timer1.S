@@ -244,9 +244,7 @@ iVector_timer1:
     
 //<editor-fold defaultstate="collapsed" desc="NETCOM">
 #if defined USE_UARTNETCOM 
-    #define	_TX_MS		    10
-    #define	_RX_MS		    5
-    #define	_STARTUP_MS	    1000
+
     
     //Tx timeout
     lhu	    v0, (netcomTx_ms)
