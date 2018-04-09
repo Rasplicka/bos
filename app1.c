@@ -688,6 +688,15 @@ char data1024[1024];
     
 static void netInitPipe()
 {
+    Netcom nc;
+    nc.setData[0]=&setPipe0;
+    nc.setData[0]->Data=setPipe0data;
+    nc.setData[0]->Status=NETCOM_IN_STATUS.WaitToRx;
+    nc.setData[0]->Data=&setPipe0;
+    nc.setData[0]->DataCapacity=1024;
+    
+    
+    
     //pripravi buffer pro set, pipe0
     setPipe0.Data=setPipe0data;
     setPipe0.Status=NETCOM_IN_STATUS.WaitToRx;

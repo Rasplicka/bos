@@ -150,9 +150,15 @@
 
 #define             NETCOM_SETPIPE_SIZE     32  //velikost set pipe bufferu 
 
-#define             _TX_MS		    50
-#define             _RX_MS		    20
-#define             _STARTUP_MS	    1000
+#define             NETCOM_ONE_MASTER
+
+#define             _TX_LONG_MS             50  //30
+#define             _TX_SHORT_MS		    5
+#define             _RX_LONG_MS             20
+#define             _STARTUP_MS             1000
+
+#define             NETCOM_SETPORT_COUNT    32
+#define             NETCOM_GETPORT_COUNT    8
 
 //</editor-fold>
 

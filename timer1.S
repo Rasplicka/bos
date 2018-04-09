@@ -245,51 +245,71 @@ iVector_timer1:
 //<editor-fold defaultstate="collapsed" desc="NETCOM">
 #if defined USE_UARTNETCOM 
 
+    //lh > lh16
+    //CALC_C > jal
+    
+    //<editor-fold defaultstate="collapsed" desc="Tx timeout">
     
     //Tx timeout
-    lhu	    v0, (netcomTx_ms)
-    beqz    v0, 1f				//skok, nenastavuje time
+    lhu	    s0, (netcomTx_ms)
+    beqz    s0, 2f				//skok, nenastavuje time
     
-    addiu   v0, TIMER1_INTERVAL
-    sh	    v0, (netcomTx_ms)
-    
-    _B_FLTC v0, _TX_MS, 1f			//meni t9, skok, nenastal timeout
-    //nastala udalost
+    addiu   s0, -TIMER1_INTERVAL
+    bgtz    s0, 1f				//skok, nenastal timeout
+
+    //nastala udalost (timeout)
+    //jal	    netcomNotRespond
     la	    v0, netcomNotRespond
     _CALL_C v0, 0
-    //sh	    zero, (netcomTx_ms)
+    move    s0, zero
     1:
+    sh	    s0, (netcomTx_ms)
+    2:
+    
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Rx timeout">
     
     //Rx timeout
-    lhu	    v0, (netcomRx_ms)
-    beqz    v0, 1f				//skok, nenastavuje time
+    lhu	    s0, (netcomRx_ms)
+    beqz    s0, 2f				//skok, nenastavuje time
     
-    addiu   v0, TIMER1_INTERVAL
-    sh	    v0, (netcomRx_ms)
-    
-    _B_FLTC v0, _RX_MS, 1f			//meni t9, skok, nenastal timeout
-    //nastala udalost
+    addiu   s0, -TIMER1_INTERVAL
+    bgtz    s0, 1f				//skok, nenastal timeout
+
+    //nastala udalost (timeout)
+    //jal	    netcomRxTimeout
     la	    v0, netcomRxTimeout
     _CALL_C v0, 0
-    //sh	    zero, (netcomRx_ms)
-    1:	
+    move    s0, zero
+    1:
+    sh	    s0, (netcomRx_ms)
+    2:
     
+    //</editor-fold>    
+    
+    //<editor-fold defaultstate="collapsed" desc="InitBus">
     
     #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
 	//pouze DevID=1, init bus
-	lhu	v0, (netcomStratup_ms)
-	addiu   v0, TIMER1_INTERVAL
-	sh	v0, (netcomStratup_ms)
-        
-	_B_FLTC v0, _STARTUP_MS, 1f		//meni t9, skok, nenastal timeout
-	//netcomStratup_ms = 100, initBus
+	lhu	s0, (netcomStratup_ms)
+	beqz    s0, 2f				//skok, nenastavuje time
+    
+	addiu   s0, -TIMER1_INTERVAL
+	bgtz    s0, 1f				//skok, nenastal timeout	
+	
+	//nastala udalost (timeout)
+	//jal	    netcomInitBus
 	la	v0, netcomInitBus
 	_CALL_C v0, 0
-  
-	sh	zero, (netcomStratup_ms)	//nastav novy cas
-        1:    
-   
+	move    s0, zero
+	1:
+	sh	s0, (netcomStratup_ms)
+	2:
     #endif  //NETCOM_DEVID==1 
+    
+    //</editor-fold>
+
 	
 #endif  //USE_UARTNETCOM  
     

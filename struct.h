@@ -410,7 +410,8 @@ const struct
     char    Master2;    
     char    Master8;    
     char    AcceptMaster;
-}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 20};
+    char    NotAcceptMaster;
+}NETCOM_OUT_STATUS={0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 20, 21};
 
 const struct 
 {
@@ -459,12 +460,28 @@ const struct
 const struct
 {
     char    None;
+    char    NextMaster1;
     char    NextMaster2;
     char    NotRespondAct;
     char    StartMaster;
     char    ReturnData;
 }NETCOM_TXFINISH_FN={0, 1, 2, 3, 4};
 
+
+typedef struct
+{
+    char    nra;
+    char    txf;
+    
+}NetcomLocals;
+
+typedef struct
+{
+    NetcomLocals locals;
+    NETCOM_DATAIN setData[NETCOM_SETPORT_COUNT];
+    NETCOM_DATAIN getData[NETCOM_GETPORT_COUNT];
+    
+}Netcom;
 
 #endif
 

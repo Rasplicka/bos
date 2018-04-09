@@ -54,23 +54,29 @@ static void sendPipe(char pipe);
 static void sendControl(char comm, char exception);
 
 //local var
-char nra=0;
-char txf=0;
-char rxExcept=0;
-char nextID=0;
-char haveNextID=0;
+static char nra=0;
+static char txf=0;
+static char rxExcept=0;
+static char nextID=0;
+static char haveNextID=0;
 
-ushort headSize=0;
-char headCommand=0;
-char headType=0;
-char headPipe=0;
-char headOpp=0;
-ushort headChecksum=0;
-ushort calcChecksum=0;
+static ushort headSize=0;
+static char headCommand=0;
+static char headType=0;
+static char headPipe=0;
+static char headOpp=0;
+static ushort headChecksum=0;
+static ushort calcChecksum=0;
 
-char* getBuffer=NULL;
-char ra=0;
-char rxStatus=0;
+static char* getBuffer=NULL;
+static char ra=0;
+static char rxStatus=0;
+
+static char maxID=NETCOM_MAXID;
+static char IDPlusOne=0;
+static char oneMaster=0;
+static char canBeMaster=0;   
+static char nextIDCounter=0;
 
 NETCOM_DATAOUT* sendingItem;                            //aktualni polozka, kterou Master odesila
 NETCOM_DATAOUT master1Item;
@@ -78,14 +84,36 @@ NETCOM_DATAOUT master2Item;
 NETCOM_DATAOUT master8Item;
 NETCOM_DATAOUT replyItem;
 
-void (*_finish)();
+//void (*_finish)();
 
 // global fn -------------------------------------------------------------------
 void netcomInit()
 {
-    netcomStratup_ms=0;
+    if(NETCOM_DEVID < 1){ return; }
+    
+#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)    
+    netcomStratup_ms=_STARTUP_MS;
+#endif  
     netcomTx_ms=0;
     netcomRx_ms=0;
+
+    if(maxID<NETCOM_DEVID){maxID=NETCOM_DEVID;}
+    if(maxID<2){maxID=2;}
+    
+    if(maxID==NETCOM_DEVID){IDPlusOne=1;}
+    else{IDPlusOne=NETCOM_DEVID+1;}
+    
+#ifdef NETCOM_ONE_MASTER
+    oneMaster=1;
+#endif   
+    
+#ifdef NETCOM_CAN_BE_MASTER
+    canBeMaster=1;
+#endif    
+    
+    //Netcom nc;
+    //nc.locals.txf
+    
     
     //destation ID=1
     master8Item.OppID=1;
@@ -204,18 +232,21 @@ void netcomRxTimeout()
     
     if(netcomTx_ms>0)
     {
-        //Master: ceka na data (ktera neprijdou, chyba cteni)
+        //Master: ceka na data (ktera prisla chybna, chyba cteni v tomto modulu)
         netcomNotRespond();
+        netcomTx_ms=0;
     }
 }
 void netcomNotRespond()
 {
+    //master odeslal data, ceka na odpoved, ta neprisla ve stanovene lhute
+    
 #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
     //devID=1, neposila master8
-    netcomStratup_ms=0;
+    netcomStratup_ms=_STARTUP_MS;
     notRespondAct();
 #else
-    //neni devID=1, posila master8
+    //neni devID=1, posila master8 (informuje DevID1, ze probiha komunikace)
     txf=NETCOM_TXFINISH_FN.NotRespondAct;
     master8();
 #endif
@@ -536,13 +567,13 @@ static void startMaster()
         {
             //set
             sendingItem->DataIndex=0;                                //bude vysilat data (pokud DataLen>0, nastavuje app)
-            startTx(1, NETCOM_EXCEPTION.Reply);                        //ocekava REPLY (OK, nebo s kodem chyby)
+            startTx(_TX_LONG_MS, NETCOM_EXCEPTION.Reply);                        //ocekava REPLY (OK, nebo s kodem chyby)
         }
         else
         {
             //get
             sendingItem->DataIndex=sendingItem->DataLen;            //DataLen obsahuje velikost bufferu, DataIndex zabrani vysilani dat 
-            startTx(1, NETCOM_EXCEPTION.ReturnData);                   //ocekava data, nebo REPLY s kodem chyby
+            startTx(_TX_LONG_MS, NETCOM_EXCEPTION.ReturnData);                   //ocekava data, nebo REPLY s kodem chyby
         }
     }
     else
@@ -553,7 +584,7 @@ static void startMaster()
             {
                 //DevID=1, neni jiny master, po 10ms vola novy StartMaster
                 nra=NOT_RESPONSE_ACTION.StartMaster;
-                netcomTx_ms=_TX_MS-10;
+                //netcomTx_ms=_TX_MS-10;
                 return;
             }
         #endif         
@@ -565,40 +596,37 @@ static void startMaster()
 
 static void nextMaster1()
 {
-    if(nextID==0)
+    //nextID
+    
+    if(oneMaster==1)
     {
-        //inicializace nextID
-        if(NETCOM_DEVID == NETCOM_MAXID) { nextID=1; }
-        else { nextID=NETCOM_DEVID + 1; }
+        //Pouze toto je master, po 10ms znova startMaster
+        netcomTx_ms=10;
+        nra=NOT_RESPONSE_ACTION.StartMaster;
+        return;
     }
     
+    if(nextID==0)
+    {
+        //nextID neni inicializovano, nove hledani nextID
+        nextID=IDPlusOne;
+        haveNextID=0;
+    }
     else if(haveNextID==0)
     {
-        //jeste nenasel platne nextID
         nextID++;
-        if(nextID >= NETCOM_MAXID) { nextID=1; }
+        if(nextID > maxID){ nextID=1; }
         
-       
-        if(nextID==NETCOM_DEVID)
+        if(nextID == NETCOM_DEVID)
         {
-            #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1) 
-                //DevID=1, neni jiny master, po 10ms vola novy StartMaster
-                nra=NOT_RESPONSE_ACTION.StartMaster;
-                netcomTx_ms=_TX_MS-10;
-                return;
-            #else  
-                //DevID != 1, nenasel jiny master, ukonci komunikaci (po 100ms nastane initBus)
-                netcomTx_ms=0;
-                nextID=0;
-                return;
-            #endif   
-        }        
-    }
-    else
-    {
-        //nextID je nastaveno, pouzije ho
+            //prosel vsechny ID a nenasel jiny master, po 5ms startMaster
+            netcomTx_ms=5;
+            nra=NOT_RESPONSE_ACTION.StartMaster;
+            return;            
+        }
     }
 
+    //ma nextID, kteremu se pokusi predat master
     master1Item.OppID=nextID;
     fillHeadControl(&master1Item, NETCOM_OUT_STATUS.Master1);
     
@@ -607,7 +635,7 @@ static void nextMaster1()
     
     nra=NOT_RESPONSE_ACTION.NextMaster;
     txf=NETCOM_TXFINISH_FN.None;
-    startTx(1, NETCOM_EXCEPTION.AcceptMaster);
+    startTx(_TX_SHORT_MS, NETCOM_EXCEPTION.AcceptMaster);
 }
 static void nextMaster2()
 {
@@ -725,7 +753,12 @@ static void txWriteFifo()
         //odeslano vsechno
         if(txf==NETCOM_TXFINISH_FN.None)
         {
-            //_DISABLE_TX_INTERRUPT;
+            //Neni master, nebo predal mastera, nebo ceka na data (get)
+            //Zadna akce, pouze ceka na volani jineho mastera
+        }
+        else if (txf==NETCOM_TXFINISH_FN.NextMaster1)
+        {
+            nextMaster1();
         }
         else if (txf==NETCOM_TXFINISH_FN.NextMaster2)
         {
@@ -774,13 +807,13 @@ static void notRespondAct()
             { 
                 //set
                 sendingItem->DataIndex=0;
-                startTx(1, NETCOM_EXCEPTION.Reply); 
+                startTx(_TX_LONG_MS, NETCOM_EXCEPTION.Reply); 
             }     
             else 
             { 
                 //get
                 sendingItem->DataIndex=sendingItem->DataLen;
-                startTx(1, NETCOM_EXCEPTION.ReturnData); 
+                startTx(_TX_LONG_MS, NETCOM_EXCEPTION.ReturnData); 
             }                              
         }
     }
@@ -790,12 +823,8 @@ static void notRespondAct()
     }
     else
     {
-        //cekalo se Accept, ale neprislo, nelze predat master dalsimu modulu
-        //znovu nastavi nra a txf
-        
-        //nove hledani nextID
+        //cekalo se AcceptMaster, ale neprisla odpoved, bude hledat dalsi master
         haveNextID=0;
-        
         nextMaster1();
     }
 }
@@ -983,83 +1012,122 @@ static void onChecksum()
         #endif   
 
         //checksum ok
-        if(rxExcept == NETCOM_EXCEPTION.AcceptMaster && headCommand == NETCOM_OUT_STATUS.AcceptMaster)
+        if(rxExcept == NETCOM_EXCEPTION.AcceptMaster)
         {
-            //Master: prijal AcceptMaster
-            //odeslat master2
-            haveNextID=1;               //nasel platne nextID (prisla odpoved)
-            #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
-                //devID=1, neposila master8
-                netcomStratup_ms=0;
-                nextMaster2();
-            #else
-                //neni devID=1, posila master8
-                txf=NETCOM_TXFINISH_FN.NextMaster2;
-                master8();
-            #endif
+            // <editor-fold defaultstate="collapsed" desc="AcceptMaster/NotAcceptMaster">
+            //ocekava AcceptMaster / NotAcceptMaster
+            if (headCommand == NETCOM_OUT_STATUS.AcceptMaster) 
+            {
+                //Master: prijal AcceptMaster, odeslat master2
+                haveNextID = 1; //nasel platne nextID (prisla odpoved)
+
+                if (nextID != IDPlusOne) {
+                    nextIDCounter++;
+                    if (nextIDCounter > 10) {
+                        //nove skenovani nextID
+                        nextIDCounter = 0;
+                        nextID = 0;
+                    }
+                }
+
+                #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
+                    //devID=1, neposila master8
+                    netcomStratup_ms = _STARTUP_MS;
+                    nextMaster2();
+                #else
+                    //neni devID=1, posila master8
+                    txf = NETCOM_TXFINISH_FN.NextMaster2;
+                    master8();
+                #endif
+            } 
+            else if (headCommand == NETCOM_OUT_STATUS.NotAcceptMaster) 
+            {
+                //Master: prijal NotAcceptMaster, (nextMaster1, hleda dalsi master)
+                haveNextID = 0;
                 
-            #ifdef TEST_BOARD_BOS1  
-                //clearPin(&LED2);    
-            #endif
+                #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
+                    netcomStratup_ms = _STARTUP_MS;
+                    nextMaster1();
+                #else
+                    txf = NETCOM_TXFINISH_FN.NextMaster1;
+                    master8();
+                #endif
+            }
+            
+            // </editor-fold>
         }
         
         else if(rxExcept == NETCOM_EXCEPTION.Reply && isReply(headCommand))
         {
+            // <editor-fold defaultstate="collapsed" desc="Reply">
             //Master: prijal Reply
-            sendingItem->Status=headCommand;                   //Reply data
-            dataOutRemove();                                //sendingItem=NULL
-            
+            sendingItem->Status = headCommand; //Reply data
+            dataOutRemove();
+
             #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                 //devID=1, neposila master8
-                netcomStratup_ms=0;
+                netcomStratup_ms = _STARTUP_MS;
                 startMaster();
             #else
                 //neni devID=1, posila master8
-                txf=NETCOM_TXFINISH_FN.StartMaster;
+                txf = NETCOM_TXFINISH_FN.StartMaster;
                 master8();
-            #endif             
+            #endif  
+
+            // </editor-fold>
         }
+        
         else if(rxExcept == NETCOM_EXCEPTION.ReturnData)
         {
-            if(headType == NETCOM_HEADTYPE.ReturnData)
+            // <editor-fold defaultstate="collapsed" desc="ReturnData/Reply">
+            if (headType == NETCOM_HEADTYPE.ReturnData) 
             {
                 //Master: prijal data, jako odpoved na get
-                sendingItem->Status=rxStatus;               //ok, nebo chyba (pokud data obsahovala chybu)
-            }
-            else
+                sendingItem->Status = rxStatus; //ok, nebo chyba (pokud data obsahovala chybu)
+            } 
+            else 
             {
                 //Master: misto dat prijal Reply, jako odpoved na get
-                sendingItem->Status=headPipe;               //Reply data (obsahuje chybu, pro nebyla odeslana data)
+                //Reply data (obsahuje chybu, proc nebyla odeslana data)
+                sendingItem->Status = headPipe; 
             }
-            dataOutRemove();                                //sendingItem=NULL             
-            
+            dataOutRemove();             
+
             #if(defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                 //devID=1, neposila master8
-                netcomStratup_ms=0;
+                netcomStratup_ms = _STARTUP_MS;
                 startMaster();
             #else
                 //neni devID=1, posila master8
-                txf=NETCOM_TXFINISH_FN.StartMaster;
+                txf = NETCOM_TXFINISH_FN.StartMaster;
                 master8();
-            #endif             
+            #endif  
+
+            // </editor-fold>
         }   
         
         else if(headType == NETCOM_HEADTYPE.Control)
         {
-            #ifdef NETCOM_CAN_BE_MASTER            
-
+            // <editor-fold defaultstate="collapsed" desc="setMaster1/2/8">
             //Slave: prijal setMaster(1,2,8)
-            if(headCommand == NETCOM_OUT_STATUS.Master1)
+            if (headCommand == NETCOM_OUT_STATUS.Master1) 
             {
                 //setMaster1
-                //sendAccept();
-                replyItem.OppID=headOpp;
-                sendControl(NETCOM_OUT_STATUS.AcceptMaster, NETCOM_EXCEPTION.SetMaster2);
-            }
-            else if (headCommand == NETCOM_OUT_STATUS.Master2)
+                if (canBeMaster == 1) 
+                {
+                    replyItem.OppID = headOpp;
+                    sendControl(NETCOM_OUT_STATUS.AcceptMaster, NETCOM_EXCEPTION.SetMaster2);
+                } 
+                else 
+                {
+                    replyItem.OppID = headOpp;
+                    sendControl(NETCOM_OUT_STATUS.NotAcceptMaster, NETCOM_EXCEPTION.None);
+                }
+            } 
+            else if (headCommand == NETCOM_OUT_STATUS.Master2) 
             {
                 //setMaster2
-                if(rxExcept == NETCOM_EXCEPTION.SetMaster2)
+                if (rxExcept == NETCOM_EXCEPTION.SetMaster2) 
                 {
                     //ocekaval setMaster2 (prevezme master)
                     #ifdef TEST_BOARD_BOS0  
@@ -1070,39 +1138,41 @@ static void onChecksum()
 
                     startMaster();
                 }
-            }
+            } 
             else 
             {
                 //master8
                 #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
                     //pouze DevID=1
-                    netcomStratup_ms=0;
+                    netcomStratup_ms = _STARTUP_MS;
                 #endif          
             }
             
-            #endif
+            // </editor-fold>
         }
         
         else
         {
+            // <editor-fold defaultstate="collapsed" desc="set/get data">
             //slave prijal set, nebo get
-            if(headType==NETCOM_HEADTYPE.SetData)
+            if (headType == NETCOM_HEADTYPE.SetData) 
             {
-                if(rxStatus==NETCOM_OUT_STATUS.ReplyOk)
+                if (rxStatus == NETCOM_OUT_STATUS.ReplyOk) 
                 {
                     //data jsou OK (checksum)
-                    netcomDataSet[headPipe]->DataLen=headSize;
-                    netcomDataSet[headPipe]->DataIndex=0;
-                    netcomDataSet[headPipe]->Status=NETCOM_IN_STATUS.Full;
+                    netcomDataSet[headPipe]->DataLen = headSize;
+                    netcomDataSet[headPipe]->DataIndex = 0;
+                    netcomDataSet[headPipe]->Status = NETCOM_IN_STATUS.Full;
                 }
-                replyItem.OppID=headOpp;
+                replyItem.OppID = headOpp;
                 sendControl(rxStatus, NETCOM_EXCEPTION.None);
             }
-            
-            else if(headType==NETCOM_HEADTYPE.GetData)
+            else if (headType == NETCOM_HEADTYPE.GetData) 
             {
                 sendPipe(headPipe);
             }
+            
+            // </editor-fold>
         }
     }
     else
@@ -1178,7 +1248,7 @@ static void sendControl(char comm, char exception)
     sendingItem=&replyItem;
     
     txf=NETCOM_TXFINISH_FN.None;
-    startTx(0, exception); //NETCOM_EXCEPTION.None);    
+    startTx(0, exception);    
 }
 
 
