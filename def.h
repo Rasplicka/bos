@@ -4,9 +4,9 @@
 //#define PIC32MM
 
 //BOARD
-//#define TEST_BOARD_BOS0
-//#define TEST_BOARD_BOS1
-#define NETCOM_BOARD_0256
+//#define TEST_BOARD_BOS0             //mala deska
+#define TEST_BOARD_BOS1           //velka deska
+//#define NETCOM_BOARD_0256
 //#define NETCOM_BOARD_0064
 
 //PROCESSOR
@@ -171,9 +171,9 @@
 #define             NETCOM_DATAGET_CAPA     4
 
 #define             _TX_LONG_MS             50  //30
-#define             _TX_SHORT_MS		    5
-#define             _RX_LONG_MS             20
-#define             _STARTUP_MS             1000
+#define             _TX_SHORT_MS		    45
+#define             _RX_LONG_MS             30
+#define             _STARTUP_MS             10000
 
 #define             NETCOM_SETPORT_COUNT    32
 #define             NETCOM_GETPORT_COUNT    8

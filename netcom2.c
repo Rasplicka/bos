@@ -13,10 +13,10 @@ extern ushort netcomRx_ms;
 #define     NC_SUBPRIORITY              2
 #define     FIFO_SIZE                   8
 
-#if   defined TEST_BOARD_BOS1  
-    PIN_INFO tx_pin={PORTB_BASE, BIT9};
-#elif defined TEST_BOARD_BOS1  
+#if   defined TEST_BOARD_BOS0  
     PIN_INFO tx_pin={PORTB_BASE, BIT2};
+#elif defined TEST_BOARD_BOS1  
+    PIN_INFO tx_pin={PORTB_BASE, BIT9};
 #elif defined NETCOM_BOARD_0256
     PIN_INFO tx_pin={PORTB_BASE, BIT14};
 #elif defined NETCOM_BOARD_0064
@@ -318,13 +318,14 @@ void netcomNotRespond()
 void netcomInitBus()
 {
     //initBus, start comunication (after 100ms pause, DevID=1 only)
+    netcomStratup_ms=_STARTUP_MS;
     
     U_STABITS.URXEN=0;      //Rx disable
     U_STABITS.UTXEN=0;      //Rx disable
     clearRxFifo();
     U_STABITS.URXEN=1;      //Rx enable
 
-    setPin(&LED2);
+    setPin(&LED4);
     startMaster();
 }
 
@@ -669,7 +670,7 @@ static void startMaster()
 static void nextMaster1()
 {
     //nextID
-    
+    /*
     if(oneMaster==1)
     {
         //Pouze toto je master, po 10ms znova startMaster
@@ -697,6 +698,10 @@ static void nextMaster1()
             return;            
         }
     }
+    */
+    
+    if(thisID==1){nextID=4;}
+    if(thisID==4){nextID=1;}
 
     //ma nextID, kteremu se pokusi predat master
     master1Item.OppID=nextID;
@@ -726,6 +731,7 @@ static void nextMaster2()
         clearPin(&LED2);
     #else
         clearPin(&LED2);
+        clearPin(&LED4);
     #endif     
 }
 static void master8()
@@ -914,7 +920,7 @@ void UART4Rx_interrupt()
     if(ra==0)
     {
         //head
-        netcomRx_ms=1;                                      //spusti citani
+        netcomRx_ms=_RX_LONG_MS;                                      //spusti citani
 
         headType=h3 & 0b00000111;
         headCommand=h3>>3;
@@ -1075,10 +1081,6 @@ static void onChecksum()
     
     if(calcChecksum==headChecksum)
     {
-        #ifdef TEST_BOARD_BOS0    
-            //invPin(&LED1);
-        #endif   
-
         //checksum ok
         if(rxExcept == NETCOM_EXCEPTION.AcceptMaster)
         {

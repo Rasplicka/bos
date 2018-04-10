@@ -800,7 +800,7 @@ static void netSetData(char oid, char opipe)
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=data1024;
-    dataStruct.DataLen=1024;
+    dataStruct.DataLen=8;
     //dataStruct.Direction=0;         //set
     
     netcomSetData(&dataStruct);

@@ -178,7 +178,7 @@ void main()
     //3. init system -----------------------------------------------------------
     // <editor-fold defaultstate="collapsed" desc="system init">
     clearSystemData(OS_DATA_BASE, OS_DATA_SIZE);    //nuluje celou oblast pro OS data
-    netcomStratup_ms=100;                           //pokud 100ms neprobuha com. bude zahajena (pri NETCOM_DEVID=1)
+    //netcomStratup_ms=100;                           //pokud 100ms neprobuha com. bude zahajena (pri NETCOM_DEVID=1)
     systemInit();                                   //init interrupt (ale zustane DI), nastav SRS[1-7] sp, gp, ...
     pinSetting();                                   //provede vychozi nastaveni periferii, prideluje IO piny
     timer1Init();                                   //timer1 1/100s, je-li definovano RTC, nastavi RTC modul na datum 1/1/2000
@@ -204,7 +204,7 @@ void main()
     spiInit();
 #endif    
 
-#ifdef USE_UARTNETCOM    
+#ifdef NETCOM_UART    
     netcomInit();
 #endif
     

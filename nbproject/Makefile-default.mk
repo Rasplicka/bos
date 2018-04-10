@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c timer1.S core_fn.S _display/ili9341/disp9341.c _display/ili9341/disp16_asm.S _display/ssd1306/disp1306.c _display/graphics.c rtc.S change_notif_mz.S change_notif_mm.S spi.c portWriter.c ubtn2.S _touchpad/touchXpt2046.c periph.c periph_fn.S app1.c app2.c app3.c user_apps.c netcom2.c
+SOURCEFILES_QUOTED_IF_SPACED=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c netcom2.c main.c globals.c timer1.S core_fn.S _display/ili9341/disp9341.c _display/ili9341/disp16_asm.S _display/ssd1306/disp1306.c _display/graphics.c rtc.S change_notif_mz.S change_notif_mm.S spi.c portWriter.c ubtn2.S _touchpad/touchXpt2046.c periph.c periph_fn.S app1.c app2.c app3.c user_apps.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/_display/ili9341/disp9341.o ${OBJECTDIR}/_display/ili9341/disp16_asm.o ${OBJECTDIR}/_display/ssd1306/disp1306.o ${OBJECTDIR}/_display/graphics.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/_touchpad/touchXpt2046.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/netcom2.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/clock_cfgBits_mm.o.d ${OBJECTDIR}/clock_cfgBits_mz.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/core_fn.o.d ${OBJECTDIR}/_display/ili9341/disp9341.o.d ${OBJECTDIR}/_display/ili9341/disp16_asm.o.d ${OBJECTDIR}/_display/ssd1306/disp1306.o.d ${OBJECTDIR}/_display/graphics.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/change_notif_mz.o.d ${OBJECTDIR}/change_notif_mm.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/_touchpad/touchXpt2046.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/periph_fn.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/user_apps.o.d ${OBJECTDIR}/netcom2.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/netcom2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/_display/ili9341/disp9341.o ${OBJECTDIR}/_display/ili9341/disp16_asm.o ${OBJECTDIR}/_display/ssd1306/disp1306.o ${OBJECTDIR}/_display/graphics.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/_touchpad/touchXpt2046.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/asm_macro.o.d ${OBJECTDIR}/clock_cfgBits_mm.o.d ${OBJECTDIR}/clock_cfgBits_mz.o.d ${OBJECTDIR}/netcom2.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/globals.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/core_fn.o.d ${OBJECTDIR}/_display/ili9341/disp9341.o.d ${OBJECTDIR}/_display/ili9341/disp16_asm.o.d ${OBJECTDIR}/_display/ssd1306/disp1306.o.d ${OBJECTDIR}/_display/graphics.o.d ${OBJECTDIR}/rtc.o.d ${OBJECTDIR}/change_notif_mz.o.d ${OBJECTDIR}/change_notif_mm.o.d ${OBJECTDIR}/spi.o.d ${OBJECTDIR}/portWriter.o.d ${OBJECTDIR}/ubtn2.o.d ${OBJECTDIR}/_touchpad/touchXpt2046.o.d ${OBJECTDIR}/periph.o.d ${OBJECTDIR}/periph_fn.o.d ${OBJECTDIR}/app1.o.d ${OBJECTDIR}/app2.o.d ${OBJECTDIR}/app3.o.d ${OBJECTDIR}/user_apps.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/_display/ili9341/disp9341.o ${OBJECTDIR}/_display/ili9341/disp16_asm.o ${OBJECTDIR}/_display/ssd1306/disp1306.o ${OBJECTDIR}/_display/graphics.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/_touchpad/touchXpt2046.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o ${OBJECTDIR}/netcom2.o
+OBJECTFILES=${OBJECTDIR}/asm_macro.o ${OBJECTDIR}/clock_cfgBits_mm.o ${OBJECTDIR}/clock_cfgBits_mz.o ${OBJECTDIR}/netcom2.o ${OBJECTDIR}/main.o ${OBJECTDIR}/globals.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/core_fn.o ${OBJECTDIR}/_display/ili9341/disp9341.o ${OBJECTDIR}/_display/ili9341/disp16_asm.o ${OBJECTDIR}/_display/ssd1306/disp1306.o ${OBJECTDIR}/_display/graphics.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/change_notif_mz.o ${OBJECTDIR}/change_notif_mm.o ${OBJECTDIR}/spi.o ${OBJECTDIR}/portWriter.o ${OBJECTDIR}/ubtn2.o ${OBJECTDIR}/_touchpad/touchXpt2046.o ${OBJECTDIR}/periph.o ${OBJECTDIR}/periph_fn.o ${OBJECTDIR}/app1.o ${OBJECTDIR}/app2.o ${OBJECTDIR}/app3.o ${OBJECTDIR}/user_apps.o
 
 # Source Files
-SOURCEFILES=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c main.c globals.c timer1.S core_fn.S _display/ili9341/disp9341.c _display/ili9341/disp16_asm.S _display/ssd1306/disp1306.c _display/graphics.c rtc.S change_notif_mz.S change_notif_mm.S spi.c portWriter.c ubtn2.S _touchpad/touchXpt2046.c periph.c periph_fn.S app1.c app2.c app3.c user_apps.c netcom2.c
+SOURCEFILES=asm_macro.S clock_cfgBits_mm.c clock_cfgBits_mz.c netcom2.c main.c globals.c timer1.S core_fn.S _display/ili9341/disp9341.c _display/ili9341/disp16_asm.S _display/ssd1306/disp1306.c _display/graphics.c rtc.S change_notif_mz.S change_notif_mm.S spi.c portWriter.c ubtn2.S _touchpad/touchXpt2046.c periph.c periph_fn.S app1.c app2.c app3.c user_apps.c
 
 
 CFLAGS=
@@ -244,6 +244,12 @@ ${OBJECTDIR}/clock_cfgBits_mz.o: clock_cfgBits_mz.c  nbproject/Makefile-${CND_CO
 	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o 
 	@${FIXDEPS} "${OBJECTDIR}/clock_cfgBits_mz.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/clock_cfgBits_mz.o.d" -o ${OBJECTDIR}/clock_cfgBits_mz.o clock_cfgBits_mz.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/netcom2.o: netcom2.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/netcom2.o.d 
+	@${RM} ${OBJECTDIR}/netcom2.o 
+	@${FIXDEPS} "${OBJECTDIR}/netcom2.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/netcom2.o.d" -o ${OBJECTDIR}/netcom2.o netcom2.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -322,12 +328,6 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/netcom2.o: netcom2.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/netcom2.o.d 
-	@${RM} ${OBJECTDIR}/netcom2.o 
-	@${FIXDEPS} "${OBJECTDIR}/netcom2.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DICD3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/netcom2.o.d" -o ${OBJECTDIR}/netcom2.o netcom2.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
 else
 ${OBJECTDIR}/clock_cfgBits_mm.o: clock_cfgBits_mm.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -340,6 +340,12 @@ ${OBJECTDIR}/clock_cfgBits_mz.o: clock_cfgBits_mz.c  nbproject/Makefile-${CND_CO
 	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o.d 
 	@${RM} ${OBJECTDIR}/clock_cfgBits_mz.o 
 	@${FIXDEPS} "${OBJECTDIR}/clock_cfgBits_mz.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/clock_cfgBits_mz.o.d" -o ${OBJECTDIR}/clock_cfgBits_mz.o clock_cfgBits_mz.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/netcom2.o: netcom2.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/netcom2.o.d 
+	@${RM} ${OBJECTDIR}/netcom2.o 
+	@${FIXDEPS} "${OBJECTDIR}/netcom2.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/netcom2.o.d" -o ${OBJECTDIR}/netcom2.o netcom2.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -418,12 +424,6 @@ ${OBJECTDIR}/user_apps.o: user_apps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/user_apps.o.d 
 	@${RM} ${OBJECTDIR}/user_apps.o 
 	@${FIXDEPS} "${OBJECTDIR}/user_apps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/user_apps.o.d" -o ${OBJECTDIR}/user_apps.o user_apps.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/netcom2.o: netcom2.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/netcom2.o.d 
-	@${RM} ${OBJECTDIR}/netcom2.o 
-	@${FIXDEPS} "${OBJECTDIR}/netcom2.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -funroll-loops -fno-schedule-insns -mcci -MMD -MF "${OBJECTDIR}/netcom2.o.d" -o ${OBJECTDIR}/netcom2.o netcom2.c   -relaxed-math -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 
