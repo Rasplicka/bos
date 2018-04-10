@@ -3,8 +3,19 @@
 //#define PIC32MM0256
 //#define PIC32MM
 
+//BOARD
 //#define TEST_BOARD_BOS0
-#define TEST_BOARD_BOS1
+//#define TEST_BOARD_BOS1
+#define NETCOM_BOARD_0256
+//#define NETCOM_BOARD_0064
+
+//PROCESSOR
+#if (defined NETCOM_BOARD_0064)
+    #define PIC32MM0064
+#else
+    #define PIC32MM0256
+#endif
+
 
 // <editor-fold defaultstate="collapsed" desc="CPU">
 
@@ -27,9 +38,6 @@
 
     // <editor-fold defaultstate="collapsed" desc="CPU MM">
 #ifdef PIC32MM
-
-#define PIC32MM0256
-
 
 //externi XTAL 8MHz
 //#define     CFG_POSC_XTAL               8
@@ -127,30 +135,40 @@
 
 // <editor-fold defaultstate="collapsed" desc="NETCOM">
 //@UARTNETCOM
-#define             USE_UARTNETCOM
-#define             UART2_USE
 
-//@NETCOM_param
-#ifdef TEST_BOARD_BOS1
-    #define             NETCOM_DEVID            1   //ID modulu           
-#else
-    #define             NETCOM_DEVID            4   //ID modulu
+#if   (defined TEST_BOARD_BOS0)
+    #define             NETCOM_UART                 2   //UART2
+    #define             NETCOM_DEVID                4   //ID modulu 
+#elif (defined TEST_BOARD_BOS1)
+    #define             NETCOM_UART                 2   //UART2
+    #define             NETCOM_DEVID                1   //ID modulu 
+#elif (defined NETCOM_BOARD_0256)
+    #define             NETCOM_UART                 1   //UART1
+#elif (defined NETCOM_BOARD_0064)
+    #define             NETCOM_UART                 1   //UART1
 #endif
 
-//#if defined NETCOM_DEVID  && NETCOM_DEVID <= 1
-    //#define             NETCOM_MASTER
-//#endif
+
+#if (defined NETCOM_UART && NETCOM_UART == 1) 
+        #define             UART1_USE
+#endif
+#if (defined NETCOM_UART && NETCOM_UART == 2) 
+        #define             UART2_USE
+#endif
+#if (defined NETCOM_UART && NETCOM_UART == 3) 
+        #define             UART3_USE
+#endif
+#if (defined NETCOM_UART && NETCOM_UART == 4) 
+        #define             UART4_USE
+#endif
 
 #define             NETCOM_MAXID            8   //max. ID na sbernici
 #define             NETCOM_CAN_BE_MASTER
+//#define             NETCOM_ONE_MASTER
 
 #define             NETCOM_DATAOUT_CAPA     8   //8 polozek dataOut
 #define             NETCOM_DATASET_CAPA     4   //8 polozek dataIn, pipe 1-8
 #define             NETCOM_DATAGET_CAPA     4
-
-#define             NETCOM_SETPIPE_SIZE     32  //velikost set pipe bufferu 
-
-#define             NETCOM_ONE_MASTER
 
 #define             _TX_LONG_MS             50  //30
 #define             _TX_SHORT_MS		    5

@@ -79,6 +79,8 @@ void invPin(PIN_INFO* pi)
     *p=pi->pin;
 }
 
+//Returns zero, when pin is low, or non zero, when pin is high
+//@param pi PIN_INFO structure
 short getPin(PIN_INFO* pi)
 {
     //uint a=pi->portBase + 0x0;

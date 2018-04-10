@@ -360,7 +360,7 @@ typedef struct
 
 #endif  //USE_GRAPHICS
 
-#ifdef USE_UARTNETCOM
+#ifdef NETCOM_UART
 
 typedef struct
 {

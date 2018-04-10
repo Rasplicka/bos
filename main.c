@@ -52,7 +52,7 @@
 #define     EVENT_C_SIZE                (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
 #define     PROC_T_SIZE                 (PROC_T_ISIZE * PROC_T_CAPA)
 
-#ifdef USE_UARTNETCOM
+#ifdef NETCOM_UART
     #define     NETCOM_DATAOUT_SIZE     (NETCOM_DATAOUT_CAPA * 4)               //velikost dataOut [bytes]
     #define     NETCOM_DATASET_SIZE     (NETCOM_DATASET_CAPA * 4)
     #define     NETCOM_DATAGET_SIZE     (NETCOM_DATAGET_CAPA * 4)
@@ -80,7 +80,7 @@ uint proc_t[(PROC_T_SIZE / 4)]                          __section(".os") __at(OS
 char regEventTable[REG_EVENT_T_SIZE]                    __section(".os");
 char eventCache[EVENT_C_SIZE]                           __section(".os");
 
-#ifdef USE_UARTNETCOM
+#ifdef NETCOM_UART
     NETCOM_DATAOUT* netcomDataOut[NETCOM_DATAOUT_CAPA]  __section(".os");
     NETCOM_DATAIN*  netcomDataSet[NETCOM_DATASET_CAPA]  __section(".os");
     NETCOM_DATAIN*  netcomDataGet[NETCOM_DATAGET_CAPA]  __section(".os");

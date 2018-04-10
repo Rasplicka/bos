@@ -243,7 +243,7 @@ iVector_timer1:
     sw	    v0, (time_ms)
     
 //<editor-fold defaultstate="collapsed" desc="NETCOM">
-#if defined USE_UARTNETCOM 
+#if defined NETCOM_UART 
 
     //lh > lh16
     //CALC_C > jal
@@ -290,7 +290,7 @@ iVector_timer1:
     
     //<editor-fold defaultstate="collapsed" desc="InitBus">
     
-    #if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
+    //#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
 	//pouze DevID=1, init bus
 	lhu	s0, (netcomStratup_ms)
 	beqz    s0, 2f				//skok, nenastavuje time
@@ -306,12 +306,12 @@ iVector_timer1:
 	1:
 	sh	s0, (netcomStratup_ms)
 	2:
-    #endif  //NETCOM_DEVID==1 
+    //#endif  //NETCOM_DEVID==1 
     
     //</editor-fold>
 
 	
-#endif  //USE_UARTNETCOM  
+#endif  //NETCOM_UART  
     
 //</editor-fold>
    

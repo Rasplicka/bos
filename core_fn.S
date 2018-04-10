@@ -2739,6 +2739,34 @@ iVector_spi6Tx:
 .ent uart_interrupt_vector 
 uart_interrupt_vector:
     
+//<editor-fold defaultstate="collapsed" desc="UART1">
+#ifdef UART1_USE    
+.global iVector_UART1Tx    
+iVector_UART1Tx:   
+    //Tx
+    la	    v0, UART1Tx_interrupt
+    _CALL_C v0, 0
+    eret
+    
+.global iVector_UART1Rx    
+iVector_UART1Rx:   
+    //Tx
+    la	    v0, UART1Rx_interrupt
+    _CALL_C v0, 0
+    eret
+    
+.global iVector_UART1Er    
+iVector_UART1Er:   
+    //Tx
+    la	    v0, UART1Er_interrupt
+    _CALL_C v0, 0
+    eret
+    
+#endif
+    
+//</editor-fold>    
+    
+//<editor-fold defaultstate="collapsed" desc="UART2">
 #ifdef UART2_USE    
 .global iVector_UART2Tx    
 iVector_UART2Tx:   
@@ -2761,8 +2789,37 @@ iVector_UART2Er:
     _CALL_C v0, 0
     eret
     
-#endif     
-
+#endif 
+    
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="UART3">
+#ifdef UART3_USE    
+.global iVector_UART3Tx    
+iVector_UART3Tx:   
+    //Tx
+    la	    v0, UART3Tx_interrupt
+    _CALL_C v0, 0
+    eret
+    
+.global iVector_UART3Rx    
+iVector_UART3Rx:   
+    //Tx
+    la	    v0, UART3Rx_interrupt
+    _CALL_C v0, 0
+    eret
+    
+.global iVector_UART3Er    
+iVector_UART3Er:   
+    //Tx
+    la	    v0, UART3Er_interrupt
+    _CALL_C v0, 0
+    eret
+    
+#endif 
+    
+//</editor-fold>
+    
 .end uart_interrupt_vector  
     
 //</editor-fold>        

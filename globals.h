@@ -19,7 +19,7 @@ PIN_INFO LED4;
 //debug stacku
 int checkStackSpaceValue=0x7FFFFFFF;                    //max. int
 
-#ifdef USE_UARTNETCOM
+#ifdef NETCOM_UART
     extern NETCOM_DATAOUT* netcomDataOut[];
     extern NETCOM_DATAIN* netcomDataSet[];
     extern NETCOM_DATAIN* netcomDataGet[];
