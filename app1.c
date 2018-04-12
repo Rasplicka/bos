@@ -77,8 +77,10 @@ static int restart=0;
 void m1_start()
 {
     netInitPipe();
-    //systemTimerRegInterval(&testSystemTimer, 3000);
     
+#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)    
+    systemTimerRegInterval(&testSystemTimer, 3000);
+#endif    
    
     while(1)
     {
@@ -88,7 +90,7 @@ void m1_start()
         if(netcomDataSet[0]->Status==NETCOM_IN_STATUS.Full)
         {
             netcomDataSet[0]->Status=NETCOM_IN_STATUS.WaitToRx;
-            invPin(&LED1);
+            //invPin(&LED1);
         }
         if(netcomDataSet[1]->Status==NETCOM_IN_STATUS.Full)
         {
@@ -98,15 +100,15 @@ void m1_start()
 #else
         //ID 1
         //netSetData(4, 0);
-        //netGetData(4, 0);
+        netGetData(4, 0);
 #endif   
         
         int a;
         for(a=0; a<100; a++)
         {
-            //doEvents();
+            doEvents();
         }
-        doEvents();
+        //doEvents();
     }
         
     // <editor-fold defaultstate="collapsed" desc="vyrazeno">
@@ -261,7 +263,7 @@ static void longTime()
 
 static void testSystemTimer(int i)
 {
-    clearPin(&LED1);
+    clearPin(&LED4);
     //clearPin(&LED2);
     //clearPin(&LED3);
     //int d=a+b;
@@ -765,7 +767,7 @@ static void netGetData(char oid, char opipe)
     //dataStruct.Direction=1;         //set    
     
     netcomGetData(&dataStruct);
-    clearPin(&LED1);
+    setPin(&LED1);
     
     while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
     {
@@ -780,11 +782,11 @@ static void netGetData(char oid, char opipe)
         
         if(opipe==0 && ret_data[0]==0 && ret_data[1]==1 && ret_data[2]==2 && ret_data[3]==3)
         {
-            setPin(&LED1);
+            clearPin(&LED1);
         }
         if(opipe==1 && ret_data[0]==0 && ret_data[1]==1 && ret_data[2]==2 && ret_data[3]==3 && ret_data[4]==10 && ret_data[5]==11 && ret_data[6]==12 && ret_data[7]==13)
         {
-            setPin(&LED1);  
+            clearPin(&LED1);  
         }
     }    
     else
@@ -801,7 +803,7 @@ static void netSetData(char oid, char opipe)
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=data1024;
-    dataStruct.DataLen=8;
+    dataStruct.DataLen=1024;
     //dataStruct.Direction=0;         //set
     
     netcomSetData(&dataStruct);

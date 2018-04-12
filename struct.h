@@ -465,7 +465,7 @@ const struct
     char    NotRespondAct;
     char    StartMaster;
     char    ReturnData;
-}NETCOM_TXFINISH_FN={0, 1, 2, 3, 4};
+}NETCOM_TXFINISH_FN={0, 1, 2, 3, 4, 5};
 
 
 typedef struct

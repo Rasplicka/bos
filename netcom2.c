@@ -160,6 +160,11 @@ void (*_finish)();
 // global fn -------------------------------------------------------------------
 void netcomInit()
 {
+    //!!!TEST
+#if   (defined TEST_BOARD_BOS0)    
+    clearPin(&LED1);
+#endif
+    
 #ifdef ID_SWITCH
     loadDeviceIDFromPin();
 #else     
@@ -325,10 +330,6 @@ void netcomInitBus()
     clearRxFifo();
     
     enableRx();
-    //setPortDigIn(tx_pin.portBase, tx_pin.pin);
-    //U_STABITS.URXEN=1;      //Rx enable
-
-    //setPin(&LED4);
     startMaster();
 }
 
@@ -632,6 +633,7 @@ void UART3Tx_interrupt()
 void UART4Tx_interrupt()
 #endif
 {
+    
     if(sendingItem != NULL)
     {
         txWriteFifo();
@@ -645,6 +647,8 @@ static void startMaster()
     //vola se, pokud ma zacit odesilat data
     if(netcomDataOut[0] != NULL && netcomDataOut[0]->Status == NETCOM_OUT_STATUS.WaitToTx)
     {
+        netcomStratup_ms=_STARTUP_MS;
+        
         //Odesila data
         sendingItem=netcomDataOut[0];
         
@@ -675,13 +679,19 @@ static void startMaster()
 static void nextMaster1()
 {
     //nextID
-    /*
+
     if(oneMaster==1)
     {
         //Pouze toto je master, po 10ms znova startMaster
         netcomTx_ms=10;
         nra=NOT_RESPONSE_ACTION.StartMaster;
         return;
+    }
+    
+    if(haveNextID==2)
+    {
+        //nove hledani nextID
+        nextID=0;
     }
     
     if(nextID==0)
@@ -695,7 +705,7 @@ static void nextMaster1()
         nextID++;
         if(nextID > maxID){ nextID=1; }
         
-        if(nextID == thisID) //NETCOM_DEVID)
+        if(nextID == thisID)
         {
             //prosel vsechny ID a nenasel jiny master, po 5ms startMaster
             netcomTx_ms=5;
@@ -703,10 +713,16 @@ static void nextMaster1()
             return;            
         }
     }
+
+    /*
+    if(nextID==0){nextID=thisID+1;}
+    else {nextID++;}
+    if(nextID==thisID){nextID=thisID+1;}
+    if(nextID>maxID){nextID=1;}
     */
     
-    if(thisID==1){nextID=4;}
-    if(thisID==4){nextID=1;}
+    //if(thisID==1){nextID=4;}
+    //if(thisID==4){nextID=1;}
 
     //ma nextID, kteremu se pokusi predat master
     master1Item.OppID=nextID;
@@ -736,7 +752,6 @@ static void nextMaster2()
         clearPin(&LED2);
     #else
         clearPin(&LED2);
-        //clearPin(&LED4);
     #endif     
 }
 static void master8()
@@ -751,6 +766,12 @@ static void startTx(char ms, char exc)
     netcomTx_ms=ms;
     rxExcept=exc;
 
+        //TEST!!!
+        //if(rxExcept == NETCOM_EXCEPTION.Reply)
+        //{
+        //    setPin(&LED1);
+        //}
+    
     ushort x;
     //adresa, b8=1
     x=(ushort)sendingItem->Head[0];
@@ -801,6 +822,7 @@ static void txWriteFifo()
         //odeslat dalsi data
         ushort x;
         char c=0;
+
         while((sendingItem->DataIndex < sendingItem->DataLen) && (c < FIFO_SIZE))
         {
             x=(ushort)sendingItem->Data[sendingItem->DataIndex];
@@ -811,6 +833,12 @@ static void txWriteFifo()
     }
     else
     {
+        //TEST!!!
+        //if(rxExcept == NETCOM_EXCEPTION.Reply)
+        //{
+        //    clearPin(&LED1);
+        //}
+        
         //konec odesilani
         //ceka na dokonceni vysilani (interrupt nastane driv)
         //!!!TEST
@@ -841,6 +869,10 @@ static void txWriteFifo()
         }
         else if (txf==NETCOM_TXFINISH_FN.ReturnData)
         {
+            //!!!TEST
+#if   (defined TEST_BOARD_BOS0)            
+            setPin(&LED1);
+#endif            
             //SLAVE: po odeslani odpovedi (dat) na get
             //replyItem.Data=NULL;                                    //nuluje adresu bufferu vysilanych dat
             NETCOM_DATAIN* p = netcomDataGet[headPipe];
@@ -1103,7 +1135,8 @@ static void onChecksum()
                     {
                         //nove skenovani nextID
                         nextIDCounter = 0;
-                        nextID = 0;
+                        haveNextID=2;
+                        //nextID = 0;
                     }
                 }
 
@@ -1144,6 +1177,7 @@ static void onChecksum()
         {
             // <editor-fold defaultstate="collapsed" desc="Reply">
             //Master: prijal Reply
+            //clearPin(&LED1);
             sendingItem->Status = headCommand; //Reply data
             dataOutRemove();
 
@@ -1176,7 +1210,7 @@ static void onChecksum()
             {
                 //Master: misto dat prijal Reply, jako odpoved na get
                 //Reply data (obsahuje chybu, proc nebyla odeslana data)
-                sendingItem->Status = headPipe; 
+                sendingItem->Status = headCommand; 
             }
             dataOutRemove();             
 
