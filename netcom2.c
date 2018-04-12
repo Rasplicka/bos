@@ -323,9 +323,12 @@ void netcomInitBus()
     U_STABITS.URXEN=0;      //Rx disable
     U_STABITS.UTXEN=0;      //Rx disable
     clearRxFifo();
-    U_STABITS.URXEN=1;      //Rx enable
+    
+    enableRx();
+    //setPortDigIn(tx_pin.portBase, tx_pin.pin);
+    //U_STABITS.URXEN=1;      //Rx enable
 
-    setPin(&LED4);
+    //setPin(&LED4);
     startMaster();
 }
 
@@ -441,6 +444,9 @@ static void fillHeadControl(NETCOM_DATAOUT* item, char comm)
 // local fn --------------------------------------------------------------------
 static char initModule()
 {
+    U_MODE=0;
+    U_STA=0;
+    
     RX_PRIORITY;
     TX_PRIORITY;
     ER_PRIORITY;
@@ -453,8 +459,7 @@ static char initModule()
     IETX_SET;
     IEER_SET;
     
-    U_MODE=0;
-    U_STA=0;
+
     
     //UART2
     U_MODEBITS.ACTIVE=0;
@@ -731,7 +736,7 @@ static void nextMaster2()
         clearPin(&LED2);
     #else
         clearPin(&LED2);
-        clearPin(&LED4);
+        //clearPin(&LED4);
     #endif     
 }
 static void master8()
@@ -1386,9 +1391,9 @@ void UART4Er_interrupt()
     IFTX_CLEAR;
     IFER_CLEAR;
     
-//#ifdef TEST_BOARD_BOS0    
-    //setPin(&LED1);
-//#endif 
+#ifdef TEST_BOARD_BOS1    
+    setPin(&LED4);
+#endif 
     
 }
 

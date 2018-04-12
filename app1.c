@@ -97,15 +97,16 @@ void m1_start()
         }        
 #else
         //ID 1
-        netSetData(4, 0);
+        //netSetData(4, 0);
         //netGetData(4, 0);
 #endif   
         
         int a;
         for(a=0; a<100; a++)
         {
-            doEvents();
+            //doEvents();
         }
+        doEvents();
     }
         
     // <editor-fold defaultstate="collapsed" desc="vyrazeno">

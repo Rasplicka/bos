@@ -252,19 +252,17 @@ iVector_timer1:
     
     //Tx timeout
     lhu	    s0, (netcomTx_ms)
-    beqz    s0, 2f				//skok, nenastavuje time
+    blez    s0, 1f				//skok, nenastavuje time
     
     addiu   s0, -TIMER1_INTERVAL
+    sh	    s0, (netcomTx_ms)
     bgtz    s0, 1f				//skok, nenastal timeout
 
     //nastala udalost (timeout)
     //jal	    netcomNotRespond
     la	    v0, netcomNotRespond
     _CALL_C v0, 0
-    move    s0, zero
     1:
-    sh	    s0, (netcomTx_ms)
-    2:
     
     //</editor-fold>
 
@@ -272,19 +270,18 @@ iVector_timer1:
     
     //Rx timeout
     lhu	    s0, (netcomRx_ms)
-    beqz    s0, 2f				//skok, nenastavuje time
+    blez    s0, 1f				//skok, nenastavuje time
     
     addiu   s0, -TIMER1_INTERVAL
+    sh	    s0, (netcomRx_ms)
     bgtz    s0, 1f				//skok, nenastal timeout
 
     //nastala udalost (timeout)
     //jal	    netcomRxTimeout
     la	    v0, netcomRxTimeout
     _CALL_C v0, 0
-    move    s0, zero
     1:
-    sh	    s0, (netcomRx_ms)
-    2:
+
     
     //</editor-fold>    
     
@@ -293,19 +290,17 @@ iVector_timer1:
     //#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
 	//pouze DevID=1, init bus
 	lhu	s0, (netcomStratup_ms)
-	beqz    s0, 2f				//skok, nenastavuje time
+	blez    s0, 1f				//skok, nenastavuje time
     
 	addiu   s0, -TIMER1_INTERVAL
+	sh	s0, (netcomStratup_ms)
 	bgtz    s0, 1f				//skok, nenastal timeout	
 	
 	//nastala udalost (timeout)
 	//jal	    netcomInitBus
 	la	v0, netcomInitBus
 	_CALL_C v0, 0
-	move    s0, zero
 	1:
-	sh	s0, (netcomStratup_ms)
-	2:
     //#endif  //NETCOM_DEVID==1 
     
     //</editor-fold>
