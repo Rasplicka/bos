@@ -49,6 +49,7 @@ static void onTouch(int p0, int p1, int p2);
 static void dispText1306();
 static void drawImage1306();
 
+static void writeNetComStats();
 static void dispText1();
 static void dispText2();
 static void exPrint();
@@ -73,34 +74,44 @@ static void netWaitForData(char pipe);
 
 
 static int restart=0;
+static int write_stats=0;
 
 void m1_start()
 {
+
+    
     netInitPipe();
     
-#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)    
-    systemTimerRegInterval(&testSystemTimer, 3000);
+#ifdef TEST_BOARD_BOS1   
+    #ifdef USE_GRAPHICS 
+        initGraphics();
+        //sysDisplay.setDefaultFont(&spfont_fixed_16);
+        graphics.setDefaultFont(&font_twcen_18);
+    #endif
+    
+    systemTimerRegInterval(&testSystemTimer, 1000);
 #endif    
    
     while(1)
     {
         
-#if (defined NETCOM_DEVID && NETCOM_DEVID >= 2)
-        //ID 2
         if(netcomDataSet[0]->Status==NETCOM_IN_STATUS.Full)
         {
             netcomDataSet[0]->Status=NETCOM_IN_STATUS.WaitToRx;
-            //invPin(&LED1);
         }
         if(netcomDataSet[1]->Status==NETCOM_IN_STATUS.Full)
         {
             netcomDataSet[1]->Status=NETCOM_IN_STATUS.WaitToRx;
-            //setPin(&LED1);
-        }        
+        } 
+        
+        
+#if (defined NETCOM_DEVID && NETCOM_DEVID >= 2)
+        //ID 4
+        //netSetData(1, 0);
 #else
         //ID 1
-        //netSetData(4, 0);
-        netGetData(4, 0);
+        netSetData(4, 0);
+        //netGetData(4, 0);
 #endif   
         
         int a;
@@ -109,6 +120,11 @@ void m1_start()
             doEvents();
         }
         //doEvents();
+        if(write_stats>0)
+        {
+            writeNetComStats();
+            write_stats=0;
+        }
     }
         
     // <editor-fold defaultstate="collapsed" desc="vyrazeno">
@@ -263,7 +279,11 @@ static void longTime()
 
 static void testSystemTimer(int i)
 {
+    write_stats++;
+    
+#ifdef TEST_BOARD_BOS1    
     clearPin(&LED4);
+#endif    
     //clearPin(&LED2);
     //clearPin(&LED3);
     //int d=a+b;
@@ -438,6 +458,38 @@ static void drawImage1306()
 #endif
 
 #ifdef USE_DISP9341
+
+static void writeNetComStats()
+{
+    graphics.clear(COLOR.Black);
+    int y=0, x1=0, x2=120;
+    
+    graphics.drawString("Tx", NULL, x1, y);
+    intToChar(netcomTxBytes, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=18;
+    
+    graphics.drawString("Rx", NULL, x1, y);
+    intToChar(netcomRxBytes, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=18;
+    
+    graphics.drawString("Bus Err", NULL, x1, y);
+    intToChar(netcomBusError, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=18;   
+    
+    graphics.drawString("Send Err", NULL, x1, y);
+    intToChar(netcomSendDataError, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=18;      
+    
+    graphics.drawString("Chk Err", NULL, x1, y);
+    intToChar(netcomChkError, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=18;      
+    
+}
 
 /*
 static void dispText1()
@@ -673,8 +725,6 @@ static void drawImg()
 
 #ifdef NETCOM_UART
 
-
-
 NETCOM_DATAIN setPipe0;
 NETCOM_DATAIN setPipe1;
 NETCOM_DATAIN getPipe0;
@@ -792,7 +842,7 @@ static void netGetData(char oid, char opipe)
     else
     {
         //dataStruct.Status obsahuje kod chyby
-        setPin(&LED4);
+        //setPin(&LED4);
     }
     
 }
@@ -803,7 +853,7 @@ static void netSetData(char oid, char opipe)
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=data1024;
-    dataStruct.DataLen=1024;
+    dataStruct.DataLen=128;
     //dataStruct.Direction=0;         //set
     
     netcomSetData(&dataStruct);
@@ -822,22 +872,22 @@ static void netSetData(char oid, char opipe)
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyBusy)
     {
         //busy
-        setPin(&LED4);
+        //setPin(&LED4);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyErrorPipe)
     {
         //pipe in opp not exist
-        setPin(&LED4);
+        //setPin(&LED4);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyErrorSize)
     {
         //data size too big
-        setPin(&LED4);
+        //setPin(&LED4);
     }
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyNotExist)
     {
         //opp not exist
-        setPin(&LED4);
+        //setPin(&LED4);
     }
     
     

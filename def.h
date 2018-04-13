@@ -171,9 +171,9 @@
 #define             NETCOM_DATAGET_CAPA     4
 
 #define             _TX_LONG_MS             50  //30
-#define             _TX_SHORT_MS		    5
+#define             _TX_SHORT_MS		    20
 #define             _RX_LONG_MS             30
-#define             _STARTUP_MS             3000
+#define             _STARTUP_MS             1000
 
 #define             NETCOM_SETPORT_COUNT    32
 #define             NETCOM_GETPORT_COUNT    8
@@ -189,7 +189,7 @@
 /*@display_ili9341*/
 #define             USE_DISP9341                    //pouzije driver displeje
 /*@touchpad_xpt2046*/
-#define             USE_TOUCHPAD_XPT2046           //aktivuje modul touchpadu, typ XPT2046
+//#define             USE_TOUCHPAD_XPT2046           //aktivuje modul touchpadu, typ XPT2046
 
 /*@display_ssd1306*/
 //#define             USE_DISP1306                    //pouzije driver displeje
@@ -207,7 +207,7 @@
 //#define             FONT_YGM_36             //color format 4bit, variable width, height 36px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 20kB)
 //#define             FONT_YGM_46             //color format 4bit, variable width, height 46px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 30kB)
 //#define             FONT_YGM_78             //color format 4bit, variable width, height 78px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (velikost cca 10kB)
-//#define             FONT_TWCEN_18           //color format 4bit, variable width, height 18px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 5kB)
+#define             FONT_TWCEN_18           //color format 4bit, variable width, height 18px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 5kB)
 #define             FONT_TWCEN_22           //color format 4bit, variable width, height 22px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 7kB)
 //#define             FONT_TWCEN_28           //color format 4bit, variable width, height 28px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 11kB)
 //#define             FONT_TWCEN_36           //color format 4bit, variable width, height 36px, ascii 0x20 - 0x7E + ceska diakritika (velikost cca 16kB)

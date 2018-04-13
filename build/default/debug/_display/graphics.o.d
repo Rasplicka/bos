@@ -4,4 +4,5 @@ _display/graphics.c  \
 _display/../asm.h  \
 _display/../def.h  \
  _display/../struct.h  \
-_display/font/font_twcen_22.h 
+_display/font/font_twcen_18.h  \
+ _display/font/font_twcen_22.h 
