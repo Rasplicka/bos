@@ -351,38 +351,38 @@ section                    address  length [bytes]      (dec)  Description
 .vector_99              0x9d000518            0x8           8   
 .vector_100             0x9d000520            0x8           8   
 .vector_101             0x9d000528            0x8           8   
-.rodata                 0x9d000530         0x4fec       20460  Read-only const 
-.text                   0x9d00551c         0x3ae8       15080  App's exec code 
-.asm_fn                 0x9d009004          0xe4c        3660   
-.text                   0x9d009e50         0x1418        5144  App's exec code 
-.asm_fn                 0x9d00b268          0x970        2416   
-.asm_rtc                0x9d00bbd8          0x4b0        1200   
-.text                   0x9d00c088          0x8c0        2240  App's exec code 
-.text                   0x9d00c948          0x3b8         952  App's exec code 
-.asm_cn                 0x9d00cd00          0x364         868   
-.dinit                  0x9d00d064          0x320         800   
-.text                   0x9d00d384          0x3fc        1020  App's exec code 
-.text                   0x9d00d780          0x1b4         436  App's exec code 
-.asm_timer1             0x9d00d934          0x1a8         424   
-.text                   0x9d00dadc          0x1a4         420  App's exec code 
-.text                   0x9d00dc80          0x21c         540  App's exec code 
-.text                   0x9d00de9c          0x164         356  App's exec code 
-.rodata                 0x9d00e000          0x130         304  Read-only const 
-.rodata                 0x9d00e130          0x130         304  Read-only const 
-.rodata                 0x9d00e260          0x130         304  Read-only const 
-.rodata                 0x9d00e390          0x130         304  Read-only const 
-.rodata                 0x9d00e4c0          0x130         304  Read-only const 
-.rodata                 0x9d00e5f0          0x130         304  Read-only const 
-.rodata                 0x9d00e720          0x130         304  Read-only const 
-.text.general_exception 0x9d00e850           0x80         128   
-.asm_fn                 0x9d00e8d0           0x60          96   
-.text.sitofp            0x9d00e930           0x54          84   
-.text                   0x9d00e984           0x50          80  App's exec code 
-.text.main_entry        0x9d00e9d4           0x44          68   
-.text                   0x9d00ea18           0x40          64  App's exec code 
-.text._bootstrap_except 0x9d00ea58           0x34          52   
-.vector_default         0x9d00ea8c           0x30          48   
-      Total kseg0_program_mem used  :      0xeaac       60076  22.9% of 0x40000
+.rodata                 0x9d000530         0x5004       20484  Read-only const 
+.text                   0x9d005534         0x3b34       15156  App's exec code 
+.asm_fn                 0x9d009068          0xe4c        3660   
+.text                   0x9d009eb4         0x150c        5388  App's exec code 
+.asm_fn                 0x9d00b3c0          0x970        2416   
+.asm_rtc                0x9d00bd30          0x4b0        1200   
+.text                   0x9d00c1e0          0x8c0        2240  App's exec code 
+.text                   0x9d00caa0          0x3e0         992  App's exec code 
+.asm_cn                 0x9d00ce80          0x364         868   
+.dinit                  0x9d00d1e4          0x320         800   
+.text                   0x9d00d504          0x3fc        1020  App's exec code 
+.text                   0x9d00d900          0x1b4         436  App's exec code 
+.asm_timer1             0x9d00dab4          0x1a8         424   
+.text                   0x9d00dc5c          0x1a4         420  App's exec code 
+.text                   0x9d00de00          0x21c         540  App's exec code 
+.text                   0x9d00e01c          0x164         356  App's exec code 
+.rodata                 0x9d00e180          0x130         304  Read-only const 
+.rodata                 0x9d00e2b0          0x130         304  Read-only const 
+.rodata                 0x9d00e3e0          0x130         304  Read-only const 
+.rodata                 0x9d00e510          0x130         304  Read-only const 
+.rodata                 0x9d00e640          0x130         304  Read-only const 
+.rodata                 0x9d00e770          0x130         304  Read-only const 
+.rodata                 0x9d00e8a0          0x130         304  Read-only const 
+.text.general_exception 0x9d00e9d0           0x80         128   
+.asm_fn                 0x9d00ea50           0x60          96   
+.text.sitofp            0x9d00eab0           0x54          84   
+.text                   0x9d00eb04           0x50          80  App's exec code 
+.text.main_entry        0x9d00eb54           0x44          68   
+.text                   0x9d00eb98           0x40          64  App's exec code 
+.text._bootstrap_except 0x9d00ebd8           0x34          52   
+.vector_default         0x9d00ec0c           0x30          48   
+      Total kseg0_program_mem used  :      0xec2c       60460  23.1% of 0x40000
 
 kseg0 Boot-Memory Usage
 section                    address  length [bytes]      (dec)  Description
@@ -396,7 +396,7 @@ section                    address  length [bytes]      (dec)  Description
 .bev_excpt              0xbfc00380            0xc          12  BEV-Exception 
          Total kseg1_boot_mem used  :       0x1d8         472  40.4% of 0x490
         --------------------------------------------------------------------------
-         Total Program Memory used  :      0xec84       60548  23.0% of 0x40490
+         Total Program Memory used  :      0xee04       60932  23.1% of 0x40490
         --------------------------------------------------------------------------
 
 
@@ -405,14 +405,14 @@ section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
 reserve_data_0_kseg0    0x80000000          0x200         512   
 .sdata                  0x80000200           0x98         152  Small init data 
-.sbss                   0x80000298          0x1b8         440  Small uninit data 
-.bss                    0x80000450          0xa18        2584  Uninitialized data 
-.bss                    0x80000e68          0x810        2064  Uninitialized data 
-.data                   0x80001678           0x8c         140  Initialized data 
-.bss                    0x80001704            0xc          12  Uninitialized data 
+.sbss                   0x80000298          0x238         568  Small uninit data 
+.bss                    0x800004d0          0xa18        2584  Uninitialized data 
+.bss                    0x80000ee8          0x810        2064  Uninitialized data 
+.data                   0x800016f8           0x8c         140  Initialized data 
+.bss                    0x80001784            0xc          12  Uninitialized data 
 .os_stack               0x800059b0         0x2000        8192   
 .os                     0x800079b0          0x650        1616   
-         Total kseg0_data_mem used  :      0x3d60       15712  47.9% of 0x8000
+         Total kseg0_data_mem used  :      0x3de0       15840  48.3% of 0x8000
 
 kseg1 Data-Memory Usage
 section                    address  length [bytes]      (dec)  Description
@@ -420,15 +420,15 @@ section                    address  length [bytes]      (dec)  Description
 reserve_data_0_kseg1    0xa0000000          0x200         512   
          Total kseg1_data_mem used  :       0x200         512  100.0% of 0x200
         --------------------------------------------------------------------------
-            Total Data Memory used  :      0x3f60       16224  48.8% of 0x8200
+            Total Data Memory used  :      0x3fe0       16352  49.1% of 0x8200
         --------------------------------------------------------------------------
 
 
 Dynamic Data-Memory Reservation
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-heap                    0x80001718           0x10          16  Reserved for heap 
-stack                   0x80001740         0x4268       17000  Reserved for stack 
+heap                    0x80001798           0x10          16  Reserved for heap 
+stack                   0x800017c0         0x41e8       16872  Reserved for stack 
 
         --------------------------------------------------------------------------
 
@@ -1535,86 +1535,88 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
                 0x80000298                _data_end = .
                 0x80000298                _bss_begin = .
 
-.sbss           0x80000298      0x1b8
+.sbss           0x80000298      0x238
                 0x80000298                _sbss_begin = .
  *(.dynsbss)
  *(.sbss .sbss.* .gnu.linkonce.sb.*)
- .sbss          0x80000298       0x14 build/default/debug/clock_cfgBits_mm.o
+ .sbss          0x80000298       0x1c build/default/debug/clock_cfgBits_mm.o
                 0x80000298                netcomChkError
                 0x8000029c                netcomSendDataError
                 0x800002a0                netcomBusError
                 0x800002a4                netcomTxBytes
                 0x800002a8                netcomRxBytes
- .sbss          0x800002ac       0x14 build/default/debug/clock_cfgBits_mz.o
- .sbss          0x800002c0       0x30 build/default/debug/netcom2.o
- .sbss          0x800002f0       0x14 build/default/debug/main.o
- .sbss          0x80000304       0x14 build/default/debug/globals.o
- .sbss          0x80000318       0x28 build/default/debug/_display/ili9341/disp9341.o
- .sbss          0x80000340       0x14 build/default/debug/_display/ssd1306/disp1306.o
- .sbss          0x80000354       0x18 build/default/debug/_display/graphics.o
- .sbss          0x8000036c       0x14 build/default/debug/spi.o
- .sbss          0x80000380       0x14 build/default/debug/portWriter.o
- .sbss          0x80000394       0x14 build/default/debug/_touchpad/touchXpt2046.o
- .sbss          0x800003a8       0x14 build/default/debug/periph.o
- .sbss          0x800003bc       0x1c build/default/debug/app1.o
- .sbss          0x800003d8       0x18 build/default/debug/app2.o
- .sbss          0x800003f0       0x14 build/default/debug/app3.o
- .sbss          0x80000404       0x14 build/default/debug/user_apps.o
+                0x800002ac                netcomTxCTRL
+                0x800002b0                netcomRxCTRL
+ .sbss          0x800002b4       0x1c build/default/debug/clock_cfgBits_mz.o
+ .sbss          0x800002d0       0x38 build/default/debug/netcom2.o
+ .sbss          0x80000308       0x1c build/default/debug/main.o
+ .sbss          0x80000324       0x1c build/default/debug/globals.o
+ .sbss          0x80000340       0x30 build/default/debug/_display/ili9341/disp9341.o
+ .sbss          0x80000370       0x1c build/default/debug/_display/ssd1306/disp1306.o
+ .sbss          0x8000038c       0x20 build/default/debug/_display/graphics.o
+ .sbss          0x800003ac       0x1c build/default/debug/spi.o
+ .sbss          0x800003c8       0x1c build/default/debug/portWriter.o
+ .sbss          0x800003e4       0x1c build/default/debug/_touchpad/touchXpt2046.o
+ .sbss          0x80000400       0x1c build/default/debug/periph.o
+ .sbss          0x8000041c       0x24 build/default/debug/app1.o
+ .sbss          0x80000440       0x20 build/default/debug/app2.o
+ .sbss          0x80000460       0x1c build/default/debug/app3.o
+ .sbss          0x8000047c       0x1c build/default/debug/user_apps.o
  *(.scommon)
- .scommon       0x80000418       0x2c build/default/debug/clock_cfgBits_mm.o
-                0x80000418                SYSTEM_STATUS
-                0x8000041c                defaultAppStartParam
-                0x80000424                LED1
-                0x8000042c                LED3
-                0x80000434                LED2
-                0x8000043c                LED4
- .scommon       0x80000444        0x0 build/default/debug/clock_cfgBits_mz.o
- .scommon       0x80000444        0x8 build/default/debug/netcom2.o
-                0x80000444                sendingItem
-                0x80000448                _finish
- .scommon       0x8000044c        0x0 build/default/debug/main.o
- .scommon       0x8000044c        0x0 build/default/debug/globals.o
- .scommon       0x8000044c        0x4 build/default/debug/_display/ili9341/disp9341.o
-                0x8000044c                defaultFont
- .scommon       0x80000450        0x0 build/default/debug/_display/ssd1306/disp1306.o
- .scommon       0x80000450        0x0 build/default/debug/_display/graphics.o
- .scommon       0x80000450        0x0 build/default/debug/spi.o
- .scommon       0x80000450        0x0 build/default/debug/portWriter.o
- .scommon       0x80000450        0x0 build/default/debug/_touchpad/touchXpt2046.o
- .scommon       0x80000450        0x0 build/default/debug/periph.o
- .scommon       0x80000450        0x0 build/default/debug/app1.o
- .scommon       0x80000450        0x0 build/default/debug/app2.o
- .scommon       0x80000450        0x0 build/default/debug/app3.o
- .scommon       0x80000450        0x0 build/default/debug/user_apps.o
-                0x80000450                _sbss_end = .
-                0x80000450                . = ALIGN (0x4)
+ .scommon       0x80000498       0x2c build/default/debug/clock_cfgBits_mm.o
+                0x80000498                SYSTEM_STATUS
+                0x8000049c                defaultAppStartParam
+                0x800004a4                LED1
+                0x800004ac                LED3
+                0x800004b4                LED2
+                0x800004bc                LED4
+ .scommon       0x800004c4        0x0 build/default/debug/clock_cfgBits_mz.o
+ .scommon       0x800004c4        0x8 build/default/debug/netcom2.o
+                0x800004c4                sendingItem
+                0x800004c8                _finish
+ .scommon       0x800004cc        0x0 build/default/debug/main.o
+ .scommon       0x800004cc        0x0 build/default/debug/globals.o
+ .scommon       0x800004cc        0x4 build/default/debug/_display/ili9341/disp9341.o
+                0x800004cc                defaultFont
+ .scommon       0x800004d0        0x0 build/default/debug/_display/ssd1306/disp1306.o
+ .scommon       0x800004d0        0x0 build/default/debug/_display/graphics.o
+ .scommon       0x800004d0        0x0 build/default/debug/spi.o
+ .scommon       0x800004d0        0x0 build/default/debug/portWriter.o
+ .scommon       0x800004d0        0x0 build/default/debug/_touchpad/touchXpt2046.o
+ .scommon       0x800004d0        0x0 build/default/debug/periph.o
+ .scommon       0x800004d0        0x0 build/default/debug/app1.o
+ .scommon       0x800004d0        0x0 build/default/debug/app2.o
+ .scommon       0x800004d0        0x0 build/default/debug/app3.o
+ .scommon       0x800004d0        0x0 build/default/debug/user_apps.o
+                0x800004d0                _sbss_end = .
+                0x800004d0                . = ALIGN (0x4)
 
-.bss            0x80000450      0xa18
+.bss            0x800004d0      0xa18
  *(.dynbss)
  *(COMMON)
- COMMON         0x80000450       0x80 build/default/debug/netcom2.o
-                0x80000450                master2Item
-                0x80000470                master8Item
-                0x80000490                master1Item
-                0x800004b0                replyItem
- COMMON         0x800004d0      0x128 build/default/debug/_display/graphics.o
-                0x800004d0                graphics
-                0x80000510                font_twcen_22
-                0x8000055c                sysDisplay
-                0x800005ac                font_twcen_18
- COMMON         0x800005f8      0x870 build/default/debug/app1.o
-                0x800005f8                dataStruct
-                0x80000618                data1024
-                0x80000a18                setPipe1
-                0x80000a24                setPipe1data
-                0x80000a44                getPipe1
-                0x80000a50                getPipe0
-                0x80000a5c                setPipe0data
-                0x80000e5c                setPipe0
-                0x80000e68                . = ALIGN ((. != 0x0)?0x4:0x1)
-                0x80000e68                . = ALIGN (0x4)
-                0x80000e68                _end = .
-                0x80000e68                _bss_end = .
+ COMMON         0x800004d0       0x80 build/default/debug/netcom2.o
+                0x800004d0                master2Item
+                0x800004f0                master8Item
+                0x80000510                master1Item
+                0x80000530                replyItem
+ COMMON         0x80000550      0x128 build/default/debug/_display/graphics.o
+                0x80000550                graphics
+                0x80000590                font_twcen_22
+                0x800005dc                sysDisplay
+                0x8000062c                font_twcen_18
+ COMMON         0x80000678      0x870 build/default/debug/app1.o
+                0x80000678                dataStruct
+                0x80000698                data1024
+                0x80000a98                setPipe1
+                0x80000aa4                setPipe1data
+                0x80000ac4                getPipe1
+                0x80000ad0                getPipe0
+                0x80000adc                setPipe0data
+                0x80000edc                setPipe0
+                0x80000ee8                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x80000ee8                . = ALIGN (0x4)
+                0x80000ee8                _end = .
+                0x80000ee8                _bss_end = .
                 0x00008000                _bmxdudba_address = 0x8000
                 0x00008000                _bmxdupba_address = 0x8000
 
@@ -1803,101 +1805,101 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
  *.elf(.debug_pubnames)
  *(.debug_pubnames)
 
-.debug_info     0x00000000    0x16dad
+.debug_info     0x00000000    0x172ad
  *.elf(.debug_info .gnu.linkonce.wi.*)
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000       0xe4 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\software-debug-break.o
- .debug_info    0x000000e4      0xeca build/default/debug/clock_cfgBits_mm.o
- .debug_info    0x00000fae      0xc97 build/default/debug/clock_cfgBits_mz.o
- .debug_info    0x00001c45     0x28f9 build/default/debug/netcom2.o
- .debug_info    0x0000453e     0x19e2 build/default/debug/main.o
- .debug_info    0x00005f20      0xfe1 build/default/debug/globals.o
- .debug_info    0x00006f01       0x41 build/default/debug/timer1.o
- .debug_info    0x00006f42       0x42 build/default/debug/core_fn.o
- .debug_info    0x00006f84     0x2cef build/default/debug/_display/ili9341/disp9341.o
- .debug_info    0x00009c73       0x56 build/default/debug/_display/ili9341/disp16_asm.o
- .debug_info    0x00009cc9      0xca0 build/default/debug/_display/ssd1306/disp1306.o
- .debug_info    0x0000a969     0x1af6 build/default/debug/_display/graphics.o
- .debug_info    0x0000c45f       0x3e build/default/debug/rtc.o
- .debug_info    0x0000c49d       0x4a build/default/debug/change_notif_mm.o
- .debug_info    0x0000c4e7     0x1e77 build/default/debug/spi.o
- .debug_info    0x0000e35e     0x12c3 build/default/debug/portWriter.o
- .debug_info    0x0000f621      0xc9d build/default/debug/_touchpad/touchXpt2046.o
- .debug_info    0x000102be      0xf53 build/default/debug/periph.o
- .debug_info    0x00011211       0x44 build/default/debug/periph_fn.o
- .debug_info    0x00011255     0x224a build/default/debug/app1.o
- .debug_info    0x0001349f      0xf19 build/default/debug/app2.o
- .debug_info    0x000143b8      0xf1b build/default/debug/app3.o
- .debug_info    0x000152d3     0x1649 build/default/debug/user_apps.o
- .debug_info    0x0001691c      0x110 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
- .debug_info    0x00016a2c       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_info    0x00016b21       0xce c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_info    0x00016bef       0xd6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_info    0x00016cc5       0xe8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_info    0x000000e4      0xf00 build/default/debug/clock_cfgBits_mm.o
+ .debug_info    0x00000fe4      0xccd build/default/debug/clock_cfgBits_mz.o
+ .debug_info    0x00001cb1     0x2937 build/default/debug/netcom2.o
+ .debug_info    0x000045e8     0x1a18 build/default/debug/main.o
+ .debug_info    0x00006000     0x1017 build/default/debug/globals.o
+ .debug_info    0x00007017       0x41 build/default/debug/timer1.o
+ .debug_info    0x00007058       0x42 build/default/debug/core_fn.o
+ .debug_info    0x0000709a     0x2d25 build/default/debug/_display/ili9341/disp9341.o
+ .debug_info    0x00009dbf       0x56 build/default/debug/_display/ili9341/disp16_asm.o
+ .debug_info    0x00009e15      0xcd6 build/default/debug/_display/ssd1306/disp1306.o
+ .debug_info    0x0000aaeb     0x1b2c build/default/debug/_display/graphics.o
+ .debug_info    0x0000c617       0x3e build/default/debug/rtc.o
+ .debug_info    0x0000c655       0x4a build/default/debug/change_notif_mm.o
+ .debug_info    0x0000c69f     0x1ead build/default/debug/spi.o
+ .debug_info    0x0000e54c     0x12f9 build/default/debug/portWriter.o
+ .debug_info    0x0000f845      0xcd3 build/default/debug/_touchpad/touchXpt2046.o
+ .debug_info    0x00010518      0xf89 build/default/debug/periph.o
+ .debug_info    0x000114a1       0x44 build/default/debug/periph_fn.o
+ .debug_info    0x000114e5     0x23a8 build/default/debug/app1.o
+ .debug_info    0x0001388d      0xf4f build/default/debug/app2.o
+ .debug_info    0x000147dc      0xf51 build/default/debug/app3.o
+ .debug_info    0x0001572d     0x16ef build/default/debug/user_apps.o
+ .debug_info    0x00016e1c      0x110 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+ .debug_info    0x00016f2c       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_info    0x00017021       0xce c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_info    0x000170ef       0xd6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_info    0x000171c5       0xe8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_abbrev   0x00000000     0x22ce
+.debug_abbrev   0x00000000     0x22df
  *.elf(.debug_abbrev)
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\software-debug-break.o
  .debug_abbrev  0x00000028      0x176 build/default/debug/clock_cfgBits_mm.o
  .debug_abbrev  0x0000019e       0xe5 build/default/debug/clock_cfgBits_mz.o
- .debug_abbrev  0x00000283      0x346 build/default/debug/netcom2.o
- .debug_abbrev  0x000005c9      0x2bb build/default/debug/main.o
- .debug_abbrev  0x00000884      0x1b1 build/default/debug/globals.o
- .debug_abbrev  0x00000a35       0x14 build/default/debug/timer1.o
- .debug_abbrev  0x00000a49       0x14 build/default/debug/core_fn.o
- .debug_abbrev  0x00000a5d      0x3b8 build/default/debug/_display/ili9341/disp9341.o
- .debug_abbrev  0x00000e15       0x14 build/default/debug/_display/ili9341/disp16_asm.o
- .debug_abbrev  0x00000e29       0xe5 build/default/debug/_display/ssd1306/disp1306.o
- .debug_abbrev  0x00000f0e      0x262 build/default/debug/_display/graphics.o
- .debug_abbrev  0x00001170       0x14 build/default/debug/rtc.o
- .debug_abbrev  0x00001184       0x14 build/default/debug/change_notif_mm.o
- .debug_abbrev  0x00001198      0x2bf build/default/debug/spi.o
- .debug_abbrev  0x00001457      0x1fc build/default/debug/portWriter.o
- .debug_abbrev  0x00001653       0xe5 build/default/debug/_touchpad/touchXpt2046.o
- .debug_abbrev  0x00001738      0x1b0 build/default/debug/periph.o
- .debug_abbrev  0x000018e8       0x14 build/default/debug/periph_fn.o
- .debug_abbrev  0x000018fc      0x2d1 build/default/debug/app1.o
- .debug_abbrev  0x00001bcd      0x1d9 build/default/debug/app2.o
- .debug_abbrev  0x00001da6      0x229 build/default/debug/app3.o
- .debug_abbrev  0x00001fcf      0x24b build/default/debug/user_apps.o
- .debug_abbrev  0x0000221a       0x14 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
- .debug_abbrev  0x0000222e       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_abbrev  0x00002256       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_abbrev  0x0000227e       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_abbrev  0x000022a6       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_abbrev  0x00000283      0x357 build/default/debug/netcom2.o
+ .debug_abbrev  0x000005da      0x2bb build/default/debug/main.o
+ .debug_abbrev  0x00000895      0x1b1 build/default/debug/globals.o
+ .debug_abbrev  0x00000a46       0x14 build/default/debug/timer1.o
+ .debug_abbrev  0x00000a5a       0x14 build/default/debug/core_fn.o
+ .debug_abbrev  0x00000a6e      0x3b8 build/default/debug/_display/ili9341/disp9341.o
+ .debug_abbrev  0x00000e26       0x14 build/default/debug/_display/ili9341/disp16_asm.o
+ .debug_abbrev  0x00000e3a       0xe5 build/default/debug/_display/ssd1306/disp1306.o
+ .debug_abbrev  0x00000f1f      0x262 build/default/debug/_display/graphics.o
+ .debug_abbrev  0x00001181       0x14 build/default/debug/rtc.o
+ .debug_abbrev  0x00001195       0x14 build/default/debug/change_notif_mm.o
+ .debug_abbrev  0x000011a9      0x2bf build/default/debug/spi.o
+ .debug_abbrev  0x00001468      0x1fc build/default/debug/portWriter.o
+ .debug_abbrev  0x00001664       0xe5 build/default/debug/_touchpad/touchXpt2046.o
+ .debug_abbrev  0x00001749      0x1b0 build/default/debug/periph.o
+ .debug_abbrev  0x000018f9       0x14 build/default/debug/periph_fn.o
+ .debug_abbrev  0x0000190d      0x2d1 build/default/debug/app1.o
+ .debug_abbrev  0x00001bde      0x1d9 build/default/debug/app2.o
+ .debug_abbrev  0x00001db7      0x229 build/default/debug/app3.o
+ .debug_abbrev  0x00001fe0      0x24b build/default/debug/user_apps.o
+ .debug_abbrev  0x0000222b       0x14 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+ .debug_abbrev  0x0000223f       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_abbrev  0x00002267       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_abbrev  0x0000228f       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_abbrev  0x000022b7       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_line     0x00000000     0x2669
+.debug_line     0x00000000     0x2685
  *.elf(.debug_line)
  *(.debug_line)
  .debug_line    0x00000000       0x9a c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\software-debug-break.o
  .debug_line    0x0000009a      0x13e build/default/debug/clock_cfgBits_mm.o
  .debug_line    0x000001d8       0x97 build/default/debug/clock_cfgBits_mz.o
- .debug_line    0x0000026f      0x3de build/default/debug/netcom2.o
- .debug_line    0x0000064d      0x19a build/default/debug/main.o
- .debug_line    0x000007e7      0x135 build/default/debug/globals.o
- .debug_line    0x0000091c       0xb2 build/default/debug/timer1.o
- .debug_line    0x000009ce      0x44c build/default/debug/core_fn.o
- .debug_line    0x00000e1a      0x3c2 build/default/debug/_display/ili9341/disp9341.o
- .debug_line    0x000011dc      0x31f build/default/debug/_display/ili9341/disp16_asm.o
- .debug_line    0x000014fb       0x97 build/default/debug/_display/ssd1306/disp1306.o
- .debug_line    0x00001592      0x162 build/default/debug/_display/graphics.o
- .debug_line    0x000016f4       0xeb build/default/debug/rtc.o
- .debug_line    0x000017df      0x10a build/default/debug/change_notif_mm.o
- .debug_line    0x000018e9      0x21d build/default/debug/spi.o
- .debug_line    0x00001b06       0xe8 build/default/debug/portWriter.o
- .debug_line    0x00001bee       0x97 build/default/debug/_touchpad/touchXpt2046.o
- .debug_line    0x00001c85       0xea build/default/debug/periph.o
- .debug_line    0x00001d6f       0x5f build/default/debug/periph_fn.o
- .debug_line    0x00001dce      0x1d9 build/default/debug/app1.o
- .debug_line    0x00001fa7       0xde build/default/debug/app2.o
- .debug_line    0x00002085      0x135 build/default/debug/app3.o
- .debug_line    0x000021ba      0x17f build/default/debug/user_apps.o
- .debug_line    0x00002339       0xb7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
- .debug_line    0x000023f0       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_line    0x00002497       0x94 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_line    0x0000252b       0x98 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_line    0x000025c3       0xa6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_line    0x0000026f      0x3e5 build/default/debug/netcom2.o
+ .debug_line    0x00000654      0x19a build/default/debug/main.o
+ .debug_line    0x000007ee      0x135 build/default/debug/globals.o
+ .debug_line    0x00000923       0xb2 build/default/debug/timer1.o
+ .debug_line    0x000009d5      0x44c build/default/debug/core_fn.o
+ .debug_line    0x00000e21      0x3c2 build/default/debug/_display/ili9341/disp9341.o
+ .debug_line    0x000011e3      0x31f build/default/debug/_display/ili9341/disp16_asm.o
+ .debug_line    0x00001502       0x97 build/default/debug/_display/ssd1306/disp1306.o
+ .debug_line    0x00001599      0x162 build/default/debug/_display/graphics.o
+ .debug_line    0x000016fb       0xeb build/default/debug/rtc.o
+ .debug_line    0x000017e6      0x10a build/default/debug/change_notif_mm.o
+ .debug_line    0x000018f0      0x21d build/default/debug/spi.o
+ .debug_line    0x00001b0d       0xe8 build/default/debug/portWriter.o
+ .debug_line    0x00001bf5       0x97 build/default/debug/_touchpad/touchXpt2046.o
+ .debug_line    0x00001c8c       0xea build/default/debug/periph.o
+ .debug_line    0x00001d76       0x5f build/default/debug/periph_fn.o
+ .debug_line    0x00001dd5      0x1ea build/default/debug/app1.o
+ .debug_line    0x00001fbf       0xde build/default/debug/app2.o
+ .debug_line    0x0000209d      0x135 build/default/debug/app3.o
+ .debug_line    0x000021d2      0x183 build/default/debug/user_apps.o
+ .debug_line    0x00002355       0xb7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+ .debug_line    0x0000240c       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_line    0x000024b3       0x94 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_line    0x00002547       0x98 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_line    0x000025df       0xa6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
 .debug_frame    0x00000000     0x1454
  *.elf(.debug_frame)
@@ -1946,23 +1948,23 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
  .debug_str     0x000005b7        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
  .debug_str     0x000005b7        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_loc      0x00000000     0x5696
+.debug_loc      0x00000000     0x5713
  *.elf(.debug_loc)
  *(.debug_loc)
  .debug_loc     0x00000000       0xdc build/default/debug/clock_cfgBits_mm.o
- .debug_loc     0x000000dc      0xfe4 build/default/debug/netcom2.o
- .debug_loc     0x000010c0      0x4cc build/default/debug/main.o
- .debug_loc     0x0000158c       0xf3 build/default/debug/globals.o
- .debug_loc     0x0000167f     0x1b36 build/default/debug/_display/ili9341/disp9341.o
- .debug_loc     0x000031b5      0x45d build/default/debug/_display/graphics.o
- .debug_loc     0x00003612      0x958 build/default/debug/spi.o
- .debug_loc     0x00003f6a      0x50b build/default/debug/portWriter.o
- .debug_loc     0x00004475      0x2f1 build/default/debug/periph.o
- .debug_loc     0x00004766      0x98a build/default/debug/app1.o
- .debug_loc     0x000050f0      0x1fc build/default/debug/app2.o
- .debug_loc     0x000052ec      0x14b build/default/debug/app3.o
- .debug_loc     0x00005437      0x233 build/default/debug/user_apps.o
- .debug_loc     0x0000566a       0x2c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_loc     0x000000dc     0x1033 build/default/debug/netcom2.o
+ .debug_loc     0x0000110f      0x4cc build/default/debug/main.o
+ .debug_loc     0x000015db       0xf3 build/default/debug/globals.o
+ .debug_loc     0x000016ce     0x1b36 build/default/debug/_display/ili9341/disp9341.o
+ .debug_loc     0x00003204      0x45d build/default/debug/_display/graphics.o
+ .debug_loc     0x00003661      0x958 build/default/debug/spi.o
+ .debug_loc     0x00003fb9      0x50b build/default/debug/portWriter.o
+ .debug_loc     0x000044c4      0x2f1 build/default/debug/periph.o
+ .debug_loc     0x000047b5      0x9b8 build/default/debug/app1.o
+ .debug_loc     0x0000516d      0x1fc build/default/debug/app2.o
+ .debug_loc     0x00005369      0x14b build/default/debug/app3.o
+ .debug_loc     0x000054b4      0x233 build/default/debug/user_apps.o
+ .debug_loc     0x000056e7       0x2c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
 
 .debug_macinfo
  *.elf(.debug_macinfo)
@@ -2063,8 +2065,8 @@ LOAD data_init
 .reginfo        0x00000000       0x18
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
 
-.stack          0x80001740      0x400
- .stack         0x80001740      0x400 stack
+.stack          0x800017c0      0x400
+ .stack         0x800017c0      0x400 stack
 
 .os_stack       0x800059b0     0x2000
  .os_stack      0x800059b0     0x2000 build/default/debug/main.o
@@ -2094,20 +2096,20 @@ LOAD data_init
                 0x80007fde                netcomRx_ms
                 0x80007fe0                ballast
 
-.bss            0x80000e68      0x810
- .bss           0x80000e68      0x810 build/default/debug/_display/ili9341/disp9341.o
+.bss            0x80000ee8      0x810
+ .bss           0x80000ee8      0x810 build/default/debug/_display/ili9341/disp9341.o
 
-.data           0x80001678       0x8c
- .data          0x80001678       0x6c build/default/debug/spi.o
-                0x80001678                s1
-                0x80001698                s2
-                0x800016b8                s3
-                0x800016d8                controlStruct
- .data          0x800016e4       0x20 build/default/debug/app1.o
-                0x800016e4                data
+.data           0x800016f8       0x8c
+ .data          0x800016f8       0x6c build/default/debug/spi.o
+                0x800016f8                s1
+                0x80001718                s2
+                0x80001738                s3
+                0x80001758                controlStruct
+ .data          0x80001764       0x20 build/default/debug/app1.o
+                0x80001764                data
 
-.bss            0x80001704        0xc
- .bss           0x80001704        0xc build/default/debug/app1.o
+.bss            0x80001784        0xc
+ .bss           0x80001784        0xc build/default/debug/app1.o
 
 .bss%z1         0x00000000        0x0
  .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
@@ -2895,284 +2897,284 @@ LOAD data_init
 .data%z262      0x00000000        0x0
  .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
 
-.rodata         0x9d000530     0x4fec
+.rodata         0x9d000530     0x5004
  .rodata        0x9d000530     0x2d08 build/default/debug/_display/graphics.o
                 0x9d0005c8                font_twcen18
                 0x9d0005e8                font_twcen18_data
                 0x9d001834                font_twcen22
                 0x9d001854                font_twcen22_data
- .rodata        0x9d003238     0x22e4 build/default/debug/app1.o
+ .rodata        0x9d003238     0x22fc build/default/debug/app1.o
                 0x9d0032d0                pokus565
                 0x9d0032f0                pokus_data
 
-.text           0x9d00551c     0x3ae8
- .text          0x9d00551c     0x201c build/default/debug/_display/ili9341/disp9341.o
-                0x9d00551d                disp9341_driver
- .text          0x9d007538     0x1acc build/default/debug/netcom2.o
-                0x9d007539                netcomInit
-                0x9d007635                netcomSetData
-                0x9d007685                netcomGetData
-                0x9d0076d9                netcomRxTimeout
-                0x9d007731                netcomNotRespond
-                0x9d00775d                netcomInitBus
-                0x9d0081ad                UART2Tx_interrupt
-                0x9d008705                UART2Rx_interrupt
-                0x9d008f69                UART2Er_interrupt
+.text           0x9d005534     0x3b34
+ .text          0x9d005534     0x201c build/default/debug/_display/ili9341/disp9341.o
+                0x9d005535                disp9341_driver
+ .text          0x9d007550     0x1b18 build/default/debug/netcom2.o
+                0x9d007551                netcomInit
+                0x9d00764d                netcomSetData
+                0x9d00769d                netcomGetData
+                0x9d0076f1                netcomRxTimeout
+                0x9d007749                netcomNotRespond
+                0x9d007775                netcomInitBus
+                0x9d008201                UART2Tx_interrupt
+                0x9d008735                UART2Rx_interrupt
+                0x9d008fad                UART2Er_interrupt
 
-.asm_fn         0x9d009004      0xe4c
- .asm_fn        0x9d009004      0xe4c build/default/debug/core_fn.o
-                0x9d009005                initCPU
-                0x9d009009                startupStack
-                0x9d00901d                allocStack
-                0x9d0090f5                clearSystemData
-                0x9d009105                setSrsValue
-                0x9d009145                startEvents
-                0x9d009191                doEvents
-                0x9d0091e5                doEventsError
-                0x9d009239                doEventsL
-                0x9d0092e1                getGP
-                0x9d0092e5                compareTimeMs
-                0x9d009309                pauseEvents
-                0x9d009345                getTimeMs
-                0x9d009351                checksum16
-                0x9d009369                iVector0
-                0x9d009379                _general_exception_handler
-                0x9d009445                getErrorBehavior
-                0x9d009479                checkStackSpace
-                0x9d0094d1                getProcID
-                0x9d0094f9                getProcTableItem
-                0x9d009521                exitProcess
-                0x9d00952b                exitProcessID
-                0x9d00955d                restartProcess
-                0x9d009567                restartProcessID
-                0x9d009625                clearWDT
-                0x9d009635                startWDT
-                0x9d009645                pauseWDT
-                0x9d009655                pauseCT
-                0x9d00967d                startCT
-                0x9d009699                regListenerWithVar
-                0x9d009699                regListener
-                0x9d0096b9                raiseEventID
-                0x9d0096f9                getRegEvent
-                0x9d009729                addRegEvent
-                0x9d009759                unregEvent
-                0x9d0097bd                removeRegEventProcID
-                0x9d009821                removeEventCacheProcID
-                0x9d00984d                raiseEvent
-                0x9d0098b5                raiseEventInt
-                0x9d00990d                systemProcess
-                0x9d009b85                setCanSleep
-                0x9d009bd5                setCanIdle
-                0x9d009c25                getCanSleepAll
-                0x9d009c55                defragTableW
-                0x9d009c95                defragTableB
-                0x9d009cd5                lockSafe
-                0x9d009cf1                strLen
-                0x9d009d0d                intToChar
-                0x9d009d25                uintToChar
-                0x9d009d8d                byteToChar
-                0x9d009df1                iVector_spi2Tx
-                0x9d009e0d                iVector_UART2Tx
-                0x9d009e23                iVector_UART2Rx
-                0x9d009e39                iVector_UART2Er
+.asm_fn         0x9d009068      0xe4c
+ .asm_fn        0x9d009068      0xe4c build/default/debug/core_fn.o
+                0x9d009069                initCPU
+                0x9d00906d                startupStack
+                0x9d009081                allocStack
+                0x9d009159                clearSystemData
+                0x9d009169                setSrsValue
+                0x9d0091a9                startEvents
+                0x9d0091f5                doEvents
+                0x9d009249                doEventsError
+                0x9d00929d                doEventsL
+                0x9d009345                getGP
+                0x9d009349                compareTimeMs
+                0x9d00936d                pauseEvents
+                0x9d0093a9                getTimeMs
+                0x9d0093b5                checksum16
+                0x9d0093cd                iVector0
+                0x9d0093dd                _general_exception_handler
+                0x9d0094a9                getErrorBehavior
+                0x9d0094dd                checkStackSpace
+                0x9d009535                getProcID
+                0x9d00955d                getProcTableItem
+                0x9d009585                exitProcess
+                0x9d00958f                exitProcessID
+                0x9d0095c1                restartProcess
+                0x9d0095cb                restartProcessID
+                0x9d009689                clearWDT
+                0x9d009699                startWDT
+                0x9d0096a9                pauseWDT
+                0x9d0096b9                pauseCT
+                0x9d0096e1                startCT
+                0x9d0096fd                regListenerWithVar
+                0x9d0096fd                regListener
+                0x9d00971d                raiseEventID
+                0x9d00975d                getRegEvent
+                0x9d00978d                addRegEvent
+                0x9d0097bd                unregEvent
+                0x9d009821                removeRegEventProcID
+                0x9d009885                removeEventCacheProcID
+                0x9d0098b1                raiseEvent
+                0x9d009919                raiseEventInt
+                0x9d009971                systemProcess
+                0x9d009be9                setCanSleep
+                0x9d009c39                setCanIdle
+                0x9d009c89                getCanSleepAll
+                0x9d009cb9                defragTableW
+                0x9d009cf9                defragTableB
+                0x9d009d39                lockSafe
+                0x9d009d55                strLen
+                0x9d009d71                intToChar
+                0x9d009d89                uintToChar
+                0x9d009df1                byteToChar
+                0x9d009e55                iVector_spi2Tx
+                0x9d009e71                iVector_UART2Tx
+                0x9d009e87                iVector_UART2Rx
+                0x9d009e9d                iVector_UART2Er
 
-.text           0x9d009e50     0x1418
- .text          0x9d009e50      0xa44 build/default/debug/spi.o
-                0x9d009e51                spiInit
-                0x9d009f71                spiGetUsed
-                0x9d009f99                spiUse
-                0x9d00a02d                spiFree
-                0x9d00a085                spiGetActivity
-                0x9d00a0b1                spiWaitToFinish
-                0x9d00a0f1                spiExchangeDE
-                0x9d00a151                spiExchange
-                0x9d00a21d                spiExchangeModeDE
-                0x9d00a285                spiExchangeMode
-                0x9d00a381                spiGetHwBuffer
-                0x9d00a3a9                spiSetBusMode
-                0x9d00a45d                spiSetSpeed
-                0x9d00a4c9                spiGetSpeed
-                0x9d00a4fd                spiTxInterrupt
- .text          0x9d00a894      0x9d4 build/default/debug/app1.o
-                0x9d00a895                m1_start
+.text           0x9d009eb4     0x150c
+ .text          0x9d009eb4      0xac8 build/default/debug/app1.o
+                0x9d009eb5                m1_start
+ .text          0x9d00a97c      0xa44 build/default/debug/spi.o
+                0x9d00a97d                spiInit
+                0x9d00aa9d                spiGetUsed
+                0x9d00aac5                spiUse
+                0x9d00ab59                spiFree
+                0x9d00abb1                spiGetActivity
+                0x9d00abdd                spiWaitToFinish
+                0x9d00ac1d                spiExchangeDE
+                0x9d00ac7d                spiExchange
+                0x9d00ad49                spiExchangeModeDE
+                0x9d00adb1                spiExchangeMode
+                0x9d00aead                spiGetHwBuffer
+                0x9d00aed5                spiSetBusMode
+                0x9d00af89                spiSetSpeed
+                0x9d00aff5                spiGetSpeed
+                0x9d00b029                spiTxInterrupt
 
-.asm_fn         0x9d00b268      0x970
- .asm_fn        0x9d00b268      0x970 build/default/debug/_display/ili9341/disp16_asm.o
-                0x9d00b281                setColorMap
-                0x9d00b289                setImageSrc
-                0x9d00b421                fillRectDirect
-                0x9d00b439                imageToPort
-                0x9d00b43d                imageToBuffer
-                0x9d00b705                setFontSrc
-                0x9d00b871                fontCharParam
-                0x9d00b91d                RGB16
-                0x9d00b931                correctColor16
-                0x9d00b935                drawLineQuick
-                0x9d00bb1d                drawPointQuick
+.asm_fn         0x9d00b3c0      0x970
+ .asm_fn        0x9d00b3c0      0x970 build/default/debug/_display/ili9341/disp16_asm.o
+                0x9d00b3d9                setColorMap
+                0x9d00b3e1                setImageSrc
+                0x9d00b579                fillRectDirect
+                0x9d00b591                imageToPort
+                0x9d00b595                imageToBuffer
+                0x9d00b85d                setFontSrc
+                0x9d00b9c9                fontCharParam
+                0x9d00ba75                RGB16
+                0x9d00ba89                correctColor16
+                0x9d00ba8d                drawLineQuick
+                0x9d00bc75                drawPointQuick
 
-.asm_rtc        0x9d00bbd8      0x4b0
- .asm_rtc       0x9d00bbd8      0x4b0 build/default/debug/rtc.o
-                0x9d00bbd9                rtcInit
-                0x9d00bd19                rtcGetTimeBCD
-                0x9d00bd35                rtcGetDateBCD
-                0x9d00bd51                rtcSetTimeBCD
-                0x9d00bdf1                rtcSetDateBCD
-                0x9d00be89                rtcGetHalfSecond
-                0x9d00be99                rtcRegTimeAlarm
-                0x9d00beb9                rtcGetHour
-                0x9d00bee9                rtcGetMinute
-                0x9d00bf19                rtcGetSecond
-                0x9d00bf49                rtcGetYear
-                0x9d00bf79                rtcGetMonth
-                0x9d00bfa9                rtcGetDay
-                0x9d00bfd9                rtcGetDayOfWeek
-                0x9d00c06d                iVector_rtc
+.asm_rtc        0x9d00bd30      0x4b0
+ .asm_rtc       0x9d00bd30      0x4b0 build/default/debug/rtc.o
+                0x9d00bd31                rtcInit
+                0x9d00be71                rtcGetTimeBCD
+                0x9d00be8d                rtcGetDateBCD
+                0x9d00bea9                rtcSetTimeBCD
+                0x9d00bf49                rtcSetDateBCD
+                0x9d00bfe1                rtcGetHalfSecond
+                0x9d00bff1                rtcRegTimeAlarm
+                0x9d00c011                rtcGetHour
+                0x9d00c041                rtcGetMinute
+                0x9d00c071                rtcGetSecond
+                0x9d00c0a1                rtcGetYear
+                0x9d00c0d1                rtcGetMonth
+                0x9d00c101                rtcGetDay
+                0x9d00c131                rtcGetDayOfWeek
+                0x9d00c1c5                iVector_rtc
 
-.text           0x9d00c088      0x8c0
- .text          0x9d00c088      0x4a8 build/default/debug/main.o
-                0x9d00c089                main
-                0x9d00c165                regProcess
- .text          0x9d00c530      0x418 build/default/debug/_display/graphics.o
-                0x9d00c531                initGraphics
-                0x9d00c5b5                initFont
-                0x9d00c625                setGraphics
-                0x9d00c815                drawButton
+.text           0x9d00c1e0      0x8c0
+ .text          0x9d00c1e0      0x4a8 build/default/debug/main.o
+                0x9d00c1e1                main
+                0x9d00c2bd                regProcess
+ .text          0x9d00c688      0x418 build/default/debug/_display/graphics.o
+                0x9d00c689                initGraphics
+                0x9d00c70d                initFont
+                0x9d00c77d                setGraphics
+                0x9d00c96d                drawButton
 
-.text           0x9d00c948      0x3b8
- .text          0x9d00c948      0x3b8 build/default/debug/user_apps.o
-                0x9d00c949                pinSetting
-                0x9d00cbb9                userAppsStart
-                0x9d00cc35                userAppError
-                0x9d00cc69                userAppEventError
-                0x9d00cc95                userAppCheckStackSpace
-                0x9d00ccc5                beforeSleep
-                0x9d00cce5                beforeIdle
+.text           0x9d00caa0      0x3e0
+ .text          0x9d00caa0      0x3e0 build/default/debug/user_apps.o
+                0x9d00caa1                pinSetting
+                0x9d00cd39                userAppsStart
+                0x9d00cdb5                userAppError
+                0x9d00cde9                userAppEventError
+                0x9d00ce15                userAppCheckStackSpace
+                0x9d00ce45                beforeSleep
+                0x9d00ce65                beforeIdle
 
-.asm_cn         0x9d00cd00      0x364
- .asm_cn        0x9d00cd00      0x364 build/default/debug/change_notif_mm.o
-                0x9d00cd01                cnStartPortA
-                0x9d00cd61                cnStopPortA
-                0x9d00cd7d                iVector_cnPortA
-                0x9d00cdb1                cnStartPortB
-                0x9d00ce11                cnStopPortB
-                0x9d00ce2d                iVector_cnPortB
-                0x9d00ce61                cnStartPortC
-                0x9d00cec1                cnStopPortC
-                0x9d00cedd                iVector_cnPortC
-                0x9d00cf11                cnStartPortD
-                0x9d00cf71                cnStopPortD
-                0x9d00cf8d                iVector_cnPortD
-                0x9d00cfc1                cnEnable
-                0x9d00cffd                cnDisble
-                0x9d00d00d                cnRegEvent
+.asm_cn         0x9d00ce80      0x364
+ .asm_cn        0x9d00ce80      0x364 build/default/debug/change_notif_mm.o
+                0x9d00ce81                cnStartPortA
+                0x9d00cee1                cnStopPortA
+                0x9d00cefd                iVector_cnPortA
+                0x9d00cf31                cnStartPortB
+                0x9d00cf91                cnStopPortB
+                0x9d00cfad                iVector_cnPortB
+                0x9d00cfe1                cnStartPortC
+                0x9d00d041                cnStopPortC
+                0x9d00d05d                iVector_cnPortC
+                0x9d00d091                cnStartPortD
+                0x9d00d0f1                cnStopPortD
+                0x9d00d10d                iVector_cnPortD
+                0x9d00d141                cnEnable
+                0x9d00d17d                cnDisble
+                0x9d00d18d                cnRegEvent
 
-.dinit          0x9d00d064      0x320
- .dinit         0x9d00d064      0x320 data_init
+.dinit          0x9d00d1e4      0x320
+ .dinit         0x9d00d1e4      0x320 data_init
 
-.text           0x9d00d384      0x3fc
- .text          0x9d00d384      0x23c build/default/debug/portWriter.o
-                0x9d00d385                portWriter_init
- .text          0x9d00d5c0      0x1c0 build/default/debug/globals.o
-                0x9d00d5c1                trap
-                0x9d00d5d5                softReset
-                0x9d00d625                startSleepMode
-                0x9d00d6c9                endSleepMode
+.text           0x9d00d504      0x3fc
+ .text          0x9d00d504      0x23c build/default/debug/portWriter.o
+                0x9d00d505                portWriter_init
+ .text          0x9d00d740      0x1c0 build/default/debug/globals.o
+                0x9d00d741                trap
+                0x9d00d755                softReset
+                0x9d00d7a5                startSleepMode
+                0x9d00d849                endSleepMode
 
-.text           0x9d00d780      0x1b4
- .text          0x9d00d780      0x1b4 build/default/debug/periph.o
-                0x9d00d781                setPortPin
-                0x9d00d7ad                clearPortPin
-                0x9d00d7d9                portInv
-                0x9d00d805                setPin
-                0x9d00d835                clearPin
-                0x9d00d865                invPin
-                0x9d00d895                getPin
-                0x9d00d8d1                signalizeError
+.text           0x9d00d900      0x1b4
+ .text          0x9d00d900      0x1b4 build/default/debug/periph.o
+                0x9d00d901                setPortPin
+                0x9d00d92d                clearPortPin
+                0x9d00d959                portInv
+                0x9d00d985                setPin
+                0x9d00d9b5                clearPin
+                0x9d00d9e5                invPin
+                0x9d00da15                getPin
+                0x9d00da51                signalizeError
 
-.asm_timer1     0x9d00d934      0x1a8
- .asm_timer1    0x9d00d934      0x1a8 build/default/debug/timer1.o
-                0x9d00d935                timer1Init
-                0x9d00d9b9                systemTimerRegInterval
-                0x9d00d9d9                iVector_timer1
+.asm_timer1     0x9d00dab4      0x1a8
+ .asm_timer1    0x9d00dab4      0x1a8 build/default/debug/timer1.o
+                0x9d00dab5                timer1Init
+                0x9d00db39                systemTimerRegInterval
+                0x9d00db59                iVector_timer1
 
-.text           0x9d00dadc      0x1a4
- .text          0x9d00dadc      0x1a4 build/default/debug/clock_cfgBits_mm.o
-                0x9d00dadd                setClock
-                0x9d00dbb1                initClock
+.text           0x9d00dc5c      0x1a4
+ .text          0x9d00dc5c      0x1a4 build/default/debug/clock_cfgBits_mm.o
+                0x9d00dc5d                setClock
+                0x9d00dd31                initClock
 
 .text           0x9d000000      0x15c
  .text          0x9d000000      0x15c build/default/debug/app3.o
                 0x9d000001                m3_start
 
-.text           0x9d00dc80      0x21c
- .text          0x9d00dc80      0x154 build/default/debug/app2.o
-                0x9d00dc81                m2_start
- .text          0x9d00ddd4       0xc8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
-                0x9d00ddd5                fpadd
-                0x9d00ddd5                __addsf3
-                0x9d00de91                fpsub
-                0x9d00de91                __subsf3
+.text           0x9d00de00      0x21c
+ .text          0x9d00de00      0x154 build/default/debug/app2.o
+                0x9d00de01                m2_start
+ .text          0x9d00df54       0xc8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
+                0x9d00df55                fpadd
+                0x9d00df55                __addsf3
+                0x9d00e011                fpsub
+                0x9d00e011                __subsf3
 
-.text           0x9d00de9c      0x164
- .text          0x9d00de9c       0xc8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
-                0x9d00de9d                supchk
-                0x9d00dee9                srshft
-                0x9d00df11                srndex
- .text          0x9d00df64       0x9c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
-                0x9d00df65                fpdiv
-                0x9d00df65                __divsf3
+.text           0x9d00e01c      0x164
+ .text          0x9d00e01c       0xc8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
+                0x9d00e01d                supchk
+                0x9d00e069                srshft
+                0x9d00e091                srndex
+ .text          0x9d00e0e4       0x9c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
+                0x9d00e0e5                fpdiv
+                0x9d00e0e5                __divsf3
 
-.rodata         0x9d00e000      0x130
- .rodata        0x9d00e000       0x98 build/default/debug/clock_cfgBits_mm.o
-                0x9d00e000                BUS_MODE
-                0x9d00e004                WAIT
-                0x9d00e008                WRITE_MODE
-                0x9d00e00c                CLOCK_CFG
-                0x9d00e010                ON_ERROR
-                0x9d00e014                CN_STYLE
-                0x9d00e018                COLOR
-                0x9d00e03c                stdColorMap
-                0x9d00e05c                NETCOM_OUT_STATUS
-                0x9d00e06c                NOT_RESPONSE_ACTION
-                0x9d00e070                NETCOM_HEADTYPE
-                0x9d00e074                NETCOM_EXCEPTION
-                0x9d00e07c                NETCOM_IN_STATUS
-                0x9d00e080                NETCOM_TXFINISH_FN
-                0x9d00e088                PERIPH_TYPE
-                0x9d00e08c                MODULE_USED
-                0x9d00e090                MODULE_ACTIVITY
-                0x9d00e094                MODULE_STATE
- .rodata        0x9d00e098       0x98 build/default/debug/clock_cfgBits_mz.o
+.rodata         0x9d00e180      0x130
+ .rodata        0x9d00e180       0x98 build/default/debug/clock_cfgBits_mm.o
+                0x9d00e180                BUS_MODE
+                0x9d00e184                WAIT
+                0x9d00e188                WRITE_MODE
+                0x9d00e18c                CLOCK_CFG
+                0x9d00e190                ON_ERROR
+                0x9d00e194                CN_STYLE
+                0x9d00e198                COLOR
+                0x9d00e1bc                stdColorMap
+                0x9d00e1dc                NETCOM_OUT_STATUS
+                0x9d00e1ec                NOT_RESPONSE_ACTION
+                0x9d00e1f0                NETCOM_HEADTYPE
+                0x9d00e1f4                NETCOM_EXCEPTION
+                0x9d00e1fc                NETCOM_IN_STATUS
+                0x9d00e200                NETCOM_TXFINISH_FN
+                0x9d00e208                PERIPH_TYPE
+                0x9d00e20c                MODULE_USED
+                0x9d00e210                MODULE_ACTIVITY
+                0x9d00e214                MODULE_STATE
+ .rodata        0x9d00e218       0x98 build/default/debug/clock_cfgBits_mz.o
 
-.rodata         0x9d00e130      0x130
- .rodata        0x9d00e130       0x98 build/default/debug/netcom2.o
- .rodata        0x9d00e1c8       0x98 build/default/debug/main.o
+.rodata         0x9d00e2b0      0x130
+ .rodata        0x9d00e2b0       0x98 build/default/debug/netcom2.o
+ .rodata        0x9d00e348       0x98 build/default/debug/main.o
 
-.rodata         0x9d00e260      0x130
- .rodata        0x9d00e260       0x98 build/default/debug/globals.o
- .rodata        0x9d00e2f8       0x98 build/default/debug/_display/ili9341/disp9341.o
+.rodata         0x9d00e3e0      0x130
+ .rodata        0x9d00e3e0       0x98 build/default/debug/globals.o
+ .rodata        0x9d00e478       0x98 build/default/debug/_display/ili9341/disp9341.o
 
-.rodata         0x9d00e390      0x130
- .rodata        0x9d00e390       0x98 build/default/debug/_display/ssd1306/disp1306.o
- .rodata        0x9d00e428       0x98 build/default/debug/spi.o
+.rodata         0x9d00e510      0x130
+ .rodata        0x9d00e510       0x98 build/default/debug/_display/ssd1306/disp1306.o
+ .rodata        0x9d00e5a8       0x98 build/default/debug/spi.o
 
-.rodata         0x9d00e4c0      0x130
- .rodata        0x9d00e4c0       0x98 build/default/debug/portWriter.o
- .rodata        0x9d00e558       0x98 build/default/debug/_touchpad/touchXpt2046.o
+.rodata         0x9d00e640      0x130
+ .rodata        0x9d00e640       0x98 build/default/debug/portWriter.o
+ .rodata        0x9d00e6d8       0x98 build/default/debug/_touchpad/touchXpt2046.o
 
-.rodata         0x9d00e5f0      0x130
- .rodata        0x9d00e5f0       0x98 build/default/debug/periph.o
- .rodata        0x9d00e688       0x98 build/default/debug/app2.o
+.rodata         0x9d00e770      0x130
+ .rodata        0x9d00e770       0x98 build/default/debug/periph.o
+ .rodata        0x9d00e808       0x98 build/default/debug/app2.o
 
-.rodata         0x9d00e720      0x130
- .rodata        0x9d00e720       0x98 build/default/debug/app3.o
- .rodata        0x9d00e7b8       0x98 build/default/debug/user_apps.o
+.rodata         0x9d00e8a0      0x130
+ .rodata        0x9d00e8a0       0x98 build/default/debug/app3.o
+ .rodata        0x9d00e938       0x98 build/default/debug/user_apps.o
 
 .text.general_exception
-                0x9d00e850       0x80
+                0x9d00e9d0       0x80
  .text.general_exception
-                0x9d00e850       0x80 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(general-exception.o)
-                0x9d00e851                _general_exception_context
+                0x9d00e9d0       0x80 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(general-exception.o)
+                0x9d00e9d1                _general_exception_context
 
 .text.fptoli    0x9d00018c       0x64
  .text.fptoli   0x9d00018c       0x64 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
@@ -3180,47 +3182,47 @@ LOAD data_init
                 0x9d00018d                fptosi
                 0x9d00018d                __fixsfsi
 
-.asm_fn         0x9d00e8d0       0x60
- .asm_fn        0x9d00e8d0       0x60 build/default/debug/periph_fn.o
-                0x9d00e8d1                setPortDigOut
-                0x9d00e8dd                setPortDigIn
-                0x9d00e8e9                setPortAnalogIn
-                0x9d00e8f5                setPortOpenDrain
-                0x9d00e909                setPortPullUp
-                0x9d00e91d                setPortPullDown
+.asm_fn         0x9d00ea50       0x60
+ .asm_fn        0x9d00ea50       0x60 build/default/debug/periph_fn.o
+                0x9d00ea51                setPortDigOut
+                0x9d00ea5d                setPortDigIn
+                0x9d00ea69                setPortAnalogIn
+                0x9d00ea75                setPortOpenDrain
+                0x9d00ea89                setPortPullUp
+                0x9d00ea9d                setPortPullDown
 
-.text.sitofp    0x9d00e930       0x54
- .text.sitofp   0x9d00e930       0x54 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
-                0x9d00e931                __floatsisf
-                0x9d00e931                litofp
-                0x9d00e931                sitofp
+.text.sitofp    0x9d00eab0       0x54
+ .text.sitofp   0x9d00eab0       0x54 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
+                0x9d00eab1                __floatsisf
+                0x9d00eab1                litofp
+                0x9d00eab1                sitofp
 
-.text           0x9d00e984       0x50
- .text          0x9d00e984       0x50 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
-                0x9d00e985                fpmul
-                0x9d00e985                __mulsf3
+.text           0x9d00eb04       0x50
+ .text          0x9d00eb04       0x50 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
+                0x9d00eb05                fpmul
+                0x9d00eb05                __mulsf3
 
 .text.main_entry
-                0x9d00e9d4       0x44
+                0x9d00eb54       0x44
  .text.main_entry
-                0x9d00e9d4       0x44 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
-                0x9d00e9ff                __crt0_exit
+                0x9d00eb54       0x44 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
+                0x9d00eb7f                __crt0_exit
 
-.text           0x9d00ea18       0x40
- .text          0x9d00ea18       0x40 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
-                0x9d00ea19                __pic32_software_reset
+.text           0x9d00eb98       0x40
+ .text          0x9d00eb98       0x40 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+                0x9d00eb99                __pic32_software_reset
 
 .text._bootstrap_exception_handler
-                0x9d00ea58       0x34
+                0x9d00ebd8       0x34
  .text._bootstrap_exception_handler
-                0x9d00ea58       0x34 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
-                0x9d00ea59                _bootstrap_exception_handler
+                0x9d00ebd8       0x34 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+                0x9d00ebd9                _bootstrap_exception_handler
 
 .vector_default
-                0x9d00ea8c       0x30
+                0x9d00ec0c       0x30
  .vector_default
-                0x9d00ea8c       0x30 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
-                0x9d00ea8d                _DefaultInterrupt
+                0x9d00ec0c       0x30 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+                0x9d00ec0d                _DefaultInterrupt
 
 .text           0x9d00015c       0x18
  .text          0x9d00015c       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-nmi-handler.o)

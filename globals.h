@@ -31,6 +31,8 @@ int checkStackSpaceValue=0x7FFFFFFF;                    //max. int
     int netcomBusError=0;
     int netcomTxBytes=0;
     int netcomRxBytes=0;
+    int netcomTxCTRL=0;
+    int netcomRxCTRL=0;
 #endif 
 
 #ifdef USE_GRAPHICS

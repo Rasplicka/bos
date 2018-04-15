@@ -86,12 +86,12 @@ void m1_start()
     #ifdef USE_GRAPHICS 
         initGraphics();
         //sysDisplay.setDefaultFont(&spfont_fixed_16);
-        graphics.setDefaultFont(&font_twcen_18);
+        graphics.setDefaultFont(&font_twcen_22);
     #endif
-    
-    systemTimerRegInterval(&testSystemTimer, 1000);
 #endif    
-   
+        
+    systemTimerRegInterval(&testSystemTimer, 1000);
+    
     while(1)
     {
         
@@ -105,13 +105,17 @@ void m1_start()
         } 
         
         
-#if (defined NETCOM_DEVID && NETCOM_DEVID >= 2)
-        //ID 4
-        //netSetData(1, 0);
-#else
+#ifdef TEST_BOARD_BOS1
         //ID 1
         netSetData(4, 0);
-        //netGetData(4, 0);
+        netGetData(4, 1);
+        netSetData(2, 0);
+        netGetData(2, 0);
+        //netSetData(1, 0);
+#else
+        //ID != 1
+        //netSetData(4, 0);
+        //netGetData(4, 1);
 #endif   
         
         int a;
@@ -119,12 +123,16 @@ void m1_start()
         {
             doEvents();
         }
+        
+#ifdef USE_GRAPHICS         
         //doEvents();
         if(write_stats>0)
         {
             writeNetComStats();
             write_stats=0;
         }
+#endif        
+        
     }
         
     // <editor-fold defaultstate="collapsed" desc="vyrazeno">
@@ -283,6 +291,8 @@ static void testSystemTimer(int i)
     
 #ifdef TEST_BOARD_BOS1    
     clearPin(&LED4);
+#else
+    clearPin(&LED1);
 #endif    
     //clearPin(&LED2);
     //clearPin(&LED3);
@@ -461,33 +471,43 @@ static void drawImage1306()
 
 static void writeNetComStats()
 {
-    graphics.clear(COLOR.Black);
+    //graphics.clear(COLOR.Black);
     int y=0, x1=0, x2=120;
     
-    graphics.drawString("Tx", NULL, x1, y);
+    graphics.drawString("Tx data", NULL, x1, y);
     intToChar(netcomTxBytes, str, 12);
     graphics.drawString(str, NULL, x2, y);
-    y+=18;
+    y+=25;
     
-    graphics.drawString("Rx", NULL, x1, y);
+    graphics.drawString("Tx CTRL", NULL, x1, y);
+    intToChar(netcomTxCTRL, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=25;    
+    
+    graphics.drawString("Rx data", NULL, x1, y);
     intToChar(netcomRxBytes, str, 12);
     graphics.drawString(str, NULL, x2, y);
-    y+=18;
+    y+=25;
+    
+    graphics.drawString("Rx CTRL", NULL, x1, y);
+    intToChar(netcomRxCTRL, str, 12);
+    graphics.drawString(str, NULL, x2, y);
+    y+=25;       
     
     graphics.drawString("Bus Err", NULL, x1, y);
     intToChar(netcomBusError, str, 12);
     graphics.drawString(str, NULL, x2, y);
-    y+=18;   
+    y+=25;   
     
     graphics.drawString("Send Err", NULL, x1, y);
     intToChar(netcomSendDataError, str, 12);
     graphics.drawString(str, NULL, x2, y);
-    y+=18;      
+    y+=25;      
     
     graphics.drawString("Chk Err", NULL, x1, y);
     intToChar(netcomChkError, str, 12);
     graphics.drawString(str, NULL, x2, y);
-    y+=18;      
+    y+=25;      
     
 }
 
@@ -842,7 +862,7 @@ static void netGetData(char oid, char opipe)
     else
     {
         //dataStruct.Status obsahuje kod chyby
-        //setPin(&LED4);
+        setPin(&LED4);
     }
     
 }
@@ -853,7 +873,7 @@ static void netSetData(char oid, char opipe)
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=data1024;
-    dataStruct.DataLen=128;
+    dataStruct.DataLen=1024;
     //dataStruct.Direction=0;         //set
     
     netcomSetData(&dataStruct);
@@ -869,6 +889,12 @@ static void netSetData(char oid, char opipe)
         //ok
         clearPin(&LED1);
     }
+    else
+    {
+        setPin(&LED4);
+    }
+    
+    /*
     else if (dataStruct.Status==NETCOM_OUT_STATUS.ReplyBusy)
     {
         //busy
@@ -889,6 +915,7 @@ static void netSetData(char oid, char opipe)
         //opp not exist
         //setPin(&LED4);
     }
+    */
     
     
 }

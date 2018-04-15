@@ -100,12 +100,12 @@ c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/
                               c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_51)
 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector52.o)
                               c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_52)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector53.o)
-                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_53)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector54.o)
-                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_54)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector55.o)
-                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_55)
+c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector56.o)
+                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_56)
+c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector57.o)
+                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_57)
+c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector58.o)
+                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_58)
 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector59.o)
                               c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_59)
 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector60.o)
@@ -194,29 +194,15 @@ c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/
                               c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048\default_isr_vectors.o (__vector_dispatch_101)
 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
                               c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector1.o) (_DefaultInterrupt)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
-                              build/default/production/_display/ili9341/disp9341.o (fpadd)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
-                              build/default/production/_display/ili9341/disp9341.o (fpdiv)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
-                              build/default/production/_display/ili9341/disp9341.o (fpmul)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
-                              c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o) (supchk)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
-                              build/default/production/_display/ili9341/disp9341.o (fptosi)
-c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
-                              build/default/production/_display/ili9341/disp9341.o (sitofp)
 
 Allocating common symbols
 Common symbol       size              file
 
 SYSTEM_STATUS       0x4               build/default/production/clock_cfgBits_mm.o
-graphics            0x40              build/default/production/_display/graphics.o
 dataStruct          0x20              build/default/production/app1.o
 master2Item         0x20              build/default/production/netcom2.o
 master8Item         0x20              build/default/production/netcom2.o
 master1Item         0x20              build/default/production/netcom2.o
-font_twcen_22       0x4c              build/default/production/_display/graphics.o
 defaultAppStartParam
                     0x8               build/default/production/clock_cfgBits_mm.o
 sendingItem         0x4               build/default/production/netcom2.o
@@ -224,11 +210,8 @@ replyItem           0x20              build/default/production/netcom2.o
 data1024            0x400             build/default/production/app1.o
 setPipe1            0xc               build/default/production/app1.o
 LED1                0x8               build/default/production/clock_cfgBits_mm.o
-sysDisplay          0x50              build/default/production/_display/graphics.o
 LED3                0x8               build/default/production/clock_cfgBits_mm.o
-font_twcen_18       0x4c              build/default/production/_display/graphics.o
 _finish             0x4               build/default/production/netcom2.o
-defaultFont         0x4               build/default/production/_display/ili9341/disp9341.o
 setPipe1data        0x20              build/default/production/app1.o
 LED2                0x8               build/default/production/clock_cfgBits_mm.o
 getPipe1            0xc               build/default/production/app1.o
@@ -247,7 +230,7 @@ section                    address  length [bytes]      (dec)  Description
 .text._on_reset         0x9d000174            0x4           4   
 .text._on_bootstrap     0x9d000178            0x4           4   
 .app_excpt              0x9d000180            0xc          12  General-Exception 
-.text.fptoli            0x9d00018c           0x64         100   
+.asm_fn                 0x9d00018c           0x60          96   
 .vector_0               0x9d000200            0x8           8  Interrupt Vector 0 
 .vector_1               0x9d000208            0x8           8  Interrupt Vector 1 
 .vector_2               0x9d000210            0x8           8  Interrupt Vector 2 
@@ -350,37 +333,33 @@ section                    address  length [bytes]      (dec)  Description
 .vector_99              0x9d000518            0x8           8   
 .vector_100             0x9d000520            0x8           8   
 .vector_101             0x9d000528            0x8           8   
-.rodata                 0x9d000530         0x4fec       20460  Read-only const 
-.text                   0x9d00551c         0x3adc       15068  App's exec code 
-.asm_fn                 0x9d008ff8          0xe4c        3660   
-.text                   0x9d009e44         0x13d0        5072  App's exec code 
-.asm_fn                 0x9d00b214          0x970        2416   
-.asm_rtc                0x9d00bb84          0x4b0        1200   
-.text                   0x9d00c034          0x8c0        2240  App's exec code 
-.asm_cn                 0x9d00c8f4          0x364         868   
-.dinit                  0x9d00cc58          0x320         800   
-.text                   0x9d00cf78          0x454        1108  App's exec code 
-.text                   0x9d00d3cc          0x374         884  App's exec code 
-.asm_timer1             0x9d00d740          0x1a8         424   
-.text                   0x9d00d8e8          0x1a4         420  App's exec code 
-.text                   0x9d00da8c          0x21c         540  App's exec code 
-.text                   0x9d00dca8          0x164         356  App's exec code 
-.rodata                 0x9d00de0c          0x130         304  Read-only const 
-.rodata                 0x9d00df3c          0x130         304  Read-only const 
-.rodata                 0x9d00e06c          0x130         304  Read-only const 
-.rodata                 0x9d00e19c          0x130         304  Read-only const 
-.rodata                 0x9d00e2cc          0x130         304  Read-only const 
-.rodata                 0x9d00e3fc          0x130         304  Read-only const 
-.rodata                 0x9d00e52c          0x130         304  Read-only const 
-.text.general_exception 0x9d00e65c           0x80         128   
-.asm_fn                 0x9d00e6dc           0x60          96   
-.text.sitofp            0x9d00e73c           0x54          84   
-.text                   0x9d00e790           0x50          80  App's exec code 
-.text.main_entry        0x9d00e7e0           0x44          68   
-.text                   0x9d00e824           0x40          64  App's exec code 
-.text._bootstrap_except 0x9d00e864           0x34          52   
-.vector_default         0x9d00e898           0x30          48   
-      Total kseg0_program_mem used  :      0xe8b4       59572  22.7% of 0x40000
+.text                   0x9d000530         0x1bb4        7092  App's exec code 
+.asm_fn                 0x9d0020e4          0xe4c        3660   
+.text                   0x9d002f30         0x1114        4372  App's exec code 
+.asm_rtc                0x9d004044          0x4b0        1200   
+.text                   0x9d0044f4          0x4a8        1192  App's exec code 
+.asm_cn                 0x9d00499c          0x364         868   
+.text                   0x9d004d00          0x360         864  App's exec code 
+.dinit                  0x9d005060          0x300         768   
+.text                   0x9d005360          0x3fc        1020  App's exec code 
+.text                   0x9d00575c          0x1b4         436  App's exec code 
+.asm_timer1             0x9d005910          0x1a8         424   
+.text                   0x9d005ab8          0x1a4         420  App's exec code 
+.text                   0x9d005c5c          0x154         340  App's exec code 
+.text.general_exception 0x9d005db0           0x80         128   
+.rodata                 0x9d005e30           0xa8         168  Read-only const 
+.rodata                 0x9d005ed8           0xa8         168  Read-only const 
+.rodata                 0x9d005f80           0xa8         168  Read-only const 
+.rodata                 0x9d006028           0xa8         168  Read-only const 
+.rodata                 0x9d0060d0           0xa8         168  Read-only const 
+.rodata                 0x9d006178           0xa8         168  Read-only const 
+.rodata                 0x9d006220           0xa8         168  Read-only const 
+.rodata                 0x9d0062c8           0xa8         168  Read-only const 
+.text.main_entry        0x9d006370           0x44          68   
+.text                   0x9d0063b4           0x40          64  App's exec code 
+.text._bootstrap_except 0x9d0063f4           0x34          52   
+.vector_default         0x9d006428           0x30          48   
+      Total kseg0_program_mem used  :      0x6440       25664  9.8% of 0x40000
 
 kseg0 Boot-Memory Usage
 section                    address  length [bytes]      (dec)  Description
@@ -394,32 +373,31 @@ section                    address  length [bytes]      (dec)  Description
 .bev_excpt              0xbfc00380            0xc          12  BEV-Exception 
          Total kseg1_boot_mem used  :       0x1d8         472  40.4% of 0x490
         --------------------------------------------------------------------------
-         Total Program Memory used  :      0xea8c       60044  22.8% of 0x40490
+         Total Program Memory used  :      0x6618       26136  9.9% of 0x40490
         --------------------------------------------------------------------------
 
 
 kseg0 Data-Memory Usage
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-.sdata                  0x80000000           0x98         152  Small init data 
-.sbss                   0x80000098          0x1b8         440  Small uninit data 
-.bss                    0x80000250          0xa18        2584  Uninitialized data 
-.bss                    0x80000c68          0x810        2064  Uninitialized data 
-.data                   0x80001478           0x8c         140  Initialized data 
-.bss                    0x80001504            0xc          12  Uninitialized data 
+.sdata                  0x80000000           0x90         144  Small init data 
+.sbss                   0x80000090          0x21c         540  Small uninit data 
+.bss                    0x800002ac          0x8f0        2288  Uninitialized data 
+.data                   0x80000b9c           0x8c         140  Initialized data 
+.bss                    0x80000c28            0xc          12  Uninitialized data 
 .os_stack               0x800059b0         0x2000        8192   
 .os                     0x800079b0          0x650        1616   
-         Total kseg0_data_mem used  :      0x3b60       15200  46.4% of 0x8000
+         Total kseg0_data_mem used  :      0x3284       12932  39.5% of 0x8000
         --------------------------------------------------------------------------
-            Total Data Memory used  :      0x3b60       15200  46.4% of 0x8000
+            Total Data Memory used  :      0x3284       12932  39.5% of 0x8000
         --------------------------------------------------------------------------
 
 
 Dynamic Data-Memory Reservation
 section                    address  length [bytes]      (dec)  Description
 -------                 ----------  -------------------------  -----------
-heap                    0x80001518           0x10          16  Reserved for heap 
-stack                   0x80001540         0x4468       17512  Reserved for stack 
+heap                    0x80000c38           0x10          16  Reserved for heap 
+stack                   0x80000c60         0x4d40       19776  Reserved for stack 
 
         --------------------------------------------------------------------------
 
@@ -505,9 +483,9 @@ Discarded input sections
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector50.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector51.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector52.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector53.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector54.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector55.o)
+ .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector56.o)
+ .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector57.o)
+ .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector58.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector59.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector60.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector61.o)
@@ -552,12 +530,6 @@ Discarded input sections
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector100.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector101.o)
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
- .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
 
 Memory Configuration
 
@@ -1033,37 +1005,37 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
 
 .vector_53      0x9d0003a8        0x8
  *(.vector_53)
- .vector_53     0x9d0003a8        0x8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector53.o)
+ .vector_53     0x9d0003a8        0x8 build/default/production/main.o
                 0x9d0003a9                __vector_dispatch_53
                 0x00000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_53) <= (_vector_spacing << 0x3))), function at exception vector 53 too large)
 
 .vector_54      0x9d0003b0        0x8
  *(.vector_54)
- .vector_54     0x9d0003b0        0x8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector54.o)
+ .vector_54     0x9d0003b0        0x8 build/default/production/main.o
                 0x9d0003b1                __vector_dispatch_54
                 0x00000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_54) <= (_vector_spacing << 0x3))), function at exception vector 54 too large)
 
 .vector_55      0x9d0003b8        0x8
  *(.vector_55)
- .vector_55     0x9d0003b8        0x8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector55.o)
+ .vector_55     0x9d0003b8        0x8 build/default/production/main.o
                 0x9d0003b9                __vector_dispatch_55
                 0x00000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_55) <= (_vector_spacing << 0x3))), function at exception vector 55 too large)
 
 .vector_56      0x9d0003c0        0x8
  *(.vector_56)
- .vector_56     0x9d0003c0        0x8 build/default/production/main.o
+ .vector_56     0x9d0003c0        0x8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector56.o)
                 0x9d0003c1                __vector_dispatch_56
                 0x00000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_56) <= (_vector_spacing << 0x3))), function at exception vector 56 too large)
 
 .vector_57      0x9d0003c8        0x8
  *(.vector_57)
- .vector_57     0x9d0003c8        0x8 build/default/production/main.o
+ .vector_57     0x9d0003c8        0x8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector57.o)
                 0x9d0003c9                __vector_dispatch_57
                 0x00000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_57) <= (_vector_spacing << 0x3))), function at exception vector 57 too large)
 
 .vector_58      0x9d0003d0        0x8
  *(.vector_58)
- .vector_58     0x9d0003d0        0x8 build/default/production/main.o
+ .vector_58     0x9d0003d0        0x8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector58.o)
                 0x9d0003d1                __vector_dispatch_58
                 0x00000001                ASSERT (((_vector_spacing == 0x0) || (SIZEOF (.vector_58) <= (_vector_spacing << 0x3))), function at exception vector 58 too large)
 
@@ -1443,127 +1415,123 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
  *(.got)
                 0x80000000                . = ALIGN (0x4)
 
-.sdata          0x80000000       0x98
+.sdata          0x80000000       0x90
                 0x80000000                _sdata_begin = .
  *(.sdata .sdata.* .gnu.linkonce.s.*)
  .sdata         0x80000000        0x4 build/default/production/clock_cfgBits_mm.o
                 0x80000000                checkStackSpaceValue
  .sdata         0x80000004        0x4 build/default/production/clock_cfgBits_mz.o
- .sdata         0x80000008       0x10 build/default/production/netcom2.o
+ .sdata         0x80000008       0x30 build/default/production/netcom2.o
                 0x8000000c                tx_pin
- .sdata         0x80000018        0x4 build/default/production/main.o
- .sdata         0x8000001c        0x4 build/default/production/globals.o
- .sdata         0x80000020       0x2c build/default/production/_display/ili9341/disp9341.o
-                0x80000024                csPin
-                0x8000002c                resetPin
-                0x80000034                dcPin
-                0x8000003c                blPin
- .sdata         0x8000004c        0x4 build/default/production/_display/ssd1306/disp1306.o
- .sdata         0x80000050        0x4 build/default/production/_display/graphics.o
- .sdata         0x80000054        0x4 build/default/production/spi.o
- .sdata         0x80000058        0x4 build/default/production/portWriter.o
- .sdata         0x8000005c        0x4 build/default/production/_touchpad/touchXpt2046.o
- .sdata         0x80000060        0x4 build/default/production/periph.o
- .sdata         0x80000064       0x20 build/default/production/app1.o
-                0x80000068                delay
-                0x8000006c                testVar
-                0x80000078                getPipe0data
-                0x8000007c                getPipe1data
- .sdata         0x80000084        0x8 build/default/production/app2.o
- .sdata         0x8000008c        0x8 build/default/production/app3.o
- .sdata         0x80000094        0x4 build/default/production/user_apps.o
-                0x80000098                . = ALIGN (0x4)
-                0x80000098                _sdata_end = .
+                0x80000014                SW0
+                0x8000001c                SW1
+                0x80000024                SW2
+                0x8000002c                SW3
+ .sdata         0x80000038        0x4 build/default/production/main.o
+ .sdata         0x8000003c        0x4 build/default/production/globals.o
+ .sdata         0x80000040        0x4 build/default/production/_display/ili9341/disp9341.o
+ .sdata         0x80000044        0x4 build/default/production/_display/ssd1306/disp1306.o
+ .sdata         0x80000048        0x4 build/default/production/_display/graphics.o
+ .sdata         0x8000004c        0x4 build/default/production/spi.o
+ .sdata         0x80000050        0x4 build/default/production/portWriter.o
+ .sdata         0x80000054        0x4 build/default/production/_touchpad/touchXpt2046.o
+ .sdata         0x80000058        0x4 build/default/production/periph.o
+ .sdata         0x8000005c       0x20 build/default/production/app1.o
+                0x80000060                delay
+                0x80000064                testVar
+                0x80000070                getPipe0data
+                0x80000074                getPipe1data
+ .sdata         0x8000007c        0x8 build/default/production/app2.o
+ .sdata         0x80000084        0x8 build/default/production/app3.o
+ .sdata         0x8000008c        0x4 build/default/production/user_apps.o
+                0x80000090                . = ALIGN (0x4)
+                0x80000090                _sdata_end = .
 
 .lit8
  *(.lit8)
 
 .lit4
  *(.lit4)
-                0x80000098                . = ALIGN (0x4)
-                0x80000098                _data_end = .
-                0x80000098                _bss_begin = .
+                0x80000090                . = ALIGN (0x4)
+                0x80000090                _data_end = .
+                0x80000090                _bss_begin = .
 
-.sbss           0x80000098      0x1b8
-                0x80000098                _sbss_begin = .
+.sbss           0x80000090      0x21c
+                0x80000090                _sbss_begin = .
  *(.dynsbss)
  *(.sbss .sbss.* .gnu.linkonce.sb.*)
- .sbss          0x80000098       0x14 build/default/production/clock_cfgBits_mm.o
-                0x80000098                netcomChkError
-                0x8000009c                netcomSendDataError
-                0x800000a0                netcomBusError
-                0x800000a4                netcomTxBytes
-                0x800000a8                netcomRxBytes
- .sbss          0x800000ac       0x14 build/default/production/clock_cfgBits_mz.o
- .sbss          0x800000c0       0x30 build/default/production/netcom2.o
- .sbss          0x800000f0       0x14 build/default/production/main.o
- .sbss          0x80000104       0x14 build/default/production/globals.o
- .sbss          0x80000118       0x28 build/default/production/_display/ili9341/disp9341.o
- .sbss          0x80000140       0x14 build/default/production/_display/ssd1306/disp1306.o
- .sbss          0x80000154       0x18 build/default/production/_display/graphics.o
- .sbss          0x8000016c       0x14 build/default/production/spi.o
- .sbss          0x80000180       0x14 build/default/production/portWriter.o
- .sbss          0x80000194       0x14 build/default/production/_touchpad/touchXpt2046.o
- .sbss          0x800001a8       0x14 build/default/production/periph.o
- .sbss          0x800001bc       0x1c build/default/production/app1.o
- .sbss          0x800001d8       0x18 build/default/production/app2.o
- .sbss          0x800001f0       0x14 build/default/production/app3.o
- .sbss          0x80000204       0x14 build/default/production/user_apps.o
+ .sbss          0x80000090       0x1c build/default/production/clock_cfgBits_mm.o
+                0x80000090                netcomChkError
+                0x80000094                netcomSendDataError
+                0x80000098                netcomBusError
+                0x8000009c                netcomTxBytes
+                0x800000a0                netcomRxBytes
+                0x800000a4                netcomTxCTRL
+                0x800000a8                netcomRxCTRL
+ .sbss          0x800000ac       0x1c build/default/production/clock_cfgBits_mz.o
+ .sbss          0x800000c8       0x38 build/default/production/netcom2.o
+ .sbss          0x80000100       0x1c build/default/production/main.o
+ .sbss          0x8000011c       0x1c build/default/production/globals.o
+ .sbss          0x80000138       0x1c build/default/production/_display/ili9341/disp9341.o
+ .sbss          0x80000154       0x1c build/default/production/_display/ssd1306/disp1306.o
+ .sbss          0x80000170       0x1c build/default/production/_display/graphics.o
+ .sbss          0x8000018c       0x1c build/default/production/spi.o
+ .sbss          0x800001a8       0x1c build/default/production/portWriter.o
+ .sbss          0x800001c4       0x1c build/default/production/_touchpad/touchXpt2046.o
+ .sbss          0x800001e0       0x1c build/default/production/periph.o
+ .sbss          0x800001fc       0x24 build/default/production/app1.o
+ .sbss          0x80000220       0x20 build/default/production/app2.o
+ .sbss          0x80000240       0x1c build/default/production/app3.o
+ .sbss          0x8000025c       0x1c build/default/production/user_apps.o
  *(.scommon)
- .scommon       0x80000218       0x2c build/default/production/clock_cfgBits_mm.o
-                0x80000218                SYSTEM_STATUS
-                0x8000021c                defaultAppStartParam
-                0x80000224                LED1
-                0x8000022c                LED3
-                0x80000234                LED2
-                0x8000023c                LED4
- .scommon       0x80000244        0x0 build/default/production/clock_cfgBits_mz.o
- .scommon       0x80000244        0x8 build/default/production/netcom2.o
-                0x80000244                sendingItem
-                0x80000248                _finish
- .scommon       0x8000024c        0x0 build/default/production/main.o
- .scommon       0x8000024c        0x0 build/default/production/globals.o
- .scommon       0x8000024c        0x4 build/default/production/_display/ili9341/disp9341.o
-                0x8000024c                defaultFont
- .scommon       0x80000250        0x0 build/default/production/_display/ssd1306/disp1306.o
- .scommon       0x80000250        0x0 build/default/production/_display/graphics.o
- .scommon       0x80000250        0x0 build/default/production/spi.o
- .scommon       0x80000250        0x0 build/default/production/portWriter.o
- .scommon       0x80000250        0x0 build/default/production/_touchpad/touchXpt2046.o
- .scommon       0x80000250        0x0 build/default/production/periph.o
- .scommon       0x80000250        0x0 build/default/production/app1.o
- .scommon       0x80000250        0x0 build/default/production/app2.o
- .scommon       0x80000250        0x0 build/default/production/app3.o
- .scommon       0x80000250        0x0 build/default/production/user_apps.o
-                0x80000250                _sbss_end = .
-                0x80000250                . = ALIGN (0x4)
+ .scommon       0x80000278       0x2c build/default/production/clock_cfgBits_mm.o
+                0x80000278                SYSTEM_STATUS
+                0x8000027c                defaultAppStartParam
+                0x80000284                LED1
+                0x8000028c                LED3
+                0x80000294                LED2
+                0x8000029c                LED4
+ .scommon       0x800002a4        0x0 build/default/production/clock_cfgBits_mz.o
+ .scommon       0x800002a4        0x8 build/default/production/netcom2.o
+                0x800002a4                sendingItem
+                0x800002a8                _finish
+ .scommon       0x800002ac        0x0 build/default/production/main.o
+ .scommon       0x800002ac        0x0 build/default/production/globals.o
+ .scommon       0x800002ac        0x0 build/default/production/_display/ili9341/disp9341.o
+ .scommon       0x800002ac        0x0 build/default/production/_display/ssd1306/disp1306.o
+ .scommon       0x800002ac        0x0 build/default/production/_display/graphics.o
+ .scommon       0x800002ac        0x0 build/default/production/spi.o
+ .scommon       0x800002ac        0x0 build/default/production/portWriter.o
+ .scommon       0x800002ac        0x0 build/default/production/_touchpad/touchXpt2046.o
+ .scommon       0x800002ac        0x0 build/default/production/periph.o
+ .scommon       0x800002ac        0x0 build/default/production/app1.o
+ .scommon       0x800002ac        0x0 build/default/production/app2.o
+ .scommon       0x800002ac        0x0 build/default/production/app3.o
+ .scommon       0x800002ac        0x0 build/default/production/user_apps.o
+                0x800002ac                _sbss_end = .
+                0x800002ac                . = ALIGN (0x4)
 
-.bss            0x80000250      0xa18
+.bss            0x800002ac      0x8f0
  *(.dynbss)
  *(COMMON)
- COMMON         0x80000250       0x80 build/default/production/netcom2.o
-                0x80000250                master2Item
-                0x80000270                master8Item
-                0x80000290                master1Item
-                0x800002b0                replyItem
- COMMON         0x800002d0      0x128 build/default/production/_display/graphics.o
-                0x800002d0                graphics
-                0x80000310                font_twcen_22
-                0x8000035c                sysDisplay
-                0x800003ac                font_twcen_18
- COMMON         0x800003f8      0x870 build/default/production/app1.o
-                0x800003f8                dataStruct
-                0x80000418                data1024
-                0x80000818                setPipe1
-                0x80000824                setPipe1data
-                0x80000844                getPipe1
-                0x80000850                getPipe0
-                0x8000085c                setPipe0data
-                0x80000c5c                setPipe0
-                0x80000c68                . = ALIGN ((. != 0x0)?0x4:0x1)
-                0x80000c68                . = ALIGN (0x4)
-                0x80000c68                _end = .
-                0x80000c68                _bss_end = .
+ COMMON         0x800002ac       0x80 build/default/production/netcom2.o
+                0x800002ac                master2Item
+                0x800002cc                master8Item
+                0x800002ec                master1Item
+                0x8000030c                replyItem
+ COMMON         0x8000032c      0x870 build/default/production/app1.o
+                0x8000032c                dataStruct
+                0x8000034c                data1024
+                0x8000074c                setPipe1
+                0x80000758                setPipe1data
+                0x80000778                getPipe1
+                0x80000784                getPipe0
+                0x80000790                setPipe0data
+                0x80000b90                setPipe0
+                0x80000b9c                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x80000b9c                . = ALIGN (0x4)
+                0x80000b9c                _end = .
+                0x80000b9c                _bss_end = .
                 0x00008000                _bmxdudba_address = 0x8000
                 0x00008000                _bmxdupba_address = 0x8000
 
@@ -1686,7 +1654,7 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
  *.elf(.debug_sfnames)
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x348
+.debug_aranges  0x00000000      0x318
  *.elf(.debug_aranges)
  *(.debug_aranges)
  .debug_aranges
@@ -1704,165 +1672,158 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
  .debug_aranges
                 0x000000b8       0x20 build/default/production/core_fn.o
  .debug_aranges
-                0x000000d8       0x20 build/default/production/_display/ili9341/disp9341.o
+                0x000000d8       0x18 build/default/production/_display/ili9341/disp9341.o
  .debug_aranges
-                0x000000f8       0x20 build/default/production/_display/ili9341/disp16_asm.o
+                0x000000f0       0x18 build/default/production/_display/ssd1306/disp1306.o
  .debug_aranges
-                0x00000118       0x18 build/default/production/_display/ssd1306/disp1306.o
+                0x00000108       0x18 build/default/production/_display/graphics.o
  .debug_aranges
-                0x00000130       0x20 build/default/production/_display/graphics.o
+                0x00000120       0x20 build/default/production/rtc.o
  .debug_aranges
-                0x00000150       0x20 build/default/production/rtc.o
+                0x00000140       0x20 build/default/production/change_notif_mm.o
  .debug_aranges
-                0x00000170       0x20 build/default/production/change_notif_mm.o
+                0x00000160       0x20 build/default/production/spi.o
  .debug_aranges
-                0x00000190       0x20 build/default/production/spi.o
+                0x00000180       0x20 build/default/production/portWriter.o
  .debug_aranges
-                0x000001b0       0x20 build/default/production/portWriter.o
+                0x000001a0       0x18 build/default/production/_touchpad/touchXpt2046.o
  .debug_aranges
-                0x000001d0       0x18 build/default/production/_touchpad/touchXpt2046.o
+                0x000001b8       0x20 build/default/production/periph.o
  .debug_aranges
-                0x000001e8       0x20 build/default/production/periph.o
+                0x000001d8       0x20 build/default/production/periph_fn.o
  .debug_aranges
-                0x00000208       0x20 build/default/production/periph_fn.o
+                0x000001f8       0x20 build/default/production/app1.o
  .debug_aranges
-                0x00000228       0x20 build/default/production/app1.o
+                0x00000218       0x20 build/default/production/app2.o
  .debug_aranges
-                0x00000248       0x20 build/default/production/app2.o
+                0x00000238       0x20 build/default/production/app3.o
  .debug_aranges
-                0x00000268       0x20 build/default/production/app3.o
+                0x00000258       0x20 build/default/production/user_apps.o
  .debug_aranges
-                0x00000288       0x20 build/default/production/user_apps.o
+                0x00000278       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
  .debug_aranges
-                0x000002a8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+                0x00000298       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_aranges
-                0x000002c8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+                0x000002b8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
  .debug_aranges
-                0x000002e8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+                0x000002d8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
  .debug_aranges
-                0x00000308       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_aranges
-                0x00000328       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+                0x000002f8       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
 .debug_pubnames
  *.elf(.debug_pubnames)
  *(.debug_pubnames)
 
-.debug_info     0x00000000    0x14473
+.debug_info     0x00000000    0x1087f
  *.elf(.debug_info .gnu.linkonce.wi.*)
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0xec5 build/default/production/clock_cfgBits_mm.o
- .debug_info    0x00000ec5      0xc97 build/default/production/clock_cfgBits_mz.o
- .debug_info    0x00001b5c     0x22e6 build/default/production/netcom2.o
- .debug_info    0x00003e42     0x1787 build/default/production/main.o
- .debug_info    0x000055c9      0xfab build/default/production/globals.o
- .debug_info    0x00006574       0x41 build/default/production/timer1.o
- .debug_info    0x000065b5       0x42 build/default/production/core_fn.o
- .debug_info    0x000065f7     0x203e build/default/production/_display/ili9341/disp9341.o
- .debug_info    0x00008635       0x56 build/default/production/_display/ili9341/disp16_asm.o
- .debug_info    0x0000868b      0xca0 build/default/production/_display/ssd1306/disp1306.o
- .debug_info    0x0000932b     0x1841 build/default/production/_display/graphics.o
- .debug_info    0x0000ab6c       0x3e build/default/production/rtc.o
- .debug_info    0x0000abaa       0x4a build/default/production/change_notif_mm.o
- .debug_info    0x0000abf4     0x1d12 build/default/production/spi.o
- .debug_info    0x0000c906     0x11e1 build/default/production/portWriter.o
- .debug_info    0x0000dae7      0xc9d build/default/production/_touchpad/touchXpt2046.o
- .debug_info    0x0000e784      0xecc build/default/production/periph.o
- .debug_info    0x0000f650       0x44 build/default/production/periph_fn.o
- .debug_info    0x0000f694     0x1c40 build/default/production/app1.o
- .debug_info    0x000112d4      0xdfb build/default/production/app2.o
- .debug_info    0x000120cf      0xe0e build/default/production/app3.o
- .debug_info    0x00012edd     0x1105 build/default/production/user_apps.o
- .debug_info    0x00013fe2      0x110 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
- .debug_info    0x000140f2       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_info    0x000141e7       0xce c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_info    0x000142b5       0xd6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_info    0x0001438b       0xe8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_info    0x00000000      0xd79 build/default/production/clock_cfgBits_mm.o
+ .debug_info    0x00000d79      0xb4b build/default/production/clock_cfgBits_mz.o
+ .debug_info    0x000018c4     0x21fb build/default/production/netcom2.o
+ .debug_info    0x00003abf     0x163b build/default/production/main.o
+ .debug_info    0x000050fa      0xe5f build/default/production/globals.o
+ .debug_info    0x00005f59       0x41 build/default/production/timer1.o
+ .debug_info    0x00005f9a       0x42 build/default/production/core_fn.o
+ .debug_info    0x00005fdc      0xb54 build/default/production/_display/ili9341/disp9341.o
+ .debug_info    0x00006b30      0xb54 build/default/production/_display/ssd1306/disp1306.o
+ .debug_info    0x00007684      0xb4c build/default/production/_display/graphics.o
+ .debug_info    0x000081d0       0x3e build/default/production/rtc.o
+ .debug_info    0x0000820e       0x4a build/default/production/change_notif_mm.o
+ .debug_info    0x00008258     0x1bc6 build/default/production/spi.o
+ .debug_info    0x00009e1e     0x1095 build/default/production/portWriter.o
+ .debug_info    0x0000aeb3      0xb51 build/default/production/_touchpad/touchXpt2046.o
+ .debug_info    0x0000ba04      0xd80 build/default/production/periph.o
+ .debug_info    0x0000c784       0x44 build/default/production/periph_fn.o
+ .debug_info    0x0000c7c8     0x13d6 build/default/production/app1.o
+ .debug_info    0x0000db9e      0xcaf build/default/production/app2.o
+ .debug_info    0x0000e84d      0xcc2 build/default/production/app3.o
+ .debug_info    0x0000f50f      0xedf build/default/production/user_apps.o
+ .debug_info    0x000103ee      0x110 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+ .debug_info    0x000104fe       0xf5 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_info    0x000105f3       0xce c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_info    0x000106c1       0xd6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_info    0x00010797       0xe8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_abbrev   0x00000000     0x1e66
+.debug_abbrev   0x00000000     0x19ba
  *.elf(.debug_abbrev)
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x176 build/default/production/clock_cfgBits_mm.o
- .debug_abbrev  0x00000176       0xe5 build/default/production/clock_cfgBits_mz.o
- .debug_abbrev  0x0000025b      0x2f0 build/default/production/netcom2.o
- .debug_abbrev  0x0000054b      0x244 build/default/production/main.o
- .debug_abbrev  0x0000078f      0x1be build/default/production/globals.o
- .debug_abbrev  0x0000094d       0x14 build/default/production/timer1.o
- .debug_abbrev  0x00000961       0x14 build/default/production/core_fn.o
- .debug_abbrev  0x00000975      0x35d build/default/production/_display/ili9341/disp9341.o
- .debug_abbrev  0x00000cd2       0x14 build/default/production/_display/ili9341/disp16_asm.o
- .debug_abbrev  0x00000ce6       0xe5 build/default/production/_display/ssd1306/disp1306.o
- .debug_abbrev  0x00000dcb      0x1ee build/default/production/_display/graphics.o
- .debug_abbrev  0x00000fb9       0x14 build/default/production/rtc.o
- .debug_abbrev  0x00000fcd       0x14 build/default/production/change_notif_mm.o
- .debug_abbrev  0x00000fe1      0x244 build/default/production/spi.o
- .debug_abbrev  0x00001225      0x19f build/default/production/portWriter.o
- .debug_abbrev  0x000013c4       0xe5 build/default/production/_touchpad/touchXpt2046.o
- .debug_abbrev  0x000014a9      0x170 build/default/production/periph.o
- .debug_abbrev  0x00001619       0x14 build/default/production/periph_fn.o
- .debug_abbrev  0x0000162d      0x27b build/default/production/app1.o
- .debug_abbrev  0x000018a8      0x158 build/default/production/app2.o
- .debug_abbrev  0x00001a00      0x1ab build/default/production/app3.o
- .debug_abbrev  0x00001bab      0x207 build/default/production/user_apps.o
- .debug_abbrev  0x00001db2       0x14 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
- .debug_abbrev  0x00001dc6       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_abbrev  0x00001dee       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_abbrev  0x00001e16       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_abbrev  0x00001e3e       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_abbrev  0x00000000      0x164 build/default/production/clock_cfgBits_mm.o
+ .debug_abbrev  0x00000164       0xd3 build/default/production/clock_cfgBits_mz.o
+ .debug_abbrev  0x00000237      0x2eb build/default/production/netcom2.o
+ .debug_abbrev  0x00000522      0x244 build/default/production/main.o
+ .debug_abbrev  0x00000766      0x1ac build/default/production/globals.o
+ .debug_abbrev  0x00000912       0x14 build/default/production/timer1.o
+ .debug_abbrev  0x00000926       0x14 build/default/production/core_fn.o
+ .debug_abbrev  0x0000093a       0xd3 build/default/production/_display/ili9341/disp9341.o
+ .debug_abbrev  0x00000a0d       0xd3 build/default/production/_display/ssd1306/disp1306.o
+ .debug_abbrev  0x00000ae0       0xd3 build/default/production/_display/graphics.o
+ .debug_abbrev  0x00000bb3       0x14 build/default/production/rtc.o
+ .debug_abbrev  0x00000bc7       0x14 build/default/production/change_notif_mm.o
+ .debug_abbrev  0x00000bdb      0x244 build/default/production/spi.o
+ .debug_abbrev  0x00000e1f      0x18d build/default/production/portWriter.o
+ .debug_abbrev  0x00000fac       0xd3 build/default/production/_touchpad/touchXpt2046.o
+ .debug_abbrev  0x0000107f      0x15e build/default/production/periph.o
+ .debug_abbrev  0x000011dd       0x14 build/default/production/periph_fn.o
+ .debug_abbrev  0x000011f1      0x22e build/default/production/app1.o
+ .debug_abbrev  0x0000141f      0x146 build/default/production/app2.o
+ .debug_abbrev  0x00001565      0x199 build/default/production/app3.o
+ .debug_abbrev  0x000016fe      0x208 build/default/production/user_apps.o
+ .debug_abbrev  0x00001906       0x14 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+ .debug_abbrev  0x0000191a       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_abbrev  0x00001942       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_abbrev  0x0000196a       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_abbrev  0x00001992       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_line     0x00000000     0x254c
+.debug_line     0x00000000     0x1e10
  *.elf(.debug_line)
  *(.debug_line)
  .debug_line    0x00000000      0x13e build/default/production/clock_cfgBits_mm.o
  .debug_line    0x0000013e       0x97 build/default/production/clock_cfgBits_mz.o
- .debug_line    0x000001d5      0x3d4 build/default/production/netcom2.o
- .debug_line    0x000005a9      0x191 build/default/production/main.o
- .debug_line    0x0000073a      0x135 build/default/production/globals.o
- .debug_line    0x0000086f       0xb2 build/default/production/timer1.o
- .debug_line    0x00000921      0x44c build/default/production/core_fn.o
- .debug_line    0x00000d6d      0x3b9 build/default/production/_display/ili9341/disp9341.o
- .debug_line    0x00001126      0x31f build/default/production/_display/ili9341/disp16_asm.o
- .debug_line    0x00001445       0x97 build/default/production/_display/ssd1306/disp1306.o
- .debug_line    0x000014dc      0x162 build/default/production/_display/graphics.o
- .debug_line    0x0000163e       0xeb build/default/production/rtc.o
- .debug_line    0x00001729      0x10a build/default/production/change_notif_mm.o
- .debug_line    0x00001833      0x214 build/default/production/spi.o
- .debug_line    0x00001a47       0xe8 build/default/production/portWriter.o
- .debug_line    0x00001b2f       0x97 build/default/production/_touchpad/touchXpt2046.o
- .debug_line    0x00001bc6       0xe1 build/default/production/periph.o
- .debug_line    0x00001ca7       0x5f build/default/production/periph_fn.o
- .debug_line    0x00001d06      0x1cb build/default/production/app1.o
- .debug_line    0x00001ed1       0xd5 build/default/production/app2.o
- .debug_line    0x00001fa6      0x12c build/default/production/app3.o
- .debug_line    0x000020d2      0x14a build/default/production/user_apps.o
- .debug_line    0x0000221c       0xb7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
- .debug_line    0x000022d3       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_line    0x0000237a       0x94 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_line    0x0000240e       0x98 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_line    0x000024a6       0xa6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_line    0x000001d5      0x3e6 build/default/production/netcom2.o
+ .debug_line    0x000005bb      0x191 build/default/production/main.o
+ .debug_line    0x0000074c      0x135 build/default/production/globals.o
+ .debug_line    0x00000881       0xb2 build/default/production/timer1.o
+ .debug_line    0x00000933      0x44c build/default/production/core_fn.o
+ .debug_line    0x00000d7f       0x97 build/default/production/_display/ili9341/disp9341.o
+ .debug_line    0x00000e16       0x97 build/default/production/_display/ssd1306/disp1306.o
+ .debug_line    0x00000ead       0x97 build/default/production/_display/graphics.o
+ .debug_line    0x00000f44       0xeb build/default/production/rtc.o
+ .debug_line    0x0000102f      0x10a build/default/production/change_notif_mm.o
+ .debug_line    0x00001139      0x214 build/default/production/spi.o
+ .debug_line    0x0000134d       0xe8 build/default/production/portWriter.o
+ .debug_line    0x00001435       0x97 build/default/production/_touchpad/touchXpt2046.o
+ .debug_line    0x000014cc       0xe1 build/default/production/periph.o
+ .debug_line    0x000015ad       0x5f build/default/production/periph_fn.o
+ .debug_line    0x0000160c      0x166 build/default/production/app1.o
+ .debug_line    0x00001772       0xd5 build/default/production/app2.o
+ .debug_line    0x00001847      0x12c build/default/production/app3.o
+ .debug_line    0x00001973      0x16d build/default/production/user_apps.o
+ .debug_line    0x00001ae0       0xb7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+ .debug_line    0x00001b97       0xa7 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_line    0x00001c3e       0x94 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_line    0x00001cd2       0x98 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_line    0x00001d6a       0xa6 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_frame    0x00000000     0x1430
+.debug_frame    0x00000000      0xecc
  *.elf(.debug_frame)
  *(.debug_frame)
  .debug_frame   0x00000000       0x50 build/default/production/clock_cfgBits_mm.o
- .debug_frame   0x00000050      0x444 build/default/production/netcom2.o
- .debug_frame   0x00000494       0xcc build/default/production/main.o
- .debug_frame   0x00000560       0x88 build/default/production/globals.o
- .debug_frame   0x000005e8      0x45c build/default/production/_display/ili9341/disp9341.o
- .debug_frame   0x00000a44       0xd0 build/default/production/_display/graphics.o
- .debug_frame   0x00000b14      0x240 build/default/production/spi.o
- .debug_frame   0x00000d54      0x104 build/default/production/portWriter.o
- .debug_frame   0x00000e58       0xf0 build/default/production/periph.o
- .debug_frame   0x00000f48      0x240 build/default/production/app1.o
- .debug_frame   0x00001188       0xa4 build/default/production/app2.o
- .debug_frame   0x0000122c       0x9c build/default/production/app3.o
- .debug_frame   0x000012c8       0xdc build/default/production/user_apps.o
- .debug_frame   0x000013a4       0x2c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_frame   0x000013d0       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_frame   0x000013f0       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_frame   0x00001410       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_frame   0x00000050      0x448 build/default/production/netcom2.o
+ .debug_frame   0x00000498       0xcc build/default/production/main.o
+ .debug_frame   0x00000564       0x88 build/default/production/globals.o
+ .debug_frame   0x000005ec      0x240 build/default/production/spi.o
+ .debug_frame   0x0000082c      0x104 build/default/production/portWriter.o
+ .debug_frame   0x00000930       0xf0 build/default/production/periph.o
+ .debug_frame   0x00000a20      0x204 build/default/production/app1.o
+ .debug_frame   0x00000c24       0xa4 build/default/production/app2.o
+ .debug_frame   0x00000cc8       0x9c build/default/production/app3.o
+ .debug_frame   0x00000d64       0xdc build/default/production/user_apps.o
+ .debug_frame   0x00000e40       0x2c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_frame   0x00000e6c       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_frame   0x00000e8c       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_frame   0x00000eac       0x20 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
-.debug_str      0x00000000      0x4b8
+.debug_str      0x00000000      0x330
  *.elf(.debug_str)
  *(.debug_str)
  .debug_str     0x00000000       0x2e build/default/production/clock_cfgBits_mm.o
@@ -1870,21 +1831,21 @@ LOAD c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4
  .debug_str     0x0000005c       0x38 build/default/production/netcom2.o
  .debug_str     0x00000094       0x38 build/default/production/main.o
  .debug_str     0x000000cc       0x2e build/default/production/globals.o
- .debug_str     0x000000fa      0x11f build/default/production/_display/ili9341/disp9341.o
- .debug_str     0x00000219       0x2e build/default/production/_display/ssd1306/disp1306.o
- .debug_str     0x00000247       0xa9 build/default/production/_display/graphics.o
- .debug_str     0x000002f0       0x4b build/default/production/spi.o
- .debug_str     0x0000033b       0x3a build/default/production/portWriter.o
- .debug_str     0x00000375       0x2e build/default/production/_touchpad/touchXpt2046.o
- .debug_str     0x000003a3       0x2e build/default/production/periph.o
- .debug_str     0x000003d1       0x5d build/default/production/app1.o
- .debug_str     0x0000042e       0x2e build/default/production/app2.o
- .debug_str     0x0000045c       0x2e build/default/production/app3.o
- .debug_str     0x0000048a       0x2e build/default/production/user_apps.o
- .debug_str     0x000004b8        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_str     0x000004b8        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
- .debug_str     0x000004b8        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
- .debug_str     0x000004b8        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+ .debug_str     0x000000fa       0x2e build/default/production/_display/ili9341/disp9341.o
+ .debug_str     0x00000128       0x2e build/default/production/_display/ssd1306/disp1306.o
+ .debug_str     0x00000156       0x2e build/default/production/_display/graphics.o
+ .debug_str     0x00000184       0x4b build/default/production/spi.o
+ .debug_str     0x000001cf       0x3a build/default/production/portWriter.o
+ .debug_str     0x00000209       0x2e build/default/production/_touchpad/touchXpt2046.o
+ .debug_str     0x00000237       0x2e build/default/production/periph.o
+ .debug_str     0x00000265       0x41 build/default/production/app1.o
+ .debug_str     0x000002a6       0x2e build/default/production/app2.o
+ .debug_str     0x000002d4       0x2e build/default/production/app3.o
+ .debug_str     0x00000302       0x2e build/default/production/user_apps.o
+ .debug_str     0x00000330        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_str     0x00000330        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-reset.o)
+ .debug_str     0x00000330        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
+ .debug_str     0x00000330        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
 
 .debug_loc      0x00000000       0x2c
  *.elf(.debug_loc)
@@ -1987,8 +1948,8 @@ LOAD data_init
 .reginfo        0x00000000       0x18
  .reginfo       0x00000000       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
 
-.stack          0x80001540      0x400
- .stack         0x80001540      0x400 stack
+.stack          0x80000c60      0x400
+ .stack         0x80000c60      0x400 stack
 
 .os_stack       0x800059b0     0x2000
  .os_stack      0x800059b0     0x2000 build/default/production/main.o
@@ -2018,56 +1979,17 @@ LOAD data_init
                 0x80007fde                netcomRx_ms
                 0x80007fe0                ballast
 
-.bss            0x80000c68      0x810
- .bss           0x80000c68      0x810 build/default/production/_display/ili9341/disp9341.o
+.data           0x80000b9c       0x8c
+ .data          0x80000b9c       0x6c build/default/production/spi.o
+                0x80000b9c                s1
+                0x80000bbc                s2
+                0x80000bdc                s3
+                0x80000bfc                controlStruct
+ .data          0x80000c08       0x20 build/default/production/app1.o
+                0x80000c08                data
 
-.data           0x80001478       0x8c
- .data          0x80001478       0x6c build/default/production/spi.o
-                0x80001478                s1
-                0x80001498                s2
-                0x800014b8                s3
-                0x800014d8                controlStruct
- .data          0x800014e4       0x20 build/default/production/app1.o
-                0x800014e4                data
-
-.bss            0x80001504        0xc
- .bss           0x80001504        0xc build/default/production/app1.o
-
-.bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
-
-.data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
-
-.bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
-
-.data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
-
-.bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
-
-.data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
-
-.bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
-
-.data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
-
-.bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
-
-.data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
-
-.bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
-
-.data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
+.bss            0x80000c28        0xc
+ .bss           0x80000c28        0xc build/default/production/app1.o
 
 .bss            0x00000000        0x0
  .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
@@ -2334,22 +2256,22 @@ LOAD data_init
  .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector59.o)
 
 .bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector55.o)
+ .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector58.o)
 
 .data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector55.o)
+ .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector58.o)
 
 .bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector54.o)
+ .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector57.o)
 
 .data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector54.o)
+ .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector57.o)
 
 .bss            0x00000000        0x0
- .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector53.o)
+ .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector56.o)
 
 .data           0x00000000        0x0
- .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector53.o)
+ .data          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector56.o)
 
 .bss            0x00000000        0x0
  .bss           0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector52.o)
@@ -2756,6 +2678,9 @@ LOAD data_init
 .data           0x00000000        0x0
  .data          0x00000000        0x0 build/default/production/_display/ili9341/disp16_asm.o
 
+.bss            0x00000000        0x0
+ .bss           0x00000000        0x0 build/default/production/_display/ili9341/disp9341.o
+
 .data           0x00000000        0x0
  .data          0x00000000        0x0 build/default/production/_display/ili9341/disp9341.o
 
@@ -2825,330 +2750,272 @@ LOAD data_init
                 0xbfc00480       0x28 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\debug-exception-return-mm.o
                 0xbfc00481                __DbgExecReturn
 
-.rodata         0x9d000530     0x4fec
- .rodata        0x9d000530     0x2d08 build/default/production/_display/graphics.o
-                0x9d0005c8                font_twcen18
-                0x9d0005e8                font_twcen18_data
-                0x9d001834                font_twcen22
-                0x9d001854                font_twcen22_data
- .rodata        0x9d003238     0x22e4 build/default/production/app1.o
-                0x9d0032d0                pokus565
-                0x9d0032f0                pokus_data
+.text           0x9d000530     0x1bb4
+ .text          0x9d000530     0x1bb4 build/default/production/netcom2.o
+                0x9d000531                netcomInit
+                0x9d00062d                netcomSetData
+                0x9d00067d                netcomGetData
+                0x9d0006d1                netcomRxTimeout
+                0x9d000729                netcomNotRespond
+                0x9d000755                netcomInitBus
+                0x9d00127d                UART1Tx_interrupt
+                0x9d0017b1                UART1Rx_interrupt
+                0x9d002029                UART1Er_interrupt
 
-.text           0x9d00551c     0x3adc
- .text          0x9d00551c     0x201c build/default/production/_display/ili9341/disp9341.o
-                0x9d00551d                disp9341_driver
- .text          0x9d007538     0x1ac0 build/default/production/netcom2.o
-                0x9d007539                netcomInit
-                0x9d007635                netcomSetData
-                0x9d007685                netcomGetData
-                0x9d0076d9                netcomRxTimeout
-                0x9d007731                netcomNotRespond
-                0x9d00775d                netcomInitBus
-                0x9d0081ad                UART2Tx_interrupt
-                0x9d008705                UART2Rx_interrupt
-                0x9d008f69                UART2Er_interrupt
+.asm_fn         0x9d0020e4      0xe4c
+ .asm_fn        0x9d0020e4      0xe4c build/default/production/core_fn.o
+                0x9d0020e5                initCPU
+                0x9d0020e9                startupStack
+                0x9d0020fd                allocStack
+                0x9d0021d5                clearSystemData
+                0x9d0021e5                setSrsValue
+                0x9d002225                startEvents
+                0x9d002271                doEvents
+                0x9d0022c5                doEventsError
+                0x9d002319                doEventsL
+                0x9d0023c1                getGP
+                0x9d0023c5                compareTimeMs
+                0x9d0023e9                pauseEvents
+                0x9d002425                getTimeMs
+                0x9d002431                checksum16
+                0x9d002449                iVector0
+                0x9d002459                _general_exception_handler
+                0x9d002525                getErrorBehavior
+                0x9d002559                checkStackSpace
+                0x9d0025b1                getProcID
+                0x9d0025d9                getProcTableItem
+                0x9d002601                exitProcess
+                0x9d00260b                exitProcessID
+                0x9d00263d                restartProcess
+                0x9d002647                restartProcessID
+                0x9d002705                clearWDT
+                0x9d002715                startWDT
+                0x9d002725                pauseWDT
+                0x9d002735                pauseCT
+                0x9d00275d                startCT
+                0x9d002779                regListenerWithVar
+                0x9d002779                regListener
+                0x9d002799                raiseEventID
+                0x9d0027d9                getRegEvent
+                0x9d002809                addRegEvent
+                0x9d002839                unregEvent
+                0x9d00289d                removeRegEventProcID
+                0x9d002901                removeEventCacheProcID
+                0x9d00292d                raiseEvent
+                0x9d002995                raiseEventInt
+                0x9d0029ed                systemProcess
+                0x9d002c65                setCanSleep
+                0x9d002cb5                setCanIdle
+                0x9d002d05                getCanSleepAll
+                0x9d002d35                defragTableW
+                0x9d002d75                defragTableB
+                0x9d002db5                lockSafe
+                0x9d002dd1                strLen
+                0x9d002ded                intToChar
+                0x9d002e05                uintToChar
+                0x9d002e6d                byteToChar
+                0x9d002ed1                iVector_spi2Tx
+                0x9d002eed                iVector_UART1Tx
+                0x9d002f03                iVector_UART1Rx
+                0x9d002f19                iVector_UART1Er
 
-.asm_fn         0x9d008ff8      0xe4c
- .asm_fn        0x9d008ff8      0xe4c build/default/production/core_fn.o
-                0x9d008ff9                initCPU
-                0x9d008ffd                startupStack
-                0x9d009011                allocStack
-                0x9d0090e9                clearSystemData
-                0x9d0090f9                setSrsValue
-                0x9d009139                startEvents
-                0x9d009185                doEvents
-                0x9d0091d9                doEventsError
-                0x9d00922d                doEventsL
-                0x9d0092d5                getGP
-                0x9d0092d9                compareTimeMs
-                0x9d0092fd                pauseEvents
-                0x9d009339                getTimeMs
-                0x9d009345                checksum16
-                0x9d00935d                iVector0
-                0x9d00936d                _general_exception_handler
-                0x9d009439                getErrorBehavior
-                0x9d00946d                checkStackSpace
-                0x9d0094c5                getProcID
-                0x9d0094ed                getProcTableItem
-                0x9d009515                exitProcess
-                0x9d00951f                exitProcessID
-                0x9d009551                restartProcess
-                0x9d00955b                restartProcessID
-                0x9d009619                clearWDT
-                0x9d009629                startWDT
-                0x9d009639                pauseWDT
-                0x9d009649                pauseCT
-                0x9d009671                startCT
-                0x9d00968d                regListenerWithVar
-                0x9d00968d                regListener
-                0x9d0096ad                raiseEventID
-                0x9d0096ed                getRegEvent
-                0x9d00971d                addRegEvent
-                0x9d00974d                unregEvent
-                0x9d0097b1                removeRegEventProcID
-                0x9d009815                removeEventCacheProcID
-                0x9d009841                raiseEvent
-                0x9d0098a9                raiseEventInt
-                0x9d009901                systemProcess
-                0x9d009b79                setCanSleep
-                0x9d009bc9                setCanIdle
-                0x9d009c19                getCanSleepAll
-                0x9d009c49                defragTableW
-                0x9d009c89                defragTableB
-                0x9d009cc9                lockSafe
-                0x9d009ce5                strLen
-                0x9d009d01                intToChar
-                0x9d009d19                uintToChar
-                0x9d009d81                byteToChar
-                0x9d009de5                iVector_spi2Tx
-                0x9d009e01                iVector_UART2Tx
-                0x9d009e17                iVector_UART2Rx
-                0x9d009e2d                iVector_UART2Er
+.text           0x9d002f30     0x1114
+ .text          0x9d002f30      0xa44 build/default/production/spi.o
+                0x9d002f31                spiInit
+                0x9d003051                spiGetUsed
+                0x9d003079                spiUse
+                0x9d00310d                spiFree
+                0x9d003165                spiGetActivity
+                0x9d003191                spiWaitToFinish
+                0x9d0031d1                spiExchangeDE
+                0x9d003231                spiExchange
+                0x9d0032fd                spiExchangeModeDE
+                0x9d003365                spiExchangeMode
+                0x9d003461                spiGetHwBuffer
+                0x9d003489                spiSetBusMode
+                0x9d00353d                spiSetSpeed
+                0x9d0035a9                spiGetSpeed
+                0x9d0035dd                spiTxInterrupt
+ .text          0x9d003974      0x6d0 build/default/production/app1.o
+                0x9d003975                m1_start
 
-.text           0x9d009e44     0x13d0
- .text          0x9d009e44      0xa44 build/default/production/spi.o
-                0x9d009e45                spiInit
-                0x9d009f65                spiGetUsed
-                0x9d009f8d                spiUse
-                0x9d00a021                spiFree
-                0x9d00a079                spiGetActivity
-                0x9d00a0a5                spiWaitToFinish
-                0x9d00a0e5                spiExchangeDE
-                0x9d00a145                spiExchange
-                0x9d00a211                spiExchangeModeDE
-                0x9d00a279                spiExchangeMode
-                0x9d00a375                spiGetHwBuffer
-                0x9d00a39d                spiSetBusMode
-                0x9d00a451                spiSetSpeed
-                0x9d00a4bd                spiGetSpeed
-                0x9d00a4f1                spiTxInterrupt
- .text          0x9d00a888      0x98c build/default/production/app1.o
-                0x9d00a889                m1_start
+.asm_rtc        0x9d004044      0x4b0
+ .asm_rtc       0x9d004044      0x4b0 build/default/production/rtc.o
+                0x9d004045                rtcInit
+                0x9d004185                rtcGetTimeBCD
+                0x9d0041a1                rtcGetDateBCD
+                0x9d0041bd                rtcSetTimeBCD
+                0x9d00425d                rtcSetDateBCD
+                0x9d0042f5                rtcGetHalfSecond
+                0x9d004305                rtcRegTimeAlarm
+                0x9d004325                rtcGetHour
+                0x9d004355                rtcGetMinute
+                0x9d004385                rtcGetSecond
+                0x9d0043b5                rtcGetYear
+                0x9d0043e5                rtcGetMonth
+                0x9d004415                rtcGetDay
+                0x9d004445                rtcGetDayOfWeek
+                0x9d0044d9                iVector_rtc
 
-.asm_fn         0x9d00b214      0x970
- .asm_fn        0x9d00b214      0x970 build/default/production/_display/ili9341/disp16_asm.o
-                0x9d00b22d                setColorMap
-                0x9d00b235                setImageSrc
-                0x9d00b3cd                fillRectDirect
-                0x9d00b3e5                imageToPort
-                0x9d00b3e9                imageToBuffer
-                0x9d00b6b1                setFontSrc
-                0x9d00b81d                fontCharParam
-                0x9d00b8c9                RGB16
-                0x9d00b8dd                correctColor16
-                0x9d00b8e1                drawLineQuick
-                0x9d00bac9                drawPointQuick
+.text           0x9d0044f4      0x4a8
+ .text          0x9d0044f4      0x4a8 build/default/production/main.o
+                0x9d0044f5                main
+                0x9d0045d1                regProcess
 
-.asm_rtc        0x9d00bb84      0x4b0
- .asm_rtc       0x9d00bb84      0x4b0 build/default/production/rtc.o
-                0x9d00bb85                rtcInit
-                0x9d00bcc5                rtcGetTimeBCD
-                0x9d00bce1                rtcGetDateBCD
-                0x9d00bcfd                rtcSetTimeBCD
-                0x9d00bd9d                rtcSetDateBCD
-                0x9d00be35                rtcGetHalfSecond
-                0x9d00be45                rtcRegTimeAlarm
-                0x9d00be65                rtcGetHour
-                0x9d00be95                rtcGetMinute
-                0x9d00bec5                rtcGetSecond
-                0x9d00bef5                rtcGetYear
-                0x9d00bf25                rtcGetMonth
-                0x9d00bf55                rtcGetDay
-                0x9d00bf85                rtcGetDayOfWeek
-                0x9d00c019                iVector_rtc
+.asm_cn         0x9d00499c      0x364
+ .asm_cn        0x9d00499c      0x364 build/default/production/change_notif_mm.o
+                0x9d00499d                cnStartPortA
+                0x9d0049fd                cnStopPortA
+                0x9d004a19                iVector_cnPortA
+                0x9d004a4d                cnStartPortB
+                0x9d004aad                cnStopPortB
+                0x9d004ac9                iVector_cnPortB
+                0x9d004afd                cnStartPortC
+                0x9d004b5d                cnStopPortC
+                0x9d004b79                iVector_cnPortC
+                0x9d004bad                cnStartPortD
+                0x9d004c0d                cnStopPortD
+                0x9d004c29                iVector_cnPortD
+                0x9d004c5d                cnEnable
+                0x9d004c99                cnDisble
+                0x9d004ca9                cnRegEvent
 
-.text           0x9d00c034      0x8c0
- .text          0x9d00c034      0x4a8 build/default/production/main.o
-                0x9d00c035                main
-                0x9d00c111                regProcess
- .text          0x9d00c4dc      0x418 build/default/production/_display/graphics.o
-                0x9d00c4dd                initGraphics
-                0x9d00c561                initFont
-                0x9d00c5d1                setGraphics
-                0x9d00c7c1                drawButton
+.text           0x9d004d00      0x360
+ .text          0x9d004d00      0x360 build/default/production/user_apps.o
+                0x9d004d01                pinSetting
+                0x9d004f19                userAppsStart
+                0x9d004f95                userAppError
+                0x9d004fc9                userAppEventError
+                0x9d004ff5                userAppCheckStackSpace
+                0x9d005025                beforeSleep
+                0x9d005045                beforeIdle
 
-.asm_cn         0x9d00c8f4      0x364
- .asm_cn        0x9d00c8f4      0x364 build/default/production/change_notif_mm.o
-                0x9d00c8f5                cnStartPortA
-                0x9d00c955                cnStopPortA
-                0x9d00c971                iVector_cnPortA
-                0x9d00c9a5                cnStartPortB
-                0x9d00ca05                cnStopPortB
-                0x9d00ca21                iVector_cnPortB
-                0x9d00ca55                cnStartPortC
-                0x9d00cab5                cnStopPortC
-                0x9d00cad1                iVector_cnPortC
-                0x9d00cb05                cnStartPortD
-                0x9d00cb65                cnStopPortD
-                0x9d00cb81                iVector_cnPortD
-                0x9d00cbb5                cnEnable
-                0x9d00cbf1                cnDisble
-                0x9d00cc01                cnRegEvent
+.dinit          0x9d005060      0x300
+ .dinit         0x9d005060      0x300 data_init
 
-.dinit          0x9d00cc58      0x320
- .dinit         0x9d00cc58      0x320 data_init
+.text           0x9d005360      0x3fc
+ .text          0x9d005360      0x23c build/default/production/portWriter.o
+                0x9d005361                portWriter_init
+ .text          0x9d00559c      0x1c0 build/default/production/globals.o
+                0x9d00559d                trap
+                0x9d0055b1                softReset
+                0x9d005601                startSleepMode
+                0x9d0056a5                endSleepMode
 
-.text           0x9d00cf78      0x454
- .text          0x9d00cf78      0x23c build/default/production/portWriter.o
-                0x9d00cf79                portWriter_init
- .text          0x9d00d1b4      0x218 build/default/production/user_apps.o
-                0x9d00d1b5                pinSetting
-                0x9d00d285                userAppsStart
-                0x9d00d301                userAppError
-                0x9d00d335                userAppEventError
-                0x9d00d361                userAppCheckStackSpace
-                0x9d00d391                beforeSleep
-                0x9d00d3b1                beforeIdle
+.text           0x9d00575c      0x1b4
+ .text          0x9d00575c      0x1b4 build/default/production/periph.o
+                0x9d00575d                setPortPin
+                0x9d005789                clearPortPin
+                0x9d0057b5                portInv
+                0x9d0057e1                setPin
+                0x9d005811                clearPin
+                0x9d005841                invPin
+                0x9d005871                getPin
+                0x9d0058ad                signalizeError
 
-.text           0x9d00d3cc      0x374
- .text          0x9d00d3cc      0x1c0 build/default/production/globals.o
-                0x9d00d3cd                trap
-                0x9d00d3e1                softReset
-                0x9d00d431                startSleepMode
-                0x9d00d4d5                endSleepMode
- .text          0x9d00d58c      0x1b4 build/default/production/periph.o
-                0x9d00d58d                setPortPin
-                0x9d00d5b9                clearPortPin
-                0x9d00d5e5                portInv
-                0x9d00d611                setPin
-                0x9d00d641                clearPin
-                0x9d00d671                invPin
-                0x9d00d6a1                getPin
-                0x9d00d6dd                signalizeError
+.asm_timer1     0x9d005910      0x1a8
+ .asm_timer1    0x9d005910      0x1a8 build/default/production/timer1.o
+                0x9d005911                timer1Init
+                0x9d005995                systemTimerRegInterval
+                0x9d0059b5                iVector_timer1
 
-.asm_timer1     0x9d00d740      0x1a8
- .asm_timer1    0x9d00d740      0x1a8 build/default/production/timer1.o
-                0x9d00d741                timer1Init
-                0x9d00d7c5                systemTimerRegInterval
-                0x9d00d7e5                iVector_timer1
-
-.text           0x9d00d8e8      0x1a4
- .text          0x9d00d8e8      0x1a4 build/default/production/clock_cfgBits_mm.o
-                0x9d00d8e9                setClock
-                0x9d00d9bd                initClock
+.text           0x9d005ab8      0x1a4
+ .text          0x9d005ab8      0x1a4 build/default/production/clock_cfgBits_mm.o
+                0x9d005ab9                setClock
+                0x9d005b8d                initClock
 
 .text           0x9d000000      0x15c
  .text          0x9d000000      0x15c build/default/production/app3.o
                 0x9d000001                m3_start
 
-.text           0x9d00da8c      0x21c
- .text          0x9d00da8c      0x154 build/default/production/app2.o
-                0x9d00da8d                m2_start
- .text          0x9d00dbe0       0xc8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcadd.o)
-                0x9d00dbe1                fpadd
-                0x9d00dbe1                __addsf3
-                0x9d00dc9d                fpsub
-                0x9d00dc9d                __subsf3
-
-.text           0x9d00dca8      0x164
- .text          0x9d00dca8       0xc8 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcsubs.o)
-                0x9d00dca9                supchk
-                0x9d00dcf5                srshft
-                0x9d00dd1d                srndex
- .text          0x9d00dd70       0x9c c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcdiv.o)
-                0x9d00dd71                fpdiv
-                0x9d00dd71                __divsf3
-
-.rodata         0x9d00de0c      0x130
- .rodata        0x9d00de0c       0x98 build/default/production/clock_cfgBits_mm.o
-                0x9d00de0c                BUS_MODE
-                0x9d00de10                WAIT
-                0x9d00de14                WRITE_MODE
-                0x9d00de18                CLOCK_CFG
-                0x9d00de1c                ON_ERROR
-                0x9d00de20                CN_STYLE
-                0x9d00de24                COLOR
-                0x9d00de48                stdColorMap
-                0x9d00de68                NETCOM_OUT_STATUS
-                0x9d00de78                NOT_RESPONSE_ACTION
-                0x9d00de7c                NETCOM_HEADTYPE
-                0x9d00de80                NETCOM_EXCEPTION
-                0x9d00de88                NETCOM_IN_STATUS
-                0x9d00de8c                NETCOM_TXFINISH_FN
-                0x9d00de94                PERIPH_TYPE
-                0x9d00de98                MODULE_USED
-                0x9d00de9c                MODULE_ACTIVITY
-                0x9d00dea0                MODULE_STATE
- .rodata        0x9d00dea4       0x98 build/default/production/clock_cfgBits_mz.o
-
-.rodata         0x9d00df3c      0x130
- .rodata        0x9d00df3c       0x98 build/default/production/netcom2.o
- .rodata        0x9d00dfd4       0x98 build/default/production/main.o
-
-.rodata         0x9d00e06c      0x130
- .rodata        0x9d00e06c       0x98 build/default/production/globals.o
- .rodata        0x9d00e104       0x98 build/default/production/_display/ili9341/disp9341.o
-
-.rodata         0x9d00e19c      0x130
- .rodata        0x9d00e19c       0x98 build/default/production/_display/ssd1306/disp1306.o
- .rodata        0x9d00e234       0x98 build/default/production/spi.o
-
-.rodata         0x9d00e2cc      0x130
- .rodata        0x9d00e2cc       0x98 build/default/production/portWriter.o
- .rodata        0x9d00e364       0x98 build/default/production/_touchpad/touchXpt2046.o
-
-.rodata         0x9d00e3fc      0x130
- .rodata        0x9d00e3fc       0x98 build/default/production/periph.o
- .rodata        0x9d00e494       0x98 build/default/production/app2.o
-
-.rodata         0x9d00e52c      0x130
- .rodata        0x9d00e52c       0x98 build/default/production/app3.o
- .rodata        0x9d00e5c4       0x98 build/default/production/user_apps.o
+.text           0x9d005c5c      0x154
+ .text          0x9d005c5c      0x154 build/default/production/app2.o
+                0x9d005c5d                m2_start
 
 .text.general_exception
-                0x9d00e65c       0x80
+                0x9d005db0       0x80
  .text.general_exception
-                0x9d00e65c       0x80 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(general-exception.o)
-                0x9d00e65d                _general_exception_context
+                0x9d005db0       0x80 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(general-exception.o)
+                0x9d005db1                _general_exception_context
 
-.text.fptoli    0x9d00018c       0x64
- .text.fptoli   0x9d00018c       0x64 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
-                0x9d00018d                fptoli
-                0x9d00018d                fptosi
-                0x9d00018d                __fixsfsi
+.asm_fn         0x9d00018c       0x60
+ .asm_fn        0x9d00018c       0x60 build/default/production/periph_fn.o
+                0x9d00018d                setPortDigOut
+                0x9d000199                setPortDigIn
+                0x9d0001a5                setPortAnalogIn
+                0x9d0001b1                setPortOpenDrain
+                0x9d0001c5                setPortPullUp
+                0x9d0001d9                setPortPullDown
 
-.asm_fn         0x9d00e6dc       0x60
- .asm_fn        0x9d00e6dc       0x60 build/default/production/periph_fn.o
-                0x9d00e6dd                setPortDigOut
-                0x9d00e6e9                setPortDigIn
-                0x9d00e6f5                setPortAnalogIn
-                0x9d00e701                setPortOpenDrain
-                0x9d00e715                setPortPullUp
-                0x9d00e729                setPortPullDown
+.rodata         0x9d005e30       0xa8
+ .rodata        0x9d005e30       0x54 build/default/production/clock_cfgBits_mm.o
+                0x9d005e30                BUS_MODE
+                0x9d005e34                WAIT
+                0x9d005e38                WRITE_MODE
+                0x9d005e3c                CLOCK_CFG
+                0x9d005e40                ON_ERROR
+                0x9d005e44                CN_STYLE
+                0x9d005e48                NETCOM_OUT_STATUS
+                0x9d005e58                NOT_RESPONSE_ACTION
+                0x9d005e5c                NETCOM_HEADTYPE
+                0x9d005e60                NETCOM_EXCEPTION
+                0x9d005e68                NETCOM_IN_STATUS
+                0x9d005e6c                NETCOM_TXFINISH_FN
+                0x9d005e74                PERIPH_TYPE
+                0x9d005e78                MODULE_USED
+                0x9d005e7c                MODULE_ACTIVITY
+                0x9d005e80                MODULE_STATE
+ .rodata        0x9d005e84       0x54 build/default/production/clock_cfgBits_mz.o
 
-.text.sitofp    0x9d00e73c       0x54
- .text.sitofp   0x9d00e73c       0x54 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
-                0x9d00e73d                __floatsisf
-                0x9d00e73d                litofp
-                0x9d00e73d                sitofp
+.rodata         0x9d005ed8       0xa8
+ .rodata        0x9d005ed8       0x54 build/default/production/netcom2.o
+ .rodata        0x9d005f2c       0x54 build/default/production/main.o
 
-.text           0x9d00e790       0x50
- .text          0x9d00e790       0x50 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\librcfops.a(sprcmul.o)
-                0x9d00e791                fpmul
-                0x9d00e791                __mulsf3
+.rodata         0x9d005f80       0xa8
+ .rodata        0x9d005f80       0x54 build/default/production/globals.o
+ .rodata        0x9d005fd4       0x54 build/default/production/_display/ili9341/disp9341.o
+
+.rodata         0x9d006028       0xa8
+ .rodata        0x9d006028       0x54 build/default/production/_display/ssd1306/disp1306.o
+ .rodata        0x9d00607c       0x54 build/default/production/_display/graphics.o
+
+.rodata         0x9d0060d0       0xa8
+ .rodata        0x9d0060d0       0x54 build/default/production/spi.o
+ .rodata        0x9d006124       0x54 build/default/production/portWriter.o
+
+.rodata         0x9d006178       0xa8
+ .rodata        0x9d006178       0x54 build/default/production/_touchpad/touchXpt2046.o
+ .rodata        0x9d0061cc       0x54 build/default/production/periph.o
+
+.rodata         0x9d006220       0xa8
+ .rodata        0x9d006220       0x54 build/default/production/app1.o
+ .rodata        0x9d006274       0x54 build/default/production/app2.o
+
+.rodata         0x9d0062c8       0xa8
+ .rodata        0x9d0062c8       0x54 build/default/production/app3.o
+ .rodata        0x9d00631c       0x54 build/default/production/user_apps.o
 
 .text.main_entry
-                0x9d00e7e0       0x44
+                0x9d006370       0x44
  .text.main_entry
-                0x9d00e7e0       0x44 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
-                0x9d00e80b                __crt0_exit
+                0x9d006370       0x44 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/./proc/32MM0256GPM048/crt0_micromips.o
+                0x9d00639b                __crt0_exit
 
-.text           0x9d00e824       0x40
- .text          0x9d00e824       0x40 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
-                0x9d00e825                __pic32_software_reset
+.text           0x9d0063b4       0x40
+ .text          0x9d0063b4       0x40 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\pic32_software_reset-mm.o
+                0x9d0063b5                __pic32_software_reset
 
 .text._bootstrap_exception_handler
-                0x9d00e864       0x34
+                0x9d0063f4       0x34
  .text._bootstrap_exception_handler
-                0x9d00e864       0x34 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
-                0x9d00e865                _bootstrap_exception_handler
+                0x9d0063f4       0x34 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-bootstrap-exception-handler.o)
+                0x9d0063f5                _bootstrap_exception_handler
 
 .vector_default
-                0x9d00e898       0x30
+                0x9d006428       0x30
  .vector_default
-                0x9d00e898       0x30 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
-                0x9d00e899                _DefaultInterrupt
+                0x9d006428       0x30 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
+                0x9d006429                _DefaultInterrupt
 
 .text           0x9d00015c       0x18
  .text          0x9d00015c       0x18 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-nmi-handler.o)
@@ -3165,12 +3032,6 @@ LOAD data_init
  .text._on_bootstrap
                 0x9d000178        0x4 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(default-on-bootstrap.o)
                 0x9d000179                _on_bootstrap
-
-.text           0x00000000        0x0
- .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(sitofp.o)
-
-.text           0x00000000        0x0
- .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libm.a(fptoli.o)
 
 .text           0x00000000        0x0
  .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(defaultinterrupt.o)
@@ -3305,13 +3166,13 @@ LOAD data_init
  .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector59.o)
 
 .text           0x00000000        0x0
- .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector55.o)
+ .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector58.o)
 
 .text           0x00000000        0x0
- .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector54.o)
+ .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector57.o)
 
 .text           0x00000000        0x0
- .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector53.o)
+ .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector56.o)
 
 .text           0x00000000        0x0
  .text          0x00000000        0x0 c:/program files (x86)/microchip/xc32/v1.44/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib/speed/micromips\libpic32.a(vector52.o)
@@ -3485,10 +3346,19 @@ LOAD data_init
  .text          0x00000000        0x0 build/default/production/rtc.o
 
 .text           0x00000000        0x0
+ .text          0x00000000        0x0 build/default/production/_display/graphics.o
+
+.text           0x00000000        0x0
  .text          0x00000000        0x0 build/default/production/_display/ssd1306/disp1306.o
+
+.asm_fn         0x00000000        0x0
+ .asm_fn        0x00000000        0x0 build/default/production/_display/ili9341/disp16_asm.o
 
 .text           0x00000000        0x0
  .text          0x00000000        0x0 build/default/production/_display/ili9341/disp16_asm.o
+
+.text           0x00000000        0x0
+ .text          0x00000000        0x0 build/default/production/_display/ili9341/disp9341.o
 
 .text           0x00000000        0x0
  .text          0x00000000        0x0 build/default/production/core_fn.o

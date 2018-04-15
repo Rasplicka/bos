@@ -333,8 +333,6 @@ static void drawBox(short x1, short y1, short x2, short y2, short w, short color
     
 }
 
-#endif
-
 void drawButton(IMAGE_SRC* font, char* text, Rect* r)
 {
     graphics.fillBox(r->X1, r->Y1, r->X2, r->Y2, COLOR.LightGrey);
@@ -347,6 +345,10 @@ void drawButton(IMAGE_SRC* font, char* text, Rect* r)
     
     graphics.drawString(text, font, x, y);
 }
+
+#endif
+
+
 
 
 /*

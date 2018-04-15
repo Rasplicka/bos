@@ -46,7 +46,10 @@ void m3_start()
     
     while(1)
     {
+        //invPin(&LED1);
+        //invPin(&LED2);
         invPin(&LED3);
+        //invPin(&LED4);
         
         int a, b=0;
         for(a=0; a<(200000 * delay); a++)

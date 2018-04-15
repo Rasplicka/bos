@@ -48,8 +48,8 @@
 #pragma config SOSCEN =  ON             // Secondary Oscillator Enable bit
 #pragma config SOSCSEL = OFF            // Secondary Oscillator External Clock Enable bit (ON if external signal is used)
 #else
-#pragma config SOSCEN =  OFF             // Secondary Oscillator Enable bit
-#pragma config SOSCSEL = OFF             // Secondary Oscillator External Clock Enable bit
+#pragma config SOSCEN =  OFF            // Secondary Oscillator Enable bit
+#pragma config SOSCSEL = ON             // Secondary Oscillator External Clock Enable bit (ON: RA4 a RB4 normal I/O port, OFF: controled by SOSC)
 #endif
 
 #pragma config IESO = OFF               // Two Speed Startup Enable bit (Two speed startup is disabled)

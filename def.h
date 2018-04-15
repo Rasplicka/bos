@@ -170,9 +170,9 @@
 #define             NETCOM_DATASET_CAPA     4   //8 polozek dataIn, pipe 1-8
 #define             NETCOM_DATAGET_CAPA     4
 
-#define             _TX_LONG_MS             50  //30
-#define             _TX_SHORT_MS		    20
-#define             _RX_LONG_MS             30
+#define             _TX_LONG_MS             30  //30
+#define             _TX_SHORT_MS		    5
+#define             _RX_LONG_MS             20
 #define             _STARTUP_MS             1000
 
 #define             NETCOM_SETPORT_COUNT    32
@@ -183,6 +183,7 @@
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 
+#ifdef TEST_BOARD_BOS1
 /*@graphics*/
 #define             USE_GRAPHICS                    //pouzije graphics
 
@@ -221,6 +222,7 @@
 //#define             SPFONT_FIXED_48         //1-bit, width 22px, height 48px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (3kB)
 //#define             SPFONT_ROCK_32          //1-bit, width 16px, height 32px, ascii 0x20 - 0x7E (7kB)
 //#define             SPFONT_ROCK_48          //1-bit, width 22px, height 48px, ascii ' ','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':' (3kB)
+#endif
 
 // </editor-fold>
 
