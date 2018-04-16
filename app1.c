@@ -71,7 +71,7 @@ static void searchModule();
 static void comunicate();
 
 NETCOM_DATAOUT dataStruct;
-static int  modules[8];
+static int  modules[9];
 static void netInitPipe();
 static void changeGetData();
 static void netGetData(char oid, char opipe);
@@ -490,9 +490,9 @@ static void drawImage1306()
 static void writeStat2()
 {
     int a, y=5;
-    for(a=0; a<NETCOM_MAXID; a++)
+    for(a=1; a <= NETCOM_MAXID; a++)
     {
-        if(modules[a]>0 && a!=NETCOM_DEVID)
+        if(modules[a]>0 && a!=netcom_devId)
         {
             graphics.drawString("ID:", NULL, 0, y);
             
@@ -507,9 +507,20 @@ static void writeStat2()
     }    
     
     int err=netcomBusError+netcomSendDataError+netcomChkError;
-    graphics.drawString("Suma Err", NULL, 0, y);
-    intToChar(err, str, 12);
+    graphics.drawString("Bus Err", NULL, 0, y);
+    intToChar(netcomBusError, str, 12);
     graphics.drawString(str, NULL, 100, y);
+    y+=22;
+    
+    graphics.drawString("Send Err", NULL, 0, y);
+    intToChar(netcomSendDataError, str, 12);
+    graphics.drawString(str, NULL, 100, y);
+    y+=22;    
+    
+    graphics.drawString("Check Err", NULL, 0, y);
+    intToChar(netcomChkError, str, 12);
+    graphics.drawString(str, NULL, 100, y);
+    y+=22;   
 }
 
 static void writeNetComStats()
@@ -810,7 +821,7 @@ static void searchModule()
     dataStruct.Pipe=0;
     
     int a;
-    for(a=0; a<NETCOM_MAXID; a++)
+    for(a=1; a <= NETCOM_MAXID; a++)
     {
         if(a!=netcom_devId)
         {
@@ -842,7 +853,7 @@ static void comunicate()
     dataStruct.DataLen=32;
     
     int a;
-    for(a=0; a<NETCOM_MAXID; a++)
+    for(a=1; a <= NETCOM_MAXID; a++)
     {
         if(modules[a]>0 && a!=netcom_devId)
         {

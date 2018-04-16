@@ -40,7 +40,7 @@ extern char netcom_devId;
 #define     NC_SUBPRIORITY              2
 #define     FIFO_SIZE                   8    
     
-#if (defined NETCOM_UART == 1 && defined PIC32MM0064) 
+#if (NETCOM_UART == 1 && defined PIC32MM0064) 
 
 #define     TX_FIFO                     U1TXREG
 #define     RX_FIFO                     U1RXREG
@@ -64,7 +64,7 @@ extern char netcom_devId;
 #define     IEER_SET                    IEC0bits.U1EIE=1
 
 #endif    
-#if (defined NETCOM_UART == 2 && defined PIC32MM0064) 
+#if (NETCOM_UART == 2 && defined PIC32MM0064) 
 
 #define     TX_FIFO                     U2TXREG
 #define     RX_FIFO                     U2RXREG
@@ -88,7 +88,7 @@ extern char netcom_devId;
 #define     IEER_SET                    IEC1bits.U2EIE=1
 
 #endif        
-#if (defined NETCOM_UART == 1 && defined PIC32MM0256) 
+#if (NETCOM_UART == 1 && defined PIC32MM0256) 
 
 #define     TX_FIFO                     U1TXREG
 #define     RX_FIFO                     U1RXREG
@@ -112,7 +112,7 @@ extern char netcom_devId;
 #define     IEER_SET                    IEC1bits.U1EIE=1
 
 #endif
-#if (defined NETCOM_UART == 2 && defined PIC32MM0256) 
+#if (NETCOM_UART == 2 && defined PIC32MM0256) 
 
 #define     TX_FIFO                     U2TXREG
 #define     RX_FIFO                     U2RXREG
@@ -136,7 +136,7 @@ extern char netcom_devId;
 #define     IEER_SET                    IEC1bits.U2EIE=1
 
 #endif
-#if (defined NETCOM_UART == 3 && defined PIC32MM0256) 
+#if (NETCOM_UART == 3 && defined PIC32MM0256) 
 
 #define     TX_FIFO                     U3TXREG
 #define     RX_FIFO                     U3RXREG
@@ -1354,7 +1354,7 @@ static void onChecksum()
                     netcomDataSet[headPipe]->DataIndex = 0;
                     netcomDataSet[headPipe]->Status = NETCOM_IN_STATUS.Full;
                     #ifndef TEST_BOARD_BOS0
-                        invPin(&LED1);
+                        //invPin(&LED1);
                     #endif                    
                 }
                 replyItem.OppID = headOpp;

@@ -5,9 +5,9 @@
 
 //BOARD
 //#define TEST_BOARD_BOS0             //mala deska
-//#define TEST_BOARD_BOS1           //velka deska
+#define TEST_BOARD_BOS1           //velka deska
 //#define NETCOM_BOARD_0256
-#define NETCOM_BOARD_0064
+//#define NETCOM_BOARD_0064
 
 //PROCESSOR
 #if (defined NETCOM_BOARD_0064)
