@@ -26,6 +26,7 @@ int checkStackSpaceValue=0x7FFFFFFF;                    //max. int
     extern void netcomSetData(NETCOM_DATAOUT* data);
     extern void netcomGetData(NETCOM_DATAOUT* data);
     
+    char netcom_devId=0;    
     int netcomChkError=0;
     int netcomSendDataError=0;
     int netcomBusError=0;

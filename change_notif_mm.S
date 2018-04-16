@@ -315,6 +315,7 @@ iVector_cnPortC:
 #endif       
 
 #ifdef PORT_CND    
+#ifdef PIC32MM0256    
 //<editor-fold defaultstate="collapsed" desc="cnStartPortD">
 .global cnStartPortD
 .align 2    
@@ -397,6 +398,7 @@ iVector_cnPortD:
 .end iVector_cnPortD 
     
 //</editor-fold> 
+#endif    
 #endif      
     
 //<editor-fold defaultstate="collapsed" desc="cnEnable">

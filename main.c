@@ -433,7 +433,7 @@ static void systemInit()
 static void blick()
 {
     //RB5, RB7, RC3
-    
+    /*
     LATA = 0xFFFF;
     LATB = 0xFFFF;
     LATC = 0xFFFF;
@@ -460,6 +460,7 @@ static void blick()
         LATBINV=0b10100000;
         LATCINV=0b1000;
     }
+    */
     
 }
 

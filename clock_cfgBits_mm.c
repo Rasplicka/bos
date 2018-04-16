@@ -8,8 +8,10 @@
 // 'C' source line config statements
 // FDEVOPT
 #pragma config SOSCHP = OFF             // Secondary Oscillator High Power Enable bit (SOSC oprerates in normal power mode.)
+#ifdef PIC32MM0256
 #pragma config FUSBIDIO = OFF
 #pragma config FVBUSIO = OFF
+#endif
 #pragma config USERID = 0xFFFF          // User ID bits (User ID bits)
 
 // FICD

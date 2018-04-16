@@ -37,6 +37,7 @@ static char str[12];
 
 static void longTime();
 static void testSystemTimer(int i);
+static void testSystemTimer3(int i);
 static void testRTC(char hour, char min, uint date);
 static void testButton(int event, int value, int index);
 static void call(int a, int b);
@@ -49,6 +50,7 @@ static void onTouch(int p0, int p1, int p2);
 static void dispText1306();
 static void drawImage1306();
 
+static void writeStat2();
 static void writeNetComStats();
 static void dispText1();
 static void dispText2();
@@ -65,7 +67,11 @@ static void drawBox();
 static void drawImg();
 
 
+static void searchModule();
+static void comunicate();
+
 NETCOM_DATAOUT dataStruct;
+static int  modules[8];
 static void netInitPipe();
 static void changeGetData();
 static void netGetData(char oid, char opipe);
@@ -75,11 +81,10 @@ static void netWaitForData(char pipe);
 
 static int restart=0;
 static int write_stats=0;
+static int module_stats=1;
 
 void m1_start()
 {
-
-    
     netInitPipe();
     
 #ifdef TEST_BOARD_BOS1   
@@ -88,13 +93,17 @@ void m1_start()
         //sysDisplay.setDefaultFont(&spfont_fixed_16);
         graphics.setDefaultFont(&font_twcen_22);
     #endif
+
+    systemTimerRegInterval(&testSystemTimer, 1000);
+    systemTimerRegInterval(&testSystemTimer3, 3000);
+#else
+    systemTimerRegInterval(&testSystemTimer, 1000);
 #endif    
         
-    systemTimerRegInterval(&testSystemTimer, 1000);
+    
     
     while(1)
     {
-        
         if(netcomDataSet[0]->Status==NETCOM_IN_STATUS.Full)
         {
             netcomDataSet[0]->Status=NETCOM_IN_STATUS.WaitToRx;
@@ -106,11 +115,28 @@ void m1_start()
         
         
 #ifdef TEST_BOARD_BOS1
-        //ID 1
-        netSetData(4, 0);
-        netGetData(4, 1);
-        netSetData(2, 0);
-        netGetData(2, 0);
+    //ID 1
+    if(module_stats>0)
+    {
+        graphics.clear(COLOR.Black);
+        searchModule();
+        module_stats=0;
+    }
+        
+    comunicate();    
+        
+    #ifdef USE_GRAPHICS         
+        //doEvents();
+        if(write_stats>0)
+        {
+            writeStat2();
+            write_stats=0;
+        }
+    #endif  
+        //netSetData(4, 0);
+        //netGetData(4, 1);
+        //netSetData(2, 0);
+        //netGetData(2, 0);
         //netSetData(1, 0);
 #else
         //ID != 1
@@ -123,16 +149,6 @@ void m1_start()
         {
             doEvents();
         }
-        
-#ifdef USE_GRAPHICS         
-        //doEvents();
-        if(write_stats>0)
-        {
-            writeNetComStats();
-            write_stats=0;
-        }
-#endif        
-        
     }
         
     // <editor-fold defaultstate="collapsed" desc="vyrazeno">
@@ -287,21 +303,16 @@ static void longTime()
 
 static void testSystemTimer(int i)
 {
+#ifdef TEST_BOARD_BOS1     
     write_stats++;
-    
-#ifdef TEST_BOARD_BOS1    
-    clearPin(&LED4);
-#else
-    clearPin(&LED1);
 #endif    
-    //clearPin(&LED2);
-    //clearPin(&LED3);
-    //int d=a+b;
-    //_LED_INV_REG = _LED_INV_VAL;
-    //doEvents();
-    //setLowPowerOsc();
-    //setCanSleep(1);
-    //invTestLed(1);
+    
+    if(LED4.portBase != 0x0)
+    {
+        clearPin(&LED4);
+    }
+  
+
     //unregEvent(&testSystemTimer);
     
     /*
@@ -328,6 +339,13 @@ static void testSystemTimer(int i)
     }
     */
     
+}
+
+static void testSystemTimer3(int i)
+{
+#ifdef TEST_BOARD_BOS1     
+    module_stats++;
+#endif 
 }
 
 static void testRTC(char hour, char min, uint date)
@@ -468,6 +486,31 @@ static void drawImage1306()
 #endif
 
 #ifdef USE_DISP9341
+
+static void writeStat2()
+{
+    int a, y=5;
+    for(a=0; a<NETCOM_MAXID; a++)
+    {
+        if(modules[a]>0 && a!=NETCOM_DEVID)
+        {
+            graphics.drawString("ID:", NULL, 0, y);
+            
+            intToChar(a, str, 1);
+            graphics.drawString(str, NULL, 30, y);
+            
+            intToChar(modules[a], str, 1);
+            graphics.drawString(str, NULL, 100, y);
+            
+            y+=22;
+        }
+    }    
+    
+    int err=netcomBusError+netcomSendDataError+netcomChkError;
+    graphics.drawString("Suma Err", NULL, 0, y);
+    intToChar(err, str, 12);
+    graphics.drawString(str, NULL, 100, y);
+}
 
 static void writeNetComStats()
 {
@@ -739,8 +782,6 @@ static void drawImg()
     graphics.drawImage(&img, 0, 0);
 }
 
-
-
 #endif
 
 #ifdef NETCOM_UART
@@ -749,7 +790,7 @@ NETCOM_DATAIN setPipe0;
 NETCOM_DATAIN setPipe1;
 NETCOM_DATAIN getPipe0;
 NETCOM_DATAIN getPipe1;
-char setPipe0data[1024]; //NETCOM_SETPIPE_SIZE];
+char setPipe0data[32]; //NETCOM_SETPIPE_SIZE];
 char setPipe1data[32];
 
 char getPipe0data[4]={0,1,2,3};
@@ -757,8 +798,71 @@ char getPipe1data[8]={0,1,2,3,10,11,12,13};
 char data[]={1,2,3,4,5,6,7,8,         9,10,11,12,13,14,15,16,
              17,18,19,20,21,22,23,24, 25,26,27,28,29,30,31,32};
 
-char data1024[1024];
+char data1024[32];
     
+static void searchModule()
+{
+    
+    
+    char ret_data[32];
+    dataStruct.Data=ret_data;
+    dataStruct.DataLen=32;
+    dataStruct.Pipe=0;
+    
+    int a;
+    for(a=0; a<NETCOM_MAXID; a++)
+    {
+        if(a!=netcom_devId)
+        {
+            dataStruct.OppID=a;
+ 
+            netcomGetData(&dataStruct);
+            while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
+            {
+                doEvents();
+            } 
+            
+            if(dataStruct.Status==NETCOM_OUT_STATUS.ReplyOk)
+            {        
+                if(modules[a]<=0){ modules[a]=1; }
+            }
+            else
+            {
+                modules[a]=-1;
+            }
+            
+        }
+    }
+}
+
+static void comunicate()
+{
+    dataStruct.Pipe=0;
+    dataStruct.Data=data1024;
+    dataStruct.DataLen=32;
+    
+    int a;
+    for(a=0; a<NETCOM_MAXID; a++)
+    {
+        if(modules[a]>0 && a!=netcom_devId)
+        {
+            dataStruct.OppID=a;
+ 
+            netcomSetData(&dataStruct);
+            while(dataStruct.Status==NETCOM_OUT_STATUS.WaitToTx)
+            {
+                doEvents();
+            } 
+            
+            if(dataStruct.Status==NETCOM_OUT_STATUS.ReplyOk)
+            {        
+                modules[a]+=32;
+            }
+        }
+    }
+    
+}
+
 static void netInitPipe()
 {
     /*
@@ -775,7 +879,7 @@ static void netInitPipe()
     //pripravi buffer pro set, pipe0
     setPipe0.Data=setPipe0data;
     setPipe0.Status=NETCOM_IN_STATUS.WaitToRx;
-    setPipe0.DataCapacity=1024;
+    setPipe0.DataCapacity=32;
     netcomDataSet[0]=&setPipe0;
     
     //pripravi buffer pro set, pipe1
@@ -798,6 +902,7 @@ static void netInitPipe()
     getPipe1.Locked=0;
     netcomDataGet[1]=&getPipe1;
     
+    /*
     int a; 
     char b=0;
     for(a=0; a<1024; a++)
@@ -806,6 +911,7 @@ static void netInitPipe()
         b++;
         if(b==0xFF){b=0;}
     }
+    */
 }
 
 static void changeGetData()
@@ -873,7 +979,7 @@ static void netSetData(char oid, char opipe)
     dataStruct.OppID=oid;
     dataStruct.Pipe=opipe;
     dataStruct.Data=data1024;
-    dataStruct.DataLen=1024;
+    dataStruct.DataLen=32;
     //dataStruct.Direction=0;         //set
     
     netcomSetData(&dataStruct);

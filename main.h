@@ -22,15 +22,41 @@ static void test();
 #ifdef PIC32MM0064
 
 extern void __attribute__((interrupt(), vector(0)))  iVector0();                //CPU timer
+
+#ifdef PORT_CNA
+extern void __attribute__((interrupt(), vector(8))) iVector_cnPortA();          //change notif. port A
+#endif
+#ifdef PORT_CNB
+extern void __attribute__((interrupt(), vector(9))) iVector_cnPortB();          //change notif. port B
+#endif
+#ifdef PORT_CNC
+extern void __attribute__((interrupt(), vector(10))) iVector_cnPortC();          //change notif. port C
+#endif
+
 extern void __attribute__((interrupt(), vector(11))) iVector_timer1();          //Timer1
+
 extern void __attribute__((interrupt(), vector(14))) iVector_rtc();             //RTC alarm
-extern void __attribute__((interrupt(), vector(15))) iVector_adc();             //adc complete
+
+//extern void __attribute__((interrupt(), vector(15))) iVector_adc();             //adc complete
+
 #ifdef SPI1_USE
-extern void __attribute__((interrupt(), vector(21))) iVector_spi1Tx();        //SPI1 Tx
+//extern void __attribute__((interrupt(), vector(21))) iVector_spi1Tx();        //SPI1 Tx
 #endif
-#ifdef SPI1_USE
-extern void __attribute__((interrupt(), vector(38))) iVector_spi1Tx();        //SPI2 Tx
+#ifdef SPI2_USE
+//extern void __attribute__((interrupt(), vector(38))) iVector_spi1Tx();        //SPI2 Tx
 #endif
+
+#ifdef UART1_USE
+extern void __attribute__((interrupt(), vector(23))) iVector_UART1Rx();        //UART1 Rx
+extern void __attribute__((interrupt(), vector(24))) iVector_UART1Tx();        //UART1 Tx
+extern void __attribute__((interrupt(), vector(25))) iVector_UART1Er();        //UART1 Error
+#endif
+#ifdef UART2_USE
+extern void __attribute__((interrupt(), vector(40))) iVector_UART2Rx();        //UART2 Rx
+extern void __attribute__((interrupt(), vector(41))) iVector_UART2Tx();        //UART2 Tx
+extern void __attribute__((interrupt(), vector(42))) iVector_UART2Er();        //UART2 Error
+#endif
+
 
 #endif
 
@@ -50,7 +76,6 @@ extern void __attribute__((interrupt(), vector(10))) iVector_cnPortC();         
 #ifdef PORT_CND
 extern void __attribute__((interrupt(), vector(11))) iVector_cnPortD();          //change notif. port D
 #endif
-
 
 extern void __attribute__((interrupt(), vector(17))) iVector_timer1();          //Timer1
 //extern void __attribute__((interrupt(), vector(29))) iVector_usb();           //USB

@@ -5,9 +5,9 @@
 
 //BOARD
 //#define TEST_BOARD_BOS0             //mala deska
-#define TEST_BOARD_BOS1           //velka deska
+//#define TEST_BOARD_BOS1           //velka deska
 //#define NETCOM_BOARD_0256
-//#define NETCOM_BOARD_0064
+#define NETCOM_BOARD_0064
 
 //PROCESSOR
 #if (defined NETCOM_BOARD_0064)
@@ -91,13 +91,13 @@
 //BOS used RAM cca 4kB
 
 #define		RAM_SIZE                8*1024
-#define     STACK_SIZE              3*1024
-#define     SYSPROC_STACK_SIZE      1024            //velikost zasobniku systemProcess
-#define		REG_EVENT_TABLE_CAPA    16              //max. pocet registraci udalosti (polozka 16 bytes) 256 B
-#define		EVENT_CACHE_CAPA        12              //velikost cache udalosti        (polozka 20 bytes) 240 B
+#define     STACK_SIZE              4*1024
+#define     SYSPROC_STACK_SIZE      512            //velikost zasobniku systemProcess
+#define		REG_EVENT_TABLE_CAPA    12              //max. pocet registraci udalosti (polozka 16 bytes) 256 B
+#define		EVENT_CACHE_CAPA        8              //velikost cache udalosti        (polozka 20 bytes) 240 B
 #define     PROC_T_CAPA             4               //kapacita proc_t (polozka 96 Bytes) 384 B
 
-#define     TIMER1_INTERVAL         10              //interval ms
+#define     TIMER1_INTERVAL         1              //interval ms
 //------------------------------------------------------------------------------
 #endif
 
@@ -138,10 +138,8 @@
 
 #if   (defined TEST_BOARD_BOS0)
     #define             NETCOM_UART                 2   //UART2
-    #define             NETCOM_DEVID                4   //ID modulu 
 #elif (defined TEST_BOARD_BOS1)
     #define             NETCOM_UART                 2   //UART2
-    #define             NETCOM_DEVID                1   //ID modulu 
 #elif (defined NETCOM_BOARD_0256)
     #define             NETCOM_UART                 1   //UART1
 #elif (defined NETCOM_BOARD_0064)
@@ -167,13 +165,13 @@
 //#define             NETCOM_ONE_MASTER
 
 #define             NETCOM_DATAOUT_CAPA     8   //8 polozek dataOut
-#define             NETCOM_DATASET_CAPA     4   //8 polozek dataIn, pipe 1-8
-#define             NETCOM_DATAGET_CAPA     4
+#define             NETCOM_DATASET_CAPA     4   //polozek v setData, (0-255)
+#define             NETCOM_DATAGET_CAPA     4   //polozek v getData, (0-31)
 
-#define             _TX_LONG_MS             30  //30
-#define             _TX_SHORT_MS		    5
-#define             _RX_LONG_MS             20
-#define             _STARTUP_MS             1000
+#define             _TX_LONG_MS             30      //doba, do kdy musi prijit odpoved na data
+#define             _TX_SHORT_MS		    5       //doba, do kdy musi prijit odpoved na setMaster
+#define             _RX_LONG_MS             20      //doba, do za kterou musi probehnout prijem dat
+#define             _STARTUP_MS             1000    //doba, po ktere ID1 zacne initBus, pokud neprijme Master8
 
 #define             NETCOM_SETPORT_COUNT    32
 #define             NETCOM_GETPORT_COUNT    8

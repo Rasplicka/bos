@@ -8,31 +8,87 @@
 extern ushort netcomStratup_ms;
 extern ushort netcomTx_ms;
 extern ushort netcomRx_ms;
+extern char netcom_devId;
+
+//#define     RS485
+
+#if (defined NETCOM_BOARD_0256 || defined NETCOM_BOARD_0064)
+    
+    PIN_INFO tx_pin={PORTB_BASE, BIT14};
+    
+    //switch 4x pin, pro nastaveni device ID
+    #define     ID_SW0     PORTB_BASE, BIT5
+    #define     ID_SW1     PORTB_BASE, BIT9
+    #define     ID_SW2     PORTB_BASE, BIT8
+    #define     ID_SW3     PORTB_BASE, BIT7
+    //#define     ID_SW4
+    //#define     ID_SW5
+    //#define     ID_SW6
+    //#define     ID_SW7
+
+#elif (defined TEST_BOARD_BOS0)
+    #define NETCOM_DEVID            4   //ID modulu 
+    PIN_INFO tx_pin={PORTB_BASE, BIT2};
+    
+#elif (defined TEST_BOARD_BOS1)
+    #define NETCOM_DEVID            1   //ID modulu 
+    PIN_INFO tx_pin={PORTB_BASE, BIT9};
+    
+#endif
 
 #define     NC_PRIORITY                 5
 #define     NC_SUBPRIORITY              2
-#define     FIFO_SIZE                   8
-//#define     RS485
+#define     FIFO_SIZE                   8    
+    
+#if (defined NETCOM_UART == 1 && defined PIC32MM0064) 
 
-#if   defined TEST_BOARD_BOS0  
-    PIN_INFO tx_pin={PORTB_BASE, BIT2};
-#elif defined TEST_BOARD_BOS1  
-    PIN_INFO tx_pin={PORTB_BASE, BIT9};
-#elif defined NETCOM_BOARD_0256
-    PIN_INFO tx_pin={PORTB_BASE, BIT14};
-#elif defined NETCOM_BOARD_0064
-    PIN_INFO tx_pin={PORTB_BASE, BIT14};  
-#endif 
+#define     TX_FIFO                     U1TXREG
+#define     RX_FIFO                     U1RXREG
 
-#if (defined NETCOM_BOARD_0256 || defined NETCOM_BOARD_0064)
-    #define     ID_SWITCH               4                       //switch 4x pin, pro nastaveni device ID
-    PIN_INFO SW0={PORTB_BASE, BIT5};
-    PIN_INFO SW1={PORTB_BASE, BIT9};
-    PIN_INFO SW2={PORTB_BASE, BIT8};
-    PIN_INFO SW3={PORTB_BASE, BIT7};
-#endif
+#define     U_STA                       U1STA
+#define     U_STABITS                   U1STAbits
+#define     U_MODE                      U1MODE
+#define     U_MODEBITS                  U1MODEbits
+#define     U_BRG                       U1BRG
+    
+#define     RX_PRIORITY                 IPC5bits.U1RXIP=NC_PRIORITY; IPC5bits.U1RXIS=NC_SUBPRIORITY
+#define     TX_PRIORITY                 IPC6bits.U1TXIP=NC_PRIORITY; IPC6bits.U1TXIS=NC_SUBPRIORITY
+#define     ER_PRIORITY                 IPC6bits.U1EIP=NC_PRIORITY; IPC6bits.U1EIS=NC_SUBPRIORITY
 
-#if (defined NETCOM_UART && NETCOM_UART == 1) 
+#define     IFRX_CLEAR                  IFS0bits.U1RXIF=0
+#define     IFTX_CLEAR                  IFS0bits.U1TXIF=0
+#define     IFER_CLEAR                  IFS0bits.U1EIF=0
+
+#define     IERX_SET                    IEC0bits.U1RXIE=1
+#define     IETX_SET                    IEC0bits.U1TXIE=1
+#define     IEER_SET                    IEC0bits.U1EIE=1
+
+#endif    
+#if (defined NETCOM_UART == 2 && defined PIC32MM0064) 
+
+#define     TX_FIFO                     U2TXREG
+#define     RX_FIFO                     U2RXREG
+
+#define     U_STA                       U2STA
+#define     U_STABITS                   U2STAbits
+#define     U_MODE                      U2MODE
+#define     U_MODEBITS                  U2MODEbits
+#define     U_BRG                       U2BRG
+    
+#define     RX_PRIORITY                 IPC10bits.U2RXIP=NC_PRIORITY; IPC10bits.U2RXIS=NC_SUBPRIORITY
+#define     TX_PRIORITY                 IPC10bits.U2TXIP=NC_PRIORITY; IPC10bits.U2TXIS=NC_SUBPRIORITY
+#define     ER_PRIORITY                 IPC10bits.U2EIP=NC_PRIORITY; IPC10bits.U2EIS=NC_SUBPRIORITY
+
+#define     IFRX_CLEAR                  IFS1bits.U2RXIF=0
+#define     IFTX_CLEAR                  IFS1bits.U2TXIF=0
+#define     IFER_CLEAR                  IFS1bits.U2EIF=0
+
+#define     IERX_SET                    IEC1bits.U2RXIE=1
+#define     IETX_SET                    IEC1bits.U2TXIE=1
+#define     IEER_SET                    IEC1bits.U2EIE=1
+
+#endif        
+#if (defined NETCOM_UART == 1 && defined PIC32MM0256) 
 
 #define     TX_FIFO                     U1TXREG
 #define     RX_FIFO                     U1RXREG
@@ -56,8 +112,7 @@ extern ushort netcomRx_ms;
 #define     IEER_SET                    IEC1bits.U1EIE=1
 
 #endif
-
-#if (defined NETCOM_UART && NETCOM_UART == 2) 
+#if (defined NETCOM_UART == 2 && defined PIC32MM0256) 
 
 #define     TX_FIFO                     U2TXREG
 #define     RX_FIFO                     U2RXREG
@@ -81,8 +136,7 @@ extern ushort netcomRx_ms;
 #define     IEER_SET                    IEC1bits.U2EIE=1
 
 #endif
-    
-#if (defined NETCOM_UART && NETCOM_UART == 3) 
+#if (defined NETCOM_UART == 3 && defined PIC32MM0256) 
 
 #define     TX_FIFO                     U3TXREG
 #define     RX_FIFO                     U3RXREG
@@ -107,6 +161,33 @@ extern ushort netcomRx_ms;
 
 #endif    
 
+// <editor-fold defaultstate="collapsed" desc="SW0-7">
+#ifdef ID_SW0
+static const PIN_INFO id_sw0 = {ID_SW0};
+#endif 
+#ifdef ID_SW1
+static const PIN_INFO id_sw1 = {ID_SW1};
+#endif 
+#ifdef ID_SW2
+static const PIN_INFO id_sw2 = {ID_SW2};
+#endif 
+#ifdef ID_SW3
+static const PIN_INFO id_sw3 = {ID_SW3};
+#endif     
+#ifdef ID_SW4
+static const PIN_INFO id_sw4 = {ID_SW4};
+#endif 
+#ifdef ID_SW5
+static const PIN_INFO id_sw5 = {ID_SW5};
+#endif 
+#ifdef ID_SW6
+static const PIN_INFO id_sw6 = {ID_SW6};
+#endif 
+#ifdef ID_SW7
+static const PIN_INFO id_sw7 = {ID_SW7};
+#endif  
+// </editor-fold>
+    
 //global fn
 void netcomInit();
 void netcomSetData(NETCOM_DATAOUT* data);
@@ -168,7 +249,7 @@ static char* getBuffer=NULL;
 static char ra=0;
 static char rxStatus=0;
 
-static char thisID=0;
+
 static char maxID=NETCOM_MAXID;
 static char IDPlusOne=0;
 static char oneMaster=0;
@@ -187,24 +268,24 @@ void (*_finish)();
 void netcomInit()
 {
     
-#ifdef ID_SWITCH
-    loadDeviceIDFromPin();
+#ifdef NETCOM_DEVID
+    netcom_devId=NETCOM_DEVID;
 #else     
-    thisID=NETCOM_DEVID;
+    loadDeviceIDFromPin();
 #endif
  
-    if(thisID<1){ return; }                                 //neni nastaveni device ID
+    if(netcom_devId<1){ return; }                                 //neni nastaveni device ID
     
-    if(thisID==1) { netcomStratup_ms=_STARTUP_MS; }         //pouze device ID 1
+    if(netcom_devId==1) { netcomStratup_ms=_STARTUP_MS; }         //pouze device ID 1
     else { netcomStratup_ms=0; }
     netcomTx_ms=0;
     netcomRx_ms=0;
 
-    if(maxID<thisID){maxID=thisID;}
+    if(maxID<netcom_devId){maxID=netcom_devId;}
     if(maxID<2){maxID=2;}
     
-    if(maxID==thisID){IDPlusOne=1;}
-    else{IDPlusOne=thisID+1;}
+    if(maxID==netcom_devId){IDPlusOne=1;}
+    else{IDPlusOne=netcom_devId+1;}
     
 #ifdef NETCOM_ONE_MASTER
     oneMaster=1;
@@ -326,7 +407,7 @@ void netcomNotRespond()
     clearStartupTimer(&notRespondAct, NETCOM_TXFINISH_FN.NotRespondAct, &master8);
 
     /*
-    if(thisID==1)    
+    if(netcom_devId==1)    
     {
         //devID=1, neposila master8
         netcomStratup_ms=_STARTUP_MS;
@@ -356,30 +437,56 @@ void netcomInitBus()
 
 static void loadDeviceIDFromPin()
 {
-    thisID=0;
-    
-#if (defined ID_SWITCH && ID_SWITCH == 4 )
+    netcom_devId=0;
     short x;
-    x=getPin(&SW0);
-    if(x>0){thisID |= 0b0001; }
     
-    x=getPin(&SW1);
-    if(x>0){thisID |= 0b0010; }    
-    
-    x=getPin(&SW2);
-    if(x>0){thisID |= 0b0100; }    
-
-    x=getPin(&SW3);
-    if(x>0){thisID |= 0b1000; }    
+#if (defined  ID_SW0)
+    x=getPin(&id_sw0);
+    if(x>0){netcom_devId |= 0b1; }
 #endif
     
+#if (defined  ID_SW1)
+    x=getPin(&id_sw1);
+    if(x>0){netcom_devId |= 0b10; }
+#endif    
+    
+#if (defined  ID_SW2)
+    x=getPin(&id_sw2);
+    if(x>0){netcom_devId |= 0b100; }
+#endif    
+    
+#if (defined  ID_SW3)
+    x=getPin(&id_sw3);
+    if(x>0){netcom_devId |= 0b1000; }
+#endif    
+    
+#if (defined  ID_SW4)
+    x=getPin(&id_sw4);
+    if(x>0){netcom_devId |= 0b10000; }
+#endif 
+    
+#if (defined  ID_SW5)
+    x=getPin(&id_sw5);
+    if(x>0){netcom_devId |= 0b100000; }
+#endif    
+    
+#if (defined  ID_SW6)
+    x=getPin(&id_sw6);
+    if(x>0){netcom_devId |= 0b1000000; }
+#endif     
+    
+#if (defined  ID_SW7)
+    x=getPin(&id_sw7);
+    if(x>0){netcom_devId |= 0b10000000; }
+#endif     
+   
 }
 
 static void fillHeadSetData(NETCOM_DATAOUT* data)
 {
     
     data->Head[0]=data->OppID;
-    data->Head[4]=thisID; //NETCOM_DEVID;
+    data->Head[4]=netcom_devId; //NETCOM_DEVID;
     
     short chksm=0;
     
@@ -420,7 +527,7 @@ static void fillHeadSetData(NETCOM_DATAOUT* data)
 static void fillHeadGetData(NETCOM_DATAOUT* data)
 {
     data->Head[0] = data->OppID;
-    data->Head[4] = thisID; //NETCOM_DEVID;
+    data->Head[4] = netcom_devId; //NETCOM_DEVID;
     data->Head[3] = NETCOM_HEADTYPE.GetData | (data->Pipe<<3);                            //comm=0, pipe
     
     data->Head[1]=data->Head[3];
@@ -432,7 +539,7 @@ static void fillHeadReturnData(NETCOM_DATAOUT* item)
 {
     //item = ReplyItem, kde je nastaveno Data, DataLen, atd...
     item->Head[0]=item->OppID;
-    item->Head[4]=thisID; //NETCOM_DEVID;
+    item->Head[4]=netcom_devId; //NETCOM_DEVID;
     
     char size=getSizeBits(item->DataLen);
     item->Head[3]=NETCOM_HEADTYPE.ReturnData | (size<<3);                            //comm=0, size
@@ -453,7 +560,7 @@ static void fillHeadControl(NETCOM_DATAOUT* item, char comm)
 {
     //item = ReplyItem, kde je nastaveno Data, DataLen, atd...
     item->Head[0]=item->OppID;
-    item->Head[4]=thisID; //NETCOM_DEVID;
+    item->Head[4]=netcom_devId; //NETCOM_DEVID;
     item->Head[3]=NETCOM_HEADTYPE.Control | (comm<<3);                            //comm=Control, command (ReplyOK/ERR..., M1/2/8,Acc... )
     
     item->Head[1]=item->Head[3];
@@ -504,7 +611,7 @@ static char initModule()
     
     //povoli prijem dat, zakaze vysilani
     U_STABITS.MASK=0xFF;     //0xFF
-    U_STABITS.ADDR=thisID;  //NETCOM_DEVID; //DevID
+    U_STABITS.ADDR=netcom_devId;  //NETCOM_DEVID; //DevID
     U_STABITS.UTXISEL=1;    //Tx interrupt, po odvysilani
     U_STABITS.UTXINV=0;     //
     U_STABITS.URXEN=1;      //Rx enable
@@ -723,7 +830,7 @@ static void nextMaster1()
         nextID++;
         if(nextID > maxID){ nextID=1; }
         
-        if(nextID == thisID)
+        if(nextID == netcom_devId)
         {
             //prosel vsechny ID a nenasel jiny master, po 5ms startMaster
             netcomTx_ms=5;
@@ -1223,7 +1330,7 @@ static void onChecksum()
             {
                 //master8
                 //#if (defined NETCOM_DEVID && NETCOM_DEVID <= 1)
-                if(thisID==1)
+                if(netcom_devId==1)
                 {
                     //pouze DevID=1
                     netcomStratup_ms = _STARTUP_MS;
@@ -1246,6 +1353,9 @@ static void onChecksum()
                     netcomDataSet[headPipe]->DataLen = headSize;
                     netcomDataSet[headPipe]->DataIndex = 0;
                     netcomDataSet[headPipe]->Status = NETCOM_IN_STATUS.Full;
+                    #ifndef TEST_BOARD_BOS0
+                        invPin(&LED1);
+                    #endif                    
                 }
                 replyItem.OppID = headOpp;
                 //if(rxStatus==0)
@@ -1307,6 +1417,10 @@ static void sendPipe(char pipe)
     }
             
     
+    //#ifndef TEST_BOARD_BOS0
+    //    intPin(&LED2);
+    //#endif    
+    
     //ok, neni locked, Status=Valid
     p->Locked=1;
     
@@ -1342,8 +1456,8 @@ static void sendControl(char comm, char exception)
 static inline void clearStartupTimer(void* fn1, char x, void* fn2)
 {
     //fn1 - vola se pri thidID=1
-    //fn2 - vila se pri thisID>1, txf se nastavi na x
-    if(thisID==1)
+    //fn2 - vila se pri netcom_devId>1, txf se nastavi na x
+    if(netcom_devId==1)
     {
         netcomStratup_ms = _STARTUP_MS;
         _finish=fn1;
@@ -1389,10 +1503,10 @@ void UART4Er_interrupt()
     IFTX_CLEAR;
     IFER_CLEAR;
     
-#ifdef TEST_BOARD_BOS1    
-    setPin(&LED4);
-#else
+#ifdef TEST_BOARD_BOS0    
     setPin(&LED1);
+#else
+    setPin(&LED4);
 #endif 
     
 }

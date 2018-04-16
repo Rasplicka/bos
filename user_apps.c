@@ -177,6 +177,74 @@ void pinSetting()
     
 #endif    
     
+#ifdef NETCOM_BOARD_0064
+    
+    //LED (nebo display SSD1306) -----------------------------------------------
+    //RA2/pin9 LED1
+    setPortDigOut(PORTA_BASE, BIT2);                                    //9
+    LED1.portBase=PORTA_BASE;
+    LED1.pin=BIT2;
+    
+    //RA3/pin10 LED2
+    setPortDigOut(PORTA_BASE, BIT3);                                    //10
+    LED2.portBase=PORTA_BASE;
+    LED2.pin=BIT3;    
+    
+    //RB4/pin11 LED3
+    setPortDigOut(PORTB_BASE, BIT4);                                    //11
+    LED3.portBase=PORTB_BASE;
+    LED3.pin=BIT4;
+
+    //RA4/pin12 LED4
+    setPortDigOut(PORTA_BASE, BIT4);                                    //12
+    LED4.portBase=PORTA_BASE;
+    LED4.pin=BIT4;    
+    
+    //Button -------------------------------------------------------------------
+    //RB3/pin7 (pin-gnd)
+    setPortDigIn(PORTB_BASE, BIT3);                                     //7
+    setPortPullUp(PORTB_BASE, BIT3, 1);
+    
+    //Digital input ------------------------------------------------------------
+    //RA0/pin2 
+    setPortDigIn(PORTA_BASE, BIT0);                                     //2
+    setPortPullDown(PORTA_BASE, BIT0, 1);    
+    
+    //Switches
+    //SW0, RB5/pin14 (pin-gnd)
+    setPortDigIn(PORTB_BASE, BIT5);                                     //14
+    setPortPullUp(PORTB_BASE, BIT5, 1);        
+    //SW1, RB9/pin18 (pin-gnd)
+    setPortDigIn(PORTB_BASE, BIT9);                                     //18
+    setPortPullUp(PORTB_BASE, BIT9, 1);        
+    //SW2, RB8/pin17 (pin-gnd)
+    setPortDigIn(PORTB_BASE, BIT8);                                     //17
+    setPortPullUp(PORTB_BASE, BIT8, 1);        
+    //SW3, RB7/pin16 (pin-gnd)
+    setPortDigIn(PORTB_BASE, BIT7);                                     //16
+    setPortPullUp(PORTB_BASE, BIT7, 1);        
+        
+    //Digital out --------------------------------------------------------------
+    //RC9/pin19 (enable +12V output)
+    setPortDigOut(PORTC_BASE, BIT9);                                     //19
+    setPortPullDown(PORTC_BASE, BIT9, 1);         
+    clearPortPin(PORTC_BASE, BIT9);
+    
+    //UART 1--------------------------------------------------------------------
+    //RB14/pin25 (U_Tx)
+    setPortDigOut(PORTB_BASE, BIT14);                                   //25
+    setPortPin(PORTB_BASE, BIT14);    
+    
+    //RB15/pin26 (U_Rx)
+    setPortDigIn(PORTB_BASE, BIT15);                                    //26
+        
+    //RB13/pin24 (U_RTS, pin H = read)
+    setPortDigOut(PORTB_BASE, BIT13);                                   //24
+    setPortPullDown(PORTB_BASE, BIT13, 1);         
+    setPortPin(PORTB_BASE, BIT13);
+    
+#endif    
+        
 #ifdef TEST_BOARD_BOS1    
     
     
@@ -305,10 +373,12 @@ void userAppsStart()
         //error, cannot run app
     }
     
+#ifndef NETCOM_BOARD_0064    
     if(regProcess(&m2_start, 1024, &defaultAppStartParam, 0x2) < 0)
     {
         //error, cannot run app
     }
+#endif    
     
     if(regProcess(&m3_start, 1024, &defaultAppStartParam, 0x3) < 0) 
     {
