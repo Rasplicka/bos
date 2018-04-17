@@ -3,15 +3,15 @@
   <executable name="dist/default/production/BOS2.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
-      <length>66704</length>                 
-      <used>25484</used>                     
-      <free>41220</free>                     
+      <length>263312</length>                 
+      <used>57092</used>                     
+      <free>206220</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
-      <length>8192</length>                 
-      <used>6136</used>                     
-      <free>2056</free>                     
+      <length>32768</length>                 
+      <used>13368</used>                     
+      <free>19400</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

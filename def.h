@@ -1,21 +1,33 @@
 //obsahuje globalni definice pro C/C++ i ASM
 
-//#define PIC32MM0256
-//#define PIC32MM
-
 //BOARD
 //#define TEST_BOARD_BOS0             //mala deska
 #define TEST_BOARD_BOS1           //velka deska
 //#define NETCOM_BOARD_0256
 //#define NETCOM_BOARD_0064
 
-//PROCESSOR
-#if (defined NETCOM_BOARD_0064)
-    #define PIC32MM0064
-#else
-    #define PIC32MM0256
+#if (defined TEST_BOARD_BOS1)
+    #define EXTERN_DEF
+    #include "_board/test_board_bos1_net.h"
 #endif
 
+#if (defined TEST_BOARD_BOS0)
+    #define EXTERN_DEF
+    #include "_board/test_board_bos0_net.h"
+#endif
+
+#if (defined NETCOM_BOARD_0256)
+    #define EXTERN_DEF
+    #include "_board/netcom_board_0256.h"
+#endif
+
+#if (defined NETCOM_BOARD_0064)
+    #define EXTERN_DEF
+    #include "_board/netcom_board_0064.h"
+#endif
+
+
+#ifndef EXTERN_DEF
 
 // <editor-fold defaultstate="collapsed" desc="CPU">
 
@@ -173,11 +185,7 @@
 #define             _RX_LONG_MS             20      //doba, do za kterou musi probehnout prijem dat
 #define             _STARTUP_MS             1000    //doba, po ktere ID1 zacne initBus, pokud neprijme Master8
 
-#define             NETCOM_SETPORT_COUNT    32
-#define             NETCOM_GETPORT_COUNT    8
-
 //</editor-fold>
-
 
 // <editor-fold defaultstate="collapsed" desc="DISPLAY, GRAPHICS, TOUCHPAD">
 
@@ -239,6 +247,92 @@
 //#define I2C1_INIT                                   //aktivuje I2C driver
 //#define I2C2_INIT
 //#define I2C3_INIT
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="ADC">
+#define     ADC_SCAN_INIT
+
+//vstupy, ktere jsou skenovany
+#ifdef PIC32MM0064
+    #define     AN8
+    #define     AN9
+    #define     AN10
+#endif
+#ifdef PIC32MM0256
+    #define     AN4
+    #define     AN5
+    #define     AN6
+    #define     AN7
+
+    //#define     ANVDDCORE         //Vcc CORE (AN27)
+    #define     ANVBG               //internal ref. 1.2V (AN28)
+    //#define     ANVSS             //GND (AN29)
+    //#define     ANVDD             //Vcc (AN30)
+#endif
+
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="RTC">
+#define     RTC
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="ubtn">
+//#define     UBTN
+
+#define     UBTN_DOWN       1
+#define     UBTN_UP         2
+#define     UBTN_DOWN_LONG  3
+#define     UBTN_UP_LONG    4
+#define     UBTN_REPEAT     5
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="dispay">
+
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="PWM">
+#define     PWM_INIT                              //rizeni vykonu, pouziva CCP moduly
+//#define     CCP_PWM_COUNT       2                 //pocet pouzitych CCP modulu pro rizeni vykonu PWM
+//#define     CCP1_PWM                              //CCP1 pouzita pro pwm
+//#define     CCP2_PWM                              //CCP2 pouzita pro pwm
+//#define     CCP3_PWM                              //CCP3 pouzita pro pwm
+//#define     CCP4_PWM
+//#define     PWM_SOFT                              //aktivuje fci soft zmeny vykonu
+
+#define     CCP_PWM_TABLE_ISIZE 20                  //velikost polozky
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="USB">
+#define     USB_DEVICE_INIT
+
+// </editor-fold>
+
+#endif
+
+#define         _TX_LONG_MS             30      //doba, do kdy musi prijit odpoved na data
+#define         _TX_SHORT_MS		    5       //doba, do kdy musi prijit odpoved na setMaster
+#define         _RX_LONG_MS             20      //doba, do za kterou musi probehnout prijem dat
+#define         _STARTUP_MS             1000    //doba, po ktere ID1 zacne initBus, pokud neprijme Master8
+
+
+#define         UBTN_DOWN               1
+#define         UBTN_UP                 2
+#define         UBTN_DOWN_LONG          3
+#define         UBTN_UP_LONG            4
+#define         UBTN_REPEAT             5
+
+
+// <editor-fold defaultstate="collapsed" desc="Error">
+
+#define     ERR_CODE_TIME_LIMIT_EXCEED          1
+#define     ERR_CODE_GENERAL_EXCEPTION          2
+#define     ERR_CODE_TRAP                       3
+#define     ERR_STACK_OVERFLOW                  4
+
+#define     ON_ERROR_RESET_SYSTEM               0
+#define     ON_ERROR_RESET_PROCESS              1
+#define     ON_ERROR_REMOVE_PROCESS             2
+
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Proc table">
@@ -303,16 +397,6 @@
 #define     CN_EVENT_ID             15
 #define     TOUCHPAD_EVENT_ID       16
 
-// </editor-fold>
-
-
-// <editor-fold defaultstate="collapsed" desc="Font (SSD1306)">
-#define     FONT1306_MID    1
-#define     FONT1306_BIG    2
-#define     FILL1306        96
-#define     IMAGE1306       97
-#define     ZERO1306        98
-#define     COMMAND1306     99
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="BIT definition">
@@ -519,62 +603,3 @@
 //*******************************************
 //drivers
 //*******************************************
-
-// <editor-fold defaultstate="collapsed" desc="ADC">
-#define     ADC_SCAN_INIT
-
-//vstupy, ktere jsou skenovany
-#ifdef PIC32MM0064
-    #define     AN8
-    #define     AN9
-    #define     AN10
-#endif
-#ifdef PIC32MM0256
-    #define     AN4
-    #define     AN5
-    #define     AN6
-    #define     AN7
-
-    //#define     ANVDDCORE         //Vcc CORE (AN27)
-    #define     ANVBG               //internal ref. 1.2V (AN28)
-    //#define     ANVSS             //GND (AN29)
-    //#define     ANVDD             //Vcc (AN30)
-#endif
-
-// </editor-fold>
-
-// <editor-fold defaultstate="collapsed" desc="RTC">
-#define     RTC
-// </editor-fold>
-
-// <editor-fold defaultstate="collapsed" desc="ubtn">
-//#define     UBTN
-
-#define     UBTN_DOWN       1
-#define     UBTN_UP         2
-#define     UBTN_DOWN_LONG  3
-#define     UBTN_UP_LONG    4
-#define     UBTN_REPEAT     5
-// </editor-fold>
-
-// <editor-fold defaultstate="collapsed" desc="dispay">
-
-// </editor-fold>
-
-// <editor-fold defaultstate="collapsed" desc="PWM">
-#define     PWM_INIT                              //rizeni vykonu, pouziva CCP moduly
-//#define     CCP_PWM_COUNT       2                 //pocet pouzitych CCP modulu pro rizeni vykonu PWM
-//#define     CCP1_PWM                              //CCP1 pouzita pro pwm
-//#define     CCP2_PWM                              //CCP2 pouzita pro pwm
-//#define     CCP3_PWM                              //CCP3 pouzita pro pwm
-//#define     CCP4_PWM
-//#define     PWM_SOFT                              //aktivuje fci soft zmeny vykonu
-
-#define     CCP_PWM_TABLE_ISIZE 20                  //velikost polozky
-// </editor-fold>
-
-// <editor-fold defaultstate="collapsed" desc="USB">
-#define     USB_DEVICE_INIT
-
-// </editor-fold>
-

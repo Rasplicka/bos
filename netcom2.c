@@ -9,6 +9,7 @@ extern ushort netcomStratup_ms;
 extern ushort netcomTx_ms;
 extern ushort netcomRx_ms;
 extern char netcom_devId;
+extern char netcom_maxId;
 
 //#define     RS485
 
@@ -27,11 +28,9 @@ extern char netcom_devId;
     //#define     ID_SW7
 
 #elif (defined TEST_BOARD_BOS0)
-    #define NETCOM_DEVID            4   //ID modulu 
     PIN_INFO tx_pin={PORTB_BASE, BIT2};
     
 #elif (defined TEST_BOARD_BOS1)
-    #define NETCOM_DEVID            1   //ID modulu 
     PIN_INFO tx_pin={PORTB_BASE, BIT9};
     
 #endif
@@ -249,8 +248,6 @@ static char* getBuffer=NULL;
 static char ra=0;
 static char rxStatus=0;
 
-
-static char maxID=NETCOM_MAXID;
 static char IDPlusOne=0;
 static char oneMaster=0;
 static char canBeMaster=0;   
@@ -268,23 +265,32 @@ void (*_finish)();
 void netcomInit()
 {
     
+    
 #ifdef NETCOM_DEVID
     netcom_devId=NETCOM_DEVID;
 #else     
     loadDeviceIDFromPin();
 #endif
- 
+
     if(netcom_devId<1){ return; }                                 //neni nastaveni device ID
+    
+#ifdef NETCOM_MAXID
+    netcom_maxId=NETCOM_MAXID;
+#else
+    int x=netcom_devId+16;
+    if(x>0xFF) { x=0xFF; }
+    netcom_maxId=(char)x;
+#endif    
     
     if(netcom_devId==1) { netcomStratup_ms=_STARTUP_MS; }         //pouze device ID 1
     else { netcomStratup_ms=0; }
     netcomTx_ms=0;
     netcomRx_ms=0;
 
-    if(maxID<netcom_devId){maxID=netcom_devId;}
-    if(maxID<2){maxID=2;}
+    if(netcom_maxId<netcom_devId){netcom_maxId=netcom_devId;}
+    if(netcom_maxId<2){netcom_maxId=2;}
     
-    if(maxID==netcom_devId){IDPlusOne=1;}
+    if(netcom_maxId==netcom_devId){IDPlusOne=1;}
     else{IDPlusOne=netcom_devId+1;}
     
 #ifdef NETCOM_ONE_MASTER
@@ -423,6 +429,8 @@ void netcomNotRespond()
 }
 void netcomInitBus()
 {
+    setPin(&LED3);
+    
     //initBus, start comunication (after 100ms pause, DevID=1 only)
     netcomStratup_ms=_STARTUP_MS;
     
@@ -828,7 +836,7 @@ static void nextMaster1()
     else if(haveNextID==0)
     {
         nextID++;
-        if(nextID > maxID){ nextID=1; }
+        if(nextID > netcom_maxId){ nextID=1; }
         
         if(nextID == netcom_devId)
         {
@@ -865,11 +873,7 @@ static void nextMaster2()
     startTx(0, NETCOM_EXCEPTION.None);   
     
     //odevzdal master
-    #ifdef TEST_BOARD_BOS0  
-        clearPin(&LED2);
-    #else
-        clearPin(&LED2);
-    #endif     
+    clearPin(&LED2);
 }
 static void master8()
 {
@@ -935,7 +939,9 @@ static void txWriteFifo()
     else
     {
         //?
+#ifndef RS485        
         setPortDigIn(tx_pin.portBase, tx_pin.pin);
+#endif        
         
         //odeslano vsechno
         if (txf==NETCOM_TXFINISH_FN.NextMaster1)
@@ -1317,12 +1323,7 @@ static void onChecksum()
                 if (rxExcept == NETCOM_EXCEPTION.SetMaster2) 
                 {
                     //ocekaval setMaster2 (prevezme master)
-                    #ifdef TEST_BOARD_BOS0  
-                        setPin(&LED2);
-                    #else
-                        setPin(&LED2);
-                    #endif
-
+                    setPin(&LED2);
                     startMaster();
                 }
             } 
@@ -1353,9 +1354,6 @@ static void onChecksum()
                     netcomDataSet[headPipe]->DataLen = headSize;
                     netcomDataSet[headPipe]->DataIndex = 0;
                     netcomDataSet[headPipe]->Status = NETCOM_IN_STATUS.Full;
-                    #ifndef TEST_BOARD_BOS0
-                        //invPin(&LED1);
-                    #endif                    
                 }
                 replyItem.OppID = headOpp;
                 //if(rxStatus==0)
@@ -1415,11 +1413,6 @@ static void sendPipe(char pipe)
         sendControl(NETCOM_OUT_STATUS.ReplyBusy, NETCOM_EXCEPTION.None);  
         return;        
     }
-            
-    
-    //#ifndef TEST_BOARD_BOS0
-    //    intPin(&LED2);
-    //#endif    
     
     //ok, neni locked, Status=Valid
     p->Locked=1;
@@ -1503,9 +1496,7 @@ void UART4Er_interrupt()
     IFTX_CLEAR;
     IFER_CLEAR;
     
-#ifdef TEST_BOARD_BOS0    
-    setPin(&LED1);
-#else
+#ifndef TEST_BOARD_BOS0    
     setPin(&LED4);
 #endif 
     

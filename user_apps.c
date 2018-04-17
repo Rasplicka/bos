@@ -12,13 +12,6 @@
  */
 
 //user apps
-//app1
-extern void m1_start();
-//app2
-extern void m2_start();
-//app3
-extern void m3_start();
-
 
 void pinSetting()
 {
@@ -367,23 +360,38 @@ void userAppsStart()
     p1.TrapBehavior = ON_ERROR.REMOVE_PROCESS;
     p1.TimeLimitValue = 0xFFFFFF;
     
-    
+#ifdef APP1  
+    extern void m1_start();
     if(regProcess(&m1_start, 1024, &p1, 0x1) < 0)
     {
         //error, cannot run app
     }
+#endif    
     
-#ifndef NETCOM_BOARD_0064    
+#ifdef APP2   
+    extern void m2_start();
     if(regProcess(&m2_start, 1024, &defaultAppStartParam, 0x2) < 0)
     {
         //error, cannot run app
     }
 #endif    
     
+#ifdef APP3    
+    extern void m3_start();
     if(regProcess(&m3_start, 1024, &defaultAppStartParam, 0x3) < 0) 
     {
         //error, cannot run app
     }
+#endif 
+
+#ifdef APPNET 
+    extern void appNet_start();
+    if(regProcess(&appNet_start, 1024, &defaultAppStartParam, 0x4) < 0) 
+    {
+        //error, cannot run app
+    }    
+#endif 
+    
 }
 
 void userAppError(char procId, char code, void* addr)

@@ -3,4 +3,5 @@ globals.c  \
 globals.h  \
 asm.h  \
 def.h  \
- struct.h 
+ _board/test_board_bos1_net.h  \
+struct.h 

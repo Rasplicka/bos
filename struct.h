@@ -475,6 +475,7 @@ typedef struct
     
 }NetcomLocals;
 
+/*
 typedef struct
 {
     NetcomLocals locals;
@@ -482,6 +483,7 @@ typedef struct
     NETCOM_DATAIN getData[NETCOM_GETPORT_COUNT];
     
 }Netcom;
+*/
 
 #endif
 
