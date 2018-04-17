@@ -25,29 +25,12 @@ void pinSetting()
     
     
 #ifdef __32MM0256GPM036__ 
-
-     //RB5, RB7
-    setPortDigOut(PORTB_BASE, BIT5 | BIT7);
-    //RC3
-    setPortDigOut(PORTC_BASE, BIT3);
-    
-    LED1_BASE=PORTB_BASE;
-    LED1_BIT=BIT5;
-    
-    LED2_BASE=PORTB_BASE;
-    LED2_BIT=BIT7;
-    
-    LED3_BASE=PORTC_BASE;
-    LED3_BIT=BIT3;    
-    
 #endif
     
 #ifdef __32MM0256GPM048__     
-    
 #endif    
     
 #ifdef __32MM0256GPM064__     
-    
 #endif  
     
 #ifdef PIC32MZ

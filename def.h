@@ -1,10 +1,22 @@
 //obsahuje globalni definice pro C/C++ i ASM
 
 //BOARD
-//#define TEST_BOARD_BOS0             //mala deska
-#define TEST_BOARD_BOS1           //velka deska
-//#define NETCOM_BOARD_0256
-//#define NETCOM_BOARD_0064
+#ifdef __32MM0256GPM036__
+    #define TEST_BOARD_BOS0             //mala deska
+#endif
+
+#ifdef __32MM0256GPM048__
+    #define TEST_BOARD_BOS1           //velka deska
+#endif
+
+#ifdef __32MM0256GPM028__
+    #define NETCOM_BOARD_0256
+#endif
+
+#ifdef __32MM0064GPL028__
+    #define NETCOM_BOARD_0064
+#endif
+
 
 #if (defined TEST_BOARD_BOS1)
     #define EXTERN_DEF
@@ -25,6 +37,7 @@
     #define EXTERN_DEF
     #include "_board/netcom_board_0064.h"
 #endif
+
 
 
 #ifndef EXTERN_DEF
@@ -583,13 +596,13 @@
     #define     PORT_CNA
     #define     PORT_CNB
     #define     PORT_CNC
-    #define     PORT_CND
-    #define     PORT_CNE
-    #define     PORT_CNF
-    #define     PORT_CNG
-    #define     PORT_CNH
-    #define     PORT_CNJ
-    #define     PORT_CNK
+    //#define     PORT_CND              //PIC32MM0256_28pin nema port D
+    //#define     PORT_CNE
+    //#define     PORT_CNF
+    //#define     PORT_CNG
+    //#define     PORT_CNH
+    //#define     PORT_CNJ
+    //#define     PORT_CNK
 #endif
 
 // </editor-fold>

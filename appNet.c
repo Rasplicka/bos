@@ -87,7 +87,7 @@ void appNet_start()
             }
         }
         
-        
+
 #ifdef TEST_BOARD_BOS1
         //pouze BOS1 (ID:1)
         if(module_stats>0)
@@ -112,7 +112,7 @@ void appNet_start()
         doEvents();
         
         cnt++;
-        if(cnt>5000) { invPin(&LED1); cnt=0; }
+        if(cnt>10000) { invPin(&LED1); cnt=0; }
     } 
 }
 

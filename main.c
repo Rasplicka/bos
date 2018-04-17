@@ -45,9 +45,6 @@
  * interrupt stack (jeden, nebo sedm, velikost kazdeho SRS_STACK_SIZE)  //zacatek oblasti
  */
     
-//#define     TEST_DRIVER_INIT
-//#define     TEST_DRIVER_VERSION     2
-
 #define     REG_EVENT_T_SIZE            (REG_EVENT_TABLE_ISIZE * REG_EVENT_TABLE_CAPA)    
 #define     EVENT_C_SIZE                (EVENT_CACHE_ISIZE * EVENT_CACHE_CAPA)    
 #define     PROC_T_SIZE                 (PROC_T_ISIZE * PROC_T_CAPA)
@@ -111,7 +108,7 @@ ushort netcomRx_ms          __section(".os") = 0;
 
 //ballast zajistuje, aby sekce .os byla plna, jinak kompilator vlozi za .os jeste sekci .data
 //velikost ballast = 64 - vars.size (zarovnano na word)
-char ballast[32]        __section(".os");
+char ballast[32]            __section(".os");
 
 
 //.os_stack je oblast RAM tesne pod .os, stack ma definovanou velikost STACK_SIZE

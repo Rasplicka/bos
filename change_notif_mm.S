@@ -315,7 +315,7 @@ iVector_cnPortC:
 #endif       
 
 #ifdef PORT_CND    
-#ifdef PIC32MM0256    
+//28-pin CPU nemaji port D (nesmi byt definovan)
 //<editor-fold defaultstate="collapsed" desc="cnStartPortD">
 .global cnStartPortD
 .align 2    
@@ -398,7 +398,6 @@ iVector_cnPortD:
 .end iVector_cnPortD 
     
 //</editor-fold> 
-#endif    
 #endif      
     
 //<editor-fold defaultstate="collapsed" desc="cnEnable">

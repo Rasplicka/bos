@@ -2,6 +2,7 @@
 
 #define PIC32MM0064
 //#define SIMULATOR
+#define APPNET
 
 // <editor-fold defaultstate="collapsed" desc="CPU">
 

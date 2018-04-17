@@ -21,6 +21,8 @@ void portWriter_init(PORT_INFO* info, char periph_type, char index)
     info->portIndex=index;
     if(periph_type==PERIPH_TYPE.spi)
     {
+        
+#if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE)        
         //info->writeBuffer=&writeBufferSpi;      
         info->writeBuffer=&spiWriteBuffer;
         info->writeBufferMode=&spiWriteBufferMode;
@@ -30,6 +32,8 @@ void portWriter_init(PORT_INFO* info, char periph_type, char index)
         //info->setBusMode=&spiSetBusMode;
 
         info->directModeHwBuffer=(int*)spiGetHwBuffer(index);
+#endif
+        
     }
     else if(periph_type==PERIPH_TYPE.i2c)
     {
@@ -44,6 +48,7 @@ void portWriter_init(PORT_INFO* info, char periph_type, char index)
 
 
 //<editor-fold defaultstate="collapsed" desc="SPI">
+#if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE)
 
 static void spiWriteBuffer(void* info, char* buffer, short len) 
 {
@@ -76,6 +81,8 @@ static void spiSetBusMode(void* info, char mode)
     spiSetBusMode(i->portIndex, mode);
 }
 */
+
+#endif
 
 // </editor-fold>
 

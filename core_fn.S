@@ -2722,13 +2722,15 @@ iVector_spi6Tx:
     li16    a0, 5			//spi index 0-5 (spi1-6)
     b16	    9f
 #endif     
-    
+  
+#if (defined SPI1_USE || defined SPI2_USE || defined SPI3_USE || defined SPI4_USE || defined SPI5_USE || defined SPI6_USE)
 9:
     la	    v0, spiTxInterrupt
     _CALL_C v0, 1
     
     eret
     //nop
+#endif    
     
 .end spi_interrupt_vector  
     
