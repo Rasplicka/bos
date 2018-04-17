@@ -118,8 +118,8 @@ void appNet_start()
 
 static void st1(int i)
 {
-    clearPin(LED3);
-    clearPin(LED4);
+    clearPin(&LED3);
+    clearPin(&LED4);
     write_stats++;
 }
 static void st3(int i)
